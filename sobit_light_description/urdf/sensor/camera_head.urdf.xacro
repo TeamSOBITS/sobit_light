@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<robot name="camera_head" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:macro name="camera_head" params="prefix parent">
+
+    <joint name="${prefix}_base_joint" type="fixed">
+      <origin xyz="0.0045 0.0 0.169655" rpy="0.0 0.0 0.0" />
+      <parent link="${parent}" />
+      <child link="${prefix}_base_link" />
+    </joint>
+
+    <link name="${prefix}_base_link" />
+
+    <xacro:sensor_d435 parent="${prefix}_base_link" name="${prefix}" topics_ns="head_camera" >
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+    </xacro:sensor_d435>
+
+  </xacro:macro>
+</robot>

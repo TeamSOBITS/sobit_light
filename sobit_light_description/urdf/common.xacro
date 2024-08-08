@@ -3,7 +3,7 @@
 <robot name="sobit_light"
        xmlns:xacro="http://ros.org/wiki/xacro">
 
-  <xacro:property name="M_PI" value="3.14159265359" />
+  <xacro:property name="PI" value="3.14159265359" />
 
   <!-- Transmission macro: Position -->
   <xacro:macro name="SimpleTransmissionPosition" params="joint reduction">

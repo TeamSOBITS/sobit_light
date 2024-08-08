@@ -8,7 +8,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
       <geometry>
-        <mesh filename="file://$(find open_manipulator_x_description)/meshes/omx1_link_base.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link_base.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey"/>
     </visual>
@@ -17,7 +17,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
       <geometry>
-        <mesh filename="file://$(find open_manipulator_x_description)/meshes/omx1_link_base.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link_base.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
 
@@ -43,7 +43,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
       <geometry>
-        <mesh filename="file://$(find open_manipulator_x_description)/meshes/omx1_link1.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link1.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey"/>
     </visual>
@@ -51,7 +51,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
       <geometry>
-        <mesh filename="file://$(find open_manipulator_x_description)/meshes/omx1_link1.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link1.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
 
@@ -78,7 +78,7 @@
     <visual>
       <origin xyz="0 0 0.0" rpy="0 0 ${M_PI/2}"/>
       <geometry>
-        <mesh filename="file://$(find open_manipulator_x_description)/meshes/omx1_link2.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link2.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey"/>
     </visual>
@@ -86,7 +86,7 @@
     <collision>
       <origin xyz="0 0 0.0" rpy="0 0 ${M_PI/2}"/>
       <geometry>
-        <mesh filename="file://$(find open_manipulator_x_description)/meshes/omx1_link2.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link2.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
 
@@ -113,7 +113,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
       <geometry>
-        <mesh filename="file://$(find open_manipulator_x_description)/meshes/omx1_link3.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link3.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey"/>
     </visual>
@@ -121,7 +121,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
       <geometry>
-        <mesh filename="file://$(find open_manipulator_x_description)/meshes/omx1_link3.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link3.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
 
@@ -148,7 +148,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
       <geometry>
-        <mesh filename="file://$(find open_manipulator_x_description)/meshes/omx1_link4.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link4.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey"/>
     </visual>
@@ -156,7 +156,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
       <geometry>
-        <mesh filename="file://$(find open_manipulator_x_description)/meshes/omx1_link4.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link4.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
 
@@ -183,7 +183,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
       <geometry>
-        <mesh filename="file://$(find open_manipulator_x_description)/meshes/omx1_link5.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link5.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey"/>
     </visual>
@@ -191,7 +191,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
       <geometry>
-        <mesh filename="file://$(find open_manipulator_x_description)/meshes/omx1_link5.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link5.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
 
@@ -218,7 +218,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
       <geometry>
-        <mesh filename="file://$(find open_manipulator_x_description)/meshes/omx1_link6.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link6.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey"/>
     </visual>
@@ -226,7 +226,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
       <geometry>
-        <mesh filename="file://$(find open_manipulator_x_description)/meshes/omx1_link6.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link6.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
 
@@ -253,7 +253,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
       <geometry>
-        <mesh filename="file://$(find open_manipulator_x_description)/meshes/omx1_link7_gripper_base.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link7_gripper_base.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey"/>
     </visual>
@@ -261,7 +261,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
       <geometry>
-        <mesh filename="file://$(find open_manipulator_x_description)/meshes/omx1_link7_gripper_base.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link7_gripper_base.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
 
@@ -286,7 +286,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
       <geometry>
-        <mesh filename="file://$(find open_manipulator_x_description)/meshes/omx1_link8_gripper.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link8_gripper.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey"/>
     </visual>
@@ -294,7 +294,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
       <geometry>
-        <mesh filename="file://$(find open_manipulator_x_description)/meshes/omx1_link8_gripper.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link8_gripper.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
 
@@ -319,7 +319,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
       <geometry>
-        <mesh filename="file://$(find open_manipulator_x_description)/meshes/omx1_link9-10_gripper.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link9-10_gripper.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey"/>
     </visual>
@@ -327,7 +327,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
       <geometry>
-        <mesh filename="file://$(find open_manipulator_x_description)/meshes/omx1_link9-10_gripper.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link9-10_gripper.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
 
@@ -352,7 +352,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 ${M_PI} ${M_PI/2}"/>
       <geometry>
-        <mesh filename="file://$(find open_manipulator_x_description)/meshes/omx1_link9-10_gripper.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link9-10_gripper.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey"/>
     </visual>
@@ -360,7 +360,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 ${M_PI} ${M_PI/2}"/>
       <geometry>
-        <mesh filename="file://$(find open_manipulator_x_description)/meshes/omx1_link9-10_gripper.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link9-10_gripper.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
 
@@ -387,7 +387,7 @@
     <visual>
       <origin xyz="0.0 0.0 0" rpy="0 0 ${M_PI/2}"/>
       <geometry>
-        <mesh filename="file://$(find open_manipulator_x_description)/meshes/omx1_link11-12_finger.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link11-12_finger.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey"/>
     </visual>
@@ -395,7 +395,7 @@
     <collision>
       <origin xyz="0.0 0.0 0" rpy="0 0 ${M_PI/2}"/>
       <geometry>
-        <mesh filename="file://$(find open_manipulator_x_description)/meshes/omx1_link11-12_finger.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link11-12_finger.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
 
@@ -423,7 +423,7 @@
     <visual>
       <origin xyz="0.0 -0.0 0" rpy="0 ${M_PI} ${M_PI/2}"/>
       <geometry>
-        <mesh filename="file://$(find open_manipulator_x_description)/meshes/omx1_link11-12_finger.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link11-12_finger.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey"/>
     </visual>
@@ -431,7 +431,7 @@
     <collision>
       <origin xyz="0.0 -0.0 0" rpy="0 ${M_PI} ${M_PI/2}"/>
       <geometry>
-        <mesh filename="file://$(find open_manipulator_x_description)/meshes/omx1_link11-12_finger.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link11-12_finger.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
 
@@ -456,7 +456,7 @@
     <visual>
       <origin xyz="0.0 -0.0 0" rpy="0 0 ${M_PI/2}"/>
       <geometry>
-        <mesh filename="file://$(find open_manipulator_x_description)/meshes/omx1_link13-14_finger.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link13-14_finger.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey"/>
     </visual>
@@ -464,7 +464,7 @@
     <collision>
       <origin xyz="0.0 -0.0 0" rpy="0 0 ${M_PI/2}"/>
       <geometry>
-        <mesh filename="file://$(find open_manipulator_x_description)/meshes/omx1_link13-14_finger.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link13-14_finger.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
 
@@ -489,7 +489,7 @@
     <visual>
       <origin xyz="0.0 -0.0 0" rpy="0 ${M_PI} ${M_PI/2}"/>
       <geometry>
-        <mesh filename="file://$(find open_manipulator_x_description)/meshes/omx1_link13-14_finger.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link13-14_finger.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey"/>
     </visual>
@@ -497,7 +497,7 @@
     <collision>
       <origin xyz="0.0 -0.0 0" rpy="0 ${M_PI} ${M_PI/2}"/>
       <geometry>
-        <mesh filename="file://$(find open_manipulator_x_description)/meshes/omx1_link13-14_finger.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link13-14_finger.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
 

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<robot name="mic" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:macro name="mic" params="prefix parent">
+
+    <joint name="${prefix}_base_joint" type="fixed">
+      <parent link="${parent}" />
+      <child link="${prefix}_base_link" />
+      <origin xyz="-0.039589 0.0 0.169655" rpy="0.0 0.0 0.0" />
+    </joint>
+
+    <link name="${prefix}_base_link">
+      <visual>
+        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 ${M_PI/2.0}" />
+        <geometry>
+          <mesh filename="package://sobit_mini_description/meshes/sensor/mic.stl"/>
+        </geometry>
+        <material name="black" />
+      </visual>
+      <collision>
+        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 ${M_PI/2.0}" />
+        <geometry>
+          <mesh filename="package://sobit_mini_description/meshes/sensor/mic.stl" />
+        </geometry>
+        <material name="black" />
+      </collision>
+      <inertial>
+        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 ${M_PI/2.0}" />
+        <mass value="0.09507172" />
+        <inertia ixx="${1/12*0.09507172*(0.078**2 + 0.157**2)}" ixy="0.0" ixz="0.0"
+                 iyy="${1/12*0.09507172*(0.026**2 + 0.078**2)}" iyz="0.0"
+                 izz="${1/12*0.09507172*(0.026**2 + 0.157**2)}" />
+      </inertial>
+    </link>
+
+    <gazebo reference="${prefix}_base_link">
+      <material>Gazebo/Black</material>
+    </gazebo>
+
+
+  </xacro:macro>
+</robot>
