@@ -1,549 +1,321 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!-- OpenManipulator X1000 (Arm) -->
-<robot name="open_manipulator_x1000"
-       xmlns:xacro="http://ros.org/wiki/xacro">
-
-  <!-- Link 0: Platform -->
-  <link name="omx1_platform_link">
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
-      <geometry>
-        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link_base.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="grey"/>
-    </visual>
-
-    <!-- TODO: Collision with simple geometry -->
-    <collision>
-      <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
-      <geometry>
-        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link_base.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </collision>
-
-    <!-- TODO: Inertial with simple geometry -->
-    <inertial>
-      <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
-      <mass value="0.2" />
-      <inertia ixx="1.0" ixy="0.0" ixz="1.0"
-               iyy="1.0" iyz="0.0"
-               izz="1.0" />
-    </inertial>
-  </link>
-
-  <!-- Joint 1: Base -->
-  <joint name="omx1_base_joint" type="fixed">
-    <parent link="omx1_platform_link"/>
-    <child link="omx1_base_link"/>
-    <origin xyz="-0.0105 -0.0135 0.006" rpy="0 0 0"/>
-  </joint>
-
-  <!-- Link 1: Base -->
-  <link name="omx1_base_link">
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
-      <geometry>
-        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link1.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="grey"/>
-    </visual>
-
-    <collision>
-      <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
-      <geometry>
-        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link1.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </collision>
-
-    <inertial>
-      <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
-      <mass value="0.2" />
-      <inertia ixx="1.0" ixy="0.0" ixz="1.0"
-               iyy="1.0" iyz="0.0"
-               izz="1.0" />
-    </inertial>
-  </link>
-
-  <!-- Joint 2: Shoulder -->
-  <joint name="omx1_arm1_joint" type="revolute">
-    <parent link="omx1_base_link"/>
-    <child link="omx1_arm1_link"/>
-    <origin xyz="0.0 0.0 0.0465" rpy="0 0 0"/>
-    <axis xyz="0 0 1"/>
-    <limit velocity="4.8" effort="1" lower="${-M_PI}" upper="${M_PI}" />
-  </joint>
-
-  <!--  Link 2: Shoulder -->
-  <link name="omx1_arm1_link">
-    <visual>
-      <origin xyz="0 0 0.0" rpy="0 0 ${M_PI/2}"/>
-      <geometry>
-        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link2.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="grey"/>
-    </visual>
-
-    <collision>
-      <origin xyz="0 0 0.0" rpy="0 0 ${M_PI/2}"/>
-      <geometry>
-        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link2.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </collision>
-
-    <inertial>
-      <origin xyz="0 0 0.0" rpy="0 0 ${M_PI/2}"/>
-      <mass value="0.2" />
-      <inertia ixx="1.0" ixy="0.0" ixz="1.0"
-               iyy="1.0" iyz="0.0"
-               izz="1.0" />
-    </inertial>
-  </link>
-
-  <!--  Joint 3: Upper Arm -->
-  <joint name="omx1_arm2_joint" type="revolute">
-    <parent link="omx1_arm1_link"/>
-    <child link="omx1_arm2_link"/>
-    <origin xyz="0.0 0.0 0.05095" rpy="0 0 0"/>
-    <axis xyz="0 1 0"/>
-    <limit velocity="4.8" effort="1" lower="${-M_PI/2}" upper="${M_PI/2}" />
-  </joint>
-
-  <!--  Link 3: Upper Arm -->
-  <link name="omx1_arm2_link">
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
-      <geometry>
-        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link3.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="grey"/>
-    </visual>
-
-    <collision>
-      <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
-      <geometry>
-        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link3.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </collision>
-
-    <inertial>
-      <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
-      <mass value="0.2" />
-      <inertia ixx="1.0" ixy="0.0" ixz="1.0"
-               iyy="1.0" iyz="0.0"
-               izz="1.0" />
-    </inertial>
-  </link>
-
-  <!--  Joint 4: Lower Arm -->
-  <joint name="omx1_arm3_joint" type="revolute">
-    <parent link="omx1_arm2_link"/>
-    <child link="omx1_arm3_link"/>
-    <origin xyz="0.022 -0.0 0.128" rpy="0 0 0"/>
-    <axis xyz="0 1 0"/>
-    <limit velocity="4.8" effort="1" lower="${-M_PI/2}" upper="${M_PI/2}" />
-  </joint>
-
-  <!--  Link 4: Lower Arm -->
-  <link name="omx1_arm3_link">
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
-      <geometry>
-        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link4.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="grey"/>
-    </visual>
-
-    <collision>
-      <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
-      <geometry>
-        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link4.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </collision>
-
-    <inertial>
-      <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
-      <mass value="0.2" />
-      <inertia ixx="1.0" ixy="0.0" ixz="1.0"
-               iyy="1.0" iyz="0.0"
-               izz="1.0" />
-    </inertial>
-  </link>
-
-  <!--  Joint 5: Forearm Upper -->
-  <joint name="omx1_arm4_joint" type="revolute">
-    <parent link="omx1_arm3_link"/>
-    <child link="omx1_arm4_link"/>
-    <origin xyz="0.0835 0.0 0.0" rpy="0 0 0"/>
-    <axis xyz="1 0 0"/>
-    <limit velocity="4.8" effort="1" lower="${-M_PI}" upper="${M_PI}" />
-  </joint>
-
-  <!--  Link 5: Forearm Upper -->
-  <link name="omx1_arm4_link">
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
-      <geometry>
-        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link5.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="grey"/>
-    </visual>
-
-    <collision>
-      <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
-      <geometry>
-        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link5.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </collision>
-
-    <inertial>
-      <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
-      <mass value="0.2" />
-      <inertia ixx="1.0" ixy="0.0" ixz="1.0"
-               iyy="1.0" iyz="0.0"
-               izz="1.0" />
-    </inertial>
-  </link>
-
-  <!--  Joint 6: Forearm Lower -->
-  <joint name="omx1_arm5_joint" type="revolute">
-    <parent link="omx1_arm4_link"/>
-    <child link="omx1_arm5_link"/>
-    <origin xyz="0.0405 0.0 0.0" rpy="0 0 0"/>
-    <axis xyz="0 1 0"/>
-    <limit velocity="4.8" effort="1" lower="${-M_PI/2}" upper="${M_PI/2}" />
-  </joint>
-
-  <!--  Link 6: Forearm Lower -->
-  <link name="omx1_arm5_link">
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
-      <geometry>
-        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link6.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="grey"/>
-    </visual>
-
-    <collision>
-      <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
-      <geometry>
-        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link6.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </collision>
-
-    <inertial>
-      <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
-      <mass value="0.2" />
-      <inertia ixx="1.0" ixy="0.0" ixz="1.0"
-               iyy="1.0" iyz="0.0"
-               izz="1.0" />
-    </inertial>
-  </link>
-
-  <!--  Joint 7: Wrist (Gripper Base) -->
-  <joint name="omx1_arm6_joint" type="revolute">
-    <parent link="omx1_arm5_link"/>
-    <child link="omx1_arm6_link"/>
-    <origin xyz="0.064 0 0.0" rpy="0 0 0"/>
-    <axis xyz="1 0 0"/>
-    <limit velocity="4.8" effort="1" lower="${-M_PI}" upper="${M_PI}" />
-  </joint>
-
-  <!--  Link 7: Wrist (Gripper Base) -->
-  <link name="omx1_arm6_link">
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
-      <geometry>
-        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link7_gripper_base.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="grey"/>
-    </visual>
-
-    <collision>
-      <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
-      <geometry>
-        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link7_gripper_base.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </collision>
-
-    <inertial>
-      <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
-      <mass value="0.2" />
-      <inertia ixx="1.0" ixy="0.0" ixz="1.0"
-               iyy="1.0" iyz="0.0"
-               izz="1.0" />
-    </inertial>
-  </link>
-
-  <!--  Joint 8: Gripper -->
-  <joint name="omx1_gripper_joint" type="fixed">
-    <parent link="omx1_arm6_link"/>
-    <child link="omx1_gripper_link"/>
-    <origin xyz="0.05 0.0 0.0" rpy="0 0 0"/>
-  </joint>
-
-  <!--  Link 8: Gripper -->
-  <link name="omx1_gripper_link">
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
-      <geometry>
-        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link8_gripper.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="grey"/>
-    </visual>
-
-    <collision>
-      <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
-      <geometry>
-        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link8_gripper.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </collision>
-
-    <inertial>
-      <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
-      <mass value="0.2" />
-      <inertia ixx="1.0" ixy="0.0" ixz="1.0"
-               iyy="1.0" iyz="0.0"
-               izz="1.0" />
-    </inertial>
-  </link>
-
-  <!--  Joint 9: Gripper left sub -->
-  <joint name="omx1_gripper_l_sub_joint" type="fixed">
-    <parent link="omx1_gripper_link"/>
-    <child link="omx1_gripper_l_sub_link"/>
-    <origin xyz="0.009 0.015 0.0" rpy="0 0 0"/>
-  </joint>
-
-  <!--  Link 9: Gripper left sub -->
-  <link name="omx1_gripper_l_sub_link">
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
-      <geometry>
-        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link9-10_gripper.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="grey"/>
-    </visual>
-
-    <collision>
-      <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
-      <geometry>
-        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link9-10_gripper.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </collision>
-
-    <inertial>
-      <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
-      <mass value="0.2" />
-      <inertia ixx="1.0" ixy="0.0" ixz="1.0"
-               iyy="1.0" iyz="0.0"
-               izz="1.0" />
-    </inertial>
-  </link>
-
-  <!--  Joint 10: Gripper right sub -->
-  <joint name="omx1_gripper_r_sub_joint" type="fixed">
-    <parent link="omx1_gripper_link"/>
-    <child link="omx1_gripper_r_sub_link"/>
-    <origin xyz="0.009 -0.015 0.0" rpy="0 0 0"/>
-  </joint>
-
-  <!--  Link 10: Gripper right sub -->
-  <link name="omx1_gripper_r_sub_link">
-    <visual>
-      <origin xyz="0 0 0" rpy="0 ${M_PI} ${M_PI/2}"/>
-      <geometry>
-        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link9-10_gripper.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="grey"/>
-    </visual>
-
-    <collision>
-      <origin xyz="0 0 0" rpy="0 ${M_PI} ${M_PI/2}"/>
-      <geometry>
-        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link9-10_gripper.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </collision>
-
-    <inertial>
-      <origin xyz="0 0 0" rpy="0 ${M_PI} ${M_PI/2}"/>
-      <mass value="0.2" />
-      <inertia ixx="1.0" ixy="0.0" ixz="1.0"
-               iyy="1.0" iyz="0.0"
-               izz="1.0" />
-    </inertial>
-  </link>
-
-  <!--  Joint 11: Gripper Finger Left -->
-  <joint name="omx1_gripper_l_finger_joint" type="prismatic">
-    <parent link="omx1_gripper_l_sub_link"/>
-    <child link="omx1_gripper_l_finger_link"/>
-    <origin xyz="0.0 0.04 0.0" rpy="0 0 0"/>
-    <axis xyz="0 1 0"/>
-    <limit velocity="4.8" effort="1" lower="${-0.055+0.02675}" upper="0.0" />
-  </joint>
-
-  <!--  Link 11: Gripper Finger Left -->
-  <link name="omx1_gripper_l_finger_link">
-    <visual>
-      <origin xyz="0.0 0.0 0" rpy="0 0 ${M_PI/2}"/>
-      <geometry>
-        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link11-12_finger.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="grey"/>
-    </visual>
-
-    <collision>
-      <origin xyz="0.0 0.0 0" rpy="0 0 ${M_PI/2}"/>
-      <geometry>
-        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link11-12_finger.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </collision>
-
-    <inertial>
-      <origin xyz="0.0 0.0 0" rpy="0 0 ${M_PI/2}"/>
-      <mass value="0.2" />
-      <inertia ixx="1.0" ixy="0.0" ixz="1.0"
-               iyy="1.0" iyz="0.0"
-               izz="1.0" />
-    </inertial>
-  </link>
-
-  <!--  Joint 12: Gripper Finger Right -->
-  <joint name="omx1_gripper_r_finger_joint" type="prismatic">
-    <parent link="omx1_gripper_r_sub_link"/>
-    <child link="omx1_gripper_r_finger_link"/>
-    <origin xyz="0.0 -0.04 0.0" rpy="0 0 0"/>
-    <axis xyz="0 -1 0"/>
-    <limit velocity="4.8" effort="1" lower="0.0" upper="${-0.055+0.02675}" />
-    <mimic joint="omx1_gripper_l_finger_joint" multiplier="1"/>
-  </joint>
-
-  <!--  Link 12: Gripper Finger Right -->
-  <link name="omx1_gripper_r_finger_link">
-    <visual>
-      <origin xyz="0.0 -0.0 0" rpy="0 ${M_PI} ${M_PI/2}"/>
-      <geometry>
-        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link11-12_finger.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="grey"/>
-    </visual>
-
-    <collision>
-      <origin xyz="0.0 -0.0 0" rpy="0 ${M_PI} ${M_PI/2}"/>
-      <geometry>
-        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link11-12_finger.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </collision>
-
-    <inertial>
-      <origin xyz="0.0 -0.0 0" rpy="0 ${M_PI} ${M_PI/2}"/>
-      <mass value="0.2" />
-      <inertia ixx="1.0" ixy="0.0" ixz="1.0"
-               iyy="1.0" iyz="0.0"
-               izz="1.0" />
-    </inertial>
-  </link>
-
-  <!--  Joint 13: Gripper Tip Left -->
-  <joint name="omx1_gripper_l_tip_joint" type="fixed">
-    <parent link="omx1_gripper_l_finger_link"/>
-    <child link="omx1_gripper_l_tip_link"/>
-    <origin xyz="${0.0345+0.0375/2} -0.0145 0.0" rpy="0 0 0"/>
-  </joint>
-
-  <!--  Link 13: Gripper Tip Left -->
-  <link name="omx1_gripper_l_tip_link">
-    <visual>
-      <origin xyz="0.0 -0.0 0" rpy="0 0 ${M_PI/2}"/>
-      <geometry>
-        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link13-14_finger.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="grey"/>
-    </visual>
-
-    <collision>
-      <origin xyz="0.0 -0.0 0" rpy="0 0 ${M_PI/2}"/>
-      <geometry>
-        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link13-14_finger.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </collision>
-
-    <inertial>
-      <origin xyz="0.0 -0.0 0" rpy="0 0 ${M_PI/2}"/>
-      <mass value="0.2" />
-      <inertia ixx="1.0" ixy="0.0" ixz="1.0"
-               iyy="1.0" iyz="0.0"
-               izz="1.0" />
-    </inertial>
-  </link>
-
-  <!--  Joint 14: Gripper Tip Right -->
-  <joint name="omx1_gripper_r_tip_joint" type="fixed">
-    <parent link="omx1_gripper_r_finger_link"/>
-    <child link="omx1_gripper_r_tip_link"/>
-    <origin xyz="${0.0345+0.0375/2} 0.0145 0.0" rpy="0 0 0"/>
-  </joint>
-
-  <!--  Link 14: Gripper Tip Right -->
-  <link name="omx1_gripper_r_tip_link">
-    <visual>
-      <origin xyz="0.0 -0.0 0" rpy="0 ${M_PI} ${M_PI/2}"/>
-      <geometry>
-        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link13-14_finger.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="grey"/>
-    </visual>
-
-    <collision>
-      <origin xyz="0.0 -0.0 0" rpy="0 ${M_PI} ${M_PI/2}"/>
-      <geometry>
-        <mesh filename="file://$(find sobit_light_description)/meshes/omx1_link13-14_finger.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </collision>
-
-    <inertial>
-      <origin xyz="0.0 -0.0 0" rpy="0 ${M_PI} ${M_PI/2}"/>
-      <mass value="0.2" />
-      <inertia ixx="1.0" ixy="0.0" ixz="1.0"
-               iyy="1.0" iyz="0.0"
-               izz="1.0" />
-    </inertial>
-  </link>
-
-  <!-- Joint 15: End Effector -->
-  <joint name="end_effector_joint" type="fixed">
-    <origin xyz="${0.0935+0.0375/2} 0.0 0.0" rpy="0 0 0"/>
-    <parent link="omx1_arm6_link"/>
-    <child link="omx1_end_effector_link"/>
-  </joint>
-
-  <!-- Link 15: End Effector -->
-  <link name="omx1_end_effector_link">
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <geometry>
-        <box size="0.01 0.01 0.01" />
-      </geometry>
-      <material name="red"/>
-     </visual>
-
-    <inertial>
-      <origin xyz="0 0 0" />
-      <mass value="0.2" />
-      <inertia ixx="1.0" ixy="0.0" ixz="1.0"
-               iyy="1.0" iyz="0.0"
-               izz="1.0" />
-    </inertial>
-  </link>
-
-  <!-- TODO: Camera Joint Position -->
-  <!-- <joint name="camera_joint" type="fixed">
-    <axis xyz="0 1 0" />
-    <origin xyz="0.070 0.032 0.052" rpy="0 0 0"/> 
-    <parent link="link5"/>
-    <child link="camera_link"/>
-  </joint>
-
-  <link name="camera_link"/> -->
-
+<robot name="arm" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:macro name="arm" params="prefix parent">
+
+    <!-- Joint 0: Platform -->
+    <joint name="${prefix}_platform_joint" type="fixed">
+      <parent link="${parent}"/>
+      <child link="${prefix}_platform_link"/>
+      <origin xyz="-0.0105 -0.0135 0.006" rpy="0 0 0"/>
+    </joint>
+
+    <!-- Link 0: Platform -->
+    <link name="${prefix}_platform_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
+        <geometry>
+          <mesh filename="file://$(find sobit_light_description)/meshes/arm/omx1_link_base.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="grey"/>
+      </visual>
+
+      <!-- TODO: Collision with simple geometry -->
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
+        <geometry>
+          <mesh filename="file://$(find sobit_light_description)/meshes/arm/omx1_link_base.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+      </collision>
+
+      <!-- TODO: Inertial with simple geometry -->
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
+        <mass value="0.2" />
+        <inertia ixx="1.0" ixy="0.0" ixz="1.0"
+                iyy="1.0" iyz="0.0"
+                izz="1.0" />
+      </inertial>
+    </link>
+
+    <!-- Joint 1: Base -->
+    <joint name="${prefix}_base_joint" type="fixed">
+      <parent link="${prefix}_platform_link"/>
+      <child link="${prefix}_base_link"/>
+      <origin xyz="-0.0105 -0.0135 0.006" rpy="0 0 0"/>
+    </joint>
+
+    <!-- Link 1: Base -->
+    <link name="${prefix}_base_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
+        <geometry>
+          <mesh filename="file://$(find sobit_light_description)/meshes/arm/omx1_link1.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="grey"/>
+      </visual>
+
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
+        <geometry>
+          <mesh filename="file://$(find sobit_light_description)/meshes/arm/omx1_link1.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+      </collision>
+
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
+        <mass value="0.2" />
+        <inertia ixx="1.0" ixy="0.0" ixz="1.0"
+                iyy="1.0" iyz="0.0"
+                izz="1.0" />
+      </inertial>
+    </link>
+
+    <!-- Joint 2: Shoulder -->
+    <joint name="${prefix}_arm1_joint" type="revolute">
+      <parent link="${prefix}_base_link"/>
+      <child link="${prefix}_arm1_link"/>
+      <origin xyz="0.0 0.0 0.0465" rpy="0 0 0"/>
+      <axis xyz="0 0 1"/>
+      <limit velocity="4.8" effort="1" lower="${-M_PI}" upper="${M_PI}" />
+    </joint>
+
+    <!--  Link 2: Shoulder -->
+    <link name="${prefix}_arm1_link">
+      <visual>
+        <origin xyz="0 0 0.0" rpy="0 0 ${M_PI/2}"/>
+        <geometry>
+          <mesh filename="file://$(find sobit_light_description)/meshes/arm/omx1_link2.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="grey"/>
+      </visual>
+
+      <collision>
+        <origin xyz="0 0 0.0" rpy="0 0 ${M_PI/2}"/>
+        <geometry>
+          <mesh filename="file://$(find sobit_light_description)/meshes/arm/omx1_link2.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+      </collision>
+
+      <inertial>
+        <origin xyz="0 0 0.0" rpy="0 0 ${M_PI/2}"/>
+        <mass value="0.2" />
+        <inertia ixx="1.0" ixy="0.0" ixz="1.0"
+                iyy="1.0" iyz="0.0"
+                izz="1.0" />
+      </inertial>
+    </link>
+
+    <!--  Joint 3: Upper Arm -->
+    <joint name="${prefix}_arm2_joint" type="revolute">
+      <parent link="${prefix}_arm1_link"/>
+      <child link="${prefix}_arm2_link"/>
+      <origin xyz="0.0 0.0 0.05095" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <limit velocity="4.8" effort="1" lower="${-M_PI/2}" upper="${M_PI/2}" />
+    </joint>
+
+    <!--  Link 3: Upper Arm -->
+    <link name="${prefix}_arm2_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
+        <geometry>
+          <mesh filename="file://$(find sobit_light_description)/meshes/arm/omx1_link3.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="grey"/>
+      </visual>
+
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
+        <geometry>
+          <mesh filename="file://$(find sobit_light_description)/meshes/arm/omx1_link3.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+      </collision>
+
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
+        <mass value="0.2" />
+        <inertia ixx="1.0" ixy="0.0" ixz="1.0"
+                iyy="1.0" iyz="0.0"
+                izz="1.0" />
+      </inertial>
+    </link>
+
+    <!--  Joint 4: Lower Arm -->
+    <joint name="${prefix}_arm3_joint" type="revolute">
+      <parent link="${prefix}_arm2_link"/>
+      <child link="${prefix}_arm3_link"/>
+      <origin xyz="0.022 -0.0 0.128" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <limit velocity="4.8" effort="1" lower="${-M_PI/2}" upper="${M_PI/2}" />
+    </joint>
+
+    <!--  Link 4: Lower Arm -->
+    <link name="${prefix}_arm3_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
+        <geometry>
+          <mesh filename="file://$(find sobit_light_description)/meshes/arm/omx1_link4.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="grey"/>
+      </visual>
+
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
+        <geometry>
+          <mesh filename="file://$(find sobit_light_description)/meshes/arm/omx1_link4.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+      </collision>
+
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
+        <mass value="0.2" />
+        <inertia ixx="1.0" ixy="0.0" ixz="1.0"
+                iyy="1.0" iyz="0.0"
+                izz="1.0" />
+      </inertial>
+    </link>
+
+    <!--  Joint 5: Forearm Upper -->
+    <joint name="${prefix}_arm4_joint" type="revolute">
+      <parent link="${prefix}_arm3_link"/>
+      <child link="${prefix}_arm4_link"/>
+      <origin xyz="0.0835 0.0 0.0" rpy="0 0 0"/>
+      <axis xyz="1 0 0"/>
+      <limit velocity="4.8" effort="1" lower="${-M_PI}" upper="${M_PI}" />
+    </joint>
+
+    <!--  Link 5: Forearm Upper -->
+    <link name="${prefix}_arm4_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
+        <geometry>
+          <mesh filename="file://$(find sobit_light_description)/meshes/arm/omx1_link5.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="grey"/>
+      </visual>
+
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
+        <geometry>
+          <mesh filename="file://$(find sobit_light_description)/meshes/arm/omx1_link5.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+      </collision>
+
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
+        <mass value="0.2" />
+        <inertia ixx="1.0" ixy="0.0" ixz="1.0"
+                iyy="1.0" iyz="0.0"
+                izz="1.0" />
+      </inertial>
+    </link>
+
+    <!--  Joint 6: Forearm Lower -->
+    <joint name="${prefix}_arm5_joint" type="revolute">
+      <parent link="${prefix}_arm4_link"/>
+      <child link="${prefix}_arm5_link"/>
+      <origin xyz="0.0405 0.0 0.0" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <limit velocity="4.8" effort="1" lower="${-M_PI/2}" upper="${M_PI/2}" />
+    </joint>
+
+    <!--  Link 6: Forearm Lower -->
+    <link name="${prefix}_arm5_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
+        <geometry>
+          <mesh filename="file://$(find sobit_light_description)/meshes/arm/omx1_link6.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="grey"/>
+      </visual>
+
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
+        <geometry>
+          <mesh filename="file://$(find sobit_light_description)/meshes/arm/omx1_link6.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+      </collision>
+
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
+        <mass value="0.2" />
+        <inertia ixx="1.0" ixy="0.0" ixz="1.0"
+                iyy="1.0" iyz="0.0"
+                izz="1.0" />
+      </inertial>
+    </link>
+
+    <!--  Joint 7: Wrist (Gripper Base) -->
+    <joint name="${prefix}_arm6_joint" type="revolute">
+      <parent link="${prefix}_arm5_link"/>
+      <child link="${prefix}_arm6_link"/>
+      <origin xyz="0.064 0 0.0" rpy="0 0 0"/>
+      <axis xyz="1 0 0"/>
+      <limit velocity="4.8" effort="1" lower="${-M_PI}" upper="${M_PI}" />
+    </joint>
+
+    <!--  Link 7: Wrist (Gripper Base) -->
+    <link name="${prefix}_arm6_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
+        <geometry>
+          <mesh filename="file://$(find sobit_light_description)/meshes/arm/omx1_link7_gripper_base.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="grey"/>
+      </visual>
+
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
+        <geometry>
+          <mesh filename="file://$(find sobit_light_description)/meshes/arm/omx1_link7_gripper_base.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+      </collision>
+
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
+        <mass value="0.2" />
+        <inertia ixx="1.0" ixy="0.0" ixz="1.0"
+                iyy="1.0" iyz="0.0"
+                izz="1.0" />
+      </inertial>
+    </link>
+
+    <!--  Joint 8: Gripper -->
+    <joint name="${prefix}_gripper_joint" type="fixed">
+      <parent link="${prefix}_arm6_link"/>
+      <child link="${prefix}_gripper_link"/>
+      <origin xyz="0.05 0.0 0.0" rpy="0 0 0"/>
+    </joint>
+
+    <!--  Link 8: Gripper -->
+    <link name="${prefix}_gripper_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
+        <geometry>
+          <mesh filename="file://$(find sobit_light_description)/meshes/arm/omx1_link8_gripper.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="grey"/>
+      </visual>
+
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
+        <geometry>
+          <mesh filename="file://$(find sobit_light_description)/meshes/arm/omx1_link8_gripper.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+      </collision>
+
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
+        <mass value="0.2" />
+        <inertia ixx="1.0" ixy="0.0" ixz="1.0"
+                iyy="1.0" iyz="0.0"
+                izz="1.0" />
+      </inertial>
+    </link>
+
+
+    <xacro:arm_transmission prefix="${prefix}" />
+
+  </xacro:macro>
 </robot>
