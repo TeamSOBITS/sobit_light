@@ -13,19 +13,17 @@
 
   <!-- Add URDF: links, joints -->
   <xacro:include filename="$(find sobit_light_description)/urdf/base/base.urdf.xacro" />
-  <xacro:include filename="$(find sobit_light_description)/urdf/body/stacks.urdf.xacro" />
-  <xacro:include filename="$(find sobit_light_description)/urdf/body/cover.urdf.xacro" />
   <xacro:include filename="$(find sobit_light_description)/urdf/arm/arm.urdf.xacro" />
   <xacro:include filename="$(find sobit_light_description)/urdf/hand/hand.urdf.xacro" />
   <xacro:include filename="$(find sobit_light_description)/urdf/back/back.urdf.xacro" />
   <xacro:include filename="$(find sobit_light_description)/urdf/head/head.urdf.xacro" />
   
-  <xacro:include filename="$(find sobit_light_description)/urdf/sensor/matrix.urdf.xacro" />
-  <xacro:include filename="$(find sobit_light_description)/urdf/sensor/mic.urdf.xacro" />
-  <xacro:include filename="$(find sobit_light_description)/urdf/sensor/lidar.urdf.xacro" />
   <xacro:include filename="$(find sobit_light_description)/urdf/sensor/head_camera.urdf.xacro" />
+  <!-- <xacro:include filename="$(find sobit_light_description)/urdf/sensor/hand_camera.urdf.xacro" /> -->
+  <xacro:include filename="$(find sobit_light_description)/urdf/sensor/mic.urdf.xacro" />
+  <xacro:include filename="$(find sobit_light_description)/urdf/sensor/speaker.urdf.xacro" />
+  <!-- <xacro:include filename="$(find sobit_light_description)/urdf/sensor/lidar.urdf.xacro" /> -->
   
-  <!-- <xacro:include filename="$(find urg_node)/urdf/hokuyo_ust.urdf.xacro" /> -->
   <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro" />
 
 
