@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!-- OpenManipulator X1000 (Arm) -->
 <robot name="arm" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find sobit_light_description)/urdf/arm/arm.transmission.xacro" />
   <xacro:macro name="arm" params="prefix parent">
 
     <!-- Joint 0: Platform -->
     <joint name="${prefix}_platform_joint" type="fixed">
       <parent link="${parent}"/>
       <child link="${prefix}_platform_link"/>
-      <origin xyz="-0.0105 -0.0135 0.006" rpy="0 0 0"/>
+      <origin xyz="0.122 0.0 0.0" rpy="0 0 0"/>
     </joint>
 
     <!-- Link 0: Platform -->
@@ -42,7 +43,7 @@
     <joint name="${prefix}_base_joint" type="fixed">
       <parent link="${prefix}_platform_link"/>
       <child link="${prefix}_base_link"/>
-      <origin xyz="-0.0105 -0.0135 0.006" rpy="0 0 0"/>
+      <origin xyz="${-0.0112-0.016/2} 0.0 0.008" rpy="0 0 0"/>
     </joint>
 
     <!-- Link 1: Base -->
@@ -72,16 +73,16 @@
     </link>
 
     <!-- Joint 2: Shoulder -->
-    <joint name="${prefix}_arm1_joint" type="revolute">
+    <joint name="${prefix}_1_joint" type="revolute">
       <parent link="${prefix}_base_link"/>
-      <child link="${prefix}_arm1_link"/>
-      <origin xyz="0.0 0.0 0.0465" rpy="0 0 0"/>
+      <child link="${prefix}_1_link"/>
+      <origin xyz="0.0 0.0 0.0465" rpy="0 ${M_PI/2} 0"/>
       <axis xyz="0 0 1"/>
       <limit velocity="4.8" effort="1" lower="${-M_PI}" upper="${M_PI}" />
     </joint>
 
     <!--  Link 2: Shoulder -->
-    <link name="${prefix}_arm1_link">
+    <link name="${prefix}_1_link">
       <visual>
         <origin xyz="0 0 0.0" rpy="0 0 ${M_PI/2}"/>
         <geometry>
@@ -107,16 +108,16 @@
     </link>
 
     <!--  Joint 3: Upper Arm -->
-    <joint name="${prefix}_arm2_joint" type="revolute">
-      <parent link="${prefix}_arm1_link"/>
-      <child link="${prefix}_arm2_link"/>
+    <joint name="${prefix}_2_joint" type="revolute">
+      <parent link="${prefix}_1_link"/>
+      <child link="${prefix}_2_link"/>
       <origin xyz="0.0 0.0 0.05095" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
       <limit velocity="4.8" effort="1" lower="${-M_PI/2}" upper="${M_PI/2}" />
     </joint>
 
     <!--  Link 3: Upper Arm -->
-    <link name="${prefix}_arm2_link">
+    <link name="${prefix}_2_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
         <geometry>
@@ -142,16 +143,16 @@
     </link>
 
     <!--  Joint 4: Lower Arm -->
-    <joint name="${prefix}_arm3_joint" type="revolute">
-      <parent link="${prefix}_arm2_link"/>
-      <child link="${prefix}_arm3_link"/>
+    <joint name="${prefix}_3_joint" type="revolute">
+      <parent link="${prefix}_2_link"/>
+      <child link="${prefix}_3_link"/>
       <origin xyz="0.022 -0.0 0.128" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
       <limit velocity="4.8" effort="1" lower="${-M_PI/2}" upper="${M_PI/2}" />
     </joint>
 
     <!--  Link 4: Lower Arm -->
-    <link name="${prefix}_arm3_link">
+    <link name="${prefix}_3_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
         <geometry>
@@ -177,16 +178,16 @@
     </link>
 
     <!--  Joint 5: Forearm Upper -->
-    <joint name="${prefix}_arm4_joint" type="revolute">
-      <parent link="${prefix}_arm3_link"/>
-      <child link="${prefix}_arm4_link"/>
+    <joint name="${prefix}_4_joint" type="revolute">
+      <parent link="${prefix}_3_link"/>
+      <child link="${prefix}_4_link"/>
       <origin xyz="0.0835 0.0 0.0" rpy="0 0 0"/>
       <axis xyz="1 0 0"/>
       <limit velocity="4.8" effort="1" lower="${-M_PI}" upper="${M_PI}" />
     </joint>
 
     <!--  Link 5: Forearm Upper -->
-    <link name="${prefix}_arm4_link">
+    <link name="${prefix}_4_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
         <geometry>
@@ -212,16 +213,16 @@
     </link>
 
     <!--  Joint 6: Forearm Lower -->
-    <joint name="${prefix}_arm5_joint" type="revolute">
-      <parent link="${prefix}_arm4_link"/>
-      <child link="${prefix}_arm5_link"/>
+    <joint name="${prefix}_5_joint" type="revolute">
+      <parent link="${prefix}_4_link"/>
+      <child link="${prefix}_5_link"/>
       <origin xyz="0.0405 0.0 0.0" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
       <limit velocity="4.8" effort="1" lower="${-M_PI/2}" upper="${M_PI/2}" />
     </joint>
 
     <!--  Link 6: Forearm Lower -->
-    <link name="${prefix}_arm5_link">
+    <link name="${prefix}_5_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
         <geometry>
@@ -247,16 +248,16 @@
     </link>
 
     <!--  Joint 7: Wrist (Gripper Base) -->
-    <joint name="${prefix}_arm6_joint" type="revolute">
-      <parent link="${prefix}_arm5_link"/>
-      <child link="${prefix}_arm6_link"/>
+    <joint name="${prefix}_6_joint" type="revolute">
+      <parent link="${prefix}_5_link"/>
+      <child link="${prefix}_6_link"/>
       <origin xyz="0.064 0 0.0" rpy="0 0 0"/>
       <axis xyz="1 0 0"/>
       <limit velocity="4.8" effort="1" lower="${-M_PI}" upper="${M_PI}" />
     </joint>
 
     <!--  Link 7: Wrist (Gripper Base) -->
-    <link name="${prefix}_arm6_link">
+    <link name="${prefix}_6_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
         <geometry>
@@ -283,7 +284,7 @@
 
     <!--  Joint 8: Gripper -->
     <joint name="${prefix}_gripper_joint" type="fixed">
-      <parent link="${prefix}_arm6_link"/>
+      <parent link="${prefix}_6_link"/>
       <child link="${prefix}_gripper_link"/>
       <origin xyz="0.05 0.0 0.0" rpy="0 0 0"/>
     </joint>
