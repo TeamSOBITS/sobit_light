@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- SOBIT Light (Gazebo) -->
+<robot name="sobit_light_gazebo" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:macro name="gazebo_ros2_control" params="prefix">
+
+    <ros2_control name="IgnitionSystem" type="system">
+      <hardware>
+        <plugin>ign_ros2_control/IgnitionSystem</plugin>
+        <!-- <plugin>gz_ros2_control/GazeboSimSystem</plugin> -->
+      </hardware>
+      <joint name="${prefix}_l_drive_wheel_joint">
+        <command_interface name="velocity">
+          <param name="min">-1</param>
+          <param name="max">1</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="${prefix}_r_drive_wheel_joint">
+        <command_interface name="velocity">
+          <param name="min">-10</param>
+          <param name="max">10</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+    </ros2_control>
+
+
+    <!-- <gazebo reference="${prefix}_base_link">
+      <material>Gazebo/Black</material>
+    </gazebo> -->
+
+
+    <gazebo reference="laser_frame">
+        <!-- <material>Gazebo/Black</material> -->
+
+        <sensor name="laser" type="ray">
+            <pose> 0 0 0 0 0 0 </pose>
+            <visualize>true</visualize>
+            <update_rate>10</update_rate>
+            <ray>
+                <scan>
+                    <horizontal>
+                        <samples>360</samples>
+                        <min_angle>-3.14</min_angle>
+                        <max_angle>3.14</max_angle>
+                    </horizontal>
+                </scan>
+                <range>
+                    <min>0.3</min>
+                    <max>12</max>
+                </range>
+            </ray>
+            <plugin name="laser_controller" filename="libgazebo_ros_ray_sensor.so">
+                <ros>
+                    <argument>~/out:=scan</argument>
+                </ros>
+                <output_type>sensor_msgs/LaserScan</output_type>
+                <frame_name>laser_frame</frame_name>
+            </plugin>
+        </sensor>
+    </gazebo>
+
+    <!-- Add Gazebo: plugins, sensors -->
+    <gazebo>
+        <!-- <plugin filename="libign_ros2_control-system.so" name="ign_ros2_control::IgnitionROS2ControlPlugin"> -->
+        <plugin filename="ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
+        <!-- <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin"> -->
+            <parameters>$(find sobit_light_control)/config/ros_controllers.yaml</parameters>
+            <!-- <parameters>$(find sobit_light_control)/config/gaz_ros2_ctl_use_sim.yaml</parameters> -->
+        </plugin>
+    </gazebo>
+
+  </xacro:macro>
+</robot>
