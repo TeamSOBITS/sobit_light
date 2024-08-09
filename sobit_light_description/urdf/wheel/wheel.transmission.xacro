@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<robot name="sobit_pro"
+       xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:macro name="wheel_transmission" params="prefix">
+
+    <xacro:velocity_joint_transmission joint="${prefix}_l_drive_wheel_joint" reduction="1" />
+    <xacro:velocity_joint_transmission joint="${prefix}_r_drive_wheel_joint" reduction="1" />
+
+  </xacro:macro>
+</robot>

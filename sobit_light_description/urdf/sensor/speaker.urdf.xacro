@@ -5,24 +5,26 @@
     <joint name="${prefix}_base_joint" type="fixed">
       <parent link="${parent}" />
       <child link="${prefix}_base_link" />
-      <origin xyz="-0.039589 0.0 0.169655" rpy="0.0 0.0 0.0" />
+      <origin xyz="0.050 0.0 0.510" rpy="0.0 0.0 0.0" />
     </joint>
 
     <link name="${prefix}_base_link">
       <visual>
-        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 ${M_PI/2.0}" />
+        <origin xyz="0.0 0.0 0.0" rpy="-${M_PI/9.0} 0.0 ${M_PI/2.0}" />
         <geometry>
-          <mesh filename="package://sobit_mini_description/meshes/sensor/mic.stl"/>
+          <mesh filename="file://$(find sobit_light_description)/meshes/sensor/speaker.stl" scale="0.001 0.001 0.001" />
         </geometry>
         <material name="black" />
       </visual>
+
       <collision>
         <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 ${M_PI/2.0}" />
         <geometry>
-          <mesh filename="package://sobit_mini_description/meshes/sensor/mic.stl" />
+          <mesh filename="file://$(find sobit_light_description)/meshes/sensor/speaker.stl" scale="0.001 0.001 0.001" />
         </geometry>
         <material name="black" />
       </collision>
+
       <inertial>
         <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 ${M_PI/2.0}" />
         <mass value="0.09507172" />
@@ -32,10 +34,10 @@
       </inertial>
     </link>
 
-    <gazebo reference="${prefix}_base_link">
-      <material>Gazebo/Black</material>
-    </gazebo>
 
+    <!-- <gazebo reference="${prefix}_base_link">
+      <material>Gazebo/Black</material>
+    </gazebo> -->
 
   </xacro:macro>
 </robot>
