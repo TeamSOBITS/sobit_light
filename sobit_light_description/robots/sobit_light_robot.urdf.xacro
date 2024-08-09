@@ -1,42 +1,55 @@
-<?xml version="1.0" ?>
-
-<robot name="sobit_light"
-       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
-       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
-       xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
-       xmlns:xacro="http://www.ros.org/wiki/xacro">
+<?xml version="1.0" encoding="UTF-8" ?>
+<robot name="sobit_light" xmlns:xacro="http://www.ros.org/wiki/xacro">
   
   <!-- Add Common Xacro: transmissions, colors -->
-  <xacro:include filename="$(find sobit_light_description)/urdf/common.xacro" />
+  <xacro:include filename="$(find sobit_light_description)/urdf/values.urdf.xacro" />
   <xacro:include filename="$(find sobit_light_description)/urdf/materials.urdf.xacro" />
+  <xacro:include filename="$(find sobit_light_description)/urdf/transmission.urdf.xacro" />
 
 
   <!-- Add URDF: links, joints -->
   <xacro:include filename="$(find sobit_light_description)/urdf/base/base.urdf.xacro" />
+  <xacro:include filename="$(find sobit_light_description)/urdf/base/plate.urdf.xacro" />
   <xacro:include filename="$(find sobit_light_description)/urdf/arm/arm.urdf.xacro" />
   <xacro:include filename="$(find sobit_light_description)/urdf/hand/hand.urdf.xacro" />
   <xacro:include filename="$(find sobit_light_description)/urdf/back/back.urdf.xacro" />
   <xacro:include filename="$(find sobit_light_description)/urdf/head/head.urdf.xacro" />
+  <xacro:include filename="$(find sobit_light_description)/urdf/wheel/wheel.urdf.xacro" />
   
-  <xacro:include filename="$(find sobit_light_description)/urdf/sensor/head_camera.urdf.xacro" />
-  <!-- <xacro:include filename="$(find sobit_light_description)/urdf/sensor/hand_camera.urdf.xacro" /> -->
+  <xacro:include filename="$(find sobit_light_description)/urdf/sensor/camera_front.urdf.xacro" />
+  <xacro:include filename="$(find sobit_light_description)/urdf/sensor/camera_back.urdf.xacro" />
+  <xacro:include filename="$(find sobit_light_description)/urdf/sensor/camera_head.urdf.xacro" />
+
+  <xacro:include filename="$(find sobit_light_description)/urdf/sensor/lidar.urdf.xacro" />
+  <xacro:include filename="$(find sobit_light_description)/urdf/sensor/tof.urdf.xacro" />
+  <xacro:include filename="$(find sobit_light_description)/urdf/sensor/imu.urdf.xacro" />
   <xacro:include filename="$(find sobit_light_description)/urdf/sensor/mic.urdf.xacro" />
   <xacro:include filename="$(find sobit_light_description)/urdf/sensor/speaker.urdf.xacro" />
-  <!-- <xacro:include filename="$(find sobit_light_description)/urdf/sensor/lidar.urdf.xacro" /> -->
   
-  <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro" />
 
+  <!-- Add URDF: gazebo -->
+  <xacro:include filename="$(find sobit_light_description)/urdf/gazebo.urdf.xacro" />
+
+
+  <link name="base_footprint"/>
 
   <!-- Connect the previous Links and Joints -->
-  <xacro:base/>
-  <!-- <xacro:stack_hexagons parent="base_link" /> -->
-  <!-- <xacro:cover  prefix="cover"  parent="plate_top_link" /> -->
-  <xacro:arm    prefix="arm"     parent="plate_top_link" />
-  <xacro:hand   prefix_hand="hand" prefix_finger="finger" parent="arm_wrist_tilt_link" />
-  <xacro:back   prefix="back"    parent="plate_top_link" />
-  <xacro:head   prefix="head"    parent="back_base_link" />
-  <xacro:head_camera prefix="head_camera" parent="head_camera_tilt_link" />
-  <xacro:mic    prefix="mic"     parent="back_base_link" />
-  <xacro:mic    prefix="speaker" parent="back_base_link" />
-  <!-- <xacro:lidar  prefix="lidar"  parent="plate_bottom_link" /> -->
+  <xacro:base    prefix="base"      parent="base_footprint" />
+  <xacro:plate   prefix="plate"     parent="base_link" />
+  <xacro:arm     prefix="arm"       parent="plate_middle_link" />
+  <xacro:hand    prefix_hand="hand" prefix_finger="finger" parent="arm_gripper_link" />
+  <xacro:back    prefix="back"      parent="plate_bottom_link" />
+  <xacro:head    prefix="head"      parent="back_base_link" />
+  <xacro:wheel   prefix="base"      parent="base_link" />
+  <xacro:lidar   prefix="lidar"     parent="base_link" />
+  <xacro:tof     prefix="tof"       parent="base_link" />
+  <xacro:imu     prefix="imu"       parent="base_link" />
+  <!-- <xacro:mic     prefix="mic"       parent="head_tilt_link" /> -->
+  <xacro:speaker prefix="speaker"   parent="back_base_link" />
+  <xacro:camera_head  prefix="head_camera"  parent="head_tilt_link" />
+  <xacro:camera_front prefix="camera_front" parent="base_link" />
+  <xacro:camera_back  prefix="camera_back"  parent="base_link" />
+
+  <xacro:gazebo_ros2_control prefix="base" />
+
 </robot>
