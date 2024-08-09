@@ -16,8 +16,8 @@ def generate_launch_description():
     package_name = robot_name + "_description"
 
     urdf_launch_package = FindPackageShare('urdf_launch')
-    omx_description_package = FindPackageShare(package_name)
-    default_rviz_config_path = PathJoinSubstitution([omx_description_package, 'rviz', 'open_manipulator_x.rviz'])
+    description_package = FindPackageShare(package_name)
+    default_rviz_config_path = PathJoinSubstitution([description_package, 'rviz', 'display.rviz'])
 
     ld = LaunchDescription()
 
@@ -32,7 +32,7 @@ def generate_launch_description():
         PathJoinSubstitution([urdf_launch_package, 'launch', 'description.launch.py']),
         launch_arguments={
             'urdf_package': package_name,
-            'urdf_package_path': PathJoinSubstitution(['urdf', robot_name+'_robot.urdf.xacro'])}.items()
+            'urdf_package_path': PathJoinSubstitution(['robots', robot_name+'_robot.urdf.xacro'])}.items()
     ))
 
     # Depending on gui parameter, either launch joint_state_publisher or joint_state_publisher_gui
