@@ -6,6 +6,7 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
+        - /RobotModel1
         - /TF1
         - /TF1/Frames1
       Splitter Ratio: 0.6852940917015076
@@ -44,7 +45,7 @@ Visualization Manager:
       Plane Cell Count: 10
       Reference Frame: <Fixed Frame>
       Value: true
-    - Alpha: 1
+    - Alpha: 0.5
       Class: rviz_default_plugins/RobotModel
       Collision Enabled: false
       Description File: ""
@@ -62,87 +63,175 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        omx1_base_link:
+        arm_1_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        omx1_end_effector_link:
+        arm_2_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        omx1_arm4_link:
+        arm_3_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        omx1_arm5_link:
+        arm_4_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        omx1_gripper_l_finger_link:
+        arm_5_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        omx1_gripper_l_sub_link:
+        arm_6_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        omx1_gripper_l_tip_link:
+        arm_base_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        omx1_gripper_link:
+        arm_gripper_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        omx1_gripper_r_finger_link:
+        arm_platform_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        omx1_gripper_r_sub_link:
+        back_base_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        omx1_gripper_r_tip_link:
+        base_footprint:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        base_l_drive_wheel_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        omx1_arm3_link:
+        base_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        omx1_platform_link:
+        base_r_drive_wheel_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        omx1_arm1_link:
+        camera_back_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_front_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        docking_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        omx1_arm2_link:
+        hand_end_effector_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        omx1_arm6_link:
+        hand_l_fingerlink:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        world:
+        hand_l_sub_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        hand_l_tip_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        hand_r_fingerlink:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        hand_r_sub_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        hand_r_tip_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        head_base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        head_camera_base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        head_camera_bottom_screw_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        head_camera_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        head_pan_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        head_tilt_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        imu_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        laser_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        plate_bottom_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        plate_middle_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        speaker_base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        tof_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -159,39 +248,79 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        omx1_base_link:
+        arm_1_link:
           Value: true
-        omx1_end_effector_link:
+        arm_2_link:
           Value: true
-        omx1_arm4_link:
+        arm_3_link:
           Value: true
-        omx1_arm5_link:
+        arm_4_link:
           Value: true
-        omx1_gripper_l_finger_link:
+        arm_5_link:
           Value: true
-        omx1_gripper_l_sub_link:
+        arm_6_link:
           Value: true
-        omx1_gripper_l_tip_link:
+        arm_base_link:
           Value: true
-        omx1_gripper_link:
+        arm_gripper_link:
           Value: true
-        omx1_gripper_r_finger_link:
+        arm_platform_link:
           Value: true
-        omx1_gripper_r_sub_link:
+        back_base_link:
           Value: true
-        omx1_gripper_r_tip_link:
+        base_footprint:
           Value: true
-        omx1_arm3_link:
+        base_l_drive_wheel_link:
           Value: true
-        omx1_platform_link:
+        base_link:
           Value: true
-        omx1_arm1_link:
+        base_r_drive_wheel_link:
           Value: true
-        omx1_arm2_link:
+        camera_back_link:
           Value: true
-        omx1_arm6_link:
+        camera_front_link:
           Value: true
-        world:
+        camera_link:
+          Value: true
+        docking_link:
+          Value: true
+        hand_end_effector_link:
+          Value: true
+        hand_l_fingerlink:
+          Value: true
+        hand_l_sub_link:
+          Value: true
+        hand_l_tip_link:
+          Value: true
+        hand_r_fingerlink:
+          Value: true
+        hand_r_sub_link:
+          Value: true
+        hand_r_tip_link:
+          Value: true
+        head_base_link:
+          Value: true
+        head_camera_base_link:
+          Value: true
+        head_camera_bottom_screw_frame:
+          Value: true
+        head_camera_link:
+          Value: true
+        head_pan_link:
+          Value: true
+        head_tilt_link:
+          Value: true
+        imu_link:
+          Value: true
+        laser_frame:
+          Value: true
+        plate_bottom_link:
+          Value: true
+        plate_middle_link:
+          Value: true
+        speaker_base_link:
+          Value: true
+        tof_link:
           Value: true
       Marker Scale: 0.15000000596046448
       Name: TF
@@ -199,32 +328,63 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        world:
-          omx1_platform_link:
-            omx1_base_link:
-              omx1_arm1_link:
-                omx1_arm2_link:
-                  omx1_arm3_link:
-                    omx1_arm4_link:
-                      omx1_arm5_link:
-                        omx1_arm6_link:
-                          omx1_end_effector_link:
+        base_footprint:
+          base_link:
+            base_l_drive_wheel_link:
+              {}
+            base_r_drive_wheel_link:
+              {}
+            camera_back_link:
+              {}
+            camera_front_link:
+              {}
+            docking_link:
+              {}
+            imu_link:
+              {}
+            laser_frame:
+              {}
+            plate_bottom_link:
+              back_base_link:
+                head_base_link:
+                  head_pan_link:
+                    head_tilt_link:
+                      head_camera_base_link:
+                        head_camera_bottom_screw_frame:
+                          head_camera_link:
                             {}
-                          omx1_gripper_link:
-                            omx1_gripper_l_sub_link:
-                              omx1_gripper_l_finger_link:
-                                omx1_gripper_l_tip_link:
+                speaker_base_link:
+                  {}
+              plate_middle_link:
+                arm_platform_link:
+                  arm_base_link:
+                    arm_1_link:
+                      arm_2_link:
+                        arm_3_link:
+                          arm_4_link:
+                            arm_5_link:
+                              arm_6_link:
+                                arm_gripper_link:
+                                  hand_l_sub_link:
+                                    hand_l_fingerlink:
+                                      hand_l_tip_link:
+                                        {}
+                                  hand_r_sub_link:
+                                    hand_r_fingerlink:
+                                      hand_r_tip_link:
+                                        {}
+                                hand_end_effector_link:
                                   {}
-                            omx1_gripper_r_sub_link:
-                              omx1_gripper_r_finger_link:
-                                omx1_gripper_r_tip_link:
-                                  {}
+            tof_link:
+              {}
+          camera_link:
+            {}
       Update Interval: 0
       Value: true
   Enabled: true
   Global Options:
     Background Color: 225; 225; 225
-    Fixed Frame: world
+    Fixed Frame: base_footprint
     Frame Rate: 30
   Name: root
   Tools:
@@ -265,25 +425,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 0.5245006084442139
+      Distance: 1.2208623886108398
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.09590770304203033
-        Y: 0.017081139609217644
-        Z: 0.15099725127220154
+        X: 0.37929850816726685
+        Y: 0.628302276134491
+        Z: 0.9797020554542542
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.0010000000474974513
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.804999589920044
+      Pitch: 0.6249989867210388
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.37000030279159546
+      Yaw: 1.090003252029419
     Saved: ~
 Window Geometry:
   Displays:
