@@ -1,16 +1,19 @@
 controller_manager:
   ros__parameters:
-    update_rate: &loop_hz 10  # Hz
+    update_rate: 10  # Hz
     use_sim_time: true
 
     arm_controller:
       type: "joint_trajectory_controller/JointTrajectoryController"
+    head_controller:
+      type: "joint_trajectory_controller/JointTrajectoryController"
     gripper_controller:
-      type: "position_controllers/GripperActionController"
+      # type: "position_controllers/GripperActionController"
+      type: "forward_command_controller/ForwardCommandController"
     diff_controller:
       type: "diff_drive_controller/DiffDriveController"
 
-    joint_state_controller:
+    joint_state_broadcaster:
       type: "joint_state_broadcaster/JointStateBroadcaster"
 
 
@@ -30,9 +33,35 @@ arm_controller:
 
     state_interfaces:
       - position
+      - velocity
 
-    state_publish_rate: *loop_hz
-    action_monitor_rate: *loop_hz
+    # state_publish_rate: 10
+    # action_monitor_rate: 10
+
+    # allow_partial_joints_goal: false
+    # open_loop_control: true
+    # constraints:
+    #   stopped_velocity_tolerance: 0.01
+    #   goal_time: 0.0
+    #   joint1:
+    #     trajectory: 0.05
+    #     goal: 0.03
+
+head_controller:
+  ros__parameters:
+    joints:
+      - head_pan_joint
+      - head_tilt_joint
+
+    command_interfaces:
+      - position
+
+    state_interfaces:
+      - position
+      - velocity
+
+    # state_publish_rate: 10
+    # action_monitor_rate: 10
 
     allow_partial_joints_goal: false
     open_loop_control: true
@@ -47,13 +76,17 @@ arm_controller:
 # https://control.ros.org/humble/doc/ros2_controllers/gripper_controllers/doc/userdoc.html
 gripper_controller:
   ros__parameters:
-    action_monitor_rate: *loop_hz
-    allow_stalling: false
-    goal_tolerance: 0.01
-    joint: hand_l_finger_joint
-    max_effort: 10.0
-    stall_timeout: 1.0
-    stall_velocity_threshold: 0.001
+    joints:
+      - hand_finger_l_joint
+    interface_name: position
+  # ros__parameters:
+  #   action_monitor_rate: 10
+  #   allow_stalling: false
+  #   goal_tolerance: 0.01
+  #   joint: hand_l_finger_joint
+  #   max_effort: 10.0
+  #   stall_timeout: 1.0
+  #   stall_velocity_threshold: 0.001
 
 
 # https://control.ros.org/humble/doc/ros2_controllers/diff_drive_controller/doc/userdoc.html
@@ -70,11 +103,11 @@ diff_controller:
     left_wheel_radius_multiplier: 1.0
     right_wheel_radius_multiplier: 1.0
 
-    publish_rate: *loop_hz
+    publish_rate: 50.0
     odom_frame_id: odom
     base_frame_id: base_link
-    pose_covariance_diagonal : [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
-    twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
+    pose_covariance_diagonal : [0.001, 0.001, 0.0, 0.0, 0.0, 0.01]
+    twist_covariance_diagonal: [0.001, 0.0, 0.0, 0.0, 0.0, 0.01]
 
     open_loop: true
     enable_odom_tf: true
