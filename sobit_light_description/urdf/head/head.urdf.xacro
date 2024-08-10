@@ -22,23 +22,18 @@
       </visual>
 
       <collision>
-        <origin xyz="${0.05125-0.15125/2} 0.0 0.0" rpy="0.0 0.0 0.0" />
-        <!-- <origin xyz="0.0 0.0 0.0" rpy="${M_PI/2.0} 0.0 ${M_PI/2.0}" /> -->
+        <origin xyz="0.0 0.0 ${0.039-0.069/2}" rpy="0 0 0"/>
         <geometry>
-          <box size="0.15125 0.0285 0.044"/>
-          <!-- <mesh filename="file://$(find sobit_light_description)/meshes/head/head_camera_base.stl" scale="0.001 0.001 0.001" /> -->
+          <box size="0.0565 0.0385 0.0690"/>
         </geometry>
       </collision>
 
       <inertial>
-        <origin xyz="${0.05125-0.15125/2} 0.0 0.0" rpy="0.0 0.0 0.0" />
-        <mass value="0.08" />
-        <inertia ixx="${1/12*0.08*(0.15125**2+0.044**2)}" ixy="0.0" ixz="0.0"
-                 iyy="${1/12*0.08*(0.0285**2 +0.044**2)}" iyz="0.0"
-                 izz="${1/12*0.08*(0.15125**2+0.0285**2)}" />
-        <!-- <inertia ixx="1.0" ixy="0.0" ixz="0.0"
-                 iyy="1.0" iyz="0.0"
-                 izz="1.0" /> -->
+        <origin xyz="0.0 0.0 ${0.039-0.069/2}" rpy="0 0 0"/>
+        <mass value="0.145" />
+        <inertia  ixx="${1/12*0.145*(0.0565**2+0.0690**2)}" ixy="0.0" ixz="0.0"
+                  iyy="${1/12*0.145*(0.0385**2+0.0690**2)}" iyz="0.0"
+                  izz="${1/12*0.145*(0.0565**2+0.0385**2)}" />
       </inertial>
     </link>
 
@@ -65,23 +60,18 @@
       </visual>
 
       <collision>
-        <origin xyz="0.0 0.0 ${0.00525+0.03525/2}" rpy="0.0 0.0 0.0" />
-        <!-- <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 ${M_PI/2.0}" /> -->
+        <origin xyz="0.0 0.0 ${0.05175/2}" rpy="0 0 0"/>
         <geometry>
-          <box size="0.0285 0.037 0.03525"/>
-          <!-- <mesh filename="file://$(find sobit_light_description)/meshes/head/head_camera_pan.stl" scale="0.001 0.001 0.001" /> -->
+          <box size="0.0285 0.0370 0.05175"/>
         </geometry>
       </collision>
 
       <inertial>
-        <origin xyz="0.0 0.0 ${0.00525+0.03525/2}" rpy="0.0 0.0 ${M_PI/2}" />
-        <mass value="0.08" />
-        <inertia ixx="${1/12*0.08*(0.0285**2+0.03525**2)}" ixy="0.0" ixz="0.0"
-                 iyy="${1/12*0.08*(0.037**2 +0.03525**2)}" iyz="0.0"
-                 izz="${1/12*0.08*(0.0285**2+0.037**2)}" />
-        <!-- <inertia ixx="1.0" ixy="0.0" ixz="0.0"
-                 iyy="1.0" iyz="0.0"
-                 izz="1.0" /> -->
+        <origin xyz="0.0 0.0 ${0.05175/2}" rpy="0 0 0"/>
+        <mass value="0.089" />
+        <inertia  ixx="${1/12*0.089*(0.0285**2+0.05175**2)}" ixy="0.0" ixz="0.0"
+                  iyy="${1/12*0.089*(0.0370**2+0.05175**2)}" iyz="0.0"
+                  izz="${1/12*0.089*(0.0285**2+0.0370**2)}" />
       </inertial>
     </link>
 
@@ -108,23 +98,18 @@
       </visual>
 
       <collision>
-        <origin xyz="0.0 0.0 ${0.028+0.0115/2}" rpy="0.0 0.0 0.0" />
-        <!-- <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 ${M_PI/2.0}" /> -->
+        <origin xyz="${0.0725-0.150/2} 0.0 ${0.028+0.1275/2}" rpy="0 0 0"/>
         <geometry>
-          <box size="0.046 0.0466 0.0115"/>
-          <!-- <mesh filename="file://$(find sobit_light_description)/meshes/head/head_camera_tilt.stl" scale="0.001 0.001 0.001" /> -->
+          <box size="0.150 0.200 0.1275"/>
         </geometry>
       </collision>
 
       <inertial>
-        <origin xyz="0.0 0.0 ${0.028+0.0115/2}" rpy="0.0 0.0 0.0" />
-        <mass value="0.08" />
-        <inertia ixx="${1/12*0.08*(0.046**2 +0.0115**2)}" ixy="0.0" ixz="0.0"
-                 iyy="${1/12*0.08*(0.0466**2+0.0115**2)}" iyz="0.0"
-                 izz="${1/12*0.08*(0.046**2 +0.0466**2)}" />
-        <!-- <inertia ixx="1.0" ixy="0.0" ixz="0.0"
-                 iyy="1.0" iyz="0.0"
-                 izz="1.0" /> -->
+        <origin xyz="${0.0725-0.150/2} 0.0 ${0.028+0.1275/2}" rpy="0 0 0"/>
+        <mass value="0.904" />
+        <inertia  ixx="${1/12*0.904*(0.150**2+0.1275**2)}" ixy="0.0" ixz="0.0"
+                  iyy="${1/12*0.904*(0.200**2+0.1275**2)}" iyz="0.0"
+                  izz="${1/12*0.904*(0.150**2+0.200**2)}" />
       </inertial>
     </link>
 

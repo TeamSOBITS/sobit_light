@@ -18,14 +18,14 @@
         <material name="body" />
       </visual>
 
-      <collision>
+      <!-- <collision>
         <origin xyz="0.0435 0.0 0.0475"
                 rpy="0 0 0" />
         <geometry>
           <box size="0.387 0.240 0.095" />
         </geometry>
         <material name="body" />
-      </collision>
+      </collision> -->
 
       <inertial>
         <mass value="6.4" />
