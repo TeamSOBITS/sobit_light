@@ -37,7 +37,7 @@
   <xacro:base    prefix="base"      parent="base_footprint" />
   <xacro:plate   prefix="plate"     parent="base_link" />
   <xacro:arm     prefix="arm"       parent="plate_middle_link" />
-  <xacro:hand    prefix_hand="hand" prefix_finger="finger" parent="arm_gripper_link" />
+  <xacro:hand    prefix_hand="hand" prefix_finger="finger" parent="arm_hand_link" />
   <xacro:back    prefix="back"      parent="plate_bottom_link" />
   <xacro:head    prefix="head"      parent="back_base_link" />
   <xacro:wheel   prefix="base"      parent="base_link" />
