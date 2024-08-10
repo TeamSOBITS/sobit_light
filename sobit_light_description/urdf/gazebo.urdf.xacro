@@ -3,23 +3,187 @@
 <robot name="sobit_light_gazebo" xmlns:xacro="http://ros.org/wiki/xacro">
   <xacro:macro name="gazebo_ros2_control" params="prefix">
 
-    <ros2_control name="IgnitionSystem" type="system">
+    <!-- <gazebo reference="${prefix}_base_link">
+      <material>Gazebo/Black</material>
+    </gazebo> -->
+
+    <gazebo reference="laser_frame">
+      <sensor name='gpu_lidar' type='gpu_lidar'>"
+        <ignition_frame_id>laser_frame</ignition_frame_id>
+        <topic>laser</topic>
+        <update_rate>10</update_rate>
+        <lidar>
+          <scan>
+            <horizontal>
+              <samples>640</samples>
+              <resolution>1</resolution>
+              <min_angle>-1.570796327</min_angle>
+              <max_angle>1.570796327</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>1</samples>
+              <resolution>0.01</resolution>
+              <min_angle>0</min_angle>
+              <max_angle>0</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0.10000000149011612</min>
+            <max>10.0</max>
+            <resolution>0.01</resolution>
+          </range>
+          <frame_id>/laser_frame</frame_id>
+        </lidar>
+        <always_on>1</always_on>
+        <visualize>true</visualize>
+      </sensor>
+    </gazebo>
+
+    <!-- Position Drive: Arm -->
+    <ros2_control name="ArmIgnitionSystem" type="system">
       <hardware>
         <plugin>ign_ros2_control/IgnitionSystem</plugin>
-        <!-- <plugin>gz_ros2_control/GazeboSimSystem</plugin> -->
       </hardware>
-      <joint name="${prefix}_l_drive_wheel_joint">
+      <joint name="arm_1_joint">
+        <command_interface name="position">
+          <param name="min">-3.141592654</param>
+          <param name="max">3.141592654</param>
+        </command_interface>
+        <state_interface name="position">
+          <param name="initial_value">0.0</param>
+        </state_interface>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+      <joint name="arm_2_joint">
+        <command_interface name="position">
+          <param name="min">-1.570796327</param>
+          <param name="max">1.570796327</param>
+        </command_interface>
+        <state_interface name="position">
+          <param name="initial_value">-1.57</param>
+        </state_interface>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+      <joint name="arm_3_joint">
+        <command_interface name="position">
+          <param name="min">-1.570796327</param>
+          <param name="max">1.570796327</param>
+        </command_interface>
+        <state_interface name="position">
+          <param name="initial_value">0.0</param>
+        </state_interface>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+      <joint name="arm_4_joint">
+        <command_interface name="position">
+          <param name="min">-3.141592654</param>
+          <param name="max">3.141592654</param>
+        </command_interface>
+        <state_interface name="position">
+          <param name="initial_value">0.0</param>
+        </state_interface>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+      <joint name="arm_5_joint">
+        <command_interface name="position">
+          <param name="min">-1.570796327</param>
+          <param name="max">1.570796327</param>
+        </command_interface>
+        <state_interface name="position">
+          <param name="initial_value">0.0</param>
+        </state_interface>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+      <joint name="arm_6_joint">
+        <command_interface name="position">
+          <param name="min">-3.141592654</param>
+          <param name="max">3.141592654</param>
+        </command_interface>
+        <state_interface name="position">
+          <param name="initial_value">0.0</param>
+        </state_interface>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+    </ros2_control>
+
+
+    <!-- Hand Mimic Joint -->
+    <ros2_control name="HandIgnitionSystem" type="system">
+      <hardware>
+        <plugin>ign_ros2_control/IgnitionSystem</plugin>
+      </hardware>
+      <joint name="hand_finger_l_joint">
+        <command_interface name="position"/>
+        <state_interface name="position">
+          <param name="initial_value">0.0</param>
+        </state_interface>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+      <joint name="hand_finger_r_joint">
+        <param name="mimic">hand_finger_l_joint</param>
+        <param name="multiplier">1</param>
+        <command_interface name="position"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+    </ros2_control>
+
+
+    <!-- Position Drive: Head -->
+    <ros2_control name="HeadIgnitionSystem" type="system">
+      <hardware>
+        <plugin>ign_ros2_control/IgnitionSystem</plugin>
+      </hardware>
+      <joint name="head_pan_joint">
+        <command_interface name="position">
+          <param name="min">-3.141592654</param>
+          <param name="max">3.141592654</param>
+        </command_interface>
+        <state_interface name="position">
+          <param name="initial_value">0.0</param>
+        </state_interface>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+      <joint name="head_tilt_joint">
+        <command_interface name="position">
+          <param name="min">-3.141592654</param>
+          <param name="max">3.141592654</param>
+        </command_interface>
+        <state_interface name="position">
+          <param name="initial_value">0.0</param>
+        </state_interface>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+    </ros2_control>
+
+
+    <!-- Differential Drive -->
+    <ros2_control name="DiffIgnitionSystem" type="system">
+      <hardware>
+        <plugin>ign_ros2_control/IgnitionSystem</plugin>
+      </hardware>
+      <joint name="base_l_drive_wheel_joint">
         <command_interface name="velocity">
-          <param name="min">-1</param>
-          <param name="max">1</param>
+          <param name="min">-1.0</param>
+          <param name="max">1.0</param>
         </command_interface>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
       </joint>
-      <joint name="${prefix}_r_drive_wheel_joint">
+      <joint name="base_r_drive_wheel_joint">
         <command_interface name="velocity">
-          <param name="min">-10</param>
-          <param name="max">10</param>
+          <param name="min">-1.0</param>
+          <param name="max">1.0</param>
         </command_interface>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
@@ -27,49 +191,15 @@
     </ros2_control>
 
 
-    <!-- <gazebo reference="${prefix}_base_link">
-      <material>Gazebo/Black</material>
-    </gazebo> -->
-
-
-    <gazebo reference="laser_frame">
-        <!-- <material>Gazebo/Black</material> -->
-
-        <sensor name="laser" type="ray">
-            <pose> 0 0 0 0 0 0 </pose>
-            <visualize>true</visualize>
-            <update_rate>10</update_rate>
-            <ray>
-                <scan>
-                    <horizontal>
-                        <samples>360</samples>
-                        <min_angle>-3.14</min_angle>
-                        <max_angle>3.14</max_angle>
-                    </horizontal>
-                </scan>
-                <range>
-                    <min>0.3</min>
-                    <max>12</max>
-                </range>
-            </ray>
-            <plugin name="laser_controller" filename="libgazebo_ros_ray_sensor.so">
-                <ros>
-                    <argument>~/out:=scan</argument>
-                </ros>
-                <output_type>sensor_msgs/LaserScan</output_type>
-                <frame_name>laser_frame</frame_name>
-            </plugin>
-        </sensor>
-    </gazebo>
-
-    <!-- Add Gazebo: plugins, sensors -->
+    <!-- Ignition ROS2 Control -->
     <gazebo>
-        <!-- <plugin filename="libign_ros2_control-system.so" name="ign_ros2_control::IgnitionROS2ControlPlugin"> -->
-        <plugin filename="ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
-        <!-- <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin"> -->
-            <parameters>$(find sobit_light_control)/config/ros_controllers.yaml</parameters>
-            <!-- <parameters>$(find sobit_light_control)/config/gaz_ros2_ctl_use_sim.yaml</parameters> -->
-        </plugin>
+      <plugin filename="ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
+        <parameters>$(find sobit_light_control)/config/ros_controllers.yaml</parameters>
+      </plugin>
+
+      <plugin filename="libignition-gazebo-sensors-system.so" name="ignition::gazebo::systems::Sensors">
+        <render_engine>ogre2</render_engine>
+      </plugin>
     </gazebo>
 
   </xacro:macro>
