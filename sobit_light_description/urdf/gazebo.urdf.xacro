@@ -7,10 +7,11 @@
       <material>Gazebo/Black</material>
     </gazebo> -->
 
-    <gazebo reference="laser_frame">
-      <sensor name="lidar_sensor" type="gpu_lidar">
-        <pose>0 0 0 0 0 -${M_PI / 2.0}</pose>
+    <gazebo reference="sim_laser_frame">
+      <sensor name="lidar" type="gpu_lidar">
+        <pose>0 0 0 0 0 0</pose>
         <topic>kachaka/lidar/scan</topic>
+        <ignition_frame_id>sim_laser_frame</ignition_frame_id>
         <update_rate>10</update_rate>
         <ray>
           <scan>
@@ -200,9 +201,38 @@
     <!-- Ignition Sensors -->
     <gazebo>
       <plugin filename="libignition-gazebo-sensors-system.so" name="ignition::gazebo::systems::Sensors">
-        <render_engine>ogre2</render_engine>
       </plugin>
     </gazebo>
+
+    <!-- Publish Pose -->
+    <gazebo>
+      <plugin filename="ignition-gazebo-pose-publisher-system" name="ignition::gazebo::systems::PosePublisher">
+        <publish_link_pose>true</publish_link_pose>
+        <publish_collision_pose>false</publish_collision_pose>
+        <publish_visual_pose>false</publish_visual_pose>
+        <publish_sensor_pose>false</publish_sensor_pose>
+        <publish_nested_model_pose>true</publish_nested_model_pose>
+        <!-- <update_frequency>20</update_frequency> -->
+      </plugin>
+    </gazebo>
+
+    <!-- Publish Joint States -->
+    <gazebo>
+      <plugin filename="ignition-gazebo-joint-state-publisher-system" name="ignition::gazebo::systems::JointStatePublisher">
+        <topic>joint_states</topic>
+      </plugin>
+    </gazebo>
+
+    <!-- <gazebo>
+      <plugin
+        filename="libignition-gazebo-physics-system.so" name="ignition::gazebo::systems::Physics">
+      </plugin>
+    </gazebo> -->
+    <!-- <gazebo>
+      <plugin
+        filename="libignition-gazebo-scene-broadcaster-system.so" name="ignition::gazebo::systems::SceneBroadcaster">
+      </plugin>
+    </gazebo> -->
 
   </xacro:macro>
 </robot>
