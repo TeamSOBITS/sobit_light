@@ -1,17 +1,3 @@
-# Copyright 2022 Open Source Robotics Foundation, Inc.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 import os
 
 from ament_index_python.packages import get_package_share_directory
@@ -69,24 +55,35 @@ def generate_launch_description():
 
     load_joint_state_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
+             '--use-sim-time',
              'joint_state_broadcaster'],
         output='screen'
     )
 
     load_arm_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
+             '--use-sim-time',
              'arm_controller'],
+        output='screen'
+    )
+
+    load_head_controller = ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
+             '--use-sim-time',
+             'head_controller'],
         output='screen'
     )
 
     load_gripper_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
+             '--use-sim-time',
              'gripper_controller'],
         output='screen'
     )
 
     load_diff_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
+             '--use-sim-time',
              'diff_controller'],
         output='screen'
     )
@@ -95,7 +92,13 @@ def generate_launch_description():
     bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
-        arguments=['/clock@rosgraph_msgs/msg/Clock[ignition.msgs.Clock'
+        arguments=[
+                    "/clock" + "@rosgraph_msgs/msg/Clock" + "[ignition.msgs.Clock",
+                    "/kachaka/lidar/scan" + "@sensor_msgs/msg/LaserScan" + "[ignition.msgs.LaserScan",
+                    "/kachaka/lidar/scan/points" + "@sensor_msgs/msg/PointCloud2" + "[ignition.msgs.PointCloudPacked",
+                    # "/tf" + "@tf2_msgs/msg/TFMessage" + "[ignition.msgs.TFMessage",
+                    "/model/sobit_light/pose" + "@geometry_msgs/msg/Pose" + "[ignition.msgs.Pose",
+                    "/joint_states" + "@sensor_msgs/msg/JointState" + "[ignition.msgs.Model",
                    ],
         output='screen'
     )
@@ -118,6 +121,12 @@ def generate_launch_description():
             event_handler=OnProcessExit(
                 target_action=load_joint_state_controller,
                 on_exit=[load_arm_controller],
+            )
+        ),
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=load_joint_state_controller,
+                on_exit=[load_head_controller],
             )
         ),
         RegisterEventHandler(
