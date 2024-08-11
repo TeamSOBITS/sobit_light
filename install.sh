@@ -9,27 +9,30 @@ cd ..
 
 # Download required packages for SOBIT LIGHT
 ros_packages=(
-    "sobit_common" \
-    "sobits_msgs" \
+    # "sobit_common" \
+    # "sobits_msgs" \
     # "urg_node" \
-    # "azure_kinect_ros_driver" \
-    "realsense_ros" \
-    "kachaka_api"
+    # "realsense_ros" \
+    # "kachaka_api"
 )
 
 # Clone all packages
-for ((i = 0; i < ${#ros_packages[@]}; i++)) {
-    echo "Clonning: ${ros_packages[i]}"
-    git clone https://github.com/TeamSOBITS/${ros_packages[i]}.git
+# for ((i = 0; i < ${#ros_packages[@]}; i++)) {
+#     echo "Clonning: ${ros_packages[i]}"
+#     git clone -b $ROS_DISTRO https://github.com/TeamSOBITS/${ros_packages[i]}.git
 
-    # Check if install.sh exists in each package
-    if [ -f ${ros_packages[i]}/install.sh ]; then
-        echo "Running install.sh in ${ros_packages[i]}."
-        cd ${ros_packages[i]}
-        bash install.sh
-        cd ..
-    fi
-}
+#     # Check if install.sh exists in each package
+#     if [ -f ${ros_packages[i]}/install.sh ]; then
+#         echo "Running install.sh in ${ros_packages[i]}."
+#         cd ${ros_packages[i]}
+#         bash install.sh
+#         cd ..
+#     fi
+# }
+
+git clone -b feature/humble-devel https://github.com/TeamSOBITS/realsense_ros.git
+cd realsense_ros/
+bash install.sh
 
 # Go back to previous directory
 cd ${DIR}
@@ -53,7 +56,7 @@ sudo apt-get install -y \
     ros-$ROS_DISTRO-joint-state-publisher \
     ros-$ROS_DISTRO-joint-state-publisher-gui \
     ros-$ROS_DISTRO-joint-state-broadcaster \
-    ros-$ROS_DISTRO-joint-limits-interface \
+    ros-$ROS_DISTRO-joint-limits \
     ros-$ROS_DISTRO-robot-controllers \
     ros-$ROS_DISTRO-robot-controllers-interface \
     ros-$ROS_DISTRO-robot-state-publisher \
@@ -65,20 +68,18 @@ sudo apt-get install -y \
 
 # Install Gazebo Fortress
 # - Install some necessary tools
-sudo apt-get update
-sudo apt-get install lsb-release gnupg
+# sudo apt-get update
+# sudo apt-get install lsb-release gnupg
 
-# - Install Ignition Fortress
-sudo curl https://packages.osrfoundation.org/gazebo.gpg --output /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
-sudo apt-get update
-sudo apt-get install ignition-fortress
+# # - Install Ignition Fortress
+# sudo curl https://packages.osrfoundation.org/gazebo.gpg --output /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
+# echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
+# sudo apt-get update
+# sudo apt-get install ignition-fortress
 
 # ROS2 Control Gazebo Plugins
-sudo apt-get update
-
 cd ..
-git clone https://github.com/ros-controls/gz_ros2_control/ -b ${ROS_DISTRO};
+git clone https://github.com/ros-controls/gz_ros2_control/ -b ${ROS_DISTRO}
 rosdep update
 rosdep install --from-paths gz_ros2_control/ -i -y --rosdistro ${ROS_DISTRO}
 
