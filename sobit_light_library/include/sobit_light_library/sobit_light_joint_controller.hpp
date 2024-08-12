@@ -1,5 +1,5 @@
-#ifndef SOBIT_LIGHT_JOINT_CONTROLLER_H
-#define SOBIT_LIGHT_JOINT_CONTROLLER_H
+#ifndef SOBIT_LIGHT_JOINT_CONTROLLER_H_
+#define SOBIT_LIGHT_JOINT_CONTROLLER_H_
 
 #include <rclcpp/rclcpp.hpp>
 
@@ -156,7 +156,7 @@ class JointController : private ROSCommonNode {
 
   // TODO: obtain links lengths with TF
   const double kArmUpper   = 0.128;
-  const double kArmUpperX  = 0.022; // shift to the x-axis
+  const double kArmUpperX  = 0.022;  // shift to the x-axis
   const double kArmLower   = 0.124;
   const double kAemGripper = 0.064 + 0.11225;
   const double kArmLength  = kArmUpper + kArmLower;
@@ -183,7 +183,7 @@ class JointController : private ROSCommonNode {
   void callbackCurrArm(const sobits_msgs::current_state_array& msg);
   void loadPose();
 };
-} // namespace sobit_light
+}  // namespace sobit_light
 
 inline void sobit_light::JointController::setJointTrajectory(
     const std::string& joint_name, 
@@ -249,4 +249,4 @@ inline void sobit_light::JointController::callbackCurrArm(
   }
 }
 
-#endif /* SOBIT_LIGHT_JOINT_CONTROLLER_H */
+#endif  // SOBIT_LIGHT_JOINT_CONTROLLER_H_
