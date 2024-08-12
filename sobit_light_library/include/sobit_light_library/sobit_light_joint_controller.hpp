@@ -1,9 +1,16 @@
 #ifndef SOBIT_LIGHT_JOINT_CONTROLLER_H_
 #define SOBIT_LIGHT_JOINT_CONTROLLER_H_
 
+#include <chrono>
+#include <functional>
+#include <string>
+
 #include <rclcpp/rclcpp.hpp>
+#include <rclcpp_components/register_node_macro.hpp>
 
 #include <tf2_ros/transform_listener.h>
+#include <tf2_ros/buffer.h>
+
 #include <trajectory_msgs/msg/joint_trajectory.hpp>
 #include <geometry_msgs/msg/transform_stamped.hpp>
 #include <geometry_msgs/msg/point.hpp>
@@ -33,10 +40,11 @@ typedef struct {
   std::vector<double> joint_val;
 } Pose;
 
-class JointController : private ROSCommonNode {
+// class JointController : private ROSCommonNode {
+class JointController : public rclcpp::Node {
  public:
-  JointController(const std::string &name);
-  // JointController();
+  // JointController(const std::string &name);
+  JointController(const rclcpp::NodeOptions& options);
   ~JointController();
   
   bool MoveToPose(
@@ -64,15 +72,15 @@ class JointController : private ROSCommonNode {
       const double head_yaw,
       const double head_pitch,
       const double sec = 5.0, bool is_sleep = true);
-  bool moveJointRad(
+  bool MoveJointRad(
       const Joint  joint_num, 
       const double rad, 
       const double sec = 5.0, bool is_sleep = true);
-  bool moveJointDeg(
+  bool MoveJointDeg(
       const Joint  joint_num, 
       const double deg, 
       const double sec = 5.0, bool is_sleep = true);
-  bool moveArmDeg(
+  bool MoveArmDeg(
       const double arm_shoulder_roll,
       const double arm_shoulder_pitch,
       const double arm_elbow_pitch,
@@ -80,7 +88,7 @@ class JointController : private ROSCommonNode {
       const double arm_wrist_pitch,
       const double arm_wrist_roll,
       const double sec = 5.0, bool is_sleep = true);
-  bool moveArmRad(
+  bool MoveArmRad(
       const double arm_shoulder_roll,
       const double arm_shoulder_pitch,
       const double arm_elbow_pitch,
@@ -88,48 +96,46 @@ class JointController : private ROSCommonNode {
       const double arm_wrist_pitch,
       const double arm_wrist_roll,
       const double sec = 5.0, bool is_sleep = true);
-  bool moveHeadDeg(
+  bool MoveHeadDeg(
       const double head_yaw,
       const double head_pitch,
       const double sec = 5.0, bool is_sleep = true);
-  bool moveHeadRad(
+  bool MoveHeadRad(
       const double head_yaw,
       const double head_pitch,
       const double sec = 5.0, bool is_sleep = true);
-  bool moveHandToTargetCoord(
+  bool MoveHandToTargetCoord(
       const double target_pos_x, const double target_pos_y, const double target_pos_z, 
       const double shift_x     , const double shift_y     , const double shift_z,
       const double sec = 5.0, bool is_sleep = true);
-  bool moveHandToTargetTF(
+  bool MoveHandToTargetTF(
       const std::string &target_name,
       const double shift_x, const double shift_y, const double shift_z,
       const double sec = 5.0, bool is_sleep = true);
-  bool moveHandToPlaceCoord(
+  bool MoveHandToPlaceCoord(
       const double target_pos_x, const double target_pos_y, const double target_pos_z, 
       const double shift_x     , const double shift_y     , const double shift_z,
       const double sec = 5.0, bool is_sleep = true);
-  bool moveHandToPlaceTF(
+  bool MoveHandToPlaceTF(
       const std::string& target_name,
       const double shift_x, const double shift_y, const double shift_z,
       const double sec = 5.0, bool is_sleep = true);
-  bool moveHeadToTargetCoord(
+  bool MoveHeadToTargetCoord(
       const double target_pos_x, const double target_pos_y, const double target_pos_z, 
       const double shift_x     , const double shift_y     , const double shift_z,
       const double sec = 5.0, bool is_sleep = true);
-  bool moveHeadToTargetTF(
+  bool MoveHeadToTargetTF(
       const std::string &target_name,
       const double shift_x, const double shift_y, const double shift_z,
       const double sec = 5.0, bool is_sleep = true);
-  // bool graspDecision(const int min_curr = 300, const int max_curr = 1000);
-  // bool placeDecision(const int min_curr = 500, const int max_curr = 1000);
+  // bool GraspDecision(const int min_curr = 300, const int max_curr = 1000);
+  // bool PlaceDecision(const int min_curr = 500, const int max_curr = 1000);
 
  private:
-  ros::NodeHandle nh_;
-  ros::NodeHandle pnh_;
+  rclcpp::Publisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr pub_arm_control_;
+  rclcpp::Publisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr pub_head_control_;
 
-  ros::Publisher  pub_arm_control_;
-  ros::Publisher  pub_head_camera_control_;  
-  ros::Subscriber sub_curr_arm;
+  // rclcpp::Subscription<sobits_msgs::msg::current_state_array>::SharedPtr sub_curr_arm;
 
   tf2_ros::Buffer tfBuffer_;
 
@@ -173,14 +179,14 @@ class JointController : private ROSCommonNode {
       const std::string& joint_name,
       const double rad,
       const double sec,
-      trajectory_msgs::JointTrajectory* jt);
+      trajectory_msgs::msg::JointTrajectory* jt);
   void addJointTrajectory(
       const std::string& joint_name,
       const double rad,
       const double sec,
-      trajectory_msgs::JointTrajectory* jt);
-  void checkPublishersConnection(const ros::Publisher& pub);
-  void callbackCurrArm(const sobits_msgs::current_state_array& msg);
+      trajectory_msgs::msg::JointTrajectory* jt);
+  void checkPublishersConnection(const rclcpp::Publisher& pub);
+  // void callbackCurrArm(const sobits_msgs::current_state_array& msg);
   void loadPose();
 };
 }  // namespace sobit_light
@@ -189,16 +195,16 @@ inline void sobit_light::JointController::setJointTrajectory(
     const std::string& joint_name, 
     const double rad, 
     const double sec, 
-    trajectory_msgs::JointTrajectory* jt) {
-  trajectory_msgs::JointTrajectory joint_trajectory;
-  trajectory_msgs::JointTrajectoryPoint joint_trajectory_point; 
+    trajectory_msgs::msg::JointTrajectory* jt) {
+  trajectory_msgs::msg::JointTrajectory joint_trajectory;
+  trajectory_msgs::msg::JointTrajectoryPoint joint_trajectory_point; 
 
   joint_trajectory.joint_names.push_back(joint_name); 
   joint_trajectory_point.positions.push_back(rad);
   // joint_trajectory_point.velocities.push_back(0.0);
   // joint_trajectory_point.accelerations.push_back(0.0);
   // joint_trajectory_point.effort.push_back(0.0);
-  joint_trajectory_point.time_from_start = ros::Duration(sec);
+  joint_trajectory_point.time_from_start = rclcpp::Duration(sec);
   joint_trajectory.points.push_back(joint_trajectory_point);
 
   *jt = joint_trajectory;
@@ -218,7 +224,7 @@ inline void sobit_light::JointController::addJointTrajectory(
   // joint_trajectory.points[0].velocities.push_back(0.0);
   // joint_trajectory.points[0].accelerations.push_back(0.0);
   // joint_trajectory.points[0].effort.push_back(0.0);
-  joint_trajectory.points[0].time_from_start = ros::Duration(sec);
+  joint_trajectory.points[0].time_from_start = rclcpp::Duration(sec);
 
   *jt = joint_trajectory;
 
@@ -226,7 +232,7 @@ inline void sobit_light::JointController::addJointTrajectory(
 }
 
 inline void sobit_light::JointController::checkPublishersConnection(
-    const ros::Publisher& pub) {
+    const rclcpp::Publisher& pub) {
 
   ros::Rate loop_rate(10);
   while (pub.getNumSubscribers() == 0 && ros::ok()) {
@@ -237,16 +243,16 @@ inline void sobit_light::JointController::checkPublishersConnection(
 }
 
 // TODO: obtain current from each actuator
-inline void sobit_light::JointController::callbackCurrArm(
-    const sobits_msgs::current_state_array& msg) {
-  // ros::spinOnce();
+// inline void sobit_light::JointController::callbackCurrArm(
+//     const sobits_msgs::msg::current_state_array& msg) {
+//   // ros::spinOnce();
 
-  for (const auto actuator : msg.current_state_array) {
-    if (actuator.joint_name == joint_names_[ARM_WRIST_TILT_JOINT])
-      arm_wrist_tilt_current_ = actuator.current_ma;
-    if (actuator.joint_name == joint_names_[HAND_JOINT])
-      hand_current_ = actuator.current_ma;
-  }
-}
+//   for (const auto actuator : msg.current_state_array) {
+//     if (actuator.joint_name == joint_names_[ARM_WRIST_TILT_JOINT])
+//       arm_wrist_tilt_current_ = actuator.current_ma;
+//     if (actuator.joint_name == joint_names_[HAND_JOINT])
+//       hand_current_ = actuator.current_ma;
+//   }
+// }
 
 #endif  // SOBIT_LIGHT_JOINT_CONTROLLER_H_
