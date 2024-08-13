@@ -99,6 +99,10 @@ def generate_launch_description():
                     # "/tf" + "@tf2_msgs/msg/TFMessage" + "[ignition.msgs.TFMessage",
                     "/model/sobit_light/pose" + "@geometry_msgs/msg/Pose" + "[ignition.msgs.Pose",
                     "/joint_states" + "@sensor_msgs/msg/JointState" + "[ignition.msgs.Model",
+                    "/head_camera/camera_info" + "@sensor_msgs/msg/CameraInfo" + "[ignition.msgs.CameraInfo",
+                    "/head_camera/color" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
+                    "/head_camera/depth" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
+                    "/head_camera/depth/points" + "@sensor_msgs/msg/PointCloud2" + "[ignition.msgs.PointCloudPacked",
                    ],
         output='screen'
     )
