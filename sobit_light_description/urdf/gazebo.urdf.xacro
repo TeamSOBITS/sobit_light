@@ -7,6 +7,64 @@
       <material>Gazebo/Black</material>
     </gazebo> -->
 
+    <!-- Sensor: Color -->
+    <gazebo reference="head_camera_color_optical_frame">
+      <sensor name="head_camera_color" type="camera">
+        <ignition_frame_id>head_camera_color_optical_frame</ignition_frame_id>
+        <always_on>1</always_on>
+        <update_rate>10</update_rate>
+        <visualize>1</visualize>
+        <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
+        <topic>/head_camera/color</topic>
+        <camera name="d435">
+          <horizontal_fov>1.21126</horizontal_fov>
+          <image>
+            <width>640</width>
+            <height>480</height>
+            <format>RGB_INT8</format>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>10</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <mean>0</mean>
+            <stddev>0.007</stddev>
+          </noise>
+        </camera>
+      </sensor>
+    </gazebo>
+
+    <!-- Sensor: Depth -->
+    <gazebo reference="head_camera_depth_optical_frame">
+      <sensor name="head_camera_depth" type="depth_camera">
+        <ignition_frame_id>head_camera_depth_optical_frame</ignition_frame_id>
+        <always_on>1</always_on>
+        <update_rate>10</update_rate>
+        <visualize>0</visualize>
+        <topic>/head_camera/depth</topic>
+        <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
+        <camera name="d435">
+          <horizontal_fov>1.48702</horizontal_fov>
+          <image>
+            <width>1280</width>
+            <height>720</height>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>10</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <mean>0</mean>
+            <stddev>0.1</stddev>
+          </noise>
+        </camera>
+      </sensor>
+    </gazebo>
+
+    <!-- Sensor: LiDAR -->
     <gazebo reference="sim_laser_frame">
       <sensor name="lidar" type="gpu_lidar">
         <pose>0 0 0 0 0 0</pose>
