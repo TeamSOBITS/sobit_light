@@ -78,10 +78,16 @@ sudo apt-get install -y \
 # sudo apt-get install ignition-fortress
 
 # ROS2 Control Gazebo Plugins
-cd ..
-git clone https://github.com/ros-controls/gz_ros2_control/ -b ${ROS_DISTRO}
-rosdep update
-rosdep install --from-paths gz_ros2_control/ -i -y --rosdistro ${ROS_DISTRO}
+# cd ..
+# git clone https://github.com/ros-controls/gz_ros2_control/ -b ${ROS_DISTRO}
+# rosdep update
+# rosdep install --from-paths gz_ros2_control/ -i -y --rosdistro ${ROS_DISTRO}
+
+# Install Gazebo Fortress with binaries
+sudo apt-get install -y \
+    ros-${ROS_DISTRO}-ros-gz \
+    ros-${ROS_DISTRO}-ign-ros2-control \
+    ros-${ROS_DISTRO}-ign-ros2-control
 
 
 # # Setting up Dynamixel USB configuration (SOBIT LIGHT: Head and Arm Robot Mechanism)
