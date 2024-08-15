@@ -253,20 +253,31 @@
 
     <!-- Ignition ROS2 Control -->
     <gazebo>
-      <plugin filename="ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
+      <plugin
+          filename="ign_ros2_control-system"
+          name="ign_ros2_control::IgnitionROS2ControlPlugin">
+          <!-- filename="gz_ros2_control-system"
+          name="gz_ros2_control::GazeboSimROS2ControlPlugin"> -->
         <parameters>$(find sobit_light_control)/config/ros_controllers.yaml</parameters>
       </plugin>
     </gazebo>
 
     <!-- Ignition Sensors -->
     <gazebo>
-      <plugin filename="libignition-gazebo-sensors-system.so" name="ignition::gazebo::systems::Sensors">
+      <!-- <plugin filename="libignition-gazebo-sensors-system.so" name="ignition::gazebo::systems::Sensors"> -->
+      <plugin
+          filename="gz-sim-sensors-system"
+          name="gz::sim::systems::Sensors">
+        <render_engine>ogre2</render_engine>
       </plugin>
     </gazebo>
 
     <!-- Publish Pose -->
     <gazebo>
-      <plugin filename="ignition-gazebo-pose-publisher-system" name="ignition::gazebo::systems::PosePublisher">
+      <!-- <plugin filename="ignition-gazebo-pose-publisher-system" name="ignition::gazebo::systems::PosePublisher"> -->
+      <plugin
+          filename="gz-sim-pose-publisher-system"
+          name="gz::sim::systems::PosePublisher">
         <publish_link_pose>true</publish_link_pose>
         <publish_collision_pose>false</publish_collision_pose>
         <publish_visual_pose>false</publish_visual_pose>
@@ -278,21 +289,34 @@
 
     <!-- Publish Joint States -->
     <gazebo>
-      <plugin filename="ignition-gazebo-joint-state-publisher-system" name="ignition::gazebo::systems::JointStatePublisher">
+      <!-- <plugin filename="ignition-gazebo-joint-state-publisher-system" name="ignition::gazebo::systems::JointStatePublisher"> -->
+      <plugin
+          filename="gz-sim-joint-state-publisher-system"
+          name="gz::sim::systems::JointStatePublisher">
         <topic>joint_states</topic>
       </plugin>
     </gazebo>
 
-    <!-- <gazebo>
-      <plugin
-        filename="libignition-gazebo-physics-system.so" name="ignition::gazebo::systems::Physics">
-      </plugin>
-    </gazebo> -->
-    <!-- <gazebo>
-      <plugin
-        filename="libignition-gazebo-scene-broadcaster-system.so" name="ignition::gazebo::systems::SceneBroadcaster">
-      </plugin>
-    </gazebo> -->
+    <gazebo>
+      <!-- <plugin
+          filename="ignition-gazebo-physics-system"
+          name="ignition::gazebo::systems::Physics">
+      </plugin> -->
+      <!-- <plugin
+          filename="gz-sim-physics-system"
+          name="gz::sim::systems::Physics">
+      </plugin> -->
+    </gazebo>
+    <gazebo>
+      <!-- <plugin
+          filename="ignition-gazebo-scene-broadcaster-system"
+          name="ignition::gazebo::systems::SceneBroadcaster">
+      </plugin> -->
+      <!-- <plugin
+          filename="gz-sim-scene-broadcaster-system"
+          name="gz::sim::systems::SceneBroadcaster">
+      </plugin> -->
+    </gazebo>
 
   </xacro:macro>
 </robot>
