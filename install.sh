@@ -45,6 +45,8 @@ cd ${DIR}
 # Download ROS packages
 sudo apt-get update
 sudo apt-get install -y \
+    ros-$ROS_DISTRO-ros2-control \
+    ros-$ROS_DISTRO-ros2-controllers \
     ros-$ROS_DISTRO-control-toolbox \
     ros-$ROS_DISTRO-controller-interface \
     ros-$ROS_DISTRO-controller-manager \
@@ -64,7 +66,7 @@ sudo apt-get install -y \
     ros-$ROS_DISTRO-transmission-interface \
     ros-$ROS_DISTRO-urdf \
     ros-$ROS_DISTRO-urdf-launch \
-    ros-$ROS_DISTRO-xacro \
+    ros-$ROS_DISTRO-xacro
 
 # Install Gazebo Fortress
 # - Install some necessary tools
@@ -87,7 +89,7 @@ sudo apt-get install -y \
 sudo apt-get install -y \
     ros-${ROS_DISTRO}-ros-gz \
     ros-${ROS_DISTRO}-ign-ros2-control \
-    ros-${ROS_DISTRO}-ign-ros2-control
+    ros-${ROS_DISTRO}-ign-ros2-control-demos
 
 
 # # Setting up Dynamixel USB configuration (SOBIT LIGHT: Head and Arm Robot Mechanism)
