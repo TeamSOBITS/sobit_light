@@ -27,18 +27,19 @@
             <near>0.1</near>
             <far>10</far>
           </clip>
-          <noise>
+          <!-- TODO: adjust noise -->
+          <!-- <noise>
             <type>gaussian</type>
             <mean>0</mean>
             <stddev>0.007</stddev>
-          </noise>
+          </noise> -->
         </camera>
       </sensor>
     </gazebo>
 
     <!-- Sensor: Depth -->
     <gazebo reference="head_camera_depth_optical_frame">
-      <sensor name="head_camera_depth" type="depth_camera">
+      <sensor name="head_camera_depth" type="depth">
         <ignition_frame_id>head_camera_depth_optical_frame</ignition_frame_id>
         <always_on>1</always_on>
         <update_rate>10</update_rate>
@@ -55,11 +56,12 @@
             <near>0.1</near>
             <far>10</far>
           </clip>
-          <noise>
+          <!-- TODO: adjust noise -->
+          <!-- <noise>
             <type>gaussian</type>
             <mean>0</mean>
             <stddev>0.1</stddev>
-          </noise>
+          </noise> -->
         </camera>
       </sensor>
     </gazebo>
