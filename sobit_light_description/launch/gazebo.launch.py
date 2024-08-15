@@ -112,8 +112,8 @@ def generate_launch_description():
         # Launch gazebo environment
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
-                [os.path.join(get_package_share_directory('ros_ign_gazebo'),
-                              'launch', 'ign_gazebo.launch.py')]),
+                [os.path.join(get_package_share_directory('ros_gz_sim'),
+                              'launch', 'gz_sim.launch.py')]),
             launch_arguments=[('gz_args', [' -r -v 4 empty.sdf'])]),
         RegisterEventHandler(
             event_handler=OnProcessExit(
