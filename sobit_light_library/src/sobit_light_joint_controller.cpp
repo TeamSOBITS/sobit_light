@@ -1,5 +1,6 @@
 #include "sobit_light_library/sobit_light_joint_controller.hpp"
 #include "sobit_light_library/sobit_light_wheel_controller.hpp"
+#include "sobits_msgs/msg/current_state_array.h"
 
 
 namespace sobit_light {
@@ -69,7 +70,7 @@ void JointController::loadPose() {
 
 bool JointController::moveToPose(
     const std::string &pose_name,
-    const int32_t sec = 5, bool is_sleep = true) {
+    const int32_t sec , bool is_sleep) {
   bool                is_pose = false;
   std::vector<double> joint_val;
 
@@ -111,7 +112,7 @@ bool JointController::moveAllJointsRad(
   const double hand,
   const double head_yaw,
   const double head_pitch,
-  const int32_t sec = 5, bool is_sleep = true) {
+  const int32_t sec , bool is_sleep ) {
   try {
     trajectory_msgs::msg::JointTrajectory arm_joint_trajectory;
     trajectory_msgs::msg::JointTrajectory head_joint_trajectory;
@@ -149,7 +150,7 @@ bool JointController::moveAllJointsRad(
 bool JointController::moveJointRad(
     const Joint  joint_num,
     const double rad,
-    const int32_t sec = 5, bool is_sleep = true) {
+    const int32_t sec , bool is_sleep ) {
   try {
     trajectory_msgs::msg::JointTrajectory joint_trajectory;
 
@@ -181,7 +182,7 @@ bool JointController::moveJointRad(
 bool JointController::moveHeadRad(
     const double head_yaw,
     const double head_pitch,
-    const int32_t sec = 5, bool is_sleep = true) {
+    const int32_t sec , bool is_sleep ) {
   try {
     trajectory_msgs::msg::JointTrajectory joint_trajectory;
 
@@ -207,7 +208,7 @@ bool JointController::moveArmRad(
     const double arm_wrist_pitch,
     const double arm_wrist_roll,
     const double hand,
-    const int32_t sec = 5, bool is_sleep = true) {
+    const int32_t sec , bool is_sleep ) {
   try {
     trajectory_msgs::msg::JointTrajectory arm_joint_trajectory;
 
@@ -234,7 +235,7 @@ bool JointController::moveArmRad(
 bool JointController::moveHandToTargetCoord(
     const double target_x, const double target_y, const double target_z, 
     const double shift_x     , const double shift_y     , const double shift_z,
-    const int32_t sec = 5, bool is_sleep = true) {
+    const int32_t sec , bool is_sleep ) {
   sobit_light::WheelController wheel_ctrl;
 
   // // Calculate goal_position_pos + difference(gap)
@@ -365,7 +366,7 @@ bool JointController::moveHandToTargetCoord(
 bool JointController::moveHandToTargetTF(
     const std::string &target_name,
     const double shift_x, const double shift_y, const double shift_z,
-    const int32_t sec = 5, bool is_sleep = true) {
+    const int32_t sec , bool is_sleep ) {
   geometry_msgs::msg::TransformStamped transformStamped;
   bool is_reached = false;
 
@@ -389,9 +390,9 @@ bool JointController::moveHandToTargetTF(
 bool JointController::moveHandToPlaceCoord(
     const double target_x, const double target_y, const double target_z, 
     const double shift_x     , const double shift_y     , const double shift_z,
-    const int32_t sec = 5, bool is_sleep = true) {
+    const int32_t sec , bool is_sleep ) {
   geometry_msgs::msg::Point shift;
-  double target_z   = 0.;
+  // double target_z   = 0.;
   bool   is_reached = false;
 
   // Reduce the target_z by 0.002[m], until expected collision is detected
@@ -413,7 +414,7 @@ bool JointController::moveHandToPlaceCoord(
 bool JointController::moveHandToPlaceTF(
     const std::string& target_name,
     const double shift_x, const double shift_y, const double shift_z,
-    const int32_t sec = 5, bool is_sleep = true) {
+    const int32_t sec , bool is_sleep ) {
   geometry_msgs::msg::Point shift;
   geometry_msgs::msg::TransformStamped transform_base_to_target;
   bool is_reached = false;
