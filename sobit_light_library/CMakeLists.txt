@@ -78,6 +78,12 @@ endif()
 ## Specify additional locations of header files
 include_directories(
   include
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${rclcpp_INCLUDE_DIRS}
+  ${std_msgs_INCLUDE_DIRS}
+  ${sobits_msgs_INCLUDE_DIRS} 
+  ${ament_index_build_path}/sobits_msgs/include
+  ${PROJECT_SOURCE_DIR}/install/sobits_msgs/include
 )
 
 include_directories(${CMAKE_SOURCE_DIR}/install/sobits_msgs/include)
@@ -88,7 +94,7 @@ include_directories(${CMAKE_SOURCE_DIR}/install/sobits_msgs/include)
 
 ## Library
 add_library(${PROJECT_NAME} SHARED 
-                                   src/sobit_light_joint_controller.cpp
+                                  #  src/sobit_light_joint_controller.cpp
                                    src/sobit_light_wheel_controller.cpp)
 ament_target_dependencies(${PROJECT_NAME}
   rclcpp
@@ -106,7 +112,7 @@ ament_target_dependencies(${PROJECT_NAME}
 
 ## Pybind11 module
 add_library(sobit_light_module SHARED src/sobit_light_library.cpp
-                                     src/sobit_light_joint_controller.cpp
+                                    #  src/sobit_light_joint_controller.cpp
                                      src/sobit_light_wheel_controller.cpp)
 set_target_properties(sobit_light_module PROPERTIES
     PREFIX ""
@@ -125,6 +131,12 @@ ament_target_dependencies(sobit_light_module
   pybind11
   trajectory_msgs
   # current_state_array
+)
+
+
+rclcpp_components_register_node(${PROJECT_NAME}
+  PLUGIN "sobit_light::WheelController"
+  EXECUTABLE ${PROJECT_NAME}_node
 )
 
 # ## Executables

@@ -15,7 +15,11 @@
 #include <trajectory_msgs/msg/joint_trajectory.hpp>
 #include <geometry_msgs/msg/transform_stamped.hpp>
 #include <geometry_msgs/msg/point.hpp>
-#include "sobits_msgs/msg/current_state_array.h"
+// #include "sobits_msgs/msg/current_state_array.h"
+// #include "sobits_msgs/sobits_msgs/msg/current_state_array.h"
+#include "sobits_msgs/msg/current_state_array.hpp"
+
+
 // #include "sobits_msgs/sobits_msgs/msg/current_state_array.h"
 // #include "sobits_msgs/include/sobits_msgs/sobits_msgs/msg/current_state_array.h"
 

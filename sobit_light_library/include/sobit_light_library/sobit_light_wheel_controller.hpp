@@ -8,9 +8,10 @@
 #include <tf2_ros/transform_broadcaster.h>
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2/LinearMath/Matrix3x3.h>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <geometry_msgs/msg/twist.hpp>
 #include <nav_msgs/msg/odometry.hpp>
+#include "rclcpp_components/register_node_macro.hpp"
 
 #include "sobit_light_library/sobit_light_library.h"
 
@@ -29,6 +30,7 @@ namespace sobit_light {
         public:
             WheelController(const std::string &name);
             WheelController();
+            WheelController(const rclcpp::NodeOptions & options);
 
             bool controlWheelLinear(const double distance);
             bool controlWheelRotateRad(const double angle_rad);
@@ -39,8 +41,8 @@ namespace sobit_light {
     };
 }
 
-inline sobit_light::WheelController::WheelController(const std::string &name) 
-: Node(name) {
+inline sobit_light::WheelController::WheelController(const rclcpp::NodeOptions & options)
+: Node("sobit_light_wheel_controller", options) {
     sub_odom_ = this->create_subscription<nav_msgs::msg::Odometry>(
         "/odom", 1, std::bind(&WheelController::callbackOdometry, this, std::placeholders::_1));
     pub_cmd_vel_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel_mux/input/teleop", 1);

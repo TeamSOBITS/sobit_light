@@ -388,7 +388,7 @@ bool JointController::moveHandToTargetTF(
 }
 
 bool JointController::moveHandToPlaceCoord(
-    const double target_x, const double target_y, const double target_z, 
+    const double target_x, const double target_y,  double target_z, 
     const double shift_x     , const double shift_y     , const double shift_z,
     const int32_t sec , bool is_sleep ) {
   geometry_msgs::msg::Point shift;

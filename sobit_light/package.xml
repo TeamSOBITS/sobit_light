@@ -13,7 +13,7 @@
   <depend>sobit_light_description</depend>
   <depend>sobit_light_control</depend>
   <depend>sobit_light_library</depend>
-  <depend>sobit_light_teleop</depend>
+  <!-- <depend>sobit_light_teleop</depend> -->
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
