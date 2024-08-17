@@ -5,6 +5,7 @@
 
     <position_joint_transmission joint="${prefix}_1_joint" reduction="1" />
     <position_joint_transmission joint="${prefix}_2_joint" reduction="1" />
+    <position_joint_transmission joint="${prefix}_2_sub_joint" reduction="1" />
     <position_joint_transmission joint="${prefix}_3_joint" reduction="1" />
     <position_joint_transmission joint="${prefix}_4_joint" reduction="1" />
     <position_joint_transmission joint="${prefix}_5_joint" reduction="1" />
