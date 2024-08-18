@@ -17,4 +17,4 @@ class ROSCommonNode : public rclcpp::Node {
   }
 };
 
-#endif /* SOBIT_LIGHT_LIBRARY_H_ */
+#endif  // SOBIT_LIGHT_LIBRARY_H_
