@@ -2,29 +2,22 @@
 #define SOBIT_LIGHT_JOINT_CONTROLLER_H_
 
 #include <chrono>
-#include <functional>
 #include <string>
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_components/register_node_macro.hpp>
 
-// #include <tf2/exceptions.h>
+#include <tf2/exceptions.h>
 #include <tf2_ros/transform_listener.h>
 #include <tf2_ros/buffer.h>
 
 #include <trajectory_msgs/msg/joint_trajectory.hpp>
 #include <geometry_msgs/msg/transform_stamped.hpp>
 #include <geometry_msgs/msg/point.hpp>
-// #include "sobits_msgs/msg/current_state_array.h"
-// #include "sobits_msgs/sobits_msgs/msg/current_state_array.h"
 #include "sobits_msgs/msg/current_state_array.hpp"
 
+#include "sobit_light_library/sobit_light_library.h"
 
-// #include "sobits_msgs/sobits_msgs/msg/current_state_array.h"
-// #include "sobits_msgs/include/sobits_msgs/sobits_msgs/msg/current_state_array.h"
-
-
-// #include "sobit_light_library/sobit_light_library.h"
 
 namespace sobit_light {
 enum Joint {
@@ -51,22 +44,16 @@ typedef struct {
 class JointController : public rclcpp::Node {
  public:
   // JointController(const std::string &name);
+  JointController();
+  JointController(const std::string &name);
   JointController(const rclcpp::NodeOptions& options);
-  ~JointController();
+  JointController(
+      const std::string& name,
+      const rclcpp::NodeOptions& options);
+  ~JointController() = default;
 
   bool moveToPose(
       const std::string &pose_name,
-      const int32_t sec = 5, bool is_sleep = true);
-  bool moveAllJointsRad(
-      const double arm_shoulder_roll,
-      const double arm_shoulder_pitch,
-      const double arm_elbow_pitch,
-      const double arm_forearm_roll,
-      const double arm_wrist_pitch,
-      const double arm_wrist_roll,
-      const double hand,
-      const double head_yaw,
-      const double head_pitch,
       const int32_t sec = 5, bool is_sleep = true);
   bool moveAllJointsDeg(
       const double arm_shoulder_roll,
@@ -79,13 +66,24 @@ class JointController : public rclcpp::Node {
       const double head_yaw,
       const double head_pitch,
       const int32_t sec = 5, bool is_sleep = true);
-  bool moveJointRad(
-      const Joint  joint_num,
-      const double rad,
+  bool moveAllJointsRad(
+      const double arm_shoulder_roll,
+      const double arm_shoulder_pitch,
+      const double arm_elbow_pitch,
+      const double arm_forearm_roll,
+      const double arm_wrist_pitch,
+      const double arm_wrist_roll,
+      const double hand,
+      const double head_yaw,
+      const double head_pitch,
       const int32_t sec = 5, bool is_sleep = true);
   bool moveJointDeg(
       const Joint  joint_num,
       const double deg,
+      const int32_t sec = 5, bool is_sleep = true);
+  bool moveJointRad(
+      const Joint  joint_num,
+      const double rad,
       const int32_t sec = 5, bool is_sleep = true);
   bool moveArmDeg(
       const double arm_shoulder_roll,
@@ -144,7 +142,7 @@ class JointController : public rclcpp::Node {
   rclcpp::Publisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr pub_arm_control_;
   rclcpp::Publisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr pub_head_control_;
 
-  rclcpp::Subscription<sobits_msgs::msg::current_state_array>::SharedPtr sub_arm_curr_;
+  rclcpp::Subscription<sobits_msgs::msg::CurrentStateArray>::SharedPtr sub_arm_curr_;
 
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_{nullptr};
   std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
@@ -179,15 +177,15 @@ class JointController : public rclcpp::Node {
   // const double kGraspMaxZ = 0.080;
 
   void setJointTrajectory(
+      trajectory_msgs::msg::JointTrajectory* jt,
       const std::string& joint_name,
       const double rad,
-      const int32_t sec = 5,
-      trajectory_msgs::msg::JointTrajectory* jt);
+      const int32_t sec = 5);
   void addJointTrajectory(
+      trajectory_msgs::msg::JointTrajectory* jt,
       const std::string& joint_name,
       const double rad,
-      const int32_t sec = 5,
-      trajectory_msgs::msg::JointTrajectory* jt);
+      const int32_t sec = 5);
   void checkPublishersConnection(
       const rclcpp::Publisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr& pub);
   void declarePoseParams(const std::string& prefix);
@@ -195,17 +193,17 @@ class JointController : public rclcpp::Node {
       const std::string& prefix,
       std::vector<Pose>& poses);
   void callbackArmCurr(
-      const sobits_msgs::msg::current_state_array::SharedPtr msg);
+      const sobits_msgs::msg::CurrentStateArray::SharedPtr msg);
   void loadPose();
 };
 }  // namespace sobit_light
 
 
 inline void sobit_light::JointController::setJointTrajectory(
-    const std::string& joint_name, 
-    const double rad, 
-    const int32_t sec = 5, 
-    trajectory_msgs::msg::JointTrajectory* jt) {
+    trajectory_msgs::msg::JointTrajectory* jt,
+    const std::string& joint_name,
+    const double rad,
+    const int32_t sec) {
   trajectory_msgs::msg::JointTrajectory joint_trajectory;
   trajectory_msgs::msg::JointTrajectoryPoint joint_trajectory_point; 
 
@@ -221,10 +219,10 @@ inline void sobit_light::JointController::setJointTrajectory(
 }
 
 inline void sobit_light::JointController::addJointTrajectory(
+    trajectory_msgs::msg::JointTrajectory* jt,
     const std::string& joint_name, 
     const double rad, 
-    const int32_t sec = 5, 
-    trajectory_msgs::msg::JointTrajectory* jt) {
+    const int32_t sec) {
   trajectory_msgs::msg::JointTrajectory joint_trajectory = *jt;
 
   joint_trajectory.joint_names.push_back(joint_name); 
@@ -240,9 +238,15 @@ inline void sobit_light::JointController::addJointTrajectory(
 // TODO: send publisher
 inline void sobit_light::JointController::checkPublishersConnection(
     const rclcpp::Publisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr& pub) {
-  while (this->count_subscribers("arm_trajectory_controller/command") == 0) {
-    rclcpp::sleep_for(std::chrono::seconds(1));
+    rclcpp::Rate loop_rate(10);
+  // while (pub->get_subscription_count() == 0 && rclcpp::ok()) {
+  while (pub->get_subscription_count() == 0) {
+    try { loop_rate.sleep(); }
+    catch (const std::exception& ex) { break; }
   }
+  // while (this->count_subscribers("arm_trajectory_controller/command") == 0) {
+  //   rclcpp::sleep_for(std::chrono::seconds(1));
+  // }
 }
 
 inline void sobit_light::JointController::declarePoseParams(
@@ -271,12 +275,12 @@ inline void sobit_light::JointController::setPoseParams(
 
 // TODO: obtain current from each actuator
 inline void sobit_light::JointController::callbackArmCurr(
-    const sobits_msgs::msg::current_state_array::SharedPtr msg) {
-  for (const auto actuator : msg->current_state_array) {
-    if (actuator->joint_name == kJointNames[kArmWristPitchJoint])
+    const sobits_msgs::msg::CurrentStateArray::SharedPtr msg) {
+  for (const auto &actuator : msg->current_state_array) {
+    if (actuator.joint_name == kJointNames[kArmWristPitchJoint])
       kArmWristPitchCurr = actuator.current_ma;
-    if (actuator->joint_name == kJointNames[kHandJoint])
-      kHandCurr = actuator->current_ma;
+    if (actuator.joint_name == kJointNames[kHandJoint])
+      kHandCurr = actuator.current_ma;
   }
 }
 
