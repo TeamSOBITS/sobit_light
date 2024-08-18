@@ -3,33 +3,33 @@
 
 namespace sobit_light {
 
-WheelController::WheelController (const std::string &name)
-: Node(name) {
-  if (!this->get_node_base_interface()) {
-    throw std::runtime_error("Failed to initialize ROS2 Node.");
-  }
+// WheelController::WheelController (const std::string &name)
+// : Node(name) {
+//   if (!this->get_node_base_interface()) {
+//     throw std::runtime_error("Failed to initialize ROS2 Node.");
+//   }
 
-  rclcpp::executors::SingleThreadedExecutor executor;
-  executor.add_node(this->shared_from_this());
-  executor.spin_some();
+//   rclcpp::executors::SingleThreadedExecutor executor;
+//   executor.add_node(this->shared_from_this());
+//   executor.spin_some();
 
-  sub_odom_ = this->create_subscription<nav_msgs::msg::Odometry>(
-      "/odom",1, std::bind(&WheelController::callbackOdometry, this, std::placeholders::_1));
-  pub_cmd_vel_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel_mux/input/teleop", 1);
+//   sub_odom_ = this->create_subscription<nav_msgs::msg::Odometry>(
+//       "/odom",1, std::bind(&WheelController::callbackOdometry, this, std::placeholders::_1));
+//   pub_cmd_vel_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel_mux/input/teleop", 1);
 
-  rclcpp::spin_some(this->get_node_base_interface());
-  rclcpp::sleep_for(std::chrono::seconds(3));
-}
+//   rclcpp::spin_some(this->get_node_base_interface());
+//   rclcpp::sleep_for(std::chrono::seconds(3));
+// }
 
-WheelController::WheelController ()
-: Node("sobit_light_wheel_controller") {
-    sub_odom_ = this->create_subscription<nav_msgs::msg::Odometry>(
-        "/odom", 1, std::bind(&WheelController::callbackOdometry, this, std::placeholders::_1));
-    pub_cmd_vel_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel_mux/input/teleop", 1);
+// WheelController::WheelController ()
+// : Node("sobit_light_wheel_controller") {
+//     sub_odom_ = this->create_subscription<nav_msgs::msg::Odometry>(
+//         "/odom", 1, std::bind(&WheelController::callbackOdometry, this, std::placeholders::_1));
+//     pub_cmd_vel_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel_mux/input/teleop", 1);
 
-    rclcpp::spin_some(this->get_node_base_interface());
-    rclcpp::sleep_for(std::chrono::seconds(3));
-}
+//     rclcpp::spin_some(this->get_node_base_interface());
+//     rclcpp::sleep_for(std::chrono::seconds(3));
+// }
 
 WheelController::WheelController(const rclcpp::NodeOptions & options)
 : Node("sobit_light_wheel_controller", options) {
