@@ -19,9 +19,10 @@
 namespace sobit_light {
 class WheelController : public rclcpp::Node {
  public:
-  WheelController(const std::string &name);
-  WheelController();
+  // WheelController(const std::string &name);
+  // WheelController();
   WheelController(const rclcpp::NodeOptions & options);
+  ~WheelController() = default;
 
   bool controlWheelLinear(const double distance);
   bool controlWheelRotateRad(const double angle_rad);
@@ -36,8 +37,8 @@ class WheelController : public rclcpp::Node {
 
   nav_msgs::msg::Odometry curt_odom_;
 
-  void checkPublishersConnection(
-      const rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr& pub);
+  // void checkPublishersConnection(
+  //     const rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr& pub);
   void callbackOdometry(
       const nav_msgs::msg::Odometry::SharedPtr odom_msg);
   double geometryQuat2Yaw(
@@ -61,16 +62,17 @@ class WheelController : public rclcpp::Node {
 //     pub_cmd_vel_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel_mux/input/teleop", 1);
 // }
 
-inline void sobit_light::WheelController::checkPublishersConnection(
-    const rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr& pub) {
-    rclcpp::Rate loop_rate(10);
-  while (pub->get_subscription_count() == 0 && rclcpp::ok()) {
-    try { loop_rate.sleep(); }
-    catch (const std::exception& ex) { break; }
-  }
+// TODO: seems not to be used
+// inline void sobit_light::WheelController::checkPublishersConnection(
+//     const rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr& pub) {
+//     rclcpp::Rate loop_rate(10);
+//   while (pub->get_subscription_count() == 0 && rclcpp::ok()) {
+//     try { loop_rate.sleep(); }
+//     catch (const std::exception& ex) { break; }
+//   }
 
-  return; 
-}
+//   return; 
+// }
 
 inline void sobit_light::WheelController::callbackOdometry(
     const nav_msgs::msg::Odometry::SharedPtr odom_msg) {
@@ -90,11 +92,11 @@ inline double sobit_light::WheelController::geometryQuat2Yaw(
 }
 
 inline double sobit_light::WheelController::rad2Deg(const double rad) {
-    return rad * 180.0 / M_PI;
+  return rad * 180.0 / M_PI;
 }
 
 inline double sobit_light::WheelController::deg2Rad(const double deg) {
-    return deg * M_PI / 180.0;
+  return deg * M_PI / 180.0;
 }
 
 #endif  // SOBIT_LIGHT_WHEEL_CONTROLLER_H_
