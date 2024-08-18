@@ -1,6 +1,5 @@
 #include "sobit_light_library/sobit_light_joint_controller.hpp"
-#include "sobit_light_library/sobit_light_wheel_controller.hpp"
-#include "sobits_msgs/msg/current_state_array.h"
+// #include "sobit_light_library/sobit_light_wheel_controller.hpp"
 
 
 namespace sobit_light {
@@ -236,7 +235,8 @@ bool JointController::moveHandToTargetCoord(
     const double target_x, const double target_y, const double target_z, 
     const double shift_x     , const double shift_y     , const double shift_z,
     const int32_t sec , bool is_sleep ) {
-  sobit_light::WheelController wheel_ctrl;
+  // sobit_light::WheelController wheel_ctrl;
+  WheelController wheel_ctrl;
 
   // // Calculate goal_position_pos + difference(gap)
   const double goal_position_pos_x = target_x + shift_x;
