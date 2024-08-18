@@ -1,38 +1,11 @@
 #include "sobit_light_library/sobit_light_joint_controller.hpp"
-// #include "sobit_light_library/sobit_light_wheel_controller.hpp"
+#include "sobit_light_library/sobit_light_wheel_controller.hpp"
 
 
 namespace sobit_light {
 
-// JointController::JointController(const std::string &name) : ROSCommonNode(name), nh_(), pnh_("~"), tf_buffer_(), tfListener_(tf_buffer_) {
-//   rclcpp::QoS qos(rclcpp::KeepLast{10});
-
-//   pub_arm_control_  = this->create_publisher<trajectory_msgs::msg::JointTrajectory>(
-//       "arm_trajectory_controller/command", qos);
-//   pub_head_control_ = this->create_publisher<trajectory_msgs::msg::JointTrajectory>(
-//       "head_trajectory_controller/command", qos);
-
-//   sub_curr_arm_ = this->create_subscription<sobits_msgs::msg::current_state_array>(
-//       "current_state_array", qos,
-//       [this](const sobits_msgs::msg::current_state_array::SharedPtr msg) -> void {
-//         CallbackCurrArm(std::move(msg));
-//       });
-
-//   tf_buffer_ =
-//     std::make_unique<tf2_ros::Buffer>(this->get_clock());
-//   tf_listener_ =
-//     std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
-
-//   declarePoseParams("initial_pose");
-//   declarePoseParams("detecting_pose");
-//   declarePoseParams("following_pose");
-
-//   loadPose();
-// }
-
-// JointController::JointController(const rclcpp::NodeOptions& options) : tf_buffer_(), tfListener_(tf_buffer_) {
-JointController::JointController(const rclcpp::NodeOptions& options)
-: Node("trajectory_controller", options) {
+JointController::JointController()
+: Node("trajectory_controller") {
   rclcpp::QoS qos(rclcpp::KeepLast{10});
 
   pub_arm_control_  = this->create_publisher<trajectory_msgs::msg::JointTrajectory>(
@@ -40,10 +13,10 @@ JointController::JointController(const rclcpp::NodeOptions& options)
   pub_head_control_ = this->create_publisher<trajectory_msgs::msg::JointTrajectory>(
       "head_trajectory_controller/command", qos);
 
-  sub_curr_arm_ = this->create_subscription<sobits_msgs::msg::current_state_array>(
+  sub_arm_curr_ = this->create_subscription<sobits_msgs::msg::CurrentStateArray>(
       "current_state_array", qos,
-      [this](const sobits_msgs::msg::current_state_array::SharedPtr msg) -> void {
-        CallbackArmCurr(std::move(msg));
+      [this](const sobits_msgs::msg::CurrentStateArray::SharedPtr msg) -> void {
+        callbackArmCurr(std::move(msg));
       });
 
   tf_buffer_ =
@@ -57,6 +30,90 @@ JointController::JointController(const rclcpp::NodeOptions& options)
 
   loadPose();
 }
+
+JointController::JointController(const std::string& name)
+: Node(name) {
+  rclcpp::QoS qos(rclcpp::KeepLast{10});
+
+  pub_arm_control_  = this->create_publisher<trajectory_msgs::msg::JointTrajectory>(
+      "arm_trajectory_controller/command", qos);
+  pub_head_control_ = this->create_publisher<trajectory_msgs::msg::JointTrajectory>(
+      "head_trajectory_controller/command", qos);
+
+  sub_arm_curr_ = this->create_subscription<sobits_msgs::msg::CurrentStateArray>(
+      "current_state_array", qos,
+      [this](const sobits_msgs::msg::CurrentStateArray::SharedPtr msg) -> void {
+        callbackArmCurr(std::move(msg));
+      });
+
+  tf_buffer_ =
+    std::make_unique<tf2_ros::Buffer>(this->get_clock());
+  tf_listener_ =
+    std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
+
+  declarePoseParams("initial_pose");
+  declarePoseParams("detecting_pose");
+  declarePoseParams("following_pose");
+
+  loadPose();
+}
+
+JointController::JointController(const rclcpp::NodeOptions& options)
+: Node("trajectory_controller", options) {
+  rclcpp::QoS qos(rclcpp::KeepLast{10});
+
+  pub_arm_control_  = this->create_publisher<trajectory_msgs::msg::JointTrajectory>(
+      "arm_trajectory_controller/command", qos);
+  pub_head_control_ = this->create_publisher<trajectory_msgs::msg::JointTrajectory>(
+      "head_trajectory_controller/command", qos);
+
+  sub_arm_curr_ = this->create_subscription<sobits_msgs::msg::CurrentStateArray>(
+      "current_state_array", qos,
+      [this](const sobits_msgs::msg::CurrentStateArray::SharedPtr msg) -> void {
+        callbackArmCurr(std::move(msg));
+      });
+
+  tf_buffer_ =
+    std::make_unique<tf2_ros::Buffer>(this->get_clock());
+  tf_listener_ =
+    std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
+
+  declarePoseParams("initial_pose");
+  declarePoseParams("detecting_pose");
+  declarePoseParams("following_pose");
+
+  loadPose();
+}
+
+JointController::JointController(
+    const std::string& name,
+    const rclcpp::NodeOptions& options)
+: Node(name, options) {
+  rclcpp::QoS qos(rclcpp::KeepLast{10});
+
+  pub_arm_control_  = this->create_publisher<trajectory_msgs::msg::JointTrajectory>(
+      "arm_trajectory_controller/command", qos);
+  pub_head_control_ = this->create_publisher<trajectory_msgs::msg::JointTrajectory>(
+      "head_trajectory_controller/command", qos);
+
+  sub_arm_curr_ = this->create_subscription<sobits_msgs::msg::CurrentStateArray>(
+      "current_state_array", qos,
+      [this](const sobits_msgs::msg::CurrentStateArray::SharedPtr msg) -> void {
+        callbackArmCurr(std::move(msg));
+      });
+
+  tf_buffer_ =
+    std::make_unique<tf2_ros::Buffer>(this->get_clock());
+  tf_listener_ =
+    std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
+
+  declarePoseParams("initial_pose");
+  declarePoseParams("detecting_pose");
+  declarePoseParams("following_pose");
+
+  loadPose();
+}
+
 
 // TODO: Load poses from yaml file
 void JointController::loadPose() {
@@ -83,7 +140,7 @@ bool JointController::moveToPose(
 
   // Move to the pose
   if (is_pose) {
-      RCLCPP_INFO(this->get_logger(), "[SOBIT LIGHT] Pose '%s' was found.", pose_name);
+      RCLCPP_INFO(this->get_logger(), "[SOBIT LIGHT] Pose '%s' was found.", pose_name.c_str());
       return moveAllJointsRad(
           joint_val[Joint::kArmShoulderRollJoint], 
           joint_val[Joint::kArmShoulderPitchJoint], 
@@ -96,7 +153,7 @@ bool JointController::moveToPose(
           joint_val[Joint::kHeadPitchJoint],
           sec, is_sleep);
   } else {
-      RCLCPP_WARN(this->get_logger(), "[SOBIT LIGHT] Pose '%s' was not found.", pose_name);
+      RCLCPP_WARN(this->get_logger(), "[SOBIT LIGHT] Pose '%s' was not found.", pose_name.c_str());
       return false;
   }
 }
@@ -117,17 +174,18 @@ bool JointController::moveAllJointsRad(
     trajectory_msgs::msg::JointTrajectory head_joint_trajectory;
 
     // Arm
-    setJointTrajectory(kJointNames[Joint::kArmShoulderRollJoint] , arm_shoulder_roll , sec, &arm_joint_trajectory);
-    addJointTrajectory(kJointNames[Joint::kArmShoulderPitchJoint], arm_shoulder_pitch, sec, &arm_joint_trajectory);
-    addJointTrajectory(kJointNames[Joint::kArmElbowPitchJoint]   , arm_shoulder_pitch, sec, &arm_joint_trajectory);
-    addJointTrajectory(kJointNames[Joint::kArmForearmRollJoint]  , arm_elbow_pitch   , sec, &arm_joint_trajectory);
-    addJointTrajectory(kJointNames[Joint::kArmWristPitchJoint]   , arm_elbow_pitch   , sec, &arm_joint_trajectory);
-    addJointTrajectory(kJointNames[Joint::kArmWristRollJoint]    , arm_forearm_roll  , sec, &arm_joint_trajectory);
-    addJointTrajectory(kJointNames[Joint::kHandJoint]            , hand              , sec, &arm_joint_trajectory);
+    setJointTrajectory(&arm_joint_trajectory, kJointNames[Joint::kArmShoulderRollJoint] , arm_shoulder_roll , sec);
+    addJointTrajectory(&arm_joint_trajectory, kJointNames[Joint::kArmShoulderPitchJoint], arm_shoulder_pitch, sec);
+    // addJointTrajectory(&arm_joint_trajectory, kJointNames[Joint::kArmShoulderPitchJoint], arm_shoulder_pitch, sec);
+    addJointTrajectory(&arm_joint_trajectory, kJointNames[Joint::kArmElbowPitchJoint]   , arm_elbow_pitch   , sec);
+    addJointTrajectory(&arm_joint_trajectory, kJointNames[Joint::kArmForearmRollJoint]  , arm_forearm_roll  , sec);
+    addJointTrajectory(&arm_joint_trajectory, kJointNames[Joint::kArmWristPitchJoint]   , arm_wrist_pitch   , sec);
+    addJointTrajectory(&arm_joint_trajectory, kJointNames[Joint::kArmWristRollJoint]    , arm_wrist_roll    , sec);
+    addJointTrajectory(&arm_joint_trajectory, kJointNames[Joint::kHandJoint]            , hand              , sec);
     
     // Head
-    setJointTrajectory(kJointNames[Joint::kHeadYawJoint]         ,  head_yaw         , sec, &head_joint_trajectory);
-    addJointTrajectory(kJointNames[Joint::kHeadPitchJoint]       ,  head_pitch       , sec, &head_joint_trajectory);
+    setJointTrajectory(&head_joint_trajectory, kJointNames[Joint::kHeadYawJoint]         ,  head_yaw         , sec);
+    addJointTrajectory(&head_joint_trajectory, kJointNames[Joint::kHeadPitchJoint]       ,  head_pitch       , sec);
 
     // Check publishers connection
     checkPublishersConnection(pub_arm_control_);
@@ -153,13 +211,13 @@ bool JointController::moveJointRad(
   try {
     trajectory_msgs::msg::JointTrajectory joint_trajectory;
 
-    setJointTrajectory(kJointNames[joint_num], rad, sec, &joint_trajectory);
+    setJointTrajectory(&joint_trajectory, kJointNames[joint_num], rad, sec);
 
     // if (joint_num == 1 || joint_num == 3) {
-    //     setJointTrajectory(kJointNames[joint_num]    ,  rad, sec, &joint_trajectory);
-    //     addJointTrajectory(kJointNames[joint_num + 1], -rad, sec, &joint_trajectory);
+    //     setJointTrajectory(&joint_trajectory, kJointNames[joint_num]    ,  rad, sec);
+    //     addJointTrajectory(&joint_trajectory, kJointNames[joint_num + 1], -rad, sec);
     // } else {
-    //     setJointTrajectory(kJointNames[joint_num]    ,  rad, sec, &joint_trajectory);
+    //     setJointTrajectory(&joint_trajectory, kJointNames[joint_num]    ,  rad, sec);
     // }
     
     if (joint_num <= Joint::kHandJoint) {
@@ -185,8 +243,8 @@ bool JointController::moveHeadRad(
   try {
     trajectory_msgs::msg::JointTrajectory joint_trajectory;
 
-    setJointTrajectory(kJointNames[Joint::kHeadYawJoint]  , head_yaw  , sec, &joint_trajectory);
-    addJointTrajectory(kJointNames[Joint::kHeadPitchJoint], head_pitch, sec, &joint_trajectory);
+    setJointTrajectory(&joint_trajectory, kJointNames[Joint::kHeadYawJoint]  , head_yaw  , sec);
+    addJointTrajectory(&joint_trajectory, kJointNames[Joint::kHeadPitchJoint], head_pitch, sec);
     
     checkPublishersConnection(pub_head_control_);
     pub_head_control_->publish(joint_trajectory);
@@ -211,13 +269,13 @@ bool JointController::moveArmRad(
   try {
     trajectory_msgs::msg::JointTrajectory arm_joint_trajectory;
 
-    setJointTrajectory(kJointNames[Joint::kArmShoulderRollJoint] , arm_shoulder_roll , sec, &arm_joint_trajectory);
-    addJointTrajectory(kJointNames[Joint::kArmShoulderPitchJoint], arm_shoulder_pitch, sec, &arm_joint_trajectory);
-    addJointTrajectory(kJointNames[Joint::kArmElbowPitchJoint]   , arm_elbow_pitch   , sec, &arm_joint_trajectory);
-    addJointTrajectory(kJointNames[Joint::kArmForearmRollJoint]  , arm_forearm_roll  , sec, &arm_joint_trajectory);
-    addJointTrajectory(kJointNames[Joint::kArmWristPitchJoint]   , arm_wrist_pitch   , sec, &arm_joint_trajectory);
-    addJointTrajectory(kJointNames[Joint::kArmWristRollJoint]    , arm_wrist_roll    , sec, &arm_joint_trajectory);
-    addJointTrajectory(kJointNames[Joint::kHandJoint]            , hand              , sec, &arm_joint_trajectory);
+    setJointTrajectory(&arm_joint_trajectory, kJointNames[Joint::kArmShoulderRollJoint] , arm_shoulder_roll , sec);
+    addJointTrajectory(&arm_joint_trajectory, kJointNames[Joint::kArmShoulderPitchJoint], arm_shoulder_pitch, sec);
+    addJointTrajectory(&arm_joint_trajectory, kJointNames[Joint::kArmElbowPitchJoint]   , arm_elbow_pitch   , sec);
+    addJointTrajectory(&arm_joint_trajectory, kJointNames[Joint::kArmForearmRollJoint]  , arm_forearm_roll  , sec);
+    addJointTrajectory(&arm_joint_trajectory, kJointNames[Joint::kArmWristPitchJoint]   , arm_wrist_pitch   , sec);
+    addJointTrajectory(&arm_joint_trajectory, kJointNames[Joint::kArmWristRollJoint]    , arm_wrist_roll    , sec);
+    addJointTrajectory(&arm_joint_trajectory, kJointNames[Joint::kHandJoint]            , hand              , sec);
     
     checkPublishersConnection (pub_arm_control_);
     pub_arm_control_->publish(arm_joint_trajectory);
@@ -233,19 +291,16 @@ bool JointController::moveArmRad(
 // TODO (@m.shigemori): Implement inverse kinematics
 bool JointController::moveHandToTargetCoord(
     const double target_x, const double target_y, const double target_z, 
-    const double shift_x     , const double shift_y     , const double shift_z,
+    const double shift_x , const double shift_y , const double shift_z,
     const int32_t sec , bool is_sleep ) {
-  // sobit_light::WheelController wheel_ctrl;
-  WheelController wheel_ctrl;
+  sobit_light::WheelController wheel_ctrl;
+  // WheelController wheel_ctrl;
 
   // // Calculate goal_position_pos + difference(gap)
   const double goal_position_pos_x = target_x + shift_x;
   const double goal_position_pos_y = target_y + shift_y;
   const double goal_position_pos_z = target_z + shift_z;
   bool is_reached = false;
-
-  // Calculate angle between footbase_pos and the sifted goal_position_pos (XY平面)
-  double tan_rad = std::atan2(goal_position_pos_y, goal_position_pos_x);
 
   // Check if the object is graspable
   if (goal_position_pos_z > kArmLength) {
@@ -373,7 +428,7 @@ bool JointController::moveHandToTargetTF(
   try {
     tf_buffer_->canTransform("arm_1_joint", target_name, this->get_clock()->now(), rclcpp::Duration(0, RCL_S_TO_NS(0.5)));
     transformStamped = tf_buffer_->lookupTransform("arm_1_joint", target_name, this->get_clock()->now());
-  } catch (tf2::TransformException &ex) {
+  } catch (const tf2::TransformException& ex) {
     RCLCPP_ERROR(this->get_logger(), "[SOBIT LIGHT] %s", ex.what());
     return false;
   }
@@ -422,7 +477,7 @@ bool JointController::moveHandToPlaceTF(
   try {
     tf_buffer_->canTransform("arm_1_joint", target_name, this->get_clock()->now(), rclcpp::Duration(2, 0));
     transform_base_to_target = tf_buffer_->lookupTransform("arm_1_joint", target_name, this->get_clock()->now());
-  } catch (tf2::TransformException ex) {
+  } catch (const tf2::TransformException& ex) {
     RCLCPP_ERROR(this->get_logger(), "[SOBIT LIGHT] %s", ex.what());
     return false;
   }
