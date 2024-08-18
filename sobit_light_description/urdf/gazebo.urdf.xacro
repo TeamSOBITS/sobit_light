@@ -7,6 +7,66 @@
       <material>Gazebo/Black</material>
     </gazebo> -->
 
+    <!-- Sensor: Color -->
+    <gazebo reference="head_camera_color_optical_frame">
+      <sensor name="head_camera_color" type="camera">
+        <ignition_frame_id>head_camera_color_optical_frame</ignition_frame_id>
+        <always_on>1</always_on>
+        <update_rate>10</update_rate>
+        <visualize>1</visualize>
+        <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
+        <topic>/head_camera/color</topic>
+        <camera name="d435">
+          <horizontal_fov>1.21126</horizontal_fov>
+          <image>
+            <width>640</width>
+            <height>480</height>
+            <format>RGB_INT8</format>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>10</far>
+          </clip>
+          <!-- TODO: adjust noise -->
+          <!-- <noise>
+            <type>gaussian</type>
+            <mean>0</mean>
+            <stddev>0.007</stddev>
+          </noise> -->
+        </camera>
+      </sensor>
+    </gazebo>
+
+    <!-- Sensor: Depth -->
+    <gazebo reference="head_camera_depth_optical_frame">
+      <sensor name="head_camera_depth" type="depth">
+        <ignition_frame_id>head_camera_depth_optical_frame</ignition_frame_id>
+        <always_on>1</always_on>
+        <update_rate>10</update_rate>
+        <visualize>0</visualize>
+        <topic>/head_camera/depth</topic>
+        <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
+        <camera name="d435">
+          <horizontal_fov>1.48702</horizontal_fov>
+          <image>
+            <width>1280</width>
+            <height>720</height>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>10</far>
+          </clip>
+          <!-- TODO: adjust noise -->
+          <!-- <noise>
+            <type>gaussian</type>
+            <mean>0</mean>
+            <stddev>0.1</stddev>
+          </noise> -->
+        </camera>
+      </sensor>
+    </gazebo>
+
+    <!-- Sensor: LiDAR -->
     <gazebo reference="sim_laser_frame">
       <sensor name="lidar" type="gpu_lidar">
         <pose>0 0 0 0 0 0</pose>
@@ -193,20 +253,31 @@
 
     <!-- Ignition ROS2 Control -->
     <gazebo>
-      <plugin filename="ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
+      <plugin
+          filename="ign_ros2_control-system"
+          name="ign_ros2_control::IgnitionROS2ControlPlugin">
+          <!-- filename="gz_ros2_control-system"
+          name="gz_ros2_control::GazeboSimROS2ControlPlugin"> -->
         <parameters>$(find sobit_light_control)/config/ros_controllers.yaml</parameters>
       </plugin>
     </gazebo>
 
     <!-- Ignition Sensors -->
     <gazebo>
-      <plugin filename="libignition-gazebo-sensors-system.so" name="ignition::gazebo::systems::Sensors">
+      <!-- <plugin filename="libignition-gazebo-sensors-system.so" name="ignition::gazebo::systems::Sensors"> -->
+      <plugin
+          filename="gz-sim-sensors-system"
+          name="gz::sim::systems::Sensors">
+        <render_engine>ogre2</render_engine>
       </plugin>
     </gazebo>
 
     <!-- Publish Pose -->
     <gazebo>
-      <plugin filename="ignition-gazebo-pose-publisher-system" name="ignition::gazebo::systems::PosePublisher">
+      <!-- <plugin filename="ignition-gazebo-pose-publisher-system" name="ignition::gazebo::systems::PosePublisher"> -->
+      <plugin
+          filename="gz-sim-pose-publisher-system"
+          name="gz::sim::systems::PosePublisher">
         <publish_link_pose>true</publish_link_pose>
         <publish_collision_pose>false</publish_collision_pose>
         <publish_visual_pose>false</publish_visual_pose>
@@ -218,21 +289,34 @@
 
     <!-- Publish Joint States -->
     <gazebo>
-      <plugin filename="ignition-gazebo-joint-state-publisher-system" name="ignition::gazebo::systems::JointStatePublisher">
+      <!-- <plugin filename="ignition-gazebo-joint-state-publisher-system" name="ignition::gazebo::systems::JointStatePublisher"> -->
+      <plugin
+          filename="gz-sim-joint-state-publisher-system"
+          name="gz::sim::systems::JointStatePublisher">
         <topic>joint_states</topic>
       </plugin>
     </gazebo>
 
-    <!-- <gazebo>
-      <plugin
-        filename="libignition-gazebo-physics-system.so" name="ignition::gazebo::systems::Physics">
-      </plugin>
-    </gazebo> -->
-    <!-- <gazebo>
-      <plugin
-        filename="libignition-gazebo-scene-broadcaster-system.so" name="ignition::gazebo::systems::SceneBroadcaster">
-      </plugin>
-    </gazebo> -->
+    <gazebo>
+      <!-- <plugin
+          filename="ignition-gazebo-physics-system"
+          name="ignition::gazebo::systems::Physics">
+      </plugin> -->
+      <!-- <plugin
+          filename="gz-sim-physics-system"
+          name="gz::sim::systems::Physics">
+      </plugin> -->
+    </gazebo>
+    <gazebo>
+      <!-- <plugin
+          filename="ignition-gazebo-scene-broadcaster-system"
+          name="ignition::gazebo::systems::SceneBroadcaster">
+      </plugin> -->
+      <!-- <plugin
+          filename="gz-sim-scene-broadcaster-system"
+          name="gz::sim::systems::SceneBroadcaster">
+      </plugin> -->
+    </gazebo>
 
   </xacro:macro>
 </robot>

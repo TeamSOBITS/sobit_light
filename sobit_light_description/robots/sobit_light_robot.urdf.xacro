@@ -5,6 +5,7 @@
   <xacro:include filename="$(find sobit_light_description)/urdf/values.urdf.xacro" />
   <xacro:include filename="$(find sobit_light_description)/urdf/materials.urdf.xacro" />
   <xacro:include filename="$(find sobit_light_description)/urdf/transmission.urdf.xacro" />
+  <xacro:include filename="$(find sobit_light_description)/urdf/dxl_control.urdf.xacro" />
 
 
   <!-- Add URDF: links, joints -->
@@ -25,7 +26,7 @@
   <xacro:include filename="$(find sobit_light_description)/urdf/sensor/imu.urdf.xacro" />
   <xacro:include filename="$(find sobit_light_description)/urdf/sensor/mic.urdf.xacro" />
   <xacro:include filename="$(find sobit_light_description)/urdf/sensor/speaker.urdf.xacro" />
-  
+
 
   <!-- Add URDF: gazebo -->
   <xacro:include filename="$(find sobit_light_description)/urdf/gazebo.urdf.xacro" />
@@ -50,6 +51,13 @@
   <xacro:camera_front prefix="camera_front" parent="base_link" />
   <xacro:camera_back  prefix="camera_back"  parent="base_link" />
 
-  <xacro:gazebo_ros2_control prefix="base" />
+  <!-- Add Dynamixel: plugins -->
+  <xacro:dxl_control name="dxl_control" />
+  <!-- <xacro:dxl_control name="dxl_control_arm" /> -->
+  <!-- <xacro:dxl_control params="dxl_control_hand" /> -->
+  <!-- <xacro:dxl_control params="dxl_control_head" /> -->
+
+  <!-- Add Gazebo: plugins -->
+  <!-- <xacro:gazebo_ros2_control prefix="base" /> -->
 
 </robot>

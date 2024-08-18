@@ -7,7 +7,7 @@ from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchD
 from launch.actions import RegisterEventHandler
 from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 
 from launch_ros.actions import Node
 
@@ -44,7 +44,13 @@ def generate_launch_description():
         output='screen',
         arguments=['-string', doc.toxml(),
                    '-name', 'sobit_light',
-                   '-allow_renaming', 'true'],
+                   '-allow_renaming', 'true',
+                   '-x', '-2.5',
+                   '-y', '2.5',
+                   '-z', '0',
+                   '-R', '0',
+                   '-P', '0',
+                   '-Y', '-1.57'],
     )
 
     # node_controller_manager = Node(
@@ -107,6 +113,12 @@ def generate_launch_description():
         output='screen'
     )
 
+    world_file_path = PathJoinSubstitution([
+        get_package_share_directory('wrs_arena_gz'),
+        'worlds',
+        'wrs2020.world.xacro'
+    ])
+
     return LaunchDescription([
         bridge,
         # Launch gazebo environment
@@ -114,7 +126,8 @@ def generate_launch_description():
             PythonLaunchDescriptionSource(
                 [os.path.join(get_package_share_directory('ros_gz_sim'),
                               'launch', 'gz_sim.launch.py')]),
-            launch_arguments=[('gz_args', [' -r -v 4 empty.sdf'])]),
+            # launch_arguments=[('gz_args', [' -r -v 4 empty.sdf'])]),
+            launch_arguments=[('gz_args', world_file_path)]),
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=ignition_spawn_entity,

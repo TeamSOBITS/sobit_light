@@ -140,6 +140,42 @@
       </inertial>
     </link>
 
+    <!--  Joint 3: Upper Arm (SUB) -->
+    <joint name="${prefix}_2_sub_joint" type="revolute">
+      <parent link="${prefix}_1_link"/>
+      <child link="${prefix}_2_sub_link"/>
+      <origin xyz="0.0 0.0 0.05095" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <limit velocity="4.8" effort="1" lower="${-M_PI/2}" upper="${M_PI/2}" />
+      <mimic joint="${prefix}_2_joint" multiplier="-1" offset="0"/>
+    </joint>
+
+    <!--  Link 3: Upper Arm (SUB) -->
+    <link name="${prefix}_2_sub_link">
+      <!-- <visual>
+        <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
+        <geometry>
+          <mesh filename="file://$(find sobit_light_description)/meshes/arm/omx1_link3.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="grey"/>
+      </visual>
+
+      <collision>
+        <origin xyz="${0.03575-0.0585/2} 0.0 ${-0.016+(0.14475+0.016)/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.0585 0.0440 ${0.14475+0.016}"/>
+        </geometry>
+      </collision>
+
+      <inertial>
+        <origin xyz="${0.03575-0.0585/2} 0.0 ${-0.016+(0.14475+0.016)/2}" rpy="0 0 0"/>
+        <mass value="0.261" />
+        <inertia  ixx="${1/12*0.261*(0.0585**2+(0.14475+0.016)**2)}" ixy="0.0" ixz="0.0"
+                  iyy="${1/12*0.261*(0.0440**2+(0.14475+0.016)**2)}" iyz="0.0"
+                  izz="${1/12*0.261*(0.0585**2+0.0440**2)}" />
+      </inertial> -->
+    </link>
+
     <!--  Joint 4: Lower Arm -->
     <joint name="${prefix}_3_joint" type="revolute">
       <parent link="${prefix}_2_link"/>
