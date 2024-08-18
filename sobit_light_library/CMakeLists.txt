@@ -139,6 +139,27 @@ rclcpp_components_register_node(${PROJECT_NAME}
   EXECUTABLE ${PROJECT_NAME}_node
 )
 
+# 実行ファイルを作成
+add_executable(test_control_wheel example/test_control_wheel.cpp)
+
+# ターゲットに依存パッケージをリンク
+ament_target_dependencies(test_control_wheel
+  rclcpp
+  geometry_msgs
+  nav_msgs
+  rclcpp
+  rclcpp_components  # 追加
+  tf2
+  tf2_ros
+  tf2_geometry_msgs
+  geometry_msgs
+  nav_msgs
+  # dynamixel_sdk
+  sobits_msgs
+  pybind11
+  trajectory_msgs
+)
+
 # ## Executables
 # add_executable(test_control_arm example/test_control_arm.cpp)
 # target_link_libraries(test_control_arm ${PROJECT_NAME})
@@ -213,6 +234,12 @@ install(TARGETS ${PROJECT_NAME}
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
+)
+
+
+install(PROGRAMS
+  example/test_control_wheel.py
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 install(TARGETS sobit_light_module

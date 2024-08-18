@@ -41,19 +41,19 @@ namespace sobit_light {
     };
 }
 
-inline sobit_light::WheelController::WheelController(const rclcpp::NodeOptions & options)
-: Node("sobit_light_wheel_controller", options) {
-    sub_odom_ = this->create_subscription<nav_msgs::msg::Odometry>(
-        "/odom", 1, std::bind(&WheelController::callbackOdometry, this, std::placeholders::_1));
-    pub_cmd_vel_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel_mux/input/teleop", 1);
-}
+// inline sobit_light::WheelController::WheelController(const rclcpp::NodeOptions & options)
+// : Node("sobit_light_wheel_controller", options) {
+//     sub_odom_ = this->create_subscription<nav_msgs::msg::Odometry>(
+//         "/odom", 1, std::bind(&WheelController::callbackOdometry, this, std::placeholders::_1));
+//     pub_cmd_vel_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel_mux/input/teleop", 1);
+// }
 
-inline sobit_light::WheelController::WheelController()
-: Node("sobit_light_wheel_controller") {
-    sub_odom_ = this->create_subscription<nav_msgs::msg::Odometry>(
-        "/odom", 1, std::bind(&WheelController::callbackOdometry, this, std::placeholders::_1));
-    pub_cmd_vel_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel_mux/input/teleop", 1);
-}
+// inline sobit_light::WheelController::WheelController()
+// : Node("sobit_light_wheel_controller") {
+//     sub_odom_ = this->create_subscription<nav_msgs::msg::Odometry>(
+//         "/odom", 1, std::bind(&WheelController::callbackOdometry, this, std::placeholders::_1));
+//     pub_cmd_vel_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel_mux/input/teleop", 1);
+// }
 
 inline void sobit_light::WheelController::checkPublishersConnection(const rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr& pub) {
     rclcpp::Rate loop_rate(10);
