@@ -36,9 +36,12 @@ class WheelController : public rclcpp::Node {
 
   nav_msgs::msg::Odometry curt_odom_;
 
-  void checkPublishersConnection(const rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr& pub);
-  void callbackOdometry(const nav_msgs::msg::Odometry::SharedPtr odom_msg);
-  double geometryQuat2Yaw(const geometry_msgs::msg::Quaternion& geometry_quat);
+  void checkPublishersConnection(
+      const rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr& pub);
+  void callbackOdometry(
+      const nav_msgs::msg::Odometry::SharedPtr odom_msg);
+  double geometryQuat2Yaw(
+      const geometry_msgs::msg::Quaternion& geometry_quat);
 
 };
 }  // namespace sobit_light
