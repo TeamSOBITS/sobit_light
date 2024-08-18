@@ -2,16 +2,17 @@
 #define SOBIT_LIGHT_WHEEL_CONTROLLER_H_
 
 #include <cmath>
-#include <cstring>
 
 #include <rclcpp/rclcpp.hpp>
+#include "rclcpp_components/register_node_macro.hpp"
+
 #include <tf2_ros/transform_broadcaster.h>
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2/LinearMath/Matrix3x3.h>
+
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <geometry_msgs/msg/twist.hpp>
 #include <nav_msgs/msg/odometry.hpp>
-#include "rclcpp_components/register_node_macro.hpp"
 
 #include "sobit_light_library/sobit_light_library.h"
 
@@ -19,9 +20,13 @@
 namespace sobit_light {
 class WheelController : public rclcpp::Node {
  public:
-  // WheelController(const std::string &name);
-  // WheelController();
-  WheelController(const rclcpp::NodeOptions & options);
+  WheelController();
+  WheelController(const std::string& name);
+  WheelController(const rclcpp::NodeOptions& options);
+  WheelController(
+      const std::string& name,
+      const rclcpp::NodeOptions& options);
+
   ~WheelController() = default;
 
   bool controlWheelLinear(const double distance);
@@ -91,11 +96,13 @@ inline double sobit_light::WheelController::geometryQuat2Yaw(
   return yaw;  
 }
 
-inline double sobit_light::WheelController::rad2Deg(const double rad) {
+inline double sobit_light::WheelController::rad2Deg(
+    const double rad) {
   return rad * 180.0 / M_PI;
 }
 
-inline double sobit_light::WheelController::deg2Rad(const double deg) {
+inline double sobit_light::WheelController::deg2Rad(
+    const double deg) {
   return deg * M_PI / 180.0;
 }
 
