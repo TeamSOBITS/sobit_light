@@ -15,31 +15,34 @@
 
 #include "sobit_light_library/sobit_light_library.h"
 
+
 namespace sobit_light {
-    class WheelController : public rclcpp::Node {
-        private:
-            rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr pub_cmd_vel_;
-            rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr sub_odom_;
+class WheelController : public rclcpp::Node {
+ public:
+  WheelController(const std::string &name);
+  WheelController();
+  WheelController(const rclcpp::NodeOptions & options);
 
-            nav_msgs::msg::Odometry curt_odom_;
+  bool controlWheelLinear(const double distance);
+  bool controlWheelRotateRad(const double angle_rad);
+  bool controlWheelRotateDeg(const double angle_deg);
 
-            void checkPublishersConnection(const rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr& pub);
-            void callbackOdometry(const nav_msgs::msg::Odometry::SharedPtr odom_msg);
-            double geometryQuat2Yaw(const geometry_msgs::msg::Quaternion& geometry_quat);
+  double rad2Deg(const double rad);
+  double deg2Rad(const double deg);
 
-        public:
-            WheelController(const std::string &name);
-            WheelController();
-            WheelController(const rclcpp::NodeOptions & options);
+ private:
+  rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr  pub_cmd_vel_;
+  rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr sub_odom_;
 
-            bool controlWheelLinear(const double distance);
-            bool controlWheelRotateRad(const double angle_rad);
-            bool controlWheelRotateDeg(const double angle_deg);
+  nav_msgs::msg::Odometry curt_odom_;
 
-            double rad2Deg(const double rad);
-            double deg2Rad(const double deg);
-    };
-}
+  void checkPublishersConnection(const rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr& pub);
+  void callbackOdometry(const nav_msgs::msg::Odometry::SharedPtr odom_msg);
+  double geometryQuat2Yaw(const geometry_msgs::msg::Quaternion& geometry_quat);
+
+};
+}  // namespace sobit_light
+
 
 // inline sobit_light::WheelController::WheelController(const rclcpp::NodeOptions & options)
 // : Node("sobit_light_wheel_controller", options) {
@@ -55,30 +58,32 @@ namespace sobit_light {
 //     pub_cmd_vel_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel_mux/input/teleop", 1);
 // }
 
-inline void sobit_light::WheelController::checkPublishersConnection(const rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr& pub) {
+inline void sobit_light::WheelController::checkPublishersConnection(
+    const rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr& pub) {
     rclcpp::Rate loop_rate(10);
+  while (pub->get_subscription_count() == 0 && rclcpp::ok()) {
+    try { loop_rate.sleep(); }
+    catch (const std::exception& ex) { break; }
+  }
 
-    while (pub->get_subscription_count() == 0 && rclcpp::ok()) {
-        try { loop_rate.sleep(); }
-        catch (const std::exception& ex) { break; }
-    }
-
-    return; 
+  return; 
 }
 
-inline void sobit_light::WheelController::callbackOdometry(const nav_msgs::msg::Odometry::SharedPtr odom_msg) {
-    curt_odom_ = *odom_msg;
+inline void sobit_light::WheelController::callbackOdometry(
+    const nav_msgs::msg::Odometry::SharedPtr odom_msg) {
+  curt_odom_ = *odom_msg;
 }
 
-inline double sobit_light::WheelController::geometryQuat2Yaw(const geometry_msgs::msg::Quaternion& geometry_quat) {
-    tf2::Quaternion quat_tf;
-    double roll, pitch, yaw;
+inline double sobit_light::WheelController::geometryQuat2Yaw(
+    const geometry_msgs::msg::Quaternion& geometry_quat) {
+  tf2::Quaternion quat_tf;
+  double roll, pitch, yaw;
 
-    tf2::fromMsg(geometry_quat, quat_tf);
-    quat_tf.normalize();
-    tf2::Matrix3x3(quat_tf).getRPY(roll, pitch, yaw);
+  tf2::fromMsg(geometry_quat, quat_tf);
+  quat_tf.normalize();
+  tf2::Matrix3x3(quat_tf).getRPY(roll, pitch, yaw);
 
-    return yaw;  
+  return yaw;  
 }
 
 inline double sobit_light::WheelController::rad2Deg(const double rad) {
@@ -89,4 +94,4 @@ inline double sobit_light::WheelController::deg2Rad(const double deg) {
     return deg * M_PI / 180.0;
 }
 
-#endif /* SOBIT_LIGHT_WHEEL_CONTROLLER_H_ */
+#endif  // SOBIT_LIGHT_WHEEL_CONTROLLER_H_
