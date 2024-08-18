@@ -1,5 +1,5 @@
 #include "sobit_light_library/sobit_light_library.h"
-// #include "sobit_light_library/sobit_light_joint_controller.hpp"
+#include "sobit_light_library/sobit_light_joint_controller.hpp"
 #include "sobit_light_library/sobit_light_wheel_controller.hpp"
 
 #include <pybind11/pybind11.h>
@@ -138,6 +138,6 @@ PYBIND11_MODULE(sobit_light_module, m) {
 //         pybind11::arg("rad"))
 //     .def("deg2Rad", &sobit_light::WheelController::deg2Rad, "deg2Rad",
 //         pybind11::arg("deg"));
-// }
+}
 
 }  // namespace sobit_light
