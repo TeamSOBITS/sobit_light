@@ -188,15 +188,18 @@ class JointController : public rclcpp::Node {
       const double rad,
       const int32_t sec = 5,
       trajectory_msgs::msg::JointTrajectory* jt);
-  void checkPublishersConnection(const rclcpp::Publisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr& pub);
+  void checkPublishersConnection(
+      const rclcpp::Publisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr& pub);
   void declarePoseParams(const std::string& prefix);
   void setPoseParams(
       const std::string& prefix,
       std::vector<Pose>& poses);
-  void callbackArmCurr(const sobits_msgs::msg::current_state_array::SharedPtr msg);
+  void callbackArmCurr(
+      const sobits_msgs::msg::current_state_array::SharedPtr msg);
   void loadPose();
 };
 }  // namespace sobit_light
+
 
 inline void sobit_light::JointController::setJointTrajectory(
     const std::string& joint_name, 
