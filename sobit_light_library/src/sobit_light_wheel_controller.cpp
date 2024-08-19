@@ -3,64 +3,76 @@
 
 namespace sobit_light {
 
-// WheelController::WheelController (const std::string &name)
-// : Node(name) {
-//   if (!this->get_node_base_interface()) {
-//     throw std::runtime_error("Failed to initialize ROS2 Node.");
-//   }
+WheelController::WheelController()
+: ROSCommonNode() {
+  std::cout << "WheelController::WheelController(const std::string& namedddddddddd)" << std::endl;
+  rclcpp::QoS qos_profile(1); // depth = 1
+  qos_profile.reliability(RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT);
+  qos_profile.history(RMW_QOS_POLICY_HISTORY_KEEP_LAST);
 
-//   rclcpp::executors::SingleThreadedExecutor executor;
-//   executor.add_node(this->shared_from_this());
-//   executor.spin_some();
-
-//   sub_odom_ = this->create_subscription<nav_msgs::msg::Odometry>(
-//       "/odom",1, std::bind(&WheelController::callbackOdometry, this, std::placeholders::_1));
-//   pub_cmd_vel_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel_mux/input/teleop", 1);
-
-//   rclcpp::spin_some(this->get_node_base_interface());
-//   rclcpp::sleep_for(std::chrono::seconds(3));
-// }
-
-WheelController::WheelController ()
-: Node("sobit_light_wheel_controller") {
   sub_odom_ = this->create_subscription<nav_msgs::msg::Odometry>(
-      "/odom", 1, std::bind(&WheelController::callbackOdometry, this, std::placeholders::_1));
-  pub_cmd_vel_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel_mux/input/teleop", 1);
+      "/kachaka/odometry/odometry", qos_profile,
+      std::bind(&WheelController::callbackOdometry, this, std::placeholders::_1));
+  pub_cmd_vel_ = this->create_publisher<geometry_msgs::msg::Twist>(
+      "/kachaka/manual_control/cmd_vel", qos_profile);
 
-  rclcpp::spin_some(this->get_node_base_interface());
-  rclcpp::sleep_for(std::chrono::seconds(3));
-}
-
-WheelController::WheelController (const std::string &name)
-: Node(name) {
-  sub_odom_ = this->create_subscription<nav_msgs::msg::Odometry>(
-      "/odom", 1, std::bind(&WheelController::callbackOdometry, this, std::placeholders::_1));
-  pub_cmd_vel_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel_mux/input/teleop", 1);
-
-  rclcpp::spin_some(this->get_node_base_interface());
-  rclcpp::sleep_for(std::chrono::seconds(3));
-}
-
-WheelController::WheelController(const rclcpp::NodeOptions& options)
-: Node("sobit_light_wheel_controller", options) {
-  sub_odom_ = this->create_subscription<nav_msgs::msg::Odometry>(
-      "/odom", 1, std::bind(&WheelController::callbackOdometry, this, std::placeholders::_1));
-  pub_cmd_vel_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel_mux/input/teleop", 1);
-
-  rclcpp::spin_some(this->get_node_base_interface());
-  rclcpp::sleep_for(std::chrono::seconds(3));
+  // rclcpp::spin_some(this->get_node_base_interface());
+  // rclcpp::sleep_for(std::chrono::seconds(3));
 }
 
 WheelController::WheelController(
-    const std::string& name,
-    const rclcpp::NodeOptions& options)
-: Node(name, options) {
-  sub_odom_ = this->create_subscription<nav_msgs::msg::Odometry>(
-      "/odom", 1, std::bind(&WheelController::callbackOdometry, this, std::placeholders::_1));
-  pub_cmd_vel_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel_mux/input/teleop", 1);
+    const std::string& name)
+: ROSCommonNode(name) {
+  std::cout << "WheelController::WheelController(const std::string& namedddddddddd)" << std::endl;
+  rclcpp::QoS qos_profile(1); // depth = 1
+  qos_profile.reliability(RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT);
+  qos_profile.history(RMW_QOS_POLICY_HISTORY_KEEP_LAST);
 
-  rclcpp::spin_some(this->get_node_base_interface());
-  rclcpp::sleep_for(std::chrono::seconds(3));
+  sub_odom_ = this->create_subscription<nav_msgs::msg::Odometry>(
+      "/kachaka/odometry/odometry", qos_profile,
+      std::bind(&WheelController::callbackOdometry, this, std::placeholders::_1));
+  pub_cmd_vel_ = this->create_publisher<geometry_msgs::msg::Twist>(
+      "/kachaka/manual_control/cmd_vel", qos_profile);
+
+  // rclcpp::spin_some(this->get_node_base_interface());
+  // rclcpp::sleep_for(std::chrono::seconds(3));
+}
+
+WheelController::WheelController(
+    const rclcpp::NodeOptions& options)
+: ROSCommonNode(options) {
+  std::cout << "WheelController::WheelController(const std::string& namedddddddddd)" << std::endl;
+  rclcpp::QoS qos_profile(1); // depth = 1
+  qos_profile.reliability(RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT);
+  qos_profile.history(RMW_QOS_POLICY_HISTORY_KEEP_LAST);
+
+  sub_odom_ = this->create_subscription<nav_msgs::msg::Odometry>(
+      "/kachaka/odometry/odometry", qos_profile,
+      std::bind(&WheelController::callbackOdometry, this, std::placeholders::_1));
+  pub_cmd_vel_ = this->create_publisher<geometry_msgs::msg::Twist>(
+      "/kachaka/manual_control/cmd_vel", qos_profile);
+
+  // rclcpp::spin_some(this->get_node_base_interface());
+  // rclcpp::sleep_for(std::chrono::seconds(3));
+}
+
+WheelController::WheelController(
+    const std::string& name_space,
+    const rclcpp::NodeOptions& options)
+: ROSCommonNode(name_space, options) {
+  std::cout << "WheelController::WheelController(const std::string& namedddddddddd)" << std::endl;
+  rclcpp::QoS qos_profile(1); // depth = 1
+  qos_profile.reliability(RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT);
+  qos_profile.history(RMW_QOS_POLICY_HISTORY_KEEP_LAST);
+
+  sub_odom_ = this->create_subscription<nav_msgs::msg::Odometry>(
+      "/kachaka/odometry/odometry", qos_profile,
+      std::bind(&WheelController::callbackOdometry, this, std::placeholders::_1));
+  pub_cmd_vel_ = this->create_publisher<geometry_msgs::msg::Twist>(
+      "/kachaka/manual_control/cmd_vel", qos_profile);
+
+  // rclcpp::spin_some(this->get_node_base_interface());
+  // rclcpp::sleep_for(std::chrono::seconds(3));
 }
 
 bool WheelController::controlWheelLinear(const double distance) {
@@ -70,9 +82,8 @@ bool WheelController::controlWheelLinear(const double distance) {
 
     while (
         curt_odom_.pose.pose.position.x == 0 &&
-        curt_odom_.pose.pose.position.y == 0 &&
-        curt_odom_.pose.pose.position.z == 0 &&
-        curt_odom_.pose.pose.orientation.w == 0) {
+        curt_odom_.pose.pose.position.y == 0) {
+      RCLCPP_INFO(this->get_logger(), "Waiting for odometry data...");
       rclcpp::spin_some(this->get_node_base_interface());
     }
     nav_msgs::msg::Odometry init_odom = curt_odom_;
@@ -114,7 +125,8 @@ bool WheelController::controlWheelLinear(const double distance) {
       double y_diif = curt_odom_.pose.pose.position.y - init_odom.pose.pose.position.y;
       moving_distance = std::hypot(x_diif, y_diif);
 
-      RCLCPP_INFO(this->get_logger(), "x_diif = %f\tx2_diif = %f\ty_diif = %f\ty2_diif = %f", init_odom.pose.pose.position.x, curt_odom_.pose.pose.position.x, init_odom.pose.pose.position.y, curt_odom_.pose.pose.position.y );
+      // RCLCPP_INFO(this->get_logger(), "x_diif = %f\tx2_diif = %f\ty_diif = %f\ty2_diif = %f", init_odom.pose.pose.position.x, curt_odom_.pose.pose.position.x, init_odom.pose.pose.position.y, curt_odom_.pose.pose.position.y );
+      RCLCPP_INFO(this->get_logger(), "target_distance = %f\tmoving_distance = %f", target_distance, moving_distance );
       loop_rate.sleep();
     }
 
@@ -130,9 +142,8 @@ bool WheelController::controlWheelRotateRad(const double angle_rad) {
   try {
     while (
         curt_odom_.pose.pose.position.x == 0 &&
-        curt_odom_.pose.pose.position.y == 0 &&
-        curt_odom_.pose.pose.position.z == 0 &&
-        curt_odom_.pose.pose.orientation.w == 0) {
+        curt_odom_.pose.pose.position.y == 0) {
+      RCLCPP_INFO(this->get_logger(), "Waiting for odometry data...");
       rclcpp::spin_some(this->get_node_base_interface());
     }
 
@@ -149,7 +160,6 @@ bool WheelController::controlWheelRotateRad(const double angle_rad) {
     double Kd = 0.8;
 
     double velocity_differential = Kp * angle_rad;
-    int loop_cnt = 1;
     rclcpp::Rate loop_rate(20);
 
     while (moving_angle_rad < abs_angle_rad) {
@@ -175,32 +185,12 @@ bool WheelController::controlWheelRotateRad(const double angle_rad) {
       pub_cmd_vel_->publish( output_vel );
       
       double curt_yaw = geometryQuat2Yaw( curt_odom_.pose.pose.orientation );
-      double pre_move_ang_rad = moving_angle_rad;
+      RCLCPP_INFO(this->get_logger(), "curt_yaw = %f\tinit_yaw = %f", curt_yaw, init_yaw );
 
-      if (-0.00314 < curt_yaw - init_yaw &&
-          curt_yaw - init_yaw < 0 &&
-          0 < angle_rad) continue;
-      else if (0 < curt_yaw - init_yaw &&
-          curt_yaw - init_yaw < 0.00314 &&
-          angle_rad < 0) continue;
+      double angle_diff = curt_yaw - init_yaw;
+      angle_diff = fmod(angle_diff + M_PI, 2 * M_PI) - M_PI; // Normalize to [-pi, pi)
 
-      if (curt_yaw - init_yaw < 0 && 0 < angle_rad)
-        moving_angle_rad = std::abs(curt_yaw - init_yaw + deg2Rad(360 * loop_cnt));
-      else if (0 < curt_yaw - init_yaw && angle_rad < 0)
-        moving_angle_rad = std::abs(curt_yaw - init_yaw - deg2Rad(360 * loop_cnt));
-      else if (0 < angle_rad)
-        moving_angle_rad = std::abs(curt_yaw - init_yaw + deg2Rad(360 * (loop_cnt - 1)));
-      else
-        moving_angle_rad = std::abs(curt_yaw - init_yaw - deg2Rad(360 * (loop_cnt - 1)));
-
-      if (rad2Deg(moving_angle_rad) < (rad2Deg(pre_move_ang_rad) - 0.0314)) {
-        loop_cnt++;
-
-        if (0 < angle_rad)
-          moving_angle_rad = std::abs(curt_yaw - init_yaw + deg2Rad(360 * (loop_cnt - 1)));
-        else
-          moving_angle_rad = std::abs(curt_yaw - init_yaw - deg2Rad(360 * (loop_cnt - 1)));
-      }
+      moving_angle_rad = std::abs(angle_diff);
       
       RCLCPP_INFO(this->get_logger(), "target_angle = %f\tmoving_angle = %f", abs_angle_rad, moving_angle_rad );
       
