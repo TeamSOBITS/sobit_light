@@ -6,27 +6,29 @@ import rclpy
 from sobit_light_module import WheelController
 
 def main(args=None):
-    print("Initializing ROS2...")
-    try:
-        rclpy.init(args=args)
-        print("ROS2 initialized successfully.")
+  print("Initializing ROS2...")
+  rclpy.init(args=args)
+  print("ROS2 initialized successfully.")
 
-        wheel_controller = WheelController("sobit_light_wheel_controller")
-        print("WheelController created successfully.")
+  wheel_controller = None
 
-        # コントロールメソッドの呼び出し
-        wheel_controller.controlWheelLinear(1.5)
-        wheel_controller.controlWheelRotateRad(1.5708)
-        wheel_controller.controlWheelRotateDeg(-90)
+  try:
+    wheel_controller = WheelController()
+    print("WheelController created successfully.")
 
-    except Exception as e:
-        print(f"An error occurred: {str(e)}")
+    # Control methods
+    wheel_controller.controlWheelLinear(0.5)
+    wheel_controller.controlWheelRotateRad(1.5708)
+    wheel_controller.controlWheelRotateDeg(-90)
+    wheel_controller.controlWheelLinear(-0.5)
 
-    finally:
-        if 'wheel_controller' in locals() and wheel_controller is not None:
-            wheel_controller.destroy_node()
+  except Exception as e:
+    print(f"Error occurred: {e}")
 
-        rclpy.shutdown()
+  finally:
+    if wheel_controller is not None:
+      wheel_controller.destroy_node()
+    rclpy.shutdown()
 
 if __name__ == '__main__':
-    main()
+  main()
