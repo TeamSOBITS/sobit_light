@@ -4,71 +4,20 @@
 
 namespace sobit_light {
 
-JointController::JointController()
-: Node("trajectory_controller") {
-  rclcpp::QoS qos(rclcpp::KeepLast{10});
+JointController::JointController(
+    const rclcpp::NodeOptions& options)
+: Node("sobit_light_joint_controller", options) {
+  rclcpp::QoS qos_profile(1); // depth = 1
+    qos_profile.reliability(RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT);
+    qos_profile.history(RMW_QOS_POLICY_HISTORY_KEEP_LAST);
 
   pub_arm_control_  = this->create_publisher<trajectory_msgs::msg::JointTrajectory>(
-      "arm_trajectory_controller/command", qos);
+      "arm_trajectory_controller/command", qos_profile);
   pub_head_control_ = this->create_publisher<trajectory_msgs::msg::JointTrajectory>(
-      "head_trajectory_controller/command", qos);
+      "head_trajectory_controller/command", qos_profile);
 
   sub_arm_curr_ = this->create_subscription<sobits_msgs::msg::CurrentStateArray>(
-      "current_state_array", qos,
-      [this](const sobits_msgs::msg::CurrentStateArray::SharedPtr msg) -> void {
-        callbackArmCurr(std::move(msg));
-      });
-
-  tf_buffer_ =
-    std::make_unique<tf2_ros::Buffer>(this->get_clock());
-  tf_listener_ =
-    std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
-
-  declarePoseParams("initial_pose");
-  declarePoseParams("detecting_pose");
-  declarePoseParams("following_pose");
-
-  loadPose();
-}
-
-JointController::JointController(const std::string& name)
-: Node(name) {
-  rclcpp::QoS qos(rclcpp::KeepLast{10});
-
-  pub_arm_control_  = this->create_publisher<trajectory_msgs::msg::JointTrajectory>(
-      "arm_trajectory_controller/command", qos);
-  pub_head_control_ = this->create_publisher<trajectory_msgs::msg::JointTrajectory>(
-      "head_trajectory_controller/command", qos);
-
-  sub_arm_curr_ = this->create_subscription<sobits_msgs::msg::CurrentStateArray>(
-      "current_state_array", qos,
-      [this](const sobits_msgs::msg::CurrentStateArray::SharedPtr msg) -> void {
-        callbackArmCurr(std::move(msg));
-      });
-
-  tf_buffer_ =
-    std::make_unique<tf2_ros::Buffer>(this->get_clock());
-  tf_listener_ =
-    std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
-
-  declarePoseParams("initial_pose");
-  declarePoseParams("detecting_pose");
-  declarePoseParams("following_pose");
-
-  loadPose();
-}
-
-JointController::JointController(const rclcpp::NodeOptions& options)
-: Node("trajectory_controller", options) {
-  rclcpp::QoS qos(rclcpp::KeepLast{10});
-
-  pub_arm_control_  = this->create_publisher<trajectory_msgs::msg::JointTrajectory>(
-      "arm_trajectory_controller/command", qos);
-  pub_head_control_ = this->create_publisher<trajectory_msgs::msg::JointTrajectory>(
-      "head_trajectory_controller/command", qos);
-
-  sub_arm_curr_ = this->create_subscription<sobits_msgs::msg::CurrentStateArray>(
-      "current_state_array", qos,
+      "current_state_array", qos_profile,
       [this](const sobits_msgs::msg::CurrentStateArray::SharedPtr msg) -> void {
         callbackArmCurr(std::move(msg));
       });
@@ -86,18 +35,20 @@ JointController::JointController(const rclcpp::NodeOptions& options)
 }
 
 JointController::JointController(
-    const std::string& name,
+    const std::string& name_space,
     const rclcpp::NodeOptions& options)
-: Node(name, options) {
-  rclcpp::QoS qos(rclcpp::KeepLast{10});
+: Node("sobit_light_wheel_controller", name_space, options) {
+  rclcpp::QoS qos_profile(1); // depth = 1
+    qos_profile.reliability(RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT);
+    qos_profile.history(RMW_QOS_POLICY_HISTORY_KEEP_LAST);
 
   pub_arm_control_  = this->create_publisher<trajectory_msgs::msg::JointTrajectory>(
-      "arm_trajectory_controller/command", qos);
+      "arm_trajectory_controller/command", qos_profile);
   pub_head_control_ = this->create_publisher<trajectory_msgs::msg::JointTrajectory>(
-      "head_trajectory_controller/command", qos);
+      "head_trajectory_controller/command", qos_profile);
 
   sub_arm_curr_ = this->create_subscription<sobits_msgs::msg::CurrentStateArray>(
-      "current_state_array", qos,
+      "current_state_array", qos_profile,
       [this](const sobits_msgs::msg::CurrentStateArray::SharedPtr msg) -> void {
         callbackArmCurr(std::move(msg));
       });
@@ -293,8 +244,8 @@ bool JointController::moveHandToTargetCoord(
     const double target_x, const double target_y, const double target_z, 
     const double shift_x , const double shift_y , const double shift_z,
     const int32_t sec , bool is_sleep ) {
-  sobit_light::WheelController wheel_ctrl;
-  // WheelController wheel_ctrl;
+  // sobit_light::WheelController wheel_ctrl;
+  WheelController wheel_ctrl;
 
   // // Calculate goal_position_pos + difference(gap)
   const double goal_position_pos_x = target_x + shift_x;
