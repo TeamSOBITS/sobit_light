@@ -14,19 +14,20 @@
 #include <geometry_msgs/msg/twist.hpp>
 #include <nav_msgs/msg/odometry.hpp>
 
-#include "sobit_light_library/sobit_light_library.h"
+#include "sobit_light_library/sobit_light_library.hpp"
 
 
 namespace sobit_light {
-class WheelController : public rclcpp::Node {
+class WheelController : public ROSCommonNode {
  public:
   WheelController();
-  WheelController(const std::string& name);
-  WheelController(const rclcpp::NodeOptions& options);
   WheelController(
-      const std::string& name,
+      const std::string& name);
+  WheelController(
       const rclcpp::NodeOptions& options);
-
+  WheelController(
+      const std::string& name_space,
+      const rclcpp::NodeOptions& options);
   ~WheelController() = default;
 
   bool controlWheelLinear(const double distance);
@@ -52,32 +53,6 @@ class WheelController : public rclcpp::Node {
 };
 }  // namespace sobit_light
 
-
-// inline sobit_light::WheelController::WheelController(const rclcpp::NodeOptions & options)
-// : Node("sobit_light_wheel_controller", options) {
-//     sub_odom_ = this->create_subscription<nav_msgs::msg::Odometry>(
-//         "/odom", 1, std::bind(&WheelController::callbackOdometry, this, std::placeholders::_1));
-//     pub_cmd_vel_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel_mux/input/teleop", 1);
-// }
-
-// inline sobit_light::WheelController::WheelController()
-// : Node("sobit_light_wheel_controller") {
-//     sub_odom_ = this->create_subscription<nav_msgs::msg::Odometry>(
-//         "/odom", 1, std::bind(&WheelController::callbackOdometry, this, std::placeholders::_1));
-//     pub_cmd_vel_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel_mux/input/teleop", 1);
-// }
-
-// TODO: seems not to be used
-// inline void sobit_light::WheelController::checkPublishersConnection(
-//     const rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr& pub) {
-//     rclcpp::Rate loop_rate(10);
-//   while (pub->get_subscription_count() == 0 && rclcpp::ok()) {
-//     try { loop_rate.sleep(); }
-//     catch (const std::exception& ex) { break; }
-//   }
-
-//   return; 
-// }
 
 inline void sobit_light::WheelController::callbackOdometry(
     const nav_msgs::msg::Odometry::SharedPtr odom_msg) {
