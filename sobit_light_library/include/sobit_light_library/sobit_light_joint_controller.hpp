@@ -16,7 +16,7 @@
 #include <geometry_msgs/msg/point.hpp>
 #include "sobits_msgs/msg/current_state_array.hpp"
 
-#include "sobit_light_library/sobit_light_library.h"
+#include "sobit_light_library/sobit_light_library.hpp"
 
 
 namespace sobit_light {
@@ -43,29 +43,27 @@ typedef struct {
 // class JointController : private ROSCommonNode {
 class JointController : public rclcpp::Node {
  public:
-  // JointController(const std::string &name);
-  JointController();
-  JointController(const std::string &name);
-  JointController(const rclcpp::NodeOptions& options);
   JointController(
-      const std::string& name,
-      const rclcpp::NodeOptions& options);
+      const rclcpp::NodeOptions& options=rclcpp::NodeOptions());
+  JointController(
+      const std::string& name_space,
+      const rclcpp::NodeOptions& options=rclcpp::NodeOptions());
   ~JointController() = default;
 
   bool moveToPose(
       const std::string &pose_name,
       const int32_t sec = 5, bool is_sleep = true);
-  bool moveAllJointsDeg(
-      const double arm_shoulder_roll,
-      const double arm_shoulder_pitch,
-      const double arm_elbow_pitch,
-      const double arm_forearm_roll,
-      const double arm_wrist_pitch,
-      const double arm_wrist_roll,
-      const double hand,
-      const double head_yaw,
-      const double head_pitch,
-      const int32_t sec = 5, bool is_sleep = true);
+//   bool moveAllJointsDeg(
+//       const double arm_shoulder_roll,
+//       const double arm_shoulder_pitch,
+//       const double arm_elbow_pitch,
+//       const double arm_forearm_roll,
+//       const double arm_wrist_pitch,
+//       const double arm_wrist_roll,
+//       const double hand,
+//       const double head_yaw,
+//       const double head_pitch,
+//       const int32_t sec = 5, bool is_sleep = true);
   bool moveAllJointsRad(
       const double arm_shoulder_roll,
       const double arm_shoulder_pitch,
@@ -77,23 +75,23 @@ class JointController : public rclcpp::Node {
       const double head_yaw,
       const double head_pitch,
       const int32_t sec = 5, bool is_sleep = true);
-  bool moveJointDeg(
-      const Joint  joint_num,
-      const double deg,
-      const int32_t sec = 5, bool is_sleep = true);
+//   bool moveJointDeg(
+//       const Joint  joint_num,
+//       const double deg,
+//       const int32_t sec = 5, bool is_sleep = true);
   bool moveJointRad(
       const Joint  joint_num,
       const double rad,
       const int32_t sec = 5, bool is_sleep = true);
-  bool moveArmDeg(
-      const double arm_shoulder_roll,
-      const double arm_shoulder_pitch,
-      const double arm_elbow_pitch,
-      const double arm_forearm_roll,
-      const double arm_wrist_pitch,
-      const double arm_wrist_roll,
-      const double hand,
-      const int32_t sec = 5, bool is_sleep = true);
+//   bool moveArmDeg(
+//       const double arm_shoulder_roll,
+//       const double arm_shoulder_pitch,
+//       const double arm_elbow_pitch,
+//       const double arm_forearm_roll,
+//       const double arm_wrist_pitch,
+//       const double arm_wrist_roll,
+//       const double hand,
+//       const int32_t sec = 5, bool is_sleep = true);
   bool moveArmRad(
       const double arm_shoulder_roll,
       const double arm_shoulder_pitch,
@@ -103,10 +101,10 @@ class JointController : public rclcpp::Node {
       const double arm_wrist_roll,
       const double hand,
       const int32_t sec = 5, bool is_sleep = true);
-  bool moveHeadDeg(
-      const double head_yaw,
-      const double head_pitch,
-      const int32_t sec = 5, bool is_sleep = true);
+//   bool moveHeadDeg(
+//       const double head_yaw,
+//       const double head_pitch,
+//       const int32_t sec = 5, bool is_sleep = true);
   bool moveHeadRad(
       const double head_yaw,
       const double head_pitch,
@@ -127,14 +125,14 @@ class JointController : public rclcpp::Node {
       const std::string& target_name,
       const double shift_x, const double shift_y, const double shift_z,
       const int32_t sec = 5, bool is_sleep = true);
-  bool moveHeadToTargetCoord(
-      const double target_x, const double target_y, const double target_z, 
-      const double shift_x , const double shift_y , const double shift_z,
-      const int32_t sec = 5, bool is_sleep = true);
-  bool moveHeadToTargetTF(
-      const std::string &target_name,
-      const double shift_x, const double shift_y, const double shift_z,
-      const int32_t sec = 5, bool is_sleep = true);
+//   bool moveHeadToTargetCoord(
+//       const double target_x, const double target_y, const double target_z, 
+//       const double shift_x , const double shift_y , const double shift_z,
+//       const int32_t sec = 5, bool is_sleep = true);
+//   bool moveHeadToTargetTF(
+//       const std::string &target_name,
+//       const double shift_x, const double shift_y, const double shift_z,
+//       const int32_t sec = 5, bool is_sleep = true);
   bool graspDecision(const int min_curr = 300, const int max_curr = 1000);
   bool placeDecision(const int min_curr = 500, const int max_curr = 1000);
 
