@@ -7,8 +7,6 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-# set(CMAKE_PREFIX_PATH "/home/sobits/colcon_ws/src" ${CMAKE_PREFIX_PATH})
-
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
@@ -28,36 +26,26 @@ find_package(nav_msgs REQUIRED)
 find_package(sobits_msgs REQUIRED)
 
 
-# Specify additional locations of header files
-# include_directories(
-#   include
-#   ${CMAKE_CURRENT_SOURCE_DIR}/include
-#   ${rclcpp_INCLUDE_DIRS}
-#   ${std_msgs_INCLUDE_DIRS}
-#   ${sobits_msgs_INCLUDE_DIRS} 
-#   ${ament_index_build_path}/sobits_msgs/include
-#   ${PROJECT_SOURCE_DIR}/install/sobits_msgs/include
-# )
-
-# include_directories(${CMAKE_SOURCE_DIR}/install/sobits_msgs/include)
-
-# include_directories(
-#   ${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_cpp/sobits_msgs
-# )
-
-
 # Library
 add_library(${PROJECT_NAME} SHARED
   src/sobit_light_joint_controller.cpp
   src/sobit_light_wheel_controller.cpp
 )
 
-rclcpp_components_register_nodes(${PROJECT_NAME}
-  "sobit_light::JointController"
-  "sobit_light::WheelController"
+# rclcpp_components_register_nodes(${PROJECT_NAME}
+#   "sobit_light::JointController"
+#   "sobit_light::WheelController"
+# )
+
+rclcpp_components_register_node(${PROJECT_NAME}
+  PLUGIN "sobit_light::JointController"
+  EXECUTABLE joint_controller
 )
 
-# target_compile_options(${PROJECT_NAME} PUBLIC -Wall)
+rclcpp_components_register_node(${PROJECT_NAME}
+  PLUGIN "sobit_light::WheelController"
+  EXECUTABLE wheel_controller
+)
 
 ament_target_dependencies(${PROJECT_NAME}
   pybind11
@@ -78,13 +66,6 @@ target_include_directories(${PROJECT_NAME}
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
 )
-
-# if(NOT WIN32)
-#   ament_environment_hooks(
-#     "${ament_cmake_package_templates_ENVIRONMENT_HOOK_LIBRARY_PATH}"
-#   )
-# endif()
-
 
 ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 ament_export_dependencies(
@@ -114,8 +95,6 @@ set_target_properties(sobit_light_module PROPERTIES
   # SUFFIX ".so"
   INSTALL_RPATH_USE_LINK_PATH TRUE
 )
-
-# target_compile_options(sobit_light_module PUBLIC -Wall)
 
 ament_target_dependencies(sobit_light_module
   pybind11
@@ -192,12 +171,6 @@ install(PROGRAMS
   example/test_control_wheel.py
   DESTINATION lib/${PROJECT_NAME}
 )
-
-# ament_python_install_package(sobit_light_module)
-
-# install(TARGETS test_control_arm test_control_head test_control_wheel test_grasp test_place
-#   DESTINATION lib/${PROJECT_NAME}
-# )
 
 
 if(BUILD_TESTING)
