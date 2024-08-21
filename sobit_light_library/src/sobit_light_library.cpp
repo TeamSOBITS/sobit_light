@@ -19,7 +19,8 @@ PYBIND11_MODULE(sobit_light_module, m) {
     .value("kHeadYawJoint"         , Joint::kHeadYawJoint)
     .value("kHeadPitchJoint"       , Joint::kHeadPitchJoint)
     .value("kJointNum"             , Joint::kJointNum)
-    .export_values();
+    .export_values()
+    ;
 
   pybind11::class_<sobit_light::JointController, std::shared_ptr<sobit_light::JointController>>(m, "JointController")
     .def(pybind11::init<const std::string&>())
@@ -111,12 +112,13 @@ PYBIND11_MODULE(sobit_light_module, m) {
         pybind11::arg("max_curr") = 1000)
     .def("placeDecision", &JointController::placeDecision, "placeDecision",
         pybind11::arg("min_curr") = 500,
-        pybind11::arg("max_curr") = 1000);
+        pybind11::arg("max_curr") = 1000)
+    ;
 
 //   pybind11::class_<WheelController>(m, "WheelController")
   pybind11::class_<WheelController, std::shared_ptr<WheelController>>(m, "WheelController")
-    // .def(pybind11::init<const std::string&>())
     .def(pybind11::init<>())
+    .def(pybind11::init<const std::string&, const std::string&>())
     .def("controlWheelLinear", &WheelController::controlWheelLinear, "controlWheelLinear",
         pybind11::arg("distance"))
     .def("controlWheelRotateRad", &WheelController::controlWheelRotateRad, "controlWheelRotateRad",
@@ -126,8 +128,8 @@ PYBIND11_MODULE(sobit_light_module, m) {
     .def("rad2Deg", &WheelController::rad2Deg, "rad2Deg",
         pybind11::arg("rad"))
     .def("deg2Rad", &WheelController::deg2Rad, "deg2Rad",
-        pybind11::arg("deg"));
-
+        pybind11::arg("deg"))
+    ;
 }
 
 }  // namespace sobit_light
