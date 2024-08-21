@@ -1,7 +1,6 @@
 #ifndef SOBIT_LIGHT_LIBRARY_H_
 #define SOBIT_LIGHT_LIBRARY_H_
 
-// #include <pybind11/pybind11.h>
 #include <rclcpp/rclcpp.hpp>
 
 class ROSCommonNode : public rclcpp::Node {
