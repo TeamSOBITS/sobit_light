@@ -3,64 +3,17 @@
 
 namespace sobit_light {
 
-WheelController::WheelController()
-: ROSCommonNode() {
-  std::cout << "WheelController::WheelController(const std::string& namedddddddddd)" << std::endl;
-  rclcpp::QoS qos_profile(1); // depth = 1
-  qos_profile.reliability(RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT);
-  qos_profile.history(RMW_QOS_POLICY_HISTORY_KEEP_LAST);
-
-  sub_odom_ = this->create_subscription<nav_msgs::msg::Odometry>(
-      "/kachaka/odometry/odometry", qos_profile,
-      std::bind(&WheelController::callbackOdometry, this, std::placeholders::_1));
-  pub_cmd_vel_ = this->create_publisher<geometry_msgs::msg::Twist>(
-      "/kachaka/manual_control/cmd_vel", qos_profile);
-
-  // rclcpp::spin_some(this->get_node_base_interface());
-  // rclcpp::sleep_for(std::chrono::seconds(3));
-}
-
-WheelController::WheelController(
-    const std::string& name)
-: ROSCommonNode(name) {
-  std::cout << "WheelController::WheelController(const std::string& namedddddddddd)" << std::endl;
-  rclcpp::QoS qos_profile(1); // depth = 1
-  qos_profile.reliability(RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT);
-  qos_profile.history(RMW_QOS_POLICY_HISTORY_KEEP_LAST);
-
-  sub_odom_ = this->create_subscription<nav_msgs::msg::Odometry>(
-      "/kachaka/odometry/odometry", qos_profile,
-      std::bind(&WheelController::callbackOdometry, this, std::placeholders::_1));
-  pub_cmd_vel_ = this->create_publisher<geometry_msgs::msg::Twist>(
-      "/kachaka/manual_control/cmd_vel", qos_profile);
-
-  // rclcpp::spin_some(this->get_node_base_interface());
-  // rclcpp::sleep_for(std::chrono::seconds(3));
-}
-
 WheelController::WheelController(
     const rclcpp::NodeOptions& options)
-: ROSCommonNode(options) {
-  std::cout << "WheelController::WheelController(const std::string& namedddddddddd)" << std::endl;
-  rclcpp::QoS qos_profile(1); // depth = 1
-  qos_profile.reliability(RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT);
-  qos_profile.history(RMW_QOS_POLICY_HISTORY_KEEP_LAST);
-
-  sub_odom_ = this->create_subscription<nav_msgs::msg::Odometry>(
-      "/kachaka/odometry/odometry", qos_profile,
-      std::bind(&WheelController::callbackOdometry, this, std::placeholders::_1));
-  pub_cmd_vel_ = this->create_publisher<geometry_msgs::msg::Twist>(
-      "/kachaka/manual_control/cmd_vel", qos_profile);
-
-  // rclcpp::spin_some(this->get_node_base_interface());
-  // rclcpp::sleep_for(std::chrono::seconds(3));
-}
+: WheelController("sobit_light_wheel_controller", "", options){}
 
 WheelController::WheelController(
+    const std::string& node_name,
     const std::string& name_space,
     const rclcpp::NodeOptions& options)
-: ROSCommonNode(name_space, options) {
-  std::cout << "WheelController::WheelController(const std::string& namedddddddddd)" << std::endl;
+: Node(node_name, name_space, options) {
+  RCLCPP_INFO(this->get_logger(), "WheelController has been started.");
+
   rclcpp::QoS qos_profile(1); // depth = 1
   qos_profile.reliability(RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT);
   qos_profile.history(RMW_QOS_POLICY_HISTORY_KEEP_LAST);
@@ -70,9 +23,6 @@ WheelController::WheelController(
       std::bind(&WheelController::callbackOdometry, this, std::placeholders::_1));
   pub_cmd_vel_ = this->create_publisher<geometry_msgs::msg::Twist>(
       "/kachaka/manual_control/cmd_vel", qos_profile);
-
-  // rclcpp::spin_some(this->get_node_base_interface());
-  // rclcpp::sleep_for(std::chrono::seconds(3));
 }
 
 bool WheelController::controlWheelLinear(const double distance) {
@@ -86,6 +36,7 @@ bool WheelController::controlWheelLinear(const double distance) {
       RCLCPP_INFO(this->get_logger(), "Waiting for odometry data...");
       rclcpp::spin_some(this->get_node_base_interface());
     }
+
     nav_msgs::msg::Odometry init_odom = curt_odom_;
 
     double moving_distance = 0.0;
@@ -99,7 +50,7 @@ bool WheelController::controlWheelLinear(const double distance) {
     rclcpp::Rate loop_rate(20);
 
     while (moving_distance < target_distance) {
-      rclcpp::spin_some(this->get_node_base_interface());
+      // rclcpp::spin_some(this->get_node_base_interface());
 
       auto end_time = this->get_clock()->now();
       auto elapsed_time = (end_time - start_time).seconds();
@@ -198,7 +149,7 @@ bool WheelController::controlWheelRotateRad(const double angle_rad) {
     }
     return true;
   } catch (const std::exception& ex) {
-    RCLCPP_ERROR( this->get_logger(), "%s", ex.what() );
+    RCLCPP_ERROR(this->get_logger(), "%s", ex.what());
 
     return false;
   }
