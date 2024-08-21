@@ -14,20 +14,16 @@
 #include <geometry_msgs/msg/twist.hpp>
 #include <nav_msgs/msg/odometry.hpp>
 
-#include "sobit_light_library/sobit_light_library.hpp"
-
 
 namespace sobit_light {
-class WheelController : public ROSCommonNode {
+class WheelController : public rclcpp::Node {
  public:
-  WheelController();
   WheelController(
-      const std::string& name);
+      const rclcpp::NodeOptions& options = rclcpp::NodeOptions());
   WheelController(
-      const rclcpp::NodeOptions& options);
-  WheelController(
+      const std::string& node_name,
       const std::string& name_space,
-      const rclcpp::NodeOptions& options);
+      const rclcpp::NodeOptions& options = rclcpp::NodeOptions());
   ~WheelController() = default;
 
   bool controlWheelLinear(const double distance);
@@ -43,8 +39,6 @@ class WheelController : public ROSCommonNode {
 
   nav_msgs::msg::Odometry curt_odom_;
 
-  // void checkPublishersConnection(
-  //     const rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr& pub);
   void callbackOdometry(
       const nav_msgs::msg::Odometry::SharedPtr odom_msg);
   double geometryQuat2Yaw(
