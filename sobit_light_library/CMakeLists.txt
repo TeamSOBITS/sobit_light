@@ -1,20 +1,17 @@
 cmake_minimum_required(VERSION 3.8)
-# cmake_minimum_required(VERSION 3.5)
 project(sobit_light_library)
 
-# add_compile_options(-std=c++17)
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)
-find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
-find_package(pybind11 REQUIRED)
+# find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
+# find_package(pybind11 REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(rclcpp_components REQUIRED) # 追加
+# find_package(rclcpp_components REQUIRED) # 追加
 find_package(rclpy REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(tf2 REQUIRED)
@@ -25,6 +22,8 @@ find_package(geometry_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(sobits_msgs REQUIRED)
 
+# Find libraries
+include_directories(include)
 
 # Library
 add_library(${PROJECT_NAME} SHARED
@@ -37,20 +36,20 @@ add_library(${PROJECT_NAME} SHARED
 #   "sobit_light::WheelController"
 # )
 
-rclcpp_components_register_node(${PROJECT_NAME}
-  PLUGIN "sobit_light::JointController"
-  EXECUTABLE joint_controller
-)
+# rclcpp_components_register_node(${PROJECT_NAME}
+#   PLUGIN "sobit_light::JointController"
+#   EXECUTABLE joint_controller
+# )
 
-rclcpp_components_register_node(${PROJECT_NAME}
-  PLUGIN "sobit_light::WheelController"
-  EXECUTABLE wheel_controller
-)
+# rclcpp_components_register_node(${PROJECT_NAME}
+#   PLUGIN "sobit_light::WheelController"
+#   EXECUTABLE wheel_controller
+# )
+
+ament_export_targets(${PROJECT_NAME} HAS_LIBRARY_TARGET)
 
 ament_target_dependencies(${PROJECT_NAME}
-  pybind11
   rclcpp
-  rclcpp_components  # 追加
   std_msgs
   tf2
   tf2_ros
@@ -61,68 +60,12 @@ ament_target_dependencies(${PROJECT_NAME}
   sobits_msgs
 )
 
-target_include_directories(${PROJECT_NAME}
-  PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>
-)
-
-ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
-ament_export_dependencies(
-  pybind11
-  rclcpp
-  rclcpp_components  # 追加
-  std_msgs
-  tf2
-  tf2_ros
-  tf2_geometry_msgs
-  trajectory_msgs
-  geometry_msgs
-  nav_msgs
-  sobits_msgs
-)
-
-
-# # Pybind11 module
-add_library(sobit_light_module SHARED
-  src/sobit_light_library.cpp
-  src/sobit_light_joint_controller.cpp
-  src/sobit_light_wheel_controller.cpp
-)
-
-set_target_properties(sobit_light_module PROPERTIES
-  PREFIX ""
-  # SUFFIX ".so"
-  INSTALL_RPATH_USE_LINK_PATH TRUE
-)
-
-ament_target_dependencies(sobit_light_module
-  pybind11
-  rclcpp
-  rclcpp_components  # 追加
-  std_msgs
-  tf2
-  tf2_ros
-  tf2_geometry_msgs
-  trajectory_msgs
-  geometry_msgs
-  nav_msgs
-  sobits_msgs
-)
-
-target_include_directories(sobit_light_module
-  PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>
-)
 
 # Executables
 add_executable(test_control_wheel example/test_control_wheel.cpp)
 target_link_libraries(test_control_wheel ${PROJECT_NAME})
 ament_target_dependencies(test_control_wheel
-  pybind11
   rclcpp
-  rclcpp_components  # 追加
   std_msgs
   tf2
   tf2_ros
@@ -142,33 +85,21 @@ install(DIRECTORY
   DESTINATION share/${PROJECT_NAME}
 )
 
-
 install(
-  DIRECTORY include/
+  DIRECTORY include/${PROJECT_NAME}
   DESTINATION include
 )
 
-install(TARGETS
-  ${PROJECT_NAME}
-  EXPORT export_${PROJECT_NAME}
-  ARCHIVE DESTINATION lib
+install(TARGETS ${PROJECT_NAME}
+  EXPORT ${PROJECT_NAME}
   LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
   RUNTIME DESTINATION bin
   INCLUDES DESTINATION include
 )
 
 install(TARGETS
-  sobit_light_module
-  DESTINATION lib/${PROJECT_NAME}
-)
-
-install(TARGETS
   test_control_wheel
-  DESTINATION lib/${PROJECT_NAME}
-)
-
-install(PROGRAMS
-  example/test_control_wheel.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
