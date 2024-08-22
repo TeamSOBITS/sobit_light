@@ -4,7 +4,7 @@
 #include <cmath>
 
 #include <rclcpp/rclcpp.hpp>
-#include "rclcpp_components/register_node_macro.hpp"
+// #include <rclcpp_components/register_node_macro.hpp>
 
 #include <tf2_ros/transform_broadcaster.h>
 #include <tf2/LinearMath/Quaternion.h>
@@ -19,12 +19,8 @@ namespace sobit_light {
 class WheelController : public rclcpp::Node {
  public:
   WheelController(
-      const rclcpp::NodeOptions& options = rclcpp::NodeOptions());
-  WheelController(
-      const std::string& node_name,
-      const std::string& name_space,
-      const rclcpp::NodeOptions& options = rclcpp::NodeOptions());
-  ~WheelController() = default;
+      const std::string& node_name = "sobit_light_wheel_controller");
+  ~WheelController();
 
   bool controlWheelLinear(const double distance);
   bool controlWheelRotateRad(const double angle_rad);

@@ -5,7 +5,7 @@
 #include <string>
 
 #include <rclcpp/rclcpp.hpp>
-#include <rclcpp_components/register_node_macro.hpp>
+// #include <rclcpp_components/register_node_macro.hpp>
 
 #include <tf2/exceptions.h>
 #include <tf2_ros/transform_listener.h>
@@ -44,11 +44,8 @@ typedef struct {
 class JointController : public rclcpp::Node {
  public:
   JointController(
-      const rclcpp::NodeOptions& options=rclcpp::NodeOptions());
-  JointController(
-      const std::string& name_space,
-      const rclcpp::NodeOptions& options=rclcpp::NodeOptions());
-  ~JointController() = default;
+      const std::string& node_name = "sobit_light_joint_controller");
+  ~JointController();
 
   bool moveToPose(
       const std::string &pose_name,
