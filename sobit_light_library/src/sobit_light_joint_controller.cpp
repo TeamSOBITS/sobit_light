@@ -5,8 +5,8 @@
 namespace sobit_light {
 
 JointController::JointController(
-    const rclcpp::NodeOptions& options)
-: Node("sobit_light_joint_controller", options) {
+    const std::string& node_name)
+: Node(node_name) {
   rclcpp::QoS qos_profile(1); // depth = 1
     qos_profile.reliability(RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT);
     qos_profile.history(RMW_QOS_POLICY_HISTORY_KEEP_LAST);
@@ -34,37 +34,10 @@ JointController::JointController(
   loadPose();
 }
 
-JointController::JointController(
-    const std::string& name_space,
-    const rclcpp::NodeOptions& options)
-: Node("sobit_light_wheel_controller", name_space, options) {
-  rclcpp::QoS qos_profile(1); // depth = 1
-    qos_profile.reliability(RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT);
-    qos_profile.history(RMW_QOS_POLICY_HISTORY_KEEP_LAST);
-
-  pub_arm_control_  = this->create_publisher<trajectory_msgs::msg::JointTrajectory>(
-      "arm_trajectory_controller/command", qos_profile);
-  pub_head_control_ = this->create_publisher<trajectory_msgs::msg::JointTrajectory>(
-      "head_trajectory_controller/command", qos_profile);
-
-  sub_arm_curr_ = this->create_subscription<sobits_msgs::msg::CurrentStateArray>(
-      "current_state_array", qos_profile,
-      [this](const sobits_msgs::msg::CurrentStateArray::SharedPtr msg) -> void {
-        callbackArmCurr(std::move(msg));
-      });
-
-  tf_buffer_ =
-    std::make_unique<tf2_ros::Buffer>(this->get_clock());
-  tf_listener_ =
-    std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
-
-  declarePoseParams("initial_pose");
-  declarePoseParams("detecting_pose");
-  declarePoseParams("following_pose");
-
-  loadPose();
+JointController::~JointController() {
+  RCLCPP_INFO(this->get_logger(), "JointController has been terminated.");
+  sub_arm_curr_.reset();
 }
-
 
 // TODO: Load poses from yaml file
 void JointController::loadPose() {
@@ -469,4 +442,4 @@ bool JointController::placeDecision(const int min_curr, const int max_curr) {
 
 }  // namespace sobit_light
 
-RCLCPP_COMPONENTS_REGISTER_NODE(sobit_light::JointController)
+// RCLCPP_COMPONENTS_REGISTER_NODE(sobit_light::JointController)

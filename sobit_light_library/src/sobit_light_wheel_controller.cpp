@@ -4,14 +4,8 @@
 namespace sobit_light {
 
 WheelController::WheelController(
-    const rclcpp::NodeOptions& options)
-: WheelController("sobit_light_wheel_controller", "", options){}
-
-WheelController::WheelController(
-    const std::string& node_name,
-    const std::string& name_space,
-    const rclcpp::NodeOptions& options)
-: Node(node_name, name_space, options) {
+    const std::string& node_name)
+: Node(node_name) {
   RCLCPP_INFO(this->get_logger(), "WheelController has been started.");
 
   rclcpp::QoS qos_profile(1); // depth = 1
@@ -25,6 +19,11 @@ WheelController::WheelController(
       "/kachaka/manual_control/cmd_vel", qos_profile);
 }
 
+WheelController::~WheelController() {
+  RCLCPP_INFO(this->get_logger(), "WheelController has been terminated.");
+  sub_odom_.reset();
+}
+
 bool WheelController::controlWheelLinear(const double distance) {
   try {
     auto start_time = this->get_clock()->now();
@@ -33,6 +32,10 @@ bool WheelController::controlWheelLinear(const double distance) {
     while (
         curt_odom_.pose.pose.position.x == 0 &&
         curt_odom_.pose.pose.position.y == 0) {
+      if (!rclcpp::ok()){
+        WheelController::~WheelController();
+      }
+
       RCLCPP_INFO(this->get_logger(), "Waiting for odometry data...");
       rclcpp::spin_some(this->get_node_base_interface());
     }
@@ -50,7 +53,7 @@ bool WheelController::controlWheelLinear(const double distance) {
     rclcpp::Rate loop_rate(20);
 
     while (moving_distance < target_distance) {
-      // rclcpp::spin_some(this->get_node_base_interface());
+      rclcpp::spin_some(this->get_node_base_interface());
 
       auto end_time = this->get_clock()->now();
       auto elapsed_time = (end_time - start_time).seconds();
@@ -161,4 +164,4 @@ bool WheelController::controlWheelRotateDeg(const double angle_deg) {
 
 }  // namespace sobit_light
 
-RCLCPP_COMPONENTS_REGISTER_NODE(sobit_light::WheelController)
+// RCLCPP_COMPONENTS_REGISTER_NODE(sobit_light::WheelController)
