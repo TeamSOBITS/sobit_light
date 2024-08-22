@@ -8,14 +8,6 @@ int main(int argc, char *argv[]) {
   // ノードの作成
   auto node = std::make_shared<sobit_light::WheelController>();
 
-  // rclcpp::spin(node);
-
-  // std::vector<rclcpp::Parameter> params = { rclcpp::Parameter("use_sim_time", false) };
-  // rclcpp::NodeOptions node_options;
-  // node_options.parameter_overrides(params);
-  // auto node = std::make_shared<sobit_light::WheelController>(node_options);
-
-
   // 車輪制御インスタンスの作成
   // `WheelController`クラスが提供するメソッドを利用します
 
@@ -31,7 +23,10 @@ int main(int argc, char *argv[]) {
   // 直線移動 (linear motion)
   node->controlWheelLinear(-0.5);
 
-  // ROS2の終了処理
+  // ノードの終了処理 (Node termination)
+  node.reset();
+
+  // ROS2の終了処理 (ROS2 termination)
   rclcpp::shutdown();
 
   return 0;
