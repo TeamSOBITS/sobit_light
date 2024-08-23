@@ -65,15 +65,21 @@ class JointController(Node):
         qos_profile=qos_policy,
     )
 
-    self.pub_arm_control_ = self.create_publisher(
-        JointTrajectory,
-        '/arm_trajectory_controller/command',
-        qos_profile=qos_policy,
-    )
+    # self.pub_arm_control_ = self.create_publisher(
+    #     JointTrajectory,
+    #     '/arm_trajectory_controller/command',
+    #     qos_profile=qos_policy,
+    # )
 
-    self.pub_head_control_ = self.create_publisher(
+    # self.pub_head_control_ = self.create_publisher(
+    #     JointTrajectory,
+    #     '/head_trajectory_controller/command',
+    #     qos_profile=qos_policy,
+    # )
+
+    self.pub_joints_control_ = self.create_publisher(
         JointTrajectory,
-        '/head_trajectory_controller/command',
+        '/trajectory_controller/command',
         qos_profile=qos_policy,
     )
 
@@ -102,8 +108,9 @@ class JointController(Node):
   def __del__(self):
     self.get_logger().info('Destroying the node...')
 
-    self.pub_arm_control_.destroy()
-    self.pub_head_control_.destroy()
+    # self.pub_arm_control_.destroy()
+    # self.pub_head_control_.destroy()
+    self.pub_joints_control_.destroy()
     self.sub_arm_curr_.destroy()
 
   def setJointTrajectoryPoint(self,
@@ -157,31 +164,50 @@ class JointController(Node):
       hand_joint_val,
       head_joint_vals,
       duration=1.0, wait=True):
-    arm_joint_trajectory = JointTrajectory()
-    head_joint_trajectory = JointTrajectory()
+    # arm_joint_trajectory = JointTrajectory()
+    # head_joint_trajectory = JointTrajectory()
+    all_joint_trajectory = JointTrajectory()
 
-    # Arm joints
-    self.setJointTrajectoryPoint(arm_joint_trajectory, kJointNames[Joints.kArmShoulderRollJoint] , arm_joint_vals[0], duration)
-    self.addJointTrajectoryPoint(arm_joint_trajectory, kJointNames[Joints.kArmShoulderPitchJoint], arm_joint_vals[1], duration)
-    self.addJointTrajectoryPoint(arm_joint_trajectory, kJointNames[Joints.kArmElbowPitchJoint]   , arm_joint_vals[2], duration)
-    self.addJointTrajectoryPoint(arm_joint_trajectory, kJointNames[Joints.kArmForearmRollJoint]  , arm_joint_vals[3], duration)
-    self.addJointTrajectoryPoint(arm_joint_trajectory, kJointNames[Joints.kArmWristPitchJoint]   , arm_joint_vals[4], duration)
-    self.addJointTrajectoryPoint(arm_joint_trajectory, kJointNames[Joints.kArmWristRollJoint]    , arm_joint_vals[5], duration)
+    # # Arm joints
+    # self.setJointTrajectoryPoint(arm_joint_trajectory, kJointNames[Joints.kArmShoulderRollJoint] , arm_joint_vals[0], duration)
+    # self.addJointTrajectoryPoint(arm_joint_trajectory, kJointNames[Joints.kArmShoulderPitchJoint], arm_joint_vals[1], duration)
+    # self.addJointTrajectoryPoint(arm_joint_trajectory, kJointNames[Joints.kArmElbowPitchJoint]   , arm_joint_vals[2], duration)
+    # self.addJointTrajectoryPoint(arm_joint_trajectory, kJointNames[Joints.kArmForearmRollJoint]  , arm_joint_vals[3], duration)
+    # self.addJointTrajectoryPoint(arm_joint_trajectory, kJointNames[Joints.kArmWristPitchJoint]   , arm_joint_vals[4], duration)
+    # self.addJointTrajectoryPoint(arm_joint_trajectory, kJointNames[Joints.kArmWristRollJoint]    , arm_joint_vals[5], duration)
 
-    # Hand joint
-    self.addJointTrajectoryPoint(arm_joint_trajectory, kJointNames[Joints.kHandJoint], hand_joint_val, duration)
+    # # Hand joint
+    # self.addJointTrajectoryPoint(arm_joint_trajectory, kJointNames[Joints.kHandJoint], hand_joint_val, duration)
 
-    # Head joints
-    self.addJointTrajectoryPoint(head_joint_trajectory, kJointNames[Joints.kHeadYawJoint]  , head_joint_vals[0], duration)
-    self.addJointTrajectoryPoint(head_joint_trajectory, kJointNames[Joints.kHeadPitchJoint], head_joint_vals[1], duration)
+    # # Head joints
+    # self.setJointTrajectoryPoint(head_joint_trajectory, kJointNames[Joints.kHeadYawJoint]  , head_joint_vals[0], duration)
+    # self.addJointTrajectoryPoint(head_joint_trajectory, kJointNames[Joints.kHeadPitchJoint], head_joint_vals[1], duration)
+
+    # # Check publishers connection
+    # self.checkPublishersConnection(self.pub_arm_control_)
+    # self.checkPublishersConnection(self.pub_head_control_)
+
+
+    # All Joints:
+    self.setJointTrajectoryPoint(all_joint_trajectory, kJointNames[Joints.kArmShoulderRollJoint] , arm_joint_vals[0], duration)
+    self.addJointTrajectoryPoint(all_joint_trajectory, kJointNames[Joints.kArmShoulderPitchJoint], arm_joint_vals[1], duration)
+    self.addJointTrajectoryPoint(all_joint_trajectory, kJointNames[Joints.kArmElbowPitchJoint]   , arm_joint_vals[2], duration)
+    self.addJointTrajectoryPoint(all_joint_trajectory, kJointNames[Joints.kArmForearmRollJoint]  , arm_joint_vals[3], duration)
+    self.addJointTrajectoryPoint(all_joint_trajectory, kJointNames[Joints.kArmWristPitchJoint]   , arm_joint_vals[4], duration)
+    self.addJointTrajectoryPoint(all_joint_trajectory, kJointNames[Joints.kArmWristRollJoint]    , arm_joint_vals[5], duration)
+    self.addJointTrajectoryPoint(all_joint_trajectory, kJointNames[Joints.kHandJoint], hand_joint_val, duration)
+    self.addJointTrajectoryPoint(all_joint_trajectory, kJointNames[Joints.kHeadYawJoint]  , head_joint_vals[0], duration)
+    self.addJointTrajectoryPoint(all_joint_trajectory, kJointNames[Joints.kHeadPitchJoint], head_joint_vals[1], duration)
 
     # Check publishers connection
-    self.checkPublishersConnection(self.pub_arm_control_)
-    self.checkPublishersConnection(self.pub_head_control_)
+    # self.checkPublishersConnection(self.pub_arm_control_)
+    # self.checkPublishersConnection(self.pub_head_control_)
+    self.checkPublishersConnection(self.pub_joints_control_)
 
     # Publish the joint trajectories
-    self.pub_arm_control_.publish(arm_joint_trajectory)
-    self.pub_head_control_.publish(head_joint_trajectory)
+    # self.pub_arm_control_.publish(arm_joint_trajectory)
+    # self.pub_head_control_.publish(head_joint_trajectory)
+    self.pub_joints_control_.publish(all_joint_trajectory)
 
   def moveJointRad(self,
       joint_num,
@@ -193,12 +219,15 @@ class JointController(Node):
     self.setJointTrajectoryPoint(arm_joint_trajectory, kJointNames[joint_num], rad, duration)
     
     # Check publishers connection
-    if (joint_num < Joints.kHandJoint):
-      self.checkPublishersConnection(self.pub_arm_control_)
-      self.pub_arm_control_.publish(arm_joint_trajectory)
-    else:
-      self.checkPublishersConnection(self.pub_head_control_)
-      self.pub_head_control_.publish(arm_joint_trajectory)
+    # if (joint_num < Joints.kHandJoint):
+    #   self.checkPublishersConnection(self.pub_arm_control_)
+    #   self.pub_arm_control_.publish(arm_joint_trajectory)
+    # else:
+    #   self.checkPublishersConnection(self.pub_head_control_)
+    #   self.pub_head_control_.publish(arm_joint_trajectory)
+    
+    self.checkPublishersConnection(self.pub_joints_control_)
+    self.pub_joints_control_.publish(arm_joint_trajectory)
 
 
   def moveArmRad(self,
@@ -219,10 +248,13 @@ class JointController(Node):
     self.addJointTrajectoryPoint(arm_joint_trajectory, kJointNames[Joints.kHandJoint], hand_joint_val, duration)
     
     # Check publishers connection
-    self.checkPublishersConnection(self.pub_arm_control_)
+    # self.checkPublishersConnection(self.pub_arm_control_)
+    self.checkPublishersConnection(self.pub_joints_control_)
+
 
     # Publish the joint trajectories
-    self.pub_arm_control_.publish(arm_joint_trajectory)
+    # self.pub_arm_control_.publish(arm_joint_trajectory)
+    self.pub_joints_control_.publish(arm_joint_trajectory)
 
 
   def moveHeadRad(self,
@@ -235,10 +267,12 @@ class JointController(Node):
     self.addJointTrajectoryPoint(head_joint_trajectory, kJointNames[Joints.kHeadPitchJoint], head_joint_vals[1], duration)
 
     # Check publishers connection
-    self.checkPublishersConnection(self.pub_head_control_)
+    # self.checkPublishersConnection(self.pub_head_control_)
+    self.checkPublishersConnection(self.pub_joints_control_)
 
     # Publish the joint trajectories
-    self.pub_head_control_.publish(head_joint_trajectory)
+    # self.pub_head_control_.publish(head_joint_trajectory)
+    self.pub_joints_control_.publish(head_joint_trajectory)
 
 
   def moveHandToTargetCoord(self,
