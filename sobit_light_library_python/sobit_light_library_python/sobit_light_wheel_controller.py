@@ -115,7 +115,7 @@ class WheelController(Node):
       self.get_logger().info('[Wheel Control: Linear] Moved distance: %f, Target distance: %f' % (moved_distance, target_distance))
       rclpy.spin_once(self)
 
-  def controlWheelRotateRag(self, angle_rad):
+  def controlWheelRotateRad(self, angle_rad):
     while not(self.is_running_):
       if not rclpy.ok():
         self.sub_odom_.destroy()
@@ -189,7 +189,7 @@ class WheelController(Node):
     self.pub_cmd_vel_.publish(output_vel)
 
   def controlWheelRotateDeg(self, angle_deg):
-    self.controlWheelRotateRag(radians(angle_deg))
+    self.controlWheelRotateRad(radians(angle_deg))
 
 
 def main(args=None):
@@ -198,8 +198,8 @@ def main(args=None):
   node = WheelController()
 
   node.controlWheelLinear(distance=0.5)
-  # node.controlWheelRotateRag(angle_rad=radians(90))
-  node.controlWheelRotateRag(angle_rad=1.57)
+  # node.controlWheelRotateRad(angle_rad=radians(90))
+  node.controlWheelRotateRad(angle_rad=1.57)
   node.controlWheelRotateDeg(angle_deg=-90)
   node.controlWheelLinear(distance=-0.5)
 
