@@ -76,7 +76,7 @@
       <!-- <child link="${prefix_hand}_${prefix_finger}_l_link"/> -->
       <child link="${prefix_hand}_link"/>
       <origin xyz="0.0 0.04 0.0" rpy="0 0 0"/>
-      <axis xyz="0 1 0"/>
+      <axis xyz="0 -1 0"/>
       <limit velocity="4.8" effort="1" lower="${-0.055+0.02675}" upper="0.0" />
     </joint>
 
@@ -114,10 +114,10 @@
       <!-- <child link="${prefix_hand}_${prefix_finger}_r_link"/> -->
       <child link="${prefix_hand}_sub_link"/>
       <origin xyz="0.0 -0.04 0.0" rpy="0 0 0"/>
-      <axis xyz="0 -1 0"/>
+      <axis xyz="0 1 0"/>
       <limit velocity="4.8" effort="1" lower="${-0.055+0.02675}" upper="0.0" />
       <!-- <mimic joint="${prefix_hand}_${prefix_finger}_l_joint" multiplier="1"/> -->
-      <mimic joint="${prefix_hand}_joint" multiplier="1"/>
+      <mimic joint="${prefix_hand}_joint" multiplier="-1"/>
     </joint>
 
     <!--  Act 8: Hand Finger (right) -->
