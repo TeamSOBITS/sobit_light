@@ -76,7 +76,7 @@
       <child link="${prefix}_shoulder_roll_link"/>
       <origin xyz="0.0 0.0 0.0465" rpy="0 ${M_PI/2} 0"/>
       <axis xyz="0 0 1"/>
-      <limit velocity="4.8" effort="1" lower="${-M_PI}" upper="${M_PI}" />
+      <limit velocity="4.8" effort="25" lower="${-M_PI}" upper="${M_PI}" />
     </joint>
 
     <!--  Act 1: Shoulder Roll -->
@@ -111,7 +111,7 @@
       <child link="${prefix}_shoulder_pitch_link"/>
       <origin xyz="0.0 0.0 0.05095" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
-      <limit velocity="4.8" effort="1" lower="${-M_PI/2}" upper="${M_PI/2}" />
+      <limit velocity="4.8" effort="25" lower="${-M_PI/2}" upper="${M_PI/2}" />
     </joint>
 
     <!--  Act 2: Shoulder Pitch (right) -->
@@ -146,7 +146,7 @@
       <child link="${prefix}_shoulder_pitch_sub_link"/>
       <origin xyz="0.0 0.0 0.05095" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
-      <limit velocity="4.8" effort="1" lower="${-M_PI/2}" upper="${M_PI/2}" />
+      <limit velocity="4.8" effort="25" lower="${-M_PI/2}" upper="${M_PI/2}" />
       <mimic joint="${prefix}_shoulder_pitch_joint" multiplier="-1" offset="0"/>
     </joint>
 
@@ -182,7 +182,7 @@
       <child link="${prefix}_elbow_pitch_link"/>
       <origin xyz="0.022 -0.0 0.128" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
-      <limit velocity="4.8" effort="1" lower="${-M_PI/2}" upper="${M_PI/2}" />
+      <limit velocity="4.8" effort="25" lower="${-M_PI/2}" upper="${M_PI/2}" />
     </joint>
 
     <!--  Act 4: Elbow Pitch -->
@@ -217,7 +217,7 @@
       <child link="${prefix}_forearm_roll_link"/>
       <origin xyz="0.0835 0.0 0.0" rpy="0 0 0"/>
       <axis xyz="1 0 0"/>
-      <limit velocity="4.8" effort="1" lower="${-M_PI}" upper="${M_PI}" />
+      <limit velocity="4.8" effort="25" lower="${-M_PI}" upper="${M_PI}" />
     </joint>
 
     <!--  Act 5: Forearm Roll -->
@@ -252,7 +252,7 @@
       <child link="${prefix}_wrist_pitch_link"/>
       <origin xyz="0.0405 0.0 0.0" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
-      <limit velocity="4.8" effort="1" lower="${-M_PI/2}" upper="${M_PI/2}" />
+      <limit velocity="4.8" effort="25" lower="${-M_PI/2}" upper="${M_PI/2}" />
     </joint>
 
     <!--  Act 6: Wrist Pitch -->
@@ -287,7 +287,7 @@
       <child link="${prefix}_wrist_roll_link"/>
       <origin xyz="0.064 0 0.0" rpy="0 0 0"/>
       <axis xyz="1 0 0"/>
-      <limit velocity="4.8" effort="1" lower="${-M_PI}" upper="${M_PI}" />
+      <limit velocity="4.8" effort="25" lower="${-M_PI}" upper="${M_PI}" />
     </joint>
 
     <!--  Act 7: Wrist Roll -->
