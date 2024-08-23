@@ -350,8 +350,8 @@ bool JointController::moveHandToTargetTF(
   bool is_reached = false;
 
   try {
-    tf_buffer_->canTransform("arm_1_joint", target_name, this->get_clock()->now(), rclcpp::Duration(0, RCL_S_TO_NS(0.5)));
-    transformStamped = tf_buffer_->lookupTransform("arm_1_joint", target_name, this->get_clock()->now());
+    tf_buffer_->canTransform("arm_shoulder_roll_joint", target_name, this->get_clock()->now(), rclcpp::Duration(0, RCL_S_TO_NS(0.5)));
+    transformStamped = tf_buffer_->lookupTransform("arm_shoulder_roll_joint", target_name, this->get_clock()->now());
   } catch (const tf2::TransformException& ex) {
     RCLCPP_ERROR(this->get_logger(), "[SOBIT LIGHT] %s", ex.what());
     return false;
@@ -399,8 +399,8 @@ bool JointController::moveHandToPlaceTF(
   bool is_reached = false;
 
   try {
-    tf_buffer_->canTransform("arm_1_joint", target_name, this->get_clock()->now(), rclcpp::Duration(2, 0));
-    transform_base_to_target = tf_buffer_->lookupTransform("arm_1_joint", target_name, this->get_clock()->now());
+    tf_buffer_->canTransform("arm_shoulder_roll_joint", target_name, this->get_clock()->now(), rclcpp::Duration(2, 0));
+    transform_base_to_target = tf_buffer_->lookupTransform("arm_shoulder_roll_joint", target_name, this->get_clock()->now());
   } catch (const tf2::TransformException& ex) {
     RCLCPP_ERROR(this->get_logger(), "[SOBIT LIGHT] %s", ex.what());
     return false;
