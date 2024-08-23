@@ -19,6 +19,7 @@
   
   <xacro:include filename="$(find sobit_light_description)/urdf/sensor/camera_front.urdf.xacro" />
   <xacro:include filename="$(find sobit_light_description)/urdf/sensor/camera_back.urdf.xacro" />
+  <xacro:include filename="$(find sobit_light_description)/urdf/sensor/camera_hand.urdf.xacro" />
   <xacro:include filename="$(find sobit_light_description)/urdf/sensor/camera_head.urdf.xacro" />
 
   <xacro:include filename="$(find sobit_light_description)/urdf/sensor/lidar.urdf.xacro" />
@@ -45,19 +46,17 @@
   <xacro:lidar   prefix="lidar"     parent="base_link" />
   <xacro:tof     prefix="tof"       parent="base_link" />
   <xacro:imu     prefix="imu"       parent="base_link" />
-  <!-- <xacro:mic     prefix="mic"       parent="head_tilt_link" /> -->
+  <!-- <xacro:mic     prefix="mic"       parent="head_pitch_link" /> -->
   <xacro:speaker prefix="speaker"   parent="back_base_link" />
-  <xacro:camera_head  prefix="head_camera"  parent="head_tilt_link" />
+  <xacro:camera_hand  prefix="hand_camera"  parent="arm_wrist_roll_link" />
+  <xacro:camera_head  prefix="head_camera"  parent="head_pitch_link" />
   <xacro:camera_front prefix="camera_front" parent="base_link" />
   <xacro:camera_back  prefix="camera_back"  parent="base_link" />
 
   <!-- Add Dynamixel: plugins -->
-  <xacro:dxl_control name="dxl_control" />
-  <!-- <xacro:dxl_control name="dxl_control_arm" /> -->
-  <!-- <xacro:dxl_control params="dxl_control_hand" /> -->
-  <!-- <xacro:dxl_control params="dxl_control_head" /> -->
+  <!-- <xacro:dxl_control name="dxl_control" /> -->
 
   <!-- Add Gazebo: plugins -->
-  <!-- <xacro:gazebo_ros2_control prefix="base" /> -->
+  <xacro:gazebo_ros2_control prefix="base" />
 
 </robot>
