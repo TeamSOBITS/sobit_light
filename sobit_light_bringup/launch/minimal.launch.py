@@ -30,7 +30,7 @@ def generate_launch_description():
     rviz_config = os.path.join(get_package_share_directory(
         bringup_pkg), "rviz", "real.rviz")
     robot_description = os.path.join(get_package_share_directory(
-        description_pkg), "robots", robot_name + "_robot.urdf.xacro")
+        description_pkg), "robots", robot_name + "_real_robot.urdf.xacro")
     robot_description_config = xacro.process_file(robot_description)
 
     controller_config = os.path.join(
