@@ -4,21 +4,21 @@
   <xacro:include filename="$(find sobit_light_description)/urdf/arm/arm.transmission.xacro" />
   <xacro:macro name="arm" params="prefix parent">
 
-    <!-- Joint 0: Platform -->
+    <!-- Joint: Platform -->
     <joint name="${prefix}_platform_joint" type="fixed">
       <parent link="${parent}"/>
       <child link="${prefix}_platform_link"/>
       <origin xyz="0.122 0.0 0.0" rpy="0 0 0"/>
     </joint>
 
-    <!-- Link 0: Platform -->
+    <!-- Link: Platform -->
     <link name="${prefix}_platform_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
         <geometry>
           <mesh filename="file://$(find sobit_light_description)/meshes/arm/omx1_link_base.stl" scale="0.001 0.001 0.001"/>
         </geometry>
-        <material name="grey"/>
+        <material name="black"/>
       </visual>
 
       <collision>
@@ -37,21 +37,21 @@
       </inertial>
     </link>
 
-    <!-- Joint 1: Base -->
+    <!-- Joint: Base -->
     <joint name="${prefix}_base_joint" type="fixed">
       <parent link="${prefix}_platform_link"/>
       <child link="${prefix}_base_link"/>
       <origin xyz="${-0.0112-0.016/2} 0.0 0.008" rpy="0 0 0"/>
     </joint>
 
-    <!-- Link 1: Base -->
+    <!-- Link: Base -->
     <link name="${prefix}_base_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
         <geometry>
           <mesh filename="file://$(find sobit_light_description)/meshes/arm/omx1_link1.stl" scale="0.001 0.001 0.001"/>
         </geometry>
-        <material name="grey"/>
+        <material name="black"/>
       </visual>
 
       <collision>
@@ -70,23 +70,23 @@
       </inertial>
     </link>
 
-    <!-- Joint 2: Shoulder -->
-    <joint name="${prefix}_1_joint" type="revolute">
+    <!-- Act 1: Shoulder Roll -->
+    <joint name="${prefix}_shoulder_roll_joint" type="revolute">
       <parent link="${prefix}_base_link"/>
-      <child link="${prefix}_1_link"/>
+      <child link="${prefix}_shoulder_roll_link"/>
       <origin xyz="0.0 0.0 0.0465" rpy="0 ${M_PI/2} 0"/>
       <axis xyz="0 0 1"/>
       <limit velocity="4.8" effort="1" lower="${-M_PI}" upper="${M_PI}" />
     </joint>
 
-    <!--  Link 2: Shoulder -->
-    <link name="${prefix}_1_link">
+    <!--  Act 1: Shoulder Roll -->
+    <link name="${prefix}_shoulder_roll_link">
       <visual>
         <origin xyz="0 0 0.0" rpy="0 0 ${M_PI/2}"/>
         <geometry>
           <mesh filename="file://$(find sobit_light_description)/meshes/arm/omx1_link2.stl" scale="0.001 0.001 0.001"/>
         </geometry>
-        <material name="grey"/>
+        <material name="black"/>
       </visual>
 
       <collision>
@@ -105,23 +105,23 @@
       </inertial>
     </link>
 
-    <!--  Joint 3: Upper Arm -->
-    <joint name="${prefix}_2_joint" type="revolute">
-      <parent link="${prefix}_1_link"/>
-      <child link="${prefix}_2_link"/>
+    <!--  Act 2: Shoulder Pitch (right) -->
+    <joint name="${prefix}_shoulder_pitch_joint" type="revolute">
+      <parent link="${prefix}_shoulder_roll_link"/>
+      <child link="${prefix}_shoulder_pitch_link"/>
       <origin xyz="0.0 0.0 0.05095" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
       <limit velocity="4.8" effort="1" lower="${-M_PI/2}" upper="${M_PI/2}" />
     </joint>
 
-    <!--  Link 3: Upper Arm -->
-    <link name="${prefix}_2_link">
+    <!--  Act 2: Shoulder Pitch (right) -->
+    <link name="${prefix}_shoulder_pitch_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
         <geometry>
           <mesh filename="file://$(find sobit_light_description)/meshes/arm/omx1_link3.stl" scale="0.001 0.001 0.001"/>
         </geometry>
-        <material name="grey"/>
+        <material name="black"/>
       </visual>
 
       <collision>
@@ -140,32 +140,32 @@
       </inertial>
     </link>
 
-    <!--  Joint 3: Upper Arm (SUB) -->
-    <joint name="${prefix}_2_sub_joint" type="revolute">
-      <parent link="${prefix}_1_link"/>
-      <child link="${prefix}_2_sub_link"/>
+    <!--  Act 3: Shoulder Pitch (left) -->
+    <joint name="${prefix}_shoulder_pitch_sub_joint" type="revolute">
+      <parent link="${prefix}_shoulder_roll_link"/>
+      <child link="${prefix}_shoulder_pitch_sub_link"/>
       <origin xyz="0.0 0.0 0.05095" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
       <limit velocity="4.8" effort="1" lower="${-M_PI/2}" upper="${M_PI/2}" />
-      <mimic joint="${prefix}_2_joint" multiplier="-1" offset="0"/>
+      <mimic joint="${prefix}_shoulder_pitch_joint" multiplier="-1" offset="0"/>
     </joint>
 
-    <!--  Link 3: Upper Arm (SUB) -->
-    <link name="${prefix}_2_sub_link">
+    <!--  Act 3: Shoulder Pitch (left) -->
+    <link name="${prefix}_shoulder_pitch_sub_link">
       <!-- <visual>
         <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
         <geometry>
           <mesh filename="file://$(find sobit_light_description)/meshes/arm/omx1_link3.stl" scale="0.001 0.001 0.001"/>
         </geometry>
-        <material name="grey"/>
-      </visual>
+        <material name="black"/>
+      </visual> -->
 
-      <collision>
+      <!-- <collision>
         <origin xyz="${0.03575-0.0585/2} 0.0 ${-0.016+(0.14475+0.016)/2}" rpy="0 0 0"/>
         <geometry>
           <box size="0.0585 0.0440 ${0.14475+0.016}"/>
         </geometry>
-      </collision>
+      </collision> -->
 
       <inertial>
         <origin xyz="${0.03575-0.0585/2} 0.0 ${-0.016+(0.14475+0.016)/2}" rpy="0 0 0"/>
@@ -173,26 +173,26 @@
         <inertia  ixx="${1/12*0.261*(0.0585**2+(0.14475+0.016)**2)}" ixy="0.0" ixz="0.0"
                   iyy="${1/12*0.261*(0.0440**2+(0.14475+0.016)**2)}" iyz="0.0"
                   izz="${1/12*0.261*(0.0585**2+0.0440**2)}" />
-      </inertial> -->
+      </inertial>
     </link>
 
-    <!--  Joint 4: Lower Arm -->
-    <joint name="${prefix}_3_joint" type="revolute">
-      <parent link="${prefix}_2_link"/>
-      <child link="${prefix}_3_link"/>
+    <!--  Act 4: Elbow Pitch -->
+    <joint name="${prefix}_elbow_pitch_joint" type="revolute">
+      <parent link="${prefix}_shoulder_pitch_link"/>
+      <child link="${prefix}_elbow_pitch_link"/>
       <origin xyz="0.022 -0.0 0.128" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
       <limit velocity="4.8" effort="1" lower="${-M_PI/2}" upper="${M_PI/2}" />
     </joint>
 
-    <!--  Link 4: Lower Arm -->
-    <link name="${prefix}_3_link">
+    <!--  Act 4: Elbow Pitch -->
+    <link name="${prefix}_elbow_pitch_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
         <geometry>
           <mesh filename="file://$(find sobit_light_description)/meshes/arm/omx1_link4.stl" scale="0.001 0.001 0.001"/>
         </geometry>
-        <material name="grey"/>
+        <material name="black"/>
       </visual>
 
       <collision>
@@ -211,23 +211,23 @@
       </inertial>
     </link>
 
-    <!--  Joint 5: Forearm Upper -->
-    <joint name="${prefix}_4_joint" type="revolute">
-      <parent link="${prefix}_3_link"/>
-      <child link="${prefix}_4_link"/>
+    <!--  Act 5: Forearm Roll -->
+    <joint name="${prefix}_forearm_roll_joint" type="revolute">
+      <parent link="${prefix}_elbow_pitch_link"/>
+      <child link="${prefix}_forearm_roll_link"/>
       <origin xyz="0.0835 0.0 0.0" rpy="0 0 0"/>
       <axis xyz="1 0 0"/>
       <limit velocity="4.8" effort="1" lower="${-M_PI}" upper="${M_PI}" />
     </joint>
 
-    <!--  Link 5: Forearm Upper -->
-    <link name="${prefix}_4_link">
+    <!--  Act 5: Forearm Roll -->
+    <link name="${prefix}_forearm_roll_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
         <geometry>
           <mesh filename="file://$(find sobit_light_description)/meshes/arm/omx1_link5.stl" scale="0.001 0.001 0.001"/>
         </geometry>
-        <material name="grey"/>
+        <material name="black"/>
       </visual>
 
       <collision>
@@ -246,23 +246,23 @@
       </inertial>
     </link>
 
-    <!--  Joint 6: Forearm Lower -->
-    <joint name="${prefix}_5_joint" type="revolute">
-      <parent link="${prefix}_4_link"/>
-      <child link="${prefix}_5_link"/>
+    <!--  Act 6: Wrist Pitch -->
+    <joint name="${prefix}_wrist_pitch_joint" type="revolute">
+      <parent link="${prefix}_forearm_roll_link"/>
+      <child link="${prefix}_wrist_pitch_link"/>
       <origin xyz="0.0405 0.0 0.0" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
       <limit velocity="4.8" effort="1" lower="${-M_PI/2}" upper="${M_PI/2}" />
     </joint>
 
-    <!--  Link 6: Forearm Lower -->
-    <link name="${prefix}_5_link">
+    <!--  Act 6: Wrist Pitch -->
+    <link name="${prefix}_wrist_pitch_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
         <geometry>
           <mesh filename="file://$(find sobit_light_description)/meshes/arm/omx1_link6.stl" scale="0.001 0.001 0.001"/>
         </geometry>
-        <material name="grey"/>
+        <material name="black"/>
       </visual>
 
       <collision>
@@ -281,23 +281,23 @@
       </inertial>
     </link>
 
-    <!--  Joint 7: Wrist (Hand Base) -->
-    <joint name="${prefix}_6_joint" type="revolute">
-      <parent link="${prefix}_5_link"/>
-      <child link="${prefix}_6_link"/>
+    <!--  Act 7: Wrist Roll -->
+    <joint name="${prefix}_wrist_roll_joint" type="revolute">
+      <parent link="${prefix}_wrist_pitch_link"/>
+      <child link="${prefix}_wrist_roll_link"/>
       <origin xyz="0.064 0 0.0" rpy="0 0 0"/>
       <axis xyz="1 0 0"/>
       <limit velocity="4.8" effort="1" lower="${-M_PI}" upper="${M_PI}" />
     </joint>
 
-    <!--  Link 7: Wrist (Hand Base) -->
-    <link name="${prefix}_6_link">
+    <!--  Act 7: Wrist Roll -->
+    <link name="${prefix}_wrist_roll_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
         <geometry>
           <mesh filename="file://$(find sobit_light_description)/meshes/arm/omx1_link7_hand_base.stl" scale="0.001 0.001 0.001"/>
         </geometry>
-        <material name="grey"/>
+        <material name="black"/>
       </visual>
 
       <collision>
@@ -316,21 +316,21 @@
       </inertial>
     </link>
 
-    <!--  Joint 8: Hand -->
+    <!--  Joint: Hand Base -->
     <joint name="${prefix}_hand_joint" type="fixed">
-      <parent link="${prefix}_6_link"/>
+      <parent link="${prefix}_wrist_roll_link"/>
       <child link="${prefix}_hand_link"/>
       <origin xyz="0.05 0.0 0.0" rpy="0 0 0"/>
     </joint>
 
-    <!--  Link 8: Hand -->
+    <!--  Link: Hand Base -->
     <link name="${prefix}_hand_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
         <geometry>
           <mesh filename="file://$(find sobit_light_description)/meshes/arm/omx1_link8_hand.stl" scale="0.001 0.001 0.001"/>
         </geometry>
-        <material name="grey"/>
+        <material name="black"/>
       </visual>
 
       <collision>

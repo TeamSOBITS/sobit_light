@@ -2,8 +2,10 @@
 <robot name="head_transmission" xmlns:xacro="http://ros.org/wiki/xacro">
   <xacro:macro name="head_transmission" params="prefix">
 
-    <position_joint_transmission joint="${prefix}_pan_joint"  reduction="1" />
-    <position_joint_transmission joint="${prefix}_tilt_joint" reduction="1" />
+    <position_joint_transmission joint="${prefix}_yaw_joint"  reduction="1" />
+    <position_joint_transmission joint="${prefix}_pitch_joint" reduction="1" />
+    <!-- <position_joint_transmission joint="${prefix}_yaw_joint"  reduction="1" /> -->
+    <!-- <position_joint_transmission joint="${prefix}_pitch_joint" reduction="1" /> -->
 
   </xacro:macro>
 </robot>

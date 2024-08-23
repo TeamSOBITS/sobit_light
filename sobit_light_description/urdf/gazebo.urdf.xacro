@@ -104,7 +104,7 @@
       <hardware>
         <plugin>ign_ros2_control/IgnitionSystem</plugin>
       </hardware>
-      <joint name="arm_1_joint">
+      <joint name="arm_shoulder_roll_joint">
         <command_interface name="position">
           <param name="min">-3.141592654</param>
           <param name="max">3.141592654</param>
@@ -115,7 +115,7 @@
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
-      <joint name="arm_2_joint">
+      <joint name="arm_shoulder_pitch_joint">
         <command_interface name="position">
           <param name="min">-1.570796327</param>
           <param name="max">1.570796327</param>
@@ -126,7 +126,15 @@
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
-      <joint name="arm_3_joint">
+      <joint name="arm_shoulder_pitch_sub_joint">
+        <param name="mimic">arm_shoulder_pitch_joint</param>
+        <param name="multiplier">1</param>
+        <command_interface name="position"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+      <joint name="arm_elbow_pitch_joint">
         <command_interface name="position">
           <param name="min">-1.570796327</param>
           <param name="max">1.570796327</param>
@@ -137,7 +145,7 @@
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
-      <joint name="arm_4_joint">
+      <joint name="arm_forearm_roll_joint">
         <command_interface name="position">
           <param name="min">-3.141592654</param>
           <param name="max">3.141592654</param>
@@ -148,7 +156,7 @@
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
-      <joint name="arm_5_joint">
+      <joint name="arm_wrist_pitch_joint">
         <command_interface name="position">
           <param name="min">-1.570796327</param>
           <param name="max">1.570796327</param>
@@ -159,7 +167,7 @@
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
-      <joint name="arm_6_joint">
+      <joint name="arm_wrist_roll_joint">
         <command_interface name="position">
           <param name="min">-3.141592654</param>
           <param name="max">3.141592654</param>
@@ -178,7 +186,8 @@
       <hardware>
         <plugin>ign_ros2_control/IgnitionSystem</plugin>
       </hardware>
-      <joint name="hand_finger_l_joint">
+      <!-- <joint name="hand_finger_l_joint"> -->
+      <joint name="hand_joint">
         <command_interface name="position"/>
         <state_interface name="position">
           <param name="initial_value">0.0</param>
@@ -186,8 +195,10 @@
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
-      <joint name="hand_finger_r_joint">
-        <param name="mimic">hand_finger_l_joint</param>
+      <!-- <joint name="hand_finger_r_joint"> -->
+      <joint name="hand_sub_joint">
+        <!-- <param name="mimic">hand_finger_l_joint</param> -->
+        <param name="mimic">hand_joint</param>
         <param name="multiplier">1</param>
         <command_interface name="position"/>
         <state_interface name="position"/>
@@ -202,7 +213,7 @@
       <hardware>
         <plugin>ign_ros2_control/IgnitionSystem</plugin>
       </hardware>
-      <joint name="head_pan_joint">
+      <joint name="head_yaw_joint">
         <command_interface name="position">
           <param name="min">-3.141592654</param>
           <param name="max">3.141592654</param>
@@ -213,7 +224,7 @@
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
-      <joint name="head_tilt_joint">
+      <joint name="head_pitch_joint">
         <command_interface name="position">
           <param name="min">-3.141592654</param>
           <param name="max">3.141592654</param>

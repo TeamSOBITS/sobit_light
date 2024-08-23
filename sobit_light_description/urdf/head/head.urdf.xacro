@@ -38,19 +38,15 @@
     </link>
 
 
-    <!-- <joint name="${prefix}_camera_pan_joint" type="revolute"> -->
-    <joint name="${prefix}_pan_joint" type="revolute">
+    <joint name="${prefix}_yaw_joint" type="revolute">
       <parent link="${prefix}_base_link" />
-      <!-- <parent link="${prefix}_camera_base_link" /> -->
-      <child link="${prefix}_pan_link" />
-      <!-- <child link="${prefix}_camera_pan_link" /> -->
+      <child link="${prefix}_yaw_link" />
       <origin xyz="0.012 0.0 0.041" rpy="0.0 0.0 0.0" />
       <axis xyz="0 0 1" />
       <limit effort="30" lower="${-M_PI}" upper="${M_PI}" velocity="${M_PI/2.0}" />
     </joint>
 
-    <link name="${prefix}_pan_link">
-    <!-- <link name="${prefix}_camera_pan_link"> -->
+    <link name="${prefix}_yaw_link">
       <visual>
         <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 ${M_PI/2.0}" />
         <geometry>
@@ -76,19 +72,15 @@
     </link>
 
 
-    <joint name="${prefix}_tilt_joint" type="revolute">
-    <!-- <joint name="${prefix}_camera_tilt_joint" type="revolute"> -->
-      <parent link="${prefix}_pan_link" />
-      <!-- <parent link="${prefix}_camera_pan_link" /> -->
-      <child link="${prefix}_tilt_link" />
-      <!-- <child link="${prefix}_camera_tilt_link" /> -->
+    <joint name="${prefix}_pitch_joint" type="revolute">
+      <parent link="${prefix}_yaw_link" />
+      <child link="${prefix}_pitch_link" />
       <origin xyz="0.0 0.0 0.0405" rpy="0.0 0.0 0.0" />
       <axis xyz="0 -1 0" />
       <limit effort="30" lower="${-M_PI/2.0}" upper="${M_PI/2.0}" velocity="${M_PI/2.0}" />
     </joint>
 
-    <link name="${prefix}_tilt_link">
-    <!-- <link name="${prefix}_camera_tilt_link"> -->
+    <link name="${prefix}_pitch_link">
       <visual>
         <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 ${M_PI/2.0}" />
         <geometry>

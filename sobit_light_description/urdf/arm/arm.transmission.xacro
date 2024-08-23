@@ -3,13 +3,13 @@
 <robot name="arm_transmission" xmlns:xacro="http://ros.org/wiki/xacro">
   <xacro:macro name="arm_transmission" params="prefix">
 
-    <position_joint_transmission joint="${prefix}_1_joint" reduction="1" />
-    <position_joint_transmission joint="${prefix}_2_joint" reduction="1" />
-    <position_joint_transmission joint="${prefix}_2_sub_joint" reduction="1" />
-    <position_joint_transmission joint="${prefix}_3_joint" reduction="1" />
-    <position_joint_transmission joint="${prefix}_4_joint" reduction="1" />
-    <position_joint_transmission joint="${prefix}_5_joint" reduction="1" />
-    <position_joint_transmission joint="${prefix}_6_joint" reduction="1" />
+    <position_joint_transmission joint="${prefix}_shoulder_roll_joint" reduction="1" />
+    <position_joint_transmission joint="${prefix}_shoulder_pitch_joint" reduction="1" />
+    <position_joint_transmission joint="${prefix}_shoulder_pitch_sub_joint" reduction="1" />
+    <position_joint_transmission joint="${prefix}_elbow_pitch_joint" reduction="1" />
+    <position_joint_transmission joint="${prefix}_forearm_roll_joint" reduction="1" />
+    <position_joint_transmission joint="${prefix}_wrist_pitch_joint" reduction="1" />
+    <position_joint_transmission joint="${prefix}_wrist_roll_joint" reduction="1" />
 
   </xacro:macro>
 </robot>
