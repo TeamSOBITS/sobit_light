@@ -1,34 +1,7 @@
-sobit_light_pose_list:
+/sobit_light_joint_controller:
   ros__parameters:
-    initial_pose:
-      arm_shoulder_roll  : 0.0
-      arm_shoulder_pitch : 1.5708
-      arm_elbow_pitch    : 0.0
-      arm_forearm_roll   : 0.0
-      arm_wrist_pitch    : 0.0
-      arm_wrist_roll     : 0.0
-      hand               : 0.0
-      head_yaw           : 0.0
-      head_pitch         : 0.0
-
-    detecting_pose:
-      arm_shoulder_roll  : 0.0
-      arm_shoulder_pitch : 1.5708
-      arm_elbow_pitch    : 0.0
-      arm_forearm_roll   : 0.0
-      arm_wrist_pitch    : 0.0
-      arm_wrist_roll     : 0.0
-      hand               : 0.0
-      head_yaw           : 0.0
-      head_pitch         : 0.0
-
-    following_pose:
-      arm_shoulder_roll  : 0.0
-      arm_shoulder_pitch : 1.5708
-      arm_elbow_pitch    : 0.0
-      arm_forearm_roll   : 0.0
-      arm_wrist_pitch    : 0.0
-      arm_wrist_roll     : 0.0
-      hand               : 0.0
-      head_yaw           : 0.0
-      head_pitch         : 0.0
+    poses:
+      names:          ['initial_pose', 'detecting_pose', 'raise_hand']
+      initial_pose:   [0.0, -1.5708, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+      detecting_pose: [0.0, -1.5708, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.7854]
+      raise_hand:     [0.0, -1.5708, -1.5708, 0.0, 0.0, 0.0, 0.7854, 0.0, 0.0]
