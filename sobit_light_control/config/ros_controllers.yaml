@@ -1,6 +1,6 @@
 controller_manager:
   ros__parameters:
-    update_rate: 10  # Hz
+    update_rate: 100  # Hz
     use_sim_time: true
 
     arm_controller:
@@ -21,12 +21,13 @@ controller_manager:
 arm_controller:
   ros__parameters:
     joints:
-      - arm_1_joint
-      - arm_2_joint
-      - arm_3_joint
-      - arm_4_joint
-      - arm_5_joint
-      - arm_6_joint
+      - arm_shoulder_roll_joint
+      - arm_shoulder_pitch_joint
+      # - arm_shoulder_pitch_sub_joint
+      - arm_elbow_pitch_joint
+      - arm_forearm_roll_joint
+      - arm_wrist_pitch_joint
+      - arm_wrist_roll_joint
 
     command_interfaces:
       - position
@@ -50,8 +51,8 @@ arm_controller:
 head_controller:
   ros__parameters:
     joints:
-      - head_pan_joint
-      - head_tilt_joint
+      - head_yaw_joint
+      - head_pitch_joint
 
     command_interfaces:
       - position
@@ -63,21 +64,21 @@ head_controller:
     # state_publish_rate: 10
     # action_monitor_rate: 10
 
-    allow_partial_joints_goal: false
-    open_loop_control: true
-    constraints:
-      stopped_velocity_tolerance: 0.01
-      goal_time: 0.0
-      joint1:
-        trajectory: 0.05
-        goal: 0.03
+    # allow_partial_joints_goal: false
+    # open_loop_control: true
+    # constraints:
+    #   stopped_velocity_tolerance: 0.01
+    #   goal_time: 0.0
+    #   joint1:
+    #     trajectory: 0.05
+    #     goal: 0.03
 
 
 # https://control.ros.org/humble/doc/ros2_controllers/gripper_controllers/doc/userdoc.html
 gripper_controller:
   ros__parameters:
     joints:
-      - hand_finger_l_joint
+      - hand_joint
     interface_name: position
   # ros__parameters:
   #   action_monitor_rate: 10
