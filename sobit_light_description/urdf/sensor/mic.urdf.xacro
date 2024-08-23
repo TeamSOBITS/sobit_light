@@ -2,35 +2,34 @@
 <robot name="mic" xmlns:xacro="http://ros.org/wiki/xacro">
   <xacro:macro name="mic" params="prefix parent">
 
-    <joint name="${prefix}_base_joint" type="fixed">
+    <joint name="${prefix}_joint" type="fixed">
       <parent link="${parent}" />
-      <child link="${prefix}_base_link" />
-      <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+      <child link="${prefix}_link" />
+      <origin xyz="-0.003202 0.0 0.12025" rpy="0.0 0.0 0.0" />
     </joint>
 
-    <link name="${prefix}_base_link">
+    <link name="${prefix}_link">
       <visual>
-        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 ${M_PI/2.0}" />
+        <origin xyz="0.0 0.0 0.0" rpy="-${5.*M_PI/36.} 0.0 ${M_PI/2.0}" />
         <geometry>
-          <mesh filename="file://$(find sobit_light_description)/meshes/sensor/mic.stl"/>
+          <mesh filename="file://$(find sobit_light_description)/meshes/sensor/mic.stl" scale="0.001 0.001 0.001" />
         </geometry>
         <material name="black" />
       </visual>
 
       <collision>
-        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 ${M_PI/2.0}" />
+        <origin xyz="0.0 0.0 0.065" rpy="0.0 -${M_PI/2.+5.*M_PI/36.} 0.0"/>
         <geometry>
-          <mesh filename="file://$(find sobit_light_description)/meshes/sensor/mic.stl" />
+          <cylinder radius="0.0256" length="0.118"/>
         </geometry>
-        <material name="black" />
       </collision>
 
       <inertial>
-        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 ${M_PI/2.0}" />
-        <mass value="0.09507172" />
-        <inertia ixx="${1/12*0.09507172*(0.078**2 + 0.157**2)}" ixy="0.0" ixz="0.0"
-                 iyy="${1/12*0.09507172*(0.026**2 + 0.078**2)}" iyz="0.0"
-                 izz="${1/12*0.09507172*(0.026**2 + 0.157**2)}" />
+        <origin xyz="0.0 0.0 0.065" rpy="0.0 -${M_PI/2.+5.*M_PI/36.} 0.0"/>
+        <mass value="0.0935" />
+        <inertia  ixx="${1/12*0.0935*(3*0.0256**2+0.118**2)}" ixy="0.0" ixz="0.0"
+                  iyy="${1/12*0.0935*(3*0.0256**2+0.118**2)}" iyz="0.0"
+                  izz="${1/12*0.0935*(3*0.0256**2+0.118**2)}" />
       </inertial>
     </link>
 

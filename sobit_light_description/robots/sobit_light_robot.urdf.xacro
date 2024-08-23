@@ -46,7 +46,7 @@
   <xacro:lidar   prefix="lidar"     parent="base_link" />
   <xacro:tof     prefix="tof"       parent="base_link" />
   <xacro:imu     prefix="imu"       parent="base_link" />
-  <!-- <xacro:mic     prefix="mic"       parent="head_pitch_link" /> -->
+  <xacro:mic     prefix="mic"       parent="head_pitch_link" />
   <xacro:speaker prefix="speaker"   parent="back_base_link" />
   <xacro:camera_hand  prefix="hand_camera"  parent="arm_wrist_roll_link" />
   <xacro:camera_head  prefix="head_camera"  parent="head_pitch_link" />
