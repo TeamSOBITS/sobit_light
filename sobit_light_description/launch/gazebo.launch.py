@@ -18,18 +18,29 @@ def generate_launch_description():
     # Launch Arguments
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
 
-    ignition_ros2_control_demos_path = os.path.join(
+    description_package = os.path.join(
         get_package_share_directory('sobit_light_description'),)
 
-    xacro_file = os.path.join(ignition_ros2_control_demos_path,
+    xacro_file = os.path.join(description_package,
                               'robots',
                               'sobit_light_robot.urdf.xacro')
+
+    rviz_file = os.path.join(description_package,
+                            'rviz',
+                            'gazebo.rviz')
 
     doc = xacro.parse(open(xacro_file))
     xacro.process_doc(doc)
     params = {'robot_description': doc.toxml(), 'use_sim_time': use_sim_time}
 
-    print(params)
+    # print(params)
+
+    rviz_node = Node(
+        package='rviz2',
+        executable='rviz2',
+        output='screen',
+        arguments=['-d', rviz_file],
+    )
 
     node_robot_state_publisher = Node(
         package='robot_state_publisher',
@@ -147,6 +158,7 @@ def generate_launch_description():
         ),
         node_robot_state_publisher,
         ignition_spawn_entity,
+        rviz_node,
         # Launch Arguments
         DeclareLaunchArgument(
             'use_sim_time',
