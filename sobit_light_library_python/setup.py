@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'sobit_light_wheel_controller = sobit_light_library_python.sobit_light_wheel_controller:main'
+            'sobit_light_wheel_controller = sobit_light_library_python.sobit_light_wheel_controller:main',
+            'sobit_light_joint_controller = sobit_light_library_python.sobit_light_joint_controller:main'
         ],
     },
 )
