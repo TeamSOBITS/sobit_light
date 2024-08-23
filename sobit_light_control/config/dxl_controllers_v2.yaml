@@ -20,13 +20,14 @@ controller_manager:
 arm_controller:
   ros__parameters:
     joints:
-      - arm_1_joint
-      - arm_2_joint
-      - arm_3_joint
-      - arm_4_joint
-      - arm_5_joint
-      - arm_6_joint
-      - hand_finger_l_joint
+      - arm_shoulder_roll_joint
+      - arm_shoulder_pitch_joint
+      - arm_shoulder_pitch_sub_joint
+      - arm_elbow_pitch_joint
+      - arm_forearm_roll_joint
+      - arm_wrist_pitch_joint
+      - arm_wrist_roll_joint
+      - hand_joint
 
     command_interfaces:
       - position
@@ -51,8 +52,8 @@ arm_controller:
 head_controller:
   ros__parameters:
     joints:
-      - head_pan_joint
-      - head_tilt_joint
+      - head_yaw_joint
+      - head_pitch_joint
 
     command_interfaces:
       - position
