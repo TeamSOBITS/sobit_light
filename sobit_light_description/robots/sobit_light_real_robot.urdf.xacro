@@ -34,6 +34,7 @@
 
 
   <!-- <link name="base_footprint"/> -->
+  <link name="base_link"/>
 
   <!-- Connect the previous Links and Joints -->
   <!-- <xacro:base    prefix="base"      parent="base_footprint" /> -->
