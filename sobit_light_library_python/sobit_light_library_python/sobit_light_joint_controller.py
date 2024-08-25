@@ -65,7 +65,7 @@ class JointController(Node):
         namespace='',
         parameters=[
             ('poses.names', ['initial_pose', 'detecting_pose', 'raise_hand']),
-            ('poses.initial_pose', [0.0, -1.5708, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]),
+            ('poses.initial_pose', [0.0, -1.5708, -1.5708, 0.0, 1.5708, 0.0, 0.0, 0.0, 0.0]),
             ('poses.detecting_pose', [0.0, -1.5708, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.7854]),
             ('poses.raise_hand', [0.0, -1.5708, -1.5708, 0.0, 0.0, 0.0, 0.7854, 0.0, 0.0]),
         ]
