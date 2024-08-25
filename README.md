@@ -158,7 +158,7 @@ SOBITSが開発した[カチャカ](https://kachaka.life/home/)を用いたモ�
 
 SOBIT LIGHTの移動機構単体で動かすことができます．
 
-1. [minimal.launch](sobit_light_bringup/launch/minimal.launch)の設定を次にように書き換えます．
+1. TODO!: [minimal.launch](sobit_light_bringup/launch/minimal.launch.py)の設定を次にように書き換えます．
     ```xml
     <!-- Activate Mobile-Base (true), Arm (true), Head (true) -->
     <arg name="enable_mb"           default="true"/>
@@ -169,13 +169,13 @@ SOBIT LIGHTの移動機構単体で動かすことができます．
     <arg name="urg_lan"             default="false"/>
     ...
     ```
-2. [minimal.launch](sobit_light_bringup/launch/minimal.launch)というlaunchファイルを実行します．
+2. [minimal.launch](sobit_light_bringup/launch/minimal.launch.py)というlaunchファイルを実行します．
     ```sh
-    $ roslaunch sobit_light_bringup minimal.launch
+    $ ros2 launch sobit_light_bringup minimal.launch
     ```
 3. [任意] デモプログラムを実行してみましょう．
     ```sh
-    $ rosrun sobit_light_library test_control_wheel.py
+    $ ros2 run sobit_light_library_python sobit_light_wheel_controller.py
     ```
 
 <!-- > [!NOTE] -->
@@ -184,12 +184,12 @@ SOBIT LIGHTの移動機構単体で動かすことができます．
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
 
-### Rviz上の可視化
+### Rviz2上の可視化
 
-実機を動かす前段階として，Rviz上でSOBIT LIGHTを可視化し，ロボットの構成を表示することができます．
+実機を動かす前段階として，Rviz2上でSOBIT LIGHTを可視化し，ロボットの構成を表示することができます．
 
 ```sh
-$ roslaunch sobit_light_description display.launch
+$ ros2 launch sobit_light_description display.launch.py
 ```
 
 正常に動作した場合は，次のようにRvizが表示されます．
@@ -225,25 +225,25 @@ SOBIT LIGHTのパンチルト機構とマニピュレータを動かすための
 > [!NOTE]
 > 既存のポーズは[sobit_light_pose.yaml](sobit_light_library/config/sobit_light_pose.yaml)に確認できます．ポーズの作成方法については[ポーズの設定方法](#ポーズの設定方法)をご参照ください．
 
-2.  `moveAllJoint()` : すべてのジョイントを任意の角度に動かします．
+2.  `moveAllJointsRad()` : すべてのジョイントを任意の角度に動かします．
     ```cpp
-    bool sobit::SobitProJointController::moveAllJoint (
-        const double arm_shoulder_tilt_joint,       // 回転角度 [rad]
-        const double arm_elbow_upper_tilt_joint,    // 回転角度 [rad]
-        const double arm_elbow_lower_tilt_joint,    // 回転角度 [rad]
-        const double arm_elbow_lower_pan_joint,     // 回転角度 [rad]
-        const double arm_wrist_tilt_joint,          // 回転角度 [rad]
+    bool sobit::SobitProJointController::moveAllJointsRad (
+        const double arm_shoulder_pitch_joint,       // 回転角度 [rad]
+        const double arm_elbow_upper_pitch_joint,    // 回転角度 [rad]
+        const double arm_elbow_lower_pitch_joint,    // 回転角度 [rad]
+        const double arm_elbow_lower_yaw_joint,     // 回転角度 [rad]
+        const double arm_wrist_pitch_joint,          // 回転角度 [rad]
         const double hand_joint,                    // 回転角度 [rad]
-        const double head_pan_joint,                // 回転角度 [rad]
-        const double head_tilt_joint,               // 回転角度 [rad]
+        const double head_yaw_joint,                // 回転角度 [rad]
+        const double head_pitch_joint,               // 回転角度 [rad]
         const double sec = 5.0,                     // 回転時間 [s]
         bool is_sleep = true                        // 回転後に待機するかどうか
     );
     ```
 
-3.  `moveJoint()` : 指定されたジョイントを任意の角度に動かします．
+3.  `moveJointRad()` : 指定されたジョイントを任意の角度に動かします．
     ```cpp
-    bool sobit::SobitProJointController::moveJoint (
+    bool sobit::SobitProJointController::moveJointRad (
         const Joint joint_num,                      // ジョイント名 (定数名)
         const double rad,                           // 回転角度 [rad]
         const double sec = 5.0,                     // 回転時間 [s]
@@ -254,22 +254,22 @@ SOBIT LIGHTのパンチルト機構とマニピュレータを動かすための
 > [!NOTE]
 > `ジョイント名`は[ジョイント名](#ジョイント名)をご確認ください．
  
-4.  `moveArm()` : アームの関節を任意の角度に動かします．
+4.  `moveArmRad()` : アームの関節を任意の角度に動かします．
     ```cpp
-    bool sobit::SobitProJointController::moveArm(
-        const double arm_shoulder_tilt_joint,       // 回転角度 [rad]
-        const double arm_elbow_upper_tilt_joint,    // 回転角度 [rad]
-        const double arm_elbow_lower_tilt_joint,    // 回転角度 [rad]
-        const double arm_elbow_lower_pan_joint,     // 回転角度 [rad]
-        const double arm_wrist_tilt_joint,          // 回転角度 [rad]
+    bool sobit::SobitProJointController::moveArmRad(
+        const double arm_shoulder_pitch_joint,       // 回転角度 [rad]
+        const double arm_elbow_upper_pitch_joint,    // 回転角度 [rad]
+        const double arm_elbow_lower_pitch_joint,    // 回転角度 [rad]
+        const double arm_elbow_lower_yaw_joint,     // 回転角度 [rad]
+        const double arm_wrist_pitch_joint,          // 回転角度 [rad]
         const double sec = 5.0,                     // 回転時間 [s]
         bool is_sleep = true                        // 回転後に待機するかどうか
     );
     ```
 
-5.  `moveHeadPanTilt()` : パンチルト機構を任意の角度に動かす．
+5.  `moveHeadRad()` : パンチルト機構を任意の角度に動かす．
     ```cpp
-    bool sobit::SobitProJointController::moveHeadPanTilt(
+    bool sobit::SobitProJointController::moveHeadRad(
         const double head_camera_pan,               // 回転角度 [rad]
         const double head_camera_tilt,              // 回転角度 [rad]
         const double sec = 5.0,                     // 移動時間 [s]
@@ -354,36 +354,38 @@ SOBIT LIGHTのジョイント名とその定数名を以下の通りです．
 
 | ジョイント番号 | ジョイント名 | ジョイント定数名 |
 | :---: | --- | --- |
-| 0 | arm_shoulder_1_tilt_joint | ARM_SHOULDER_1_TILT_JOINT |
-| 1 | arm_shoulder_2_tilt_joint | ARM_SHOULDER_2_TILT_JOINT |
-| 2 | arm_elbow_upper_1_tilt_joint | ARM_ELBOW_UPPER_1_TILT_JOINT |
-| 3 | arm_elbow_upper_2_tilt_joint | ARM_ELBOW_UPPER_2_TILT_JOINT |
-| 4 | arm_elbow_lower_tilt_joint | ARM_ELBOW_LOWER_TILT_JOINT |
-| 5 | arm_elbow_lower_pan_joint | ARM_ELBOW_LOWER_PAN_JOINT |
-| 6 | arm_wrist_tilt_joint | ARM_WRIST_TILT_JOINT |
-| 7 | hand_joint | HAND_JOINT |
-| 8 | head_pan_joint | HEAD_PAN_JOINT |
-| 9 | head_tilt_joint | HEAD_TILT_JOINT |
+| 0 | arm_shoulder_roll_joint | kArmShoulderRollJoint |
+| 1 | arm_shoulder_pitch_joint | kArmShoulderPitchJoint |
+| 2 | arm_shoulder_pitch_sub_joint | kArmShoulderPitchSubJoint |
+| 3 | arm_elbow_pitch_joint | kArmElbowPitchJoint |
+| 4 | arm_forearm_roll_joint | kArmForearmRollJoint |
+| 5 | arm_wrist_pitch_joint | kArmWristPitchJoint |
+| 6 | arm_wrist_roll_joint | kArmWristRollJoint |
+| 7 | hand_joint | kHandJoint |
+| 8 | head_yaw_joint | kHeadYawJoint |
+| 9 | head_pitch_joint | kHeadPitchJoint |
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
 
 #### ポーズの設定方法
 
-[sobit_light_pose.yaml](sobit_light_library/config/sobit_light_pose.yaml)というファイルでポーズの追加・編集ができます．以下のようなフォーマットになります．
+TODO!
+
+[sobit_light_pose.yaml](sobit_light_library_python/config/pose_list.yaml)というファイルでポーズの追加・編集ができます．以下のようなフォーマットになります．
 
 ```yaml
 sobit_light_pose:
     - { 
         pose_name: "pose_name",
-        arm_shoulder_1_tilt_joint: 1.57,
-        arm_elbow_upper_1_tilt_joint: 1.57,
-        arm_elbow_lower_tilt_joint: 0.0,
-        arm_elbow_lower_pan_joint: -1.57,
-        arm_wrist_tilt_joint: -1.57,
+        arm_shoulder_1_pitch_joint: 1.57,
+        arm_elbow_upper_1_pitch_joint: 1.57,
+        arm_elbow_lower_pitch_joint: 0.0,
+        arm_elbow_lower_yaw_joint: -1.57,
+        arm_wrist_pitch_joint: -1.57,
         hand_joint: 0.0,
-        head_pan_joint: 0.0,
-        head_tilt_joint: 0.0
+        head_yaw_joint: 0.0,
+        head_pitch_joint: 0.0
     }
     ...
 ```  
@@ -520,6 +522,7 @@ TBD
 - [x] OSS
     - [x] ドキュメンテーションの充実
     - [x] コーディングスタイルの統一
+- Abundant update
 
 現時点のバッグや新規機能の依頼を確認するために[Issueページ][issues-url] をご覧ください．
 
