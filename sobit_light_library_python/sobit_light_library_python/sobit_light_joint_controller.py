@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from math import (sin, cos, acos, atan2, sqrt, pow, pi)
+from math import (sin, cos, asin, acos, atan2, sqrt, pow, pi, radians, degrees)
+import asyncio
 
 import rclpy
 from rclpy.node import Node
@@ -15,7 +16,8 @@ from control_msgs.action import FollowJointTrajectory
 
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 from sensor_msgs.msg import JointState
-from geometry_msgs.msg import TransformStamped
+from tf2_geometry_msgs import TransformStamped, do_transform_point
+from geometry_msgs.msg import Point, PointStamped
 from sobits_msgs.msg import CurrentStateArray, CurrentState
 
 from .sobit_light_wheel_controller import WheelController
@@ -122,17 +124,20 @@ class JointController(Node):
     self.tf_listener_ = TransformListener(self.tf_buffer_, self)
     self.all_jt_ = JointTrajectory()
 
-    self.kCurrentArray = [0.0] * Joints.kJointNum
+    self.kEffortArray = [0.0] * Joints.kJointNum
     self.kPositionArray = [0.0] * Joints.kJointNum
 
     # Constants
-    self.kArmUpper   = 0.128
-    self.kArmUpperX  = 0.022
-    self.kArmLower   = 0.124
-    self.kArmGripper = 0.064 + 0.11225
-    self.kArmLength  = self.kArmUpper + self.kArmLower
-    self.kGraspMinZ  = 0.035
-    self.kGraspMaxZ  = 0.080
+    self.kArmUpperZ  = 0.1280
+    self.kArmUpperX  = 0.0220
+    self.kArmLower   = 0.1240
+    self.kArmGripper = 0.1834
+    self.kArmLength  = sqrt(pow(self.kArmUpperZ+self.kArmLower, 2) + pow(self.kArmUpperX, 2))
+
+    # self.kGraspMinZ  = 0.075  # respect to the base_joint
+    # self.kGraspMaxZ  = 0.550  # respect to the base_joint
+    self.kGraspMinZ  = -0.245          # respect to the arm_shoulder_pitch_joint
+    self.kGraspMaxZ  = self.kArmLength # respect to the arm_shoulder_pitch_joint
 
     self.kPoses = []
   
@@ -149,7 +154,7 @@ class JointController(Node):
     # self.pub_arm_control_.destroy()
     # self.pub_head_control_.destroy()
     self.pub_joints_control_.destroy()
-    # self.sub_arm_curr_.destroy()
+    # self.sub_arm_curr_.destroy() # TODO: obtain the effort value from the joint_states topic
 
   def setJointTrajectoryPoint(self,
       joint_name,
@@ -235,7 +240,7 @@ class JointController(Node):
       self.get_logger().warn('Waiting...')
       rclpy.spin_once(self)
 
-
+  # TODO: there must be a simpler way to load the poses
   def loadPoses(self):
     names = self.get_parameter('poses.names').value
     initial_joints = self.get_parameter('poses.initial_pose').value
@@ -420,57 +425,86 @@ class JointController(Node):
       duration=1.0, wait=True):
     is_reached = False
     wheel_ctrl = WheelController()
+    transformStamped = TransformStamped()
 
-    goal_coord = [target_coord[0] + shift_coord[0],
-                  target_coord[1] + shift_coord[1],
-                  target_coord[2] + shift_coord[2]]
+    goal_coord = Point(
+        x=target_coord[0] + shift_coord[0],
+        y=target_coord[1] + shift_coord[1],
+        z=target_coord[2] + shift_coord[2]
+    )
 
-    if goal_coord[2] > self.kArmLength * 2:
-        self.get_logger().error('The target is too far (%f > %f)' % (goal_coord[2], self.kArmLength * 2))
-        return is_reached
+    # Get the transform
+    # TODO: spin method
+    # TODO: create method for waiting for transform
+    try:
+      while not self.tf_buffer_.can_transform(
+        'arm_shoulder_pitch_link', 'base_link',
+        rclpy.time.Time()):
+        self.get_logger().info('Waiting for transform...')
+        rclpy.spin_once(self)
+        rclpy.spin_once(self)
+        rclpy.spin_once(self)
+        rclpy.spin_once(self)
+        rclpy.spin_once(self)
+        rclpy.spin_once(self)
+        rclpy.spin_once(self)
+        rclpy.spin_once(self)
+        rclpy.spin_once(self)
+        rclpy.spin_once(self)
+        rclpy.spin_once(self)
+        transformStamped = self.tf_buffer_.lookup_transform('arm_shoulder_pitch_link', 'base_link', rclpy.time.Time())
 
-    elif goal_coord[2] < -self.kArmLength:
-        self.get_logger().error('The target is located too low (%f < %f)' % (goal_coord[2], -self.kArmLength))
-        return is_reached
+    except TransformException as e:
+      self.get_logger().error('Failed to get transform: %s' % e)
+      return is_reached
 
-    arm_shoulder_roll_joint_rad = 0.0
-    arm_shoulder_pitch_joint_rad = 0.0
-    arm_elbow_pitch_joint_rad = 0.0
-    arm_forearm_roll_joint_rad = 0.0
-    arm_wrist_pitch_joint_rad = 0.0
-    arm_wrist_roll_joint_rad = 0.0
+
+    print('transform:', transformStamped.transform.translation)
+
+    # Transform the point
+    goal_coord = do_transform_point(PointStamped(point=goal_coord), transformStamped).point
+
+
+    # Print the goal coordinates
+    self.get_logger().info('goal_coord (ref:arm_shoulder_pitch_link): %s' % goal_coord)
+
+    
+    # Check if the object is in the grasp range
+    if self.kGraspMinZ <= goal_coord.z <= self.kGraspMaxZ:
+      self.get_logger().info('Object is in the grasp range')
+      self.get_logger().info('(kGraspMinZ:%f <= goal_coord[2]:%f <= kGraspMaxZ:%f)' % (self.kGraspMinZ, goal_coord.z, self.kGraspMaxZ))
+    
+    else:
+      self.get_logger().error('Object is out of the grasp range')
+      self.get_logger().error('(kGraspMinZ:%f <= goal_coord[2]:%f <= kGraspMaxZ:%f)' % (self.kGraspMinZ, goal_coord.z, self.kGraspMaxZ))
+
+      return is_reached
+    
+    
+    # Calculate the joint angles
+    # TODO: do not hardcode the arm_elbow_pitch_joint_rad
+    arm_shoulder_roll_joint_rad  = 0.0
+    arm_shoulder_pitch_joint_rad = asin(goal_coord.z / self.kArmLength) - atan2(self.kArmUpperX, self.kArmUpperZ)
+    arm_elbow_pitch_joint_rad    = radians(-90)
+    arm_forearm_roll_joint_rad   = 0.0
+    arm_wrist_pitch_joint_rad    = -arm_shoulder_pitch_joint_rad
+    arm_wrist_roll_joint_rad     = 0.0
+
     hand_joint_rad = 0.0
-    elbow_joint_z = 0.0
 
-    if goal_coord[2] > self.kArmUpper:
-        self.get_logger().info('The target is located above the arm (%f > %f)' % (goal_coord[2], self.kArmUpper))
-        elbow_joint_z = self.kArmLength
-        arm_shoulder_pitch_joint_rad = pi / 2
-
-    elif 0 <= goal_coord[2] <= self.kArmUpper:
-        self.get_logger().info('The target is located below arm_elbow_pitch_join and above shoulder_pitch_joint (%f <= %f <= %f)' % (0, goal_coord[2], self.kArmUpper))
-        elbow_joint_z = self.kArmLength * sin(pi / 4)
-        arm_shoulder_pitch_joint_rad = pi / 4
-
-    elif goal_coord[2] < 0:
-        self.get_logger().info('The target is located below the shoulder_pitch_joint (%f < %f)' % (goal_coord[2], 0))
-        elbow_joint_z = 0.0
-        arm_shoulder_pitch_joint_rad = 0.0
-
-    base_z = elbow_joint_z - goal_coord[2]
-    arm_elbow_pitch_joint_rad = acos(base_z / self.kArmUpper)
-    arm_wrist_pitch_joint_rad = pi / 2 - (arm_shoulder_pitch_joint_rad + arm_elbow_pitch_joint_rad)
-
-    arm_wrist_joint_x = self.kArmUpper * (cos(arm_shoulder_pitch_joint_rad) + cos(arm_shoulder_pitch_joint_rad + arm_elbow_pitch_joint_rad))
-    arm_wrist_joint_z = self.kArmUpper * (sin(arm_shoulder_pitch_joint_rad) + sin(arm_shoulder_pitch_joint_rad + arm_elbow_pitch_joint_rad))
-
+    # Calculate the end effector position
+    # TODO: check if the gripper is in the proper position
+    end_effector_x = self.kArmLength * cos(arm_elbow_pitch_joint_rad + atan2(self.kArmUpperX, self.kArmUpperZ)) + self.kArmGripper
+    end_effector_z = self.kArmLength * sin(arm_elbow_pitch_joint_rad + atan2(self.kArmUpperX, self.kArmUpperZ))
+    
     # Rotate the robot
-    rot_rad = atan2(goal_coord[1], goal_coord[0])
-    # wheel_ctrl.controlWheelRotateRad(rot_rad)
+    rot_rad = atan2(goal_coord.y, goal_coord.x)
+    wheel_ctrl.controlWheelRotateRad(rot_rad)
 
     # Move forward
-    linear_m = sqrt(goal_coord[0] ** 2 + goal_coord[1] ** 2)
-    # wheel_ctrl.controlWheelLinear(linear_m)
+    # TODO: check if the robot is in the proper position
+    linear_m = sqrt(pow(goal_coord.x, 2) + pow(goal_coord.y, 2)) - sqrt(pow(end_effector_x, 2) + pow(end_effector_z, 2))
+    wheel_ctrl.controlWheelLinear(linear_m)
 
     is_reached = self.moveArmRad(
         [
@@ -495,19 +529,38 @@ class JointController(Node):
 
     transformStamped = TransformStamped()
 
+    # Get the transform
+    # TODO: spin method
     try:
-      self.tf_buffer_.can_transform(
-          'arm_base_joint', target_name,
-          rclpy.time.Time(), rclpy.time.Duration(seconds=1.0))
-      transformStamped = self.tf_buffer_.lookup_transform('arm_base_joint', target_name, rclpy.time.Time())
+      while not self.tf_buffer_.can_transform(
+        'base_link', target_name,
+        rclpy.time.Time()):
+        self.get_logger().info('Waiting for transform...')
+        rclpy.spin_once(self)
+        rclpy.spin_once(self)
+        rclpy.spin_once(self)
+        rclpy.spin_once(self)
+        rclpy.spin_once(self)
+        rclpy.spin_once(self)
+        rclpy.spin_once(self)
+        rclpy.spin_once(self)
+        rclpy.spin_once(self)
+        rclpy.spin_once(self)
+        rclpy.spin_once(self)
+        transformStamped = self.tf_buffer_.lookup_transform('base_link', target_name, rclpy.time.Time())
+
     except TransformException as e:
       self.get_logger().error('Failed to get transform: %s' % e)
       return is_reached
-    
+
     target_coord = [
         transformStamped.transform.translation.x,
         transformStamped.transform.translation.y,
-        transformStamped.transform.translation.z]
+        transformStamped.transform.translation.z
+    ]
+
+    print('target_coord (ref:arm_shoulder_pitch_joint):', target_coord)
+    
     is_reached = self.moveHandToTargetCoord(
         target_coord,
         shift_coord,
@@ -543,52 +596,46 @@ class JointController(Node):
       duration=1.0, wait=True):
     is_placed = False
 
-    transformStamped = TransformStamped()
-
-    try:
-      self.tf_buffer_.can_transform(
-          'arm_base_joint', target_name,
-          rclpy.time.Time(), rclpy.time.Duration(seconds=1.0))
-      transformStamped = self.tf_buffer_.lookup_transform('arm_base_joint', target_name, rclpy.time.Time())
-    except TransformException as e:
-      self.get_logger().error('Failed to get transform: %s' % e)
-      return is_placed
+    while not(is_placed and self.graspDecision(500.0, 1000.0)):
+      is_placed = self.moveHandToTargetTF(
+          target_name,
+          shift_coord,
+          duration, wait)
+      
+      if not is_placed:
+        self.get_logger().error('Failed to place the object')
+        return is_placed
+      
+      shift_coord[2] = -0.002
     
-    target_coord = [
-        transformStamped.transform.translation.x,
-        transformStamped.transform.translation.y,
-        transformStamped.transform.translation.z]
-    is_placed = self.moveHandToPlaceCoord(
-        target_coord,
-        shift_coord,
-        duration, wait)
-
     return is_placed
 
   def graspDecision(self,
       min_current, max_current):
-    is_grasped = False
-    while self.kCurrentArray[kJointNames[Joints.kHandJoint]] == 0:
+    while self.kEffortArray[kJointNames[Joints.kHandJoint]] == 0:
       self.get_logger().info('Waiting for current...')
       rclpy.spin_once(self)
-    
+
+    is_grasped = False
+
     is_grasped = True if \
-      self.kCurrentArray[kJointNames[Joints.kHandJoint]] > min_current \
-      and self.kCurrentArray[kJointNames[Joints.kHandJoint]] < max_current \
+      self.kEffortArray[kJointNames[Joints.kHandJoint]] > min_current \
+      and self.kEffortArray[kJointNames[Joints.kHandJoint]] < max_current \
       else False
   
     return is_grasped
 
   def placeDecision(self,
       min_current, max_current):
-    is_placed = False
-    while self.kCurrentArray[kJointNames[Joints.kArmWristPitchJoint]] == 0:
+    while self.kEffortArray[kJointNames[Joints.kArmWristPitchJoint]] == 0:
       self.get_logger().info('Waiting for current...')
       rclpy.spin_once(self)
-    
+
+    is_placed = False
+
     is_placed = True if \
-        self.kCurrentArray[kJointNames[Joints.kArmWristPitchJoint]] > min_current \
-        and self.kCurrentArray[kJointNames[Joints.kArmWristPitchJoint]] < max_current \
+        self.kEffortArray[kJointNames[Joints.kArmWristPitchJoint]] > min_current \
+        and self.kEffortArray[kJointNames[Joints.kArmWristPitchJoint]] < max_current \
         else False
 
     return is_placed
@@ -600,22 +647,15 @@ class JointController(Node):
           self.kPositionArray[j] = msg.position[i]
 
   def callbackArmCurr(self, msg):
-    # self.kCurrentArray[kJointNames[Joints.kArmShoulderRollJoint]] = msg.current_state_array[Joints.kArmShoulderRollJoint].current_ma
-    # self.kCurrentArray[kJointNames[Joints.kArmShoulderPitchJoint]] = msg.current_state_array[Joints.kArmShoulderPitchJoint].current_ma
-    # self.kCurrentArray[kJointNames[Joints.kArmElbowPitchJoint]] = msg.current_state_array[Joints.kArmElbowPitchJoint].current_ma
-    self.kCurrentArray[kJointNames[Joints.kArmWristPitchJoint]] = msg.current_state_array[Joints.kArmWristPitchJoint].current_ma
-    # self.kCurrentArray[kJointNames[Joints.kArmWristRollJoint]] = msg.current_state_array[Joints.kArmWristRollJoint].current_ma
-    self.kCurrentArray[kJointNames[Joints.kHandJoint]] = msg.current_state_array[Joints.kHandJoint].current_ma
-    # self.kCurrentArray[kJointNames[Joints.kHeadYawJoint]] = msg.current_state_array[Joints.kHeadYawJoint].current_ma
-    # self.kCurrentArray[kJointNames[Joints.kHeadPitchJoint]] = msg.current_state_array[Joints.kHeadPitchJoint].current_ma
-
+    for i in range(len(msg.name)):
+      for j in range(Joints.kJointNum):
+        if msg.name[i] == kJointNames[j]:
+          self.kEffortArray[j] = msg.effort[i]
 
 
 
 def main(args=None):
   rclpy.init(args=args)
-
-
 
   node = JointController()
 
@@ -630,8 +670,8 @@ def main(args=None):
   # node.moveToPose('raise_hand', 3.0)
   # node.moveToPose('detecting_pose', 3.0)
   # node.moveToPose('initial_pose', 3.0)
-  # node.moveHandToTargetCoord([0.0, 0.0, 0.2], [0.0, 0.0, 0.0], 5.0)
-  # node.moveToPose('initial_pose', 3.0)
+  node.moveHandToTargetCoord([1, 0.0, 0.23443], [0.0, 0.0, 0.0], 5.0)
+  node.moveToPose('initial_pose', 3.0)
   # node.moveHandToTargetTF('target_name', [0.0, 0.0, 0.0], 1.0)
   # node.moveHandToPlaceCoord([0.0, 0.0, 0.0], [0.0, 0.0, 0.0], 1.0)
   # node.moveHandToPlaceTF('target_name', [0.0, 0.0, 0.0], 1.0)
