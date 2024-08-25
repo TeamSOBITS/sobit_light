@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from math import (radians, degrees, fmod, pi)
+from math import (radians, degrees, fmod, copysign, pi)
 
 import rclpy
 from rclpy.node import Node
@@ -88,9 +88,16 @@ class WheelController(Node):
 
       # Calculate the elapsed time
       elapsed_time = curr_time - start_time
-      elapsed_time = elapsed_time.nanoseconds
+      elapsed_time, _ = elapsed_time.seconds_nanoseconds
+      # elapsed_time = elapsed_time / 1e9
 
       vel_linear = 0.0
+
+      # TODO: Fix the PID controller
+      if (target_distance < 0.01) or (target_distance - moved_distance < 0.01):
+        break
+      if (target_distance < 0.69) and (abs(vel_diff) > 1.0):
+        vel_diff = copysign(1.0, vel_diff)
 
       if (target_distance < 0.1):
         vel_linear = Kp * (target_distance + 0.001 - moved_distance) \
@@ -114,6 +121,10 @@ class WheelController(Node):
       # Debug
       self.get_logger().info('[Wheel Control: Linear] Moved distance: %f, Target distance: %f' % (moved_distance, target_distance))
       rclpy.spin_once(self)
+    
+    # Stop the robot after the target distance is reached
+    output_vel.linear.x = 0.0
+    self.pub_cmd_vel_.publish(output_vel)
 
   def controlWheelRotateRad(self, angle_rad):
     while not(self.is_running_):
@@ -151,8 +162,8 @@ class WheelController(Node):
 
       # Calculate the elapsed time
       elapsed_time = curr_time - start_time
-      elapsed_time = elapsed_time.nanoseconds
-      elapsed_time = elapsed_time / 1e9
+      elapsed_time, _ = elapsed_time.seconds_nanoseconds
+      # elapsed_time = elapsed_time / 1e9
 
       vel_angular = 0.0
 
