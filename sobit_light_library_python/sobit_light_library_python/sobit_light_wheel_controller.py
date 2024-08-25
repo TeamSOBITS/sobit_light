@@ -88,8 +88,8 @@ class WheelController(Node):
 
       # Calculate the elapsed time
       elapsed_time = curr_time - start_time
-      elapsed_time, _ = elapsed_time.seconds_nanoseconds
-      # elapsed_time = elapsed_time / 1e9
+      elapsed_time = elapsed_time.nanoseconds
+      elapsed_time = elapsed_time / 1e9
 
       vel_linear = 0.0
 
@@ -162,8 +162,9 @@ class WheelController(Node):
 
       # Calculate the elapsed time
       elapsed_time = curr_time - start_time
-      elapsed_time, _ = elapsed_time.seconds_nanoseconds
-      # elapsed_time = elapsed_time / 1e9
+      elapsed_time = elapsed_time.nanoseconds
+      elapsed_time = elapsed_time / 1e9
+      # print(elapsed_time)
 
       vel_angular = 0.0
 
@@ -178,7 +179,6 @@ class WheelController(Node):
 
       output_vel.angular.z = vel_angular if angle_rad > 0 else -vel_angular
       vel_diff = vel_angular
-
       self.pub_cmd_vel_.publish(output_vel)
 
       # Calculate the moved distance
@@ -186,7 +186,7 @@ class WheelController(Node):
       self.get_logger().info('Current yaw: %f, Initial yaw: %f' % (curt_yaw, init_yaw))
 
       angle_diff_rad = curt_yaw - init_yaw
-      angle_diff_rad = fmod(angle_diff_rad+pi, 2*pi) - pi
+      angle_diff_rad = fmod(angle_diff_rad, 2*pi)
       moved_angle_rad = abs(angle_diff_rad)
 
       # Debug
@@ -209,7 +209,6 @@ def main(args=None):
   node = WheelController()
 
   node.controlWheelLinear(distance=0.5)
-  # node.controlWheelRotateRad(angle_rad=radians(90))
   node.controlWheelRotateRad(angle_rad=1.57)
   node.controlWheelRotateDeg(angle_deg=-90)
   node.controlWheelLinear(distance=-0.5)
