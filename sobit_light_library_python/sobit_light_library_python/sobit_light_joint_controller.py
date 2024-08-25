@@ -436,27 +436,12 @@ class JointController(Node):
     # Get the transform
     # TODO: spin method
     # TODO: create method for waiting for transform
-    try:
-      while not self.tf_buffer_.can_transform(
-        'arm_shoulder_pitch_link', 'base_link',
-        rclpy.time.Time()):
-        self.get_logger().info('Waiting for transform...')
-        rclpy.spin_once(self)
-        rclpy.spin_once(self)
-        rclpy.spin_once(self)
-        rclpy.spin_once(self)
-        rclpy.spin_once(self)
-        rclpy.spin_once(self)
-        rclpy.spin_once(self)
-        rclpy.spin_once(self)
-        rclpy.spin_once(self)
-        rclpy.spin_once(self)
+    while transformStamped.transform.translation.z == 0:
+      try:
         rclpy.spin_once(self)
         transformStamped = self.tf_buffer_.lookup_transform('arm_shoulder_pitch_link', 'base_link', rclpy.time.Time())
-
-    except TransformException as e:
-      self.get_logger().error('Failed to get transform: %s' % e)
-      return is_reached
+      except TransformException as e:
+        self.get_logger().error('Failed to get transform: %s' % e)
 
 
     print('transform:', transformStamped.transform.translation)
@@ -484,7 +469,7 @@ class JointController(Node):
     # Calculate the joint angles
     # TODO: do not hardcode the arm_elbow_pitch_joint_rad
     arm_shoulder_roll_joint_rad  = 0.0
-    arm_shoulder_pitch_joint_rad = asin(goal_coord.z / self.kArmLength) - atan2(self.kArmUpperX, self.kArmUpperZ)
+    arm_shoulder_pitch_joint_rad = - asin(goal_coord.z / self.kArmLength) + atan2(self.kArmUpperX, self.kArmUpperZ)
     arm_elbow_pitch_joint_rad    = radians(-90)
     arm_forearm_roll_joint_rad   = 0.0
     arm_wrist_pitch_joint_rad    = -arm_shoulder_pitch_joint_rad
@@ -531,27 +516,12 @@ class JointController(Node):
 
     # Get the transform
     # TODO: spin method
-    try:
-      while not self.tf_buffer_.can_transform(
-        'base_link', target_name,
-        rclpy.time.Time()):
-        self.get_logger().info('Waiting for transform...')
-        rclpy.spin_once(self)
-        rclpy.spin_once(self)
-        rclpy.spin_once(self)
-        rclpy.spin_once(self)
-        rclpy.spin_once(self)
-        rclpy.spin_once(self)
-        rclpy.spin_once(self)
-        rclpy.spin_once(self)
-        rclpy.spin_once(self)
-        rclpy.spin_once(self)
+    while transformStamped.transform.translation.z == 0:
+      try:
         rclpy.spin_once(self)
         transformStamped = self.tf_buffer_.lookup_transform('base_link', target_name, rclpy.time.Time())
-
-    except TransformException as e:
-      self.get_logger().error('Failed to get transform: %s' % e)
-      return is_reached
+      except TransformException as e:
+        self.get_logger().error('Failed to get transform: %s' % e)
 
     target_coord = [
         transformStamped.transform.translation.x,
@@ -670,7 +640,7 @@ def main(args=None):
   # node.moveToPose('raise_hand', 3.0)
   # node.moveToPose('detecting_pose', 3.0)
   # node.moveToPose('initial_pose', 3.0)
-  node.moveHandToTargetCoord([1, 0.0, 0.23443], [0.0, 0.0, 0.0], 5.0)
+  node.moveHandToTargetCoord([1.0, 0.0, 0.55], [0.0, 0.0, 0.0], 5.0)
   node.moveToPose('initial_pose', 3.0)
   # node.moveHandToTargetTF('target_name', [0.0, 0.0, 0.0], 1.0)
   # node.moveHandToPlaceCoord([0.0, 0.0, 0.0], [0.0, 0.0, 0.0], 1.0)
