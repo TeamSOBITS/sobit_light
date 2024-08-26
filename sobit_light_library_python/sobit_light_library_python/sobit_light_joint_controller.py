@@ -20,7 +20,11 @@ from tf2_geometry_msgs import TransformStamped, do_transform_point
 from geometry_msgs.msg import Point, PointStamped
 from sobits_msgs.msg import CurrentStateArray, CurrentState
 
-from .sobit_light_wheel_controller import WheelController
+import sys
+import os
+sys.path.append(os.path.join("/home/sobits/colcon_ws/src/sobit_light/sobit_light_library_python/sobit_light_library_python"))
+
+from sobit_light_wheel_controller import WheelController
 
 from rclpy.parameter import Parameter
 from rclpy.parameter import ParameterType as Type
@@ -628,6 +632,8 @@ def main(args=None):
   rclpy.init(args=args)
 
   node = JointController()
+  wheel_ctrl = WheelController()
+  wheel_ctrl.controlWheelRotateDeg(-90)
 
   # node.moveArmRad([0.0, -1.57, 0.0, 0.0, 0.0, 0.0], 0.0 ,3.0)
   # node.moveArmRad([0.0, -1., 0.0, 0.0, 0.0, 0.0], 0.0, 3.0)
@@ -640,8 +646,9 @@ def main(args=None):
   # node.moveToPose('raise_hand', 3.0)
   # node.moveToPose('detecting_pose', 3.0)
   # node.moveToPose('initial_pose', 3.0)
-  node.moveHandToTargetCoord([1.0, 0.0, 0.55], [0.0, 0.0, 0.0], 5.0)
-  node.moveToPose('initial_pose', 3.0)
+  # node.moveHandToTargetCoord([0.5, 0.0, 0.3], [0.0, 0.0, 0.0], 5.0)
+  # node.moveArmRad([0.0, -1.57, 0.0, 0.0, 0.0, 0.0], 0.0 ,3.0)
+  # node.moveToPose('initial_pose', 3.0)
   # node.moveHandToTargetTF('target_name', [0.0, 0.0, 0.0], 1.0)
   # node.moveHandToPlaceCoord([0.0, 0.0, 0.0], [0.0, 0.0, 0.0], 1.0)
   # node.moveHandToPlaceTF('target_name', [0.0, 0.0, 0.0], 1.0)
