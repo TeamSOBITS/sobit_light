@@ -10,29 +10,26 @@ cd ..
 # Download required packages for SOBIT LIGHT
 ros_packages=(
     # "sobit_common" \
-    # "sobits_msgs" \
+    "sobits_msgs" \
     # "urg_node" \
-    # "realsense_ros" \
+    "realsense_ros" \
     # "kachaka_api"
 )
 
-# Clone all packages
-# for ((i = 0; i < ${#ros_packages[@]}; i++)) {
-#     echo "Clonning: ${ros_packages[i]}"
-#     git clone -b $ROS_DISTRO https://github.com/TeamSOBITS/${ros_packages[i]}.git
+#Clone all packages
+for ((i = 0; i < ${#ros_packages[@]}; i++)) {
+    echo "Clonning: ${ros_packages[i]}"
+    # git clone -b $ROS_DISTRO https://github.com/TeamSOBITS/${ros_packages[i]}.git
+    git clone -b feature/humble-devel https://github.com/TeamSOBITS/${ros_packages[i]}.git
 
-#     # Check if install.sh exists in each package
-#     if [ -f ${ros_packages[i]}/install.sh ]; then
-#         echo "Running install.sh in ${ros_packages[i]}."
-#         cd ${ros_packages[i]}
-#         bash install.sh
-#         cd ..
-#     fi
-# }
-
-git clone -b feature/humble-devel https://github.com/TeamSOBITS/realsense_ros.git
-cd realsense_ros/
-bash install.sh
+    # Check if install.sh exists in each package
+    if [ -f ${ros_packages[i]}/install.sh ]; then
+        echo "Running install.sh in ${ros_packages[i]}."
+        cd ${ros_packages[i]}
+        bash install.sh
+        cd ..
+    fi
+}
 
 # Go back to previous directory
 cd ${DIR}
