@@ -68,8 +68,10 @@ class JointController(Node):
     self.declare_parameters(
         namespace='',
         parameters=[
-            ('poses.names', ['initial_pose', 'detecting_pose', 'raise_hand']),
+            ('poses.names', ['initial_pose', 'detect_bag_pose', 'pass_pose', 'detecting_pose', 'raise_hand']),
             ('poses.initial_pose', [0.0, -1.5708, -1.5708, 0.0, 1.5708, 0.0, 0.0, 0.0, 0.0]),
+            ('poses.detect_bag_pose', [0.0, -0.56, 0.0, 0.0, 0.56 - 1.57, 0.0, 0.0, 0.0, 0.348]),
+            ('poses.pass_pose', [0.0, -1.163, -1.571, 0.0, 0.0, 0.0, 0.0, 0.0, -0.484]),
             ('poses.detecting_pose', [0.0, -1.5708, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.7854]),
             ('poses.raise_hand', [0.0, -1.5708, -1.5708, 0.0, 0.0, 0.0, 0.7854, 0.0, 0.0]),
         ]
@@ -248,14 +250,20 @@ class JointController(Node):
   def loadPoses(self):
     names = self.get_parameter('poses.names').value
     initial_joints = self.get_parameter('poses.initial_pose').value
+    detect_bag_joints = self.get_parameter('poses.detect_bag_pose').value
+    pass_joints = self.get_parameter('poses.pass_pose').value
     detecting_joints = self.get_parameter('poses.detecting_pose').value
     raise_hand_joints = self.get_parameter('poses.raise_hand').value
 
     initial_pose = Pose(names[0], initial_joints)
-    detecting_pose = Pose(names[1], detecting_joints)
-    raise_hand_pose = Pose(names[2], raise_hand_joints)
+    detect_bag_pose = Pose(names[1], detect_bag_joints)
+    pass_pose = Pose(names[2], pass_joints)
+    detecting_pose = Pose(names[3], detecting_joints)
+    raise_hand_pose = Pose(names[4], raise_hand_joints)
 
     self.kPoses.append(initial_pose)
+    self.kPoses.append(detect_bag_pose)
+    self.kPoses.append(pass_pose)
     self.kPoses.append(detecting_pose)
     self.kPoses.append(raise_hand_pose)
 
@@ -432,26 +440,26 @@ class JointController(Node):
     transformStamped = TransformStamped()
 
     goal_coord = Point(
-        x=target_coord[0] + shift_coord[0],
+        x=target_coord[0] + shift_coord[0] - 0.15185068274597818,
         y=target_coord[1] + shift_coord[1],
-        z=target_coord[2] + shift_coord[2]
+        z=target_coord[2] + shift_coord[2] - 0.33516653035453214
     )
 
     # Get the transform
     # TODO: spin method
     # TODO: create method for waiting for transform
-    while transformStamped.transform.translation.z == 0:
-      try:
-        rclpy.spin_once(self)
-        transformStamped = self.tf_buffer_.lookup_transform('arm_shoulder_pitch_link', 'base_link', rclpy.time.Time())
-      except TransformException as e:
-        self.get_logger().error('Failed to get transform: %s' % e)
+    # while transformStamped.transform.translation.z == 0:
+    #   try:
+    #     rclpy.spin_once(self)
+    #     transformStamped = self.tf_buffer_.lookup_transform('arm_shoulder_pitch_link','base_link', self.get_clock().now()-rclpy.time.Duration(seconds=1.0))
+    #   except TransformException as e:
+    #     self.get_logger().error('Failed to get transform: %s' % e)
 
 
-    print('transform:', transformStamped.transform.translation)
+    # print('transform:', transformStamped.transform.translation)
 
-    # Transform the point
-    goal_coord = do_transform_point(PointStamped(point=goal_coord), transformStamped).point
+    # # Transform the point
+    # goal_coord = do_transform_point(PointStamped(point=goal_coord), transformStamped).point
 
 
     # Print the goal coordinates
@@ -486,8 +494,10 @@ class JointController(Node):
     end_effector_x = self.kArmLength * cos(arm_elbow_pitch_joint_rad + atan2(self.kArmUpperX, self.kArmUpperZ)) + self.kArmGripper
     end_effector_z = self.kArmLength * sin(arm_elbow_pitch_joint_rad + atan2(self.kArmUpperX, self.kArmUpperZ))
     
+    print('goal_coord:', goal_coord)
     # Rotate the robot
-    rot_rad = atan2(goal_coord.y, goal_coord.x)
+    rot_rad = atan2(goal_coord.y, goal_coord.x if goal_coord.x > 0 else -goal_coord.x)
+    print('rot_rad:', rot_rad)
     wheel_ctrl.controlWheelRotateRad(rot_rad)
 
     # Move forward
@@ -632,8 +642,8 @@ def main(args=None):
   rclpy.init(args=args)
 
   node = JointController()
-  wheel_ctrl = WheelController()
-  wheel_ctrl.controlWheelRotateDeg(-90)
+  # wheel_ctrl = WheelController()
+  # wheel_ctrl.controlWheelRotateDeg(-90)
 
   # node.moveArmRad([0.0, -1.57, 0.0, 0.0, 0.0, 0.0], 0.0 ,3.0)
   # node.moveArmRad([0.0, -1., 0.0, 0.0, 0.0, 0.0], 0.0, 3.0)
@@ -642,7 +652,7 @@ def main(args=None):
   # node.moveAllJointsRad([0.0, -1.57, 0.0, 0.0, 0.0, 0,0], 0.0, [0.0, 0.0], 3.0)
   # node.moveJointRad(Joints.kHandJoint, 3.14, 3.0)
   # node.moveJointRad(Joints.kArmShoulderRollJoint, 0.0, 3.0)
-  node.moveToPose('initial_pose', 3.0)
+  # node.moveToPose('detect_bag_pose', 4.0)
   # node.moveToPose('raise_hand', 3.0)
   # node.moveToPose('detecting_pose', 3.0)
   # node.moveToPose('initial_pose', 3.0)
@@ -650,8 +660,9 @@ def main(args=None):
   # node.moveArmRad([0.0, -1.57, 0.0, 0.0, 0.0, 0.0], 0.0 ,3.0)
   # node.moveToPose('initial_pose', 3.0)
   # node.moveHandToTargetTF('target_name', [0.0, 0.0, 0.0], 1.0)
-  # node.moveHandToPlaceCoord([0.0, 0.0, 0.0], [0.0, 0.0, 0.0], 1.0)
+  node.moveHandToTargetCoord([0.0, 0.0, 0.3], [0.0, 0.0, 0.0], 5.0)
   # node.moveHandToPlaceTF('target_name', [0.0, 0.0, 0.0], 1.0)
+  # node.moveHandToTargetTF('handle_point', [0.0, 0.0, 0.0], 5.0, True)
 
   node.destroy_node()
   rclpy.shutdown()
