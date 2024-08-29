@@ -144,6 +144,7 @@ class WheelController(Node):
     # Initialize values
     output_vel = Twist()
     moved_angle_rad = 0.0
+    previous_yaw = init_yaw
     target_angle_rad = abs(angle_rad)
     target_angle_deg = degrees(target_angle_rad)
 
@@ -153,6 +154,7 @@ class WheelController(Node):
     Kd = 0.8
 
     vel_diff = Kp * angle_rad
+    max_angular_speed = 0.7
 
     while (moved_angle_rad < target_angle_rad-0.01):
       rclpy.spin_once(self)
@@ -177,7 +179,9 @@ class WheelController(Node):
                    - Kd * vel_diff \
                    + Ki / (8.0 / target_angle_rad) * (target_angle_rad + 0.001 - moved_angle_rad) * pow(elapsed_time, 2)
 
-      output_vel.angular.z = vel_angular if angle_rad > 0 else -vel_angular
+      # Apply the maximum speed limit
+      vel_angular = min(vel_angular, max_angular_speed) if angle_rad > 0 else -min(abs(vel_angular), max_angular_speed)
+      output_vel.angular.z = vel_angular
       vel_diff = vel_angular
       self.pub_cmd_vel_.publish(output_vel)
 
@@ -185,10 +189,15 @@ class WheelController(Node):
       curt_yaw = geoQuat2Yaw(self.curt_odom_.pose.pose.orientation)
       self.get_logger().info('Current yaw: %f, Initial yaw: %f' % (curt_yaw, init_yaw))
 
-      angle_diff_rad = curt_yaw - init_yaw
-      angle_diff_rad = fmod(angle_diff_rad, 2*pi)
-      moved_angle_rad = abs(angle_diff_rad)
+      delta_angle = curt_yaw - previous_yaw
 
+      if delta_angle > pi:
+          delta_angle -= 2 * pi
+      elif delta_angle < -pi:
+          delta_angle += 2 * pi
+
+      moved_angle_rad += abs(delta_angle)
+      previous_yaw = curt_yaw
       # Debug
       self.get_logger().info('[Wheel Control: Rotate] Moved angle: %f, Target angle: %f' % (moved_angle_rad, target_angle_rad))
 
@@ -208,10 +217,10 @@ def main(args=None):
 
   node = WheelController()
 
-  node.controlWheelLinear(distance=0.5)
-  node.controlWheelRotateRad(angle_rad=1.57)
-  node.controlWheelRotateDeg(angle_deg=-90)
-  node.controlWheelLinear(distance=-0.5)
+  # node.controlWheelLinear(distance=-2)
+  node.controlWheelRotateRad(angle_rad=6.28)
+  # node.controlWheelRotateDeg(angle_deg=-90)
+  # node.controlWheelLinear(distance=-0.5)
 
   node.destroy_node()
   rclpy.shutdown()
