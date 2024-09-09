@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<robot name="sobit_light" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  
+  <!-- Add Common Xacro: transmissions, colors -->
+  <xacro:include filename="$(find sobit_light_description)/urdf/values.urdf.xacro" />
+  <xacro:include filename="$(find sobit_light_description)/urdf/materials.urdf.xacro" />
+  <xacro:include filename="$(find sobit_light_description)/urdf/transmission.urdf.xacro" />
+  <xacro:include filename="$(find sobit_light_description)/urdf/dxl_control.urdf.xacro" />
+
+
+  <!-- Add URDF: links, joints -->
+  <xacro:include filename="$(find sobit_light_description)/urdf/base/base.urdf.xacro" />
+  <xacro:include filename="$(find sobit_light_description)/urdf/base/plate.urdf.xacro" />
+  <xacro:include filename="$(find sobit_light_description)/urdf/arm/arm.urdf.xacro" />
+  <xacro:include filename="$(find sobit_light_description)/urdf/hand/hand.urdf.xacro" />
+  <xacro:include filename="$(find sobit_light_description)/urdf/back/back.urdf.xacro" />
+  <xacro:include filename="$(find sobit_light_description)/urdf/head/head.urdf.xacro" />
+  <xacro:include filename="$(find sobit_light_description)/urdf/wheel/wheel.urdf.xacro" />
+  
+  <xacro:include filename="$(find sobit_light_description)/urdf/sensor/camera_front.urdf.xacro" />
+  <xacro:include filename="$(find sobit_light_description)/urdf/sensor/camera_back.urdf.xacro" />
+  <xacro:include filename="$(find sobit_light_description)/urdf/sensor/camera_hand.urdf.xacro" />
+  <xacro:include filename="$(find sobit_light_description)/urdf/sensor/camera_head.urdf.xacro" />
+
+  <xacro:include filename="$(find sobit_light_description)/urdf/sensor/lidar.urdf.xacro" />
+  <xacro:include filename="$(find sobit_light_description)/urdf/sensor/tof.urdf.xacro" />
+  <xacro:include filename="$(find sobit_light_description)/urdf/sensor/imu.urdf.xacro" />
+  <xacro:include filename="$(find sobit_light_description)/urdf/sensor/mic.urdf.xacro" />
+  <xacro:include filename="$(find sobit_light_description)/urdf/sensor/speaker.urdf.xacro" />
+
+
+  <!-- Add URDF: gazebo -->
+  <xacro:include filename="$(find sobit_light_description)/urdf/gazebo.urdf.xacro" />
+
+
+  <link name="base_footprint"/>
+
+  <!-- Connect the previous Links and Joints -->
+  <xacro:base    prefix="base"      parent="base_footprint" />
+  <xacro:plate   prefix="plate"     parent="base_link" />
+  <xacro:arm     prefix="arm"       parent="plate_middle_link" />
+  <xacro:hand    prefix_hand="hand" prefix_finger="finger" parent="arm_hand_link" />
+  <xacro:back    prefix="back"      parent="plate_bottom_link" />
+  <xacro:head    prefix="head"      parent="back_base_link" />
+  <xacro:wheel   prefix="base"      parent="base_link" />
+  <xacro:lidar   prefix="lidar"     parent="base_link" />
+  <xacro:tof     prefix="tof"       parent="base_link" />
+  <xacro:imu     prefix="imu"       parent="base_link" />
+  <xacro:mic     prefix="mic"       parent="head_pitch_link" />
+  <xacro:speaker prefix="speaker"   parent="back_base_link" />
+  <xacro:camera_hand  prefix="hand_camera"  parent="arm_wrist_roll_link" />
+  <xacro:camera_head  prefix="head_camera"  parent="head_pitch_link" />
+  <xacro:camera_front prefix="camera_front" parent="base_link" />
+  <xacro:camera_back  prefix="camera_back"  parent="base_link" />
+
+  <!-- Add Dynamixel: plugins -->
+  <!-- <xacro:dxl_control name="dxl_control" /> -->
+
+  <!-- Add Gazebo: plugins -->
+  <xacro:gazebo_ros2_control prefix="base" />
+
+</robot>

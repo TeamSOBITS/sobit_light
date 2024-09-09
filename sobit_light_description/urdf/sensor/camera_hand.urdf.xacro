@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<robot name="camera_hand" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find realsense2_description)/urdf/_d405.urdf.xacro" />
+  <xacro:macro name="camera_hand" params="prefix parent">
+
+    <!-- Joint: Hand Camera Base -->
+    <joint name="${prefix}_base_joint" type="fixed">
+      <origin xyz="0.03685 0.0 0.0408" rpy="0 0 0"/>
+      <parent link="${parent}"/>
+      <child link="${prefix}_base_link"/>
+    </joint>
+
+    <!-- Link: Hand Camera Base -->
+    <link name="${prefix}_base_link">
+      <visual>
+        <origin xyz="0.0 0.0 0.0" rpy="0 0 ${M_PI/2}"/>
+        <geometry>
+          <mesh filename="file://$(find sobit_light_description)/meshes/hand/omx1_link15_camera_base.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="black"/>
+      </visual>
+
+      <collision>
+        <origin xyz="${0.01665-0.028/2} 0.0 ${0.043/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.028 0.049 0.049" />
+        </geometry>
+      </collision>
+
+      <inertial>
+        <origin xyz="${0.01665-0.028/2} 0.0 ${0.043/2}" rpy="0 0 0"/>
+        <mass value="0.038" />
+        <inertia  ixx="${1/12*0.038*(0.028**2+0.049**2)}" ixy="0.0" ixz="0.0"
+                  iyy="${1/12*0.038*(0.049**2+0.049**2)}" iyz="0.0"
+                  izz="${1/12*0.038*(0.028**2+0.049**2)}" />
+      </inertial>
+    </link>
+
+
+    <xacro:sensor_d405 parent="${prefix}_base_link" name="${prefix}" use_nominal_extrinsics="true" >
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+    </xacro:sensor_d405>
+
+  </xacro:macro>
+</robot>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<robot name="lidar" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:macro name="lidar" params="prefix parent">
+
+    <joint name="${prefix}_joint" type="fixed">
+      <parent link="${parent}" />
+      <child link="laser_frame" />
+      <origin xyz="0.156 0 0.1049" rpy="0 0 ${M_PI / 2.0}" />
+    </joint>
+
+    <link name="laser_frame">
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <mass value="0.2" />
+        <inertia ixx="0.001" ixy="0" ixz="0"
+                 iyy="0.001" iyz="0"
+                 izz="0.001" />
+      </inertial>
+    </link>
+
+    <joint name="${prefix}_sim_joint" type="fixed">
+      <parent link="laser_frame" />
+      <child link="sim_laser_frame" />
+      <origin xyz="0.0 0 0.0" rpy="0 0 -${M_PI / 2.0}" />
+    </joint>
+
+    <link name="sim_laser_frame">
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <mass value="0.2" />
+        <inertia ixx="0.001" ixy="0" ixz="0"
+                 iyy="0.001" iyz="0"
+                 izz="0.001" />
+      </inertial>
+    </link>
+
+  </xacro:macro>
+</robot>

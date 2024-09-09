@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<robot name="imu" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:macro name="imu" params="prefix parent">
+
+    <joint name="${prefix}_joint"
+          type="fixed">
+      <parent link="${parent}" />
+      <child link="${prefix}_link" />
+      <origin rpy="0 0 0"
+              xyz="0.0756 -0.0655 0.05146" />
+    </joint>
+
+    <link name="${prefix}_link" />
+
+  </xacro:macro>
+</robot>

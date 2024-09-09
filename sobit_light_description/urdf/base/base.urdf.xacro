@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<robot name="base" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:macro name="base" params="parent prefix">
+
+    <!-- Base -->
+    <joint name="${parent}_joint"
+          type="fixed">
+      <parent link="${parent}" />
+      <child link="${prefix}_link" />
+    </joint>
+
+    <link name="${prefix}_link">
+      <visual>
+        <origin xyz="0.0435 0.0 0.0475" rpy="0 0 0" />
+        <geometry>
+          <box size="0.387 0.240 0.095" />
+        </geometry>
+        <material name="body" />
+      </visual>
+
+      <!-- <collision>
+        <origin xyz="0.0435 0.0 0.0475"
+                rpy="0 0 0" />
+        <geometry>
+          <box size="0.387 0.240 0.095" />
+        </geometry>
+        <material name="body" />
+      </collision> -->
+
+      <inertial>
+        <mass value="6.4" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="2.1342e-02" ixy="0" ixz="0"
+                 iyy="2.1342e-02" iyz="0"
+                 izz="4.2667e-02" />
+      </inertial>
+    </link>
+
+
+    <!-- Docking -->
+    <joint name="docking_joint"
+          type="prismatic">
+      <parent link="${prefix}_link" />
+      <child link="docking_link" />
+      <axis xyz="0 0 1.0" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <limit lower="0.0" upper="0.012" effort="1.0" velocity="1.0" />
+    </joint>
+
+    <link name="docking_link">
+      <visual>
+        <origin xyz="0 0 0.1075" rpy="0 0 0" />
+        <geometry>
+          <cylinder length="0.015" radius="0.025" />
+        </geometry>
+        <material name="body" />
+      </visual>
+
+      <collision>
+        <origin xyz="0 0 0.1075" rpy="0 0 0" />
+        <geometry>
+          <cylinder length="0.015" radius="0.025" />
+        </geometry>
+        <material name="body" />
+      </collision>
+
+      <inertial>
+        <mass value="0.2" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="0.001" ixy="0" ixz="0"
+                 iyy="0.001" iyz="0"
+                 izz="0.001" />
+      </inertial>
+    </link>
+
+  </xacro:macro>
+</robot>
