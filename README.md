@@ -1,6 +1,9 @@
 <a name="readme-top"></a>
 
-[JA](README.md) | [EN](README.en.md)
+[JA](README.md) | [EN](README_en.md)
+
+> [!WARNING]
+> 本ロボット，及び本リポジトリはサポートされて間もないため，今後も頻繁に大きく改良される可能性があります．
 
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
@@ -66,6 +69,7 @@ SOBITSが開発した[カチャカ](https://kachaka.life/home/)を用いたモ�
 
 > [!WARNING]
 > 初心者の場合，実機のロボットを扱う際に，先輩方に付き添ってもらいながらロボットを動かしましょう．
+> また，SOBIT LIGHTの使用はDockerの使用を必須とすることに留意してください．
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
@@ -96,28 +100,51 @@ SOBITSが開発した[カチャカ](https://kachaka.life/home/)を用いたモ�
 
 ### インストール方法
 
-1. ROSの`src`フォルダに移動します．
-   ```sh
-   $ cd ~/colcon_ws/src/
-   ```
-2. 本レポジトリをcloneします．
-   ```sh
-   $ git clone https://github.com/TeamSOBITS/sobit_light
-   ```
-3. レポジトリの中へ移動します．
-   ```sh
-   $ cd sobit_light/
-   ```
-4. 依存パッケージをインストールします．
-   ```sh
-   $ bash install.sh
-   ```
-5. パッケージをコンパイルします．
-   ```sh
-   $ cd ~/colcon_ws/
-   $ colcon build --symlink-install
-   $ source ~/colcon_ws/install/setup.sh
-   ```
+- SOBIT LIGHTを使用したい開発環境，またはDocker内で行う内容
+    1. ROSの`src`フォルダに移動します．
+        ```sh
+        $ cd ~/colcon_ws/src/
+        ```
+    2. 本レポジトリをcloneします．
+        ```sh
+        $ git clone https://github.com/TeamSOBITS/sobit_light
+        ```
+    3. レポジトリの中へ移動します．
+        ```sh
+        $ cd sobit_light/
+        ```
+    4. 依存パッケージをインストールします．
+        ```sh
+        $ bash install.sh
+        ```
+    5. パッケージをコンパイルします．
+        ```sh
+        $ cd ~/colcon_ws/
+        $ colcon build --symlink-install
+        $ source ~/colcon_ws/install/setup.sh
+        ```
+
+- ローカルで行う内容(2回目以降は4だけで良い)
+    1. Kachaka APIをgit clone
+        ```sh
+        $ cd
+        $ git clone https://github.com/TeamSOBITS/kachaka-api.git
+        ```
+    2. KachakaのIPアドレスを確認
+        Kachakaが起動していることを確認して，Kachakaに「ねぇカチャカ，IPアドレスを教えて」と声で指示してください．\
+        するとKachakaからIPアドレスが読み上げられる．
+    3. デフォルトでKachakaのコマンドとなるように登録
+        ```sh
+        $ echo 'alias kachaka="cd ~/kachaka-api/tools/ros2_bridge && ./start_bridge.sh "' >> ~/.bashrc
+        ```
+    4. Kachaka用のDockerコンテナを作成
+        ```
+        $ kachaka XXX.XXX.XX.XX
+        ```
+        ※ XXX.XXX.XX.XXはカチャカのIPアドレスにしてください。
+
+> [!NOTE]
+> ここで作成したコンテナに関して，もしカチャカのIPアドレスが変わった場合は一度Dockerコンテナを消して1から行ってください．
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
@@ -125,64 +152,12 @@ SOBITSが開発した[カチャカ](https://kachaka.life/home/)を用いたモ�
 <!-- 実行・操作方法 -->
 ## 実行・操作方法
 
-1. SOBIT LIGHTの起動する機能をパラメタとして[minimal.launch](sobit_light_bringup/launch/minimal.launch)に設定します．
-   ```xml
-    <!-- Activate Mobile-Base (true), Arm (true), Head (true) -->
-    <arg name="enable_mb"           default="true"/>
-    <arg name="enable_arm"          default="true"/>
-    <arg name="enable_head"         default="true"/>
-    ...
-    <arg name="open_rviz"           default="true"/>
-    ...
-   ```
-
-> [!NOTE]
-> 使用したい機能に応じて，`true`か`false`かに書き換えてください．
-
-2. [minimal.launch](sobit_light_bringup/launch/minimal.launch)というlaunchファイルを実行します．
+1. [minimal.launch](sobit_light_bringup/launch/minimal.launch.py)というlaunchファイルを実行します．
    ```sh
-   $ roslaunch sobit_light_bringup minimal.launch
+   $ ros2 launch sobit_light_bringup minimal.launch.py
    ```
-3. [任意] デモプログラムを実行してみましょう．
-   ```sh
-   $ rosrun sobit_light_library test_control_wheel.py
-   ```
-
-> [!NOTE]
-> SOBIT LIGHTの動作方法に慣れるため，[example](sobit_light_library/example/)フォルダを確認し，それぞれのサンプルファイルから動作関数を学びましょう．
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
-
-
-### 移動機構のみを使用する場合
-
-SOBIT LIGHTの移動機構単体で動かすことができます．
-
-1. TODO!: [minimal.launch](sobit_light_bringup/launch/minimal.launch.py)の設定を次にように書き換えます．
-    ```xml
-    <!-- Activate Mobile-Base (true), Arm (true), Head (true) -->
-    <arg name="enable_mb"           default="true"/>
-    <arg name="enable_arm"          default="false"/>
-    <arg name="enable_head"         default="false"/>
-
-    <!-- URG: lan-cable (true), usb-cable (false) -->
-    <arg name="urg_lan"             default="false"/>
-    ...
-    ```
-2. [minimal.launch](sobit_light_bringup/launch/minimal.launch.py)というlaunchファイルを実行します．
-    ```sh
-    $ ros2 launch sobit_light_bringup minimal.launch
-    ```
-3. [任意] デモプログラムを実行してみましょう．
-    ```sh
-    $ ros2 run sobit_light_library_python sobit_light_wheel_controller.py
-    ```
-
-<!-- > [!NOTE] -->
-<!-- > URG(LiDAR)はLAN式通信の場合は`true`に，USB式通信の場合は`false`に設定してください． -->
-
-<p align="right">(<a href="#readme-top">上に戻る</a>)</p>
-
 
 ### Rviz2上の可視化
 
@@ -372,8 +347,8 @@ SOBIT LIGHTのジョイント名とその定数名を以下の通りです．
 
 TODO!
 
-[sobit_light_pose.yaml](sobit_light_library_python/config/pose_list.yaml)というファイルでポーズの追加・編集ができます．以下のようなフォーマットになります．
-
+<!-- [sobit_light_pose.yaml](sobit_light_library_python/config/pose_list.yaml)というファイルでポーズの追加・編集ができます．以下のようなフォーマットになります． -->
+<!-- 
 ```yaml
 sobit_light_pose:
     - { 
@@ -388,7 +363,10 @@ sobit_light_pose:
         head_pitch_joint: 0.0
     }
     ...
-```  
+```   -->
+
+[sobit_light_joint_controller.py](/sobit_light_library_python/sobit_light_library_python/sobit_light_joint_controller.py)のPoseを定義しているところで設定する．\
+poses.namesのリストに定義したいPose名を追加，その後poses.(定義したPose名)のリストに各ジョイントの角度を設定する．
 
 ### ホイールコントローラ
 
@@ -519,7 +497,7 @@ TBD
 <!-- マイルストーン -->
 ## マイルストーン
 
-- [x] OSS
+- [o] OSS
     - [x] ドキュメンテーションの充実
     - [x] コーディングスタイルの統一
 - Abundant update

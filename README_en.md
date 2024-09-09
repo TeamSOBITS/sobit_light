@@ -1,6 +1,9 @@
 <a name="readme-top"></a>
 
-[JA](README.md) | [EN](README.en.md)
+[JA](README.md) | [EN](README_en.md)
+
+> [!WARNING]
+> This robot and this repository have been supported for a short period of time and may be improved frequently and significantly in the future.
 
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
@@ -66,6 +69,7 @@ This is a library to operate the [Kachaka](https://kachaka.life/home/)-integrate
 
 > [!WARNING]
 > If you have no previous experience controlling this robot, please have a senior colleague accompany you while you want to use this robot.
+> Please note that the use of SOBIT LIGHT requires the use of Docker.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -96,28 +100,51 @@ First, please set up the following environment before proceeding to the next ins
 
 ### Installation
 
-1. Go to the `src` folder of ROS.
-   ```sh
-   $ cd ~/colcon_ws/src/
-   ```
-2. Clone this repository.
-   ```sh
-   $ git clone https://github.com/TeamSOBITS/sobit_light
-   ```
-3. Navigate into the repository.
-   ```sh
-   $ cd sobit_light/
-   ```
-4. Install the dependent packages.
-   ```sh
-   $ bash install.sh
-   ```
-5. Compile the package.
-   ```sh
-   $ cd ~/colcon_ws/
-   $ colcon build --symlink-install
-   $ source ~/colcon_ws/install/setup.sh
-   ```
+- What to do in the development environment where you want to use SOBIT LIGHT or in Docker
+    1. Go to the `src` folder of ROS.
+        ```sh
+        $ cd ~/colcon_ws/src/
+        ```
+    2. Clone this repository.
+        ```sh
+        $ git clone https://github.com/TeamSOBITS/sobit_light
+        ```
+    3. Navigate into the repository.
+        ```sh
+        $ cd sobit_light/
+        ```
+    4. Install the dependent packages.
+        ```sh
+        $ bash install.sh
+        ```
+    5. Compile the package.
+        ```sh
+        $ cd ~/colcon_ws/
+        $ colcon build --symlink-install
+        $ source ~/colcon_ws/install/setup.sh
+        ```
+
+- What to do locally (after the second time, only 4 is needed)
+    1. Clone the Kachaka API
+        ```sh
+        $ cd
+        $ git clone https://github.com/TeamSOBITS/kachaka-api.git
+        ```
+    2. Check the Kachaka IP address
+        bringup the Kachaka.Please call out, “ねぇカチャカ，IPアドレスを教えて”\
+        IP address is read out from Kachaka.
+    3. Set up the Command
+        ```sh
+        $ echo 'alias kachaka="cd ~/kachaka-api/tools/ros2_bridge && ./start_bridge.sh "' >> ~/.bashrc
+        ```
+    4. Create the Docker container of Kachaka
+        ```
+        $ kachaka XXX.XXX.XX.XX
+        ```
+        ※ XXX.XXX.XX.XX is Kachaka IP address
+
+> [!NOTE]
+> If the IP address of the container created here is changed, delete the Docker container and start from scratch.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -125,70 +152,19 @@ First, please set up the following environment before proceeding to the next ins
 <!-- LAUNCH AND USAGE EXAMPLES -->
 ## Launch and Usage
 
-1. Set the parameters inside [minimal.launch](sobit_light_bringup/launch/minimal.launch) and select the functions to launch with SOBIT LIGHT.
-   ```xml
-    <!-- Activate Mobile-Base (true), Arm (true), Head (true) -->
-    <arg name="enable_mb"           default="true"/>
-    <arg name="enable_arm"          default="true"/>
-    <arg name="enable_head"         default="true"/>
-    ...
-    <arg name="open_rviz"           default="true"/>
-    ...
-   ```
-> [!NOTE]
-> Rewrite it as `true` or `false` depending on the functions you want to use.
-
-2. Execute the launch file [minimal.launch](sobit_light_bringup/launch/minimal.launch).
-   ```sh
-   $ roslaunch sobit_light_bringup minimal.launch
-   ```
-3. [Optional] Let's run the demo program.
-   ```sh
-   $ rosrun sobit_light_library test_control_wheel.py
-   ```
-
-> [!NOTE]
-> Check the [example](sobit_light_library/example/) folder to become familiar with how SOBIT LIGHT works, and learn the working functions from each sample file.
+1. Execute the launch file [minimal.launch](sobit_light_bringup/launch/minimal.launch.py).
+    ```sh
+    $ roslaunch sobit_light_bringup minimal.launch.py
+    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-### If only using mobile mechanism
-
-SOBIT LIGHT can be moved by the moving mechanism alone.
-
-1. Rewrite [minimal.launch](sobit_light_bringup/launch/minimal.launch) as follows
-    ```xml
-    <!-- Activate Mobile-Base (true), Arm (true), Head (true) -->
-    <arg name="enable_mb"           default="true"/>
-    <arg name="enable_arm"          default="false"/>
-    <arg name="enable_head"         default="false"/>
-
-    <!-- URG: lan-cable (true), usb-cable (false) -->
-    <arg name="urg_lan"             default="false"/>
-    ...
-    ```
-2. Execute the launch file [minimal.launch](sobit_light_bringup/launch/minimal.launch).
-    ```sh
-    $ roslaunch sobit_light_bringup minimal.launch
-    ```
-3. [Optional] Let's run the demo program.
-    ```sh
-    $ rosrun sobit_light_library test_control_wheel.py
-    ```
-
-<!-- > [!NOTE]
-> URG(LiDAR) should be set to `true` for LAN type communication and to `false` for USB type communication. -->
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-### Visualize on Rviz
+### Visualize on Rviz2
 
 As a preliminary step to running the actual machine, SOBIT LIGHT can be visualized on Rviz to display the robot's configuration.
 
 ```sh
-$ roslaunch sobit_light_description display.launch
+$ ros2 launch sobit_light_description display.launch.py
 ```
 
 If it works correctly, Rviz will be displayed as follows.
@@ -369,7 +345,9 @@ The joint names of SOBIT LIGHT and their constants are listed below.
 
 #### How to set new poses
 
-Poses can be added and edited in the file [sobit_light_pose.yaml](sobit_light_library/config/sobit_light_pose.yaml). The format is as follows:
+TODO!
+
+<!-- Poses can be added and edited in the file [sobit_light_pose.yaml](sobit_light_library/config/sobit_light_pose.yaml). The format is as follows:
 
 ```yaml
 sobit_light_pose:
@@ -385,7 +363,10 @@ sobit_light_pose:
         head_tilt_joint: 0.0
     }
     ...
-```  
+```   -->
+
+Set where Pose is defined in [sobit_light_joint_controller.py](/sobit_light_library_python/sobit_light_library_python/sobit_light_joint_controller.py).\
+Add the Pose name you wish to define to the poses.names list, and then set the angle of each joint in the poses.(Pose name) list.
 
 ### Wheel Controller
 
@@ -515,7 +496,7 @@ TBD
 <!-- MILESTONE -->
 ## Milestone
 
-- [x] OSS
+- [o] OSS
     - [x] Improved documentation
     - [x] Unified coding style
 
