@@ -11,6 +11,7 @@ cd ..
 ros_packages=(
     # "sobit_common" \
     "sobits_msgs" \
+    "dynamixel_hardware"
     # "urg_node" \
     "realsense_ros" \
     # "kachaka_api"
