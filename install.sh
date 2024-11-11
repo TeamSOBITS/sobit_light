@@ -9,10 +9,8 @@ cd ..
 
 # Download required packages for SOBIT LIGHT
 ros_packages=(
-    # "sobit_common" \
-    "sobits_msgs" \
+    "sobit_msgs" \
     "dynamixel_hardware"
-    # "urg_node" \
     "realsense_ros" \
     # "kachaka_api"
 )
@@ -20,8 +18,7 @@ ros_packages=(
 #Clone all packages
 for ((i = 0; i < ${#ros_packages[@]}; i++)) {
     echo "Clonning: ${ros_packages[i]}"
-    # git clone -b $ROS_DISTRO https://github.com/TeamSOBITS/${ros_packages[i]}.git
-    git clone -b feature/humble-devel https://github.com/TeamSOBITS/${ros_packages[i]}.git
+    git clone -b $ROS_DISTRO-devel https://github.com/TeamSOBITS/${ros_packages[i]}.git
 
     # Check if install.sh exists in each package
     if [ -f ${ros_packages[i]}/install.sh ]; then
@@ -36,9 +33,8 @@ for ((i = 0; i < ${#ros_packages[@]}; i++)) {
 cd ${DIR}
 
 # Download required dependencies
-# sudo apt-get update
-# sudo apt-get install -y \
-#     mpg321 
+python3 -m pip install \
+    transforms3d
 
 # Download ROS packages
 sudo apt-get update
@@ -64,7 +60,8 @@ sudo apt-get install -y \
     ros-$ROS_DISTRO-transmission-interface \
     ros-$ROS_DISTRO-urdf \
     ros-$ROS_DISTRO-urdf-launch \
-    ros-$ROS_DISTRO-xacro
+    ros-$ROS_DISTRO-xacro \
+    ros-$ROS_DISTRO-tf-transformations
 
 # Install Gazebo Fortress
 # - Install some necessary tools
