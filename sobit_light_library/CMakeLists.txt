@@ -20,7 +20,7 @@ find_package(tf2_geometry_msgs REQUIRED)
 find_package(trajectory_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
-find_package(sobits_msgs REQUIRED)
+find_package(sobits_interfaces REQUIRED)
 
 # Find libraries
 include_directories(include)
@@ -57,7 +57,7 @@ ament_target_dependencies(${PROJECT_NAME}
   trajectory_msgs
   geometry_msgs
   nav_msgs
-  sobits_msgs
+  sobits_interfaces
 )
 
 
@@ -73,7 +73,7 @@ ament_target_dependencies(test_control_wheel
   trajectory_msgs
   geometry_msgs
   nav_msgs
-  sobits_msgs
+  sobits_interfaces
 )
 
 #############

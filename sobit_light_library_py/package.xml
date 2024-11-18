@@ -23,7 +23,7 @@
   <depend>trajectory_msgs</depend>
   <depend>geometry_msgs</depend>
   <depend>nav_msgs</depend>
-  <depend>sobits_msgs</depend>
+  <depend>sobits_interfaces</depend>
 
   <exec_depend>rpyutils</exec_depend>
 

@@ -14,7 +14,7 @@
 #include <trajectory_msgs/msg/joint_trajectory.hpp>
 #include <geometry_msgs/msg/transform_stamped.hpp>
 #include <geometry_msgs/msg/point.hpp>
-#include "sobits_msgs/msg/current_state_array.hpp"
+#include "sobits_interfaces/msg/current_state_array.hpp"
 
 #include "sobit_light_library/sobit_light_library.hpp"
 
@@ -137,7 +137,7 @@ class JointController : public rclcpp::Node {
   rclcpp::Publisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr pub_arm_control_;
   rclcpp::Publisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr pub_head_control_;
 
-  rclcpp::Subscription<sobits_msgs::msg::CurrentStateArray>::SharedPtr sub_arm_curr_;
+  rclcpp::Subscription<sobits_interfaces::msg::CurrentStateArray>::SharedPtr sub_arm_curr_;
 
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_{nullptr};
   std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
@@ -188,7 +188,7 @@ class JointController : public rclcpp::Node {
       const std::string& prefix,
       std::vector<Pose>& poses);
   void callbackArmCurr(
-      const sobits_msgs::msg::CurrentStateArray::SharedPtr msg);
+      const sobits_interfaces::msg::CurrentStateArray::SharedPtr msg);
   void loadPose();
 };
 }  // namespace sobit_light
@@ -270,7 +270,7 @@ inline void sobit_light::JointController::setPoseParams(
 
 // TODO: obtain current from each actuator
 inline void sobit_light::JointController::callbackArmCurr(
-    const sobits_msgs::msg::CurrentStateArray::SharedPtr msg) {
+    const sobits_interfaces::msg::CurrentStateArray::SharedPtr msg) {
   for (const auto &actuator : msg->current_state_array) {
     if (actuator.joint_name == kJointNames[kArmWristPitchJoint])
       kArmWristPitchCurr = actuator.current_ma;

@@ -16,9 +16,9 @@ JointController::JointController(
   pub_head_control_ = this->create_publisher<trajectory_msgs::msg::JointTrajectory>(
       "head_trajectory_controller/command", qos_profile);
 
-  sub_arm_curr_ = this->create_subscription<sobits_msgs::msg::CurrentStateArray>(
+  sub_arm_curr_ = this->create_subscription<sobits_interfaces::msg::CurrentStateArray>(
       "current_state_array", qos_profile,
-      [this](const sobits_msgs::msg::CurrentStateArray::SharedPtr msg) -> void {
+      [this](const sobits_interfaces::msg::CurrentStateArray::SharedPtr msg) -> void {
         callbackArmCurr(std::move(msg));
       });
 
@@ -37,6 +37,7 @@ JointController::JointController(
 JointController::~JointController() {
   RCLCPP_INFO(this->get_logger(), "JointController has been terminated.");
   sub_arm_curr_.reset();
+  // pub_arm_control_.reset();
 }
 
 // TODO: Load poses from yaml file
