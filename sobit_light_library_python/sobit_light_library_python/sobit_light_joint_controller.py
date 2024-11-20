@@ -18,7 +18,7 @@ from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 from sensor_msgs.msg import JointState
 from tf2_geometry_msgs import TransformStamped, do_transform_point
 from geometry_msgs.msg import Point, PointStamped
-from sobits_msgs.msg import CurrentStateArray, CurrentState
+from sobits_interfaces.msg import CurrentStateArray, CurrentState
 
 import sys
 import os
@@ -654,13 +654,13 @@ def main(args=None):
   # node.moveJointRad(Joints.kArmShoulderRollJoint, 0.0, 3.0)
   # node.moveToPose('detect_bag_pose', 4.0)
   # node.moveToPose('raise_hand', 3.0)
-  # node.moveToPose('detecting_pose', 3.0)
-  # node.moveToPose('initial_pose', 3.0)
+  # node.moveToPose('detecting_pose', 10.0)
+  node.moveToPose('initial_pose', 10.0)
   # node.moveHandToTargetCoord([0.5, 0.0, 0.3], [0.0, 0.0, 0.0], 5.0)
   # node.moveArmRad([0.0, -1.57, 0.0, 0.0, 0.0, 0.0], 0.0 ,3.0)
   # node.moveToPose('initial_pose', 3.0)
   # node.moveHandToTargetTF('target_name', [0.0, 0.0, 0.0], 1.0)
-  node.moveHandToTargetCoord([0.0, 0.0, 0.3], [0.0, 0.0, 0.0], 5.0)
+  # node.moveHandToTargetCoord([0.0, 0.0, 0.3], [0.0, 0.0, 0.0], 5.0)
   # node.moveHandToPlaceTF('target_name', [0.0, 0.0, 0.0], 1.0)
   # node.moveHandToTargetTF('handle_point', [0.0, 0.0, 0.0], 5.0, True)
 
