@@ -5,7 +5,7 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
 from launch.actions import RegisterEventHandler
-from launch.event_handlers import OnProcessExit
+from launch.event_handlers import OnExecutionComplete, OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 
@@ -49,6 +49,16 @@ def generate_launch_description():
         parameters=[params],
     )
 
+    node_tf_camera = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        output='screen',
+        arguments=['--frame-id', 'head_camera_depth_optical_frame',
+                   '--child-frame-id', 'sobit_light/head_pitch_link/head_camera_depth',
+                   '--pitch', '-1.57',
+                   '--roll', '1.57'],
+    )
+
     ignition_spawn_entity = Node(
         package='ros_gz_sim',
         executable='create',
@@ -57,12 +67,6 @@ def generate_launch_description():
                    '-name', 'sobit_light',
                    '-allow_renaming', 'true'],
     )
-
-    # node_controller_manager = Node(
-    #     package='controller_manager',
-    #     executable='ros2_control_node',
-    #     parameters=[]
-
 
     load_joint_state_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
@@ -157,6 +161,7 @@ def generate_launch_description():
             )
         ),
         node_robot_state_publisher,
+        node_tf_camera,
         ignition_spawn_entity,
         rviz_node,
         # Launch Arguments
