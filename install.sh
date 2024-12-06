@@ -10,9 +10,8 @@ cd ..
 # Download required packages for SOBIT LIGHT
 ros_packages=(
     "sobits_msgs" \
-    "dynamixel_hardware"
-    "realsense_ros" \
-    # "kachaka_api"
+    "dynamixel_hardware" \
+    "realsense_ros"
 )
 
 #Clone all packages
