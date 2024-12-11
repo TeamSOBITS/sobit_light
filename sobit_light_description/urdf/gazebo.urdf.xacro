@@ -3,10 +3,6 @@
 <robot name="sobit_light_gazebo" xmlns:xacro="http://ros.org/wiki/xacro">
   <xacro:macro name="gazebo_ros2_control" params="prefix">
 
-    <!-- <gazebo reference="${prefix}_base_link">
-      <material>Gazebo/Black</material>
-    </gazebo> -->
-
     <!-- Sensor: Color -->
     <gazebo reference="head_camera_color_optical_frame">
       <sensor name="head_camera_color" type="camera">
@@ -99,180 +95,6 @@
       </sensor>
     </gazebo>
 
-    <!-- Position Drive: Arm -->
-    <!-- TODO: PID Controller (https://control.ros.org/rolling/doc/gazebo_ros2_control/doc/index.html) -->
-    <ros2_control name="ArmIgnitionSystem" type="system">
-      <hardware>
-        <plugin>ign_ros2_control/IgnitionSystem</plugin>
-      </hardware>
-      <joint name="arm_shoulder_roll_joint">
-        <command_interface name="position">
-          <param name="min">-3.141592654</param>
-          <param name="max">3.141592654</param>
-        </command_interface>
-        <state_interface name="position">
-          <param name="initial_value">0.0</param>
-        </state_interface>
-        <state_interface name="velocity"/>
-        <state_interface name="effort"/>
-      </joint>
-      <joint name="arm_shoulder_pitch_joint">
-        <command_interface name="position">
-          <param name="min">-1.570796327</param>
-          <param name="max">1.570796327</param>
-        </command_interface>
-        <state_interface name="position">
-          <param name="initial_value">-1.57</param>
-        </state_interface>
-        <state_interface name="velocity"/>
-        <state_interface name="effort"/>
-      </joint>
-      <joint name="arm_shoulder_pitch_sub_joint">
-        <param name="mimic">arm_shoulder_pitch_joint</param>
-        <param name="multiplier">-1</param>
-        <command_interface name="position"/>
-        <state_interface name="position"/>
-        <state_interface name="velocity"/>
-        <state_interface name="effort"/>
-      </joint>
-      <joint name="arm_elbow_pitch_joint">
-        <command_interface name="position">
-          <param name="min">-1.570796327</param>
-          <param name="max">1.570796327</param>
-        </command_interface>
-        <state_interface name="position">
-          <param name="initial_value">0.0</param>
-        </state_interface>
-        <state_interface name="velocity"/>
-        <state_interface name="effort"/>
-      </joint>
-      <joint name="arm_forearm_roll_joint">
-        <command_interface name="position">
-          <param name="min">-3.141592654</param>
-          <param name="max">3.141592654</param>
-        </command_interface>
-        <state_interface name="position">
-          <param name="initial_value">0.0</param>
-        </state_interface>
-        <state_interface name="velocity"/>
-        <state_interface name="effort"/>
-      </joint>
-      <joint name="arm_wrist_pitch_joint">
-        <command_interface name="position">
-          <param name="min">-1.570796327</param>
-          <param name="max">1.570796327</param>
-        </command_interface>
-        <state_interface name="position">
-          <param name="initial_value">0.0</param>
-        </state_interface>
-        <state_interface name="velocity"/>
-        <state_interface name="effort"/>
-      </joint>
-      <joint name="arm_wrist_roll_joint">
-        <command_interface name="position">
-          <param name="min">-3.141592654</param>
-          <param name="max">3.141592654</param>
-        </command_interface>
-        <state_interface name="position">
-          <param name="initial_value">0.0</param>
-        </state_interface>
-        <state_interface name="velocity"/>
-        <state_interface name="effort"/>
-      </joint>
-    </ros2_control>
-
-
-    <!-- Hand Mimic Joint -->
-    <ros2_control name="HandIgnitionSystem" type="system">
-      <hardware>
-        <plugin>ign_ros2_control/IgnitionSystem</plugin>
-      </hardware>
-      <!-- <joint name="hand_finger_l_joint"> -->
-      <joint name="hand_joint">
-        <command_interface name="position"/>
-        <state_interface name="position">
-          <param name="initial_value">0.0</param>
-        </state_interface>
-        <state_interface name="velocity"/>
-        <state_interface name="effort"/>
-      </joint>
-      <!-- <joint name="hand_finger_r_joint"> -->
-      <joint name="hand_sub_joint">
-        <!-- <param name="mimic">hand_finger_l_joint</param> -->
-        <param name="mimic">hand_joint</param>
-        <param name="multiplier">1</param>
-        <command_interface name="position"/>
-        <state_interface name="position"/>
-        <state_interface name="velocity"/>
-        <state_interface name="effort"/>
-      </joint>
-    </ros2_control>
-
-
-    <!-- Position Drive: Head -->
-    <ros2_control name="HeadIgnitionSystem" type="system">
-      <hardware>
-        <plugin>ign_ros2_control/IgnitionSystem</plugin>
-      </hardware>
-      <joint name="head_yaw_joint">
-        <command_interface name="position">
-          <param name="min">-3.141592654</param>
-          <param name="max">3.141592654</param>
-        </command_interface>
-        <state_interface name="position">
-          <param name="initial_value">0.0</param>
-        </state_interface>
-        <state_interface name="velocity"/>
-        <state_interface name="effort"/>
-      </joint>
-      <joint name="head_pitch_joint">
-        <command_interface name="position">
-          <param name="min">-1.570796327</param>
-          <param name="max">1.570796327</param>
-        </command_interface>
-        <state_interface name="position">
-          <param name="initial_value">0.0</param>
-        </state_interface>
-        <state_interface name="velocity"/>
-        <state_interface name="effort"/>
-      </joint>
-    </ros2_control>
-
-
-    <!-- Differential Drive -->
-    <ros2_control name="DiffIgnitionSystem" type="system">
-      <hardware>
-        <plugin>ign_ros2_control/IgnitionSystem</plugin>
-      </hardware>
-      <joint name="base_l_drive_wheel_joint">
-        <command_interface name="velocity">
-          <param name="min">-1.0</param>
-          <param name="max">1.0</param>
-        </command_interface>
-        <state_interface name="position"/>
-        <state_interface name="velocity"/>
-      </joint>
-      <joint name="base_r_drive_wheel_joint">
-        <command_interface name="velocity">
-          <param name="min">-1.0</param>
-          <param name="max">1.0</param>
-        </command_interface>
-        <state_interface name="position"/>
-        <state_interface name="velocity"/>
-      </joint>
-    </ros2_control>
-
-
-    <!-- Ignition ROS2 Control -->
-    <gazebo>
-      <plugin
-          filename="ign_ros2_control-system"
-          name="ign_ros2_control::IgnitionROS2ControlPlugin">
-          <!-- filename="gz_ros2_control-system"
-          name="gz_ros2_control::GazeboSimROS2ControlPlugin"> -->
-        <parameters>$(find sobit_light_control)/config/ros_controllers.yaml</parameters>
-      </plugin>
-    </gazebo>
 
     <!-- Ignition Sensors -->
     <gazebo>
@@ -285,8 +107,7 @@
     </gazebo>
 
     <!-- Publish Pose -->
-    <gazebo>
-      <!-- <plugin filename="ignition-gazebo-pose-publisher-system" name="ignition::gazebo::systems::PosePublisher"> -->
+    <!-- <gazebo>
       <plugin
           filename="gz-sim-pose-publisher-system"
           name="gz::sim::systems::PosePublisher">
@@ -295,9 +116,8 @@
         <publish_visual_pose>false</publish_visual_pose>
         <publish_sensor_pose>false</publish_sensor_pose>
         <publish_nested_model_pose>true</publish_nested_model_pose>
-        <!-- <update_frequency>20</update_frequency> -->
       </plugin>
-    </gazebo>
+    </gazebo> -->
 
     <!-- Publish Joint States -->
     <gazebo>
@@ -309,26 +129,6 @@
       </plugin>
     </gazebo>
 
-    <gazebo>
-      <!-- <plugin
-          filename="ignition-gazebo-physics-system"
-          name="ignition::gazebo::systems::Physics">
-      </plugin> -->
-      <!-- <plugin
-          filename="gz-sim-physics-system"
-          name="gz::sim::systems::Physics">
-      </plugin> -->
-    </gazebo>
-    <gazebo>
-      <!-- <plugin
-          filename="ignition-gazebo-scene-broadcaster-system"
-          name="ignition::gazebo::systems::SceneBroadcaster">
-      </plugin> -->
-      <!-- <plugin
-          filename="gz-sim-scene-broadcaster-system"
-          name="gz::sim::systems::SceneBroadcaster">
-      </plugin> -->
-    </gazebo>
 
   </xacro:macro>
 </robot>
