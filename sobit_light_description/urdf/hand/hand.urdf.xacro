@@ -70,18 +70,15 @@
     </link>
 
     <!--  Act 8: Hand Finger (left) -->
-    <!-- <joint name="${prefix_hand}_${prefix_finger}_l_joint" type="prismatic"> -->
     <joint name="${prefix_hand}_joint" type="prismatic">
       <parent link="${prefix_hand}_sub_l_link"/>
-      <!-- <child link="${prefix_hand}_${prefix_finger}_l_link"/> -->
       <child link="${prefix_hand}_link"/>
       <origin xyz="0.0 0.04 0.0" rpy="0 0 0"/>
-      <axis xyz="0 -1 0"/>
-      <limit velocity="4.8" effort="1" lower="${-0.055+0.02675}" upper="0.0" />
+      <axis xyz="0 1 0"/>
+      <limit velocity="4.8" effort="1" lower="0.0" upper="${0.02675-0.055}" />
     </joint>
 
     <!--  Act 8: Hand Finger (left) -->
-    <!-- <link name="${prefix_hand}_${prefix_finger}_l_link"> -->
     <link name="${prefix_hand}_link">
       <visual>
         <origin xyz="0.0 0.0 0" rpy="0 0 ${M_PI/2}"/>
@@ -108,20 +105,16 @@
     </link>
 
     <!--  Act 8: Hand Finger (right) -->
-    <!-- <joint name="${prefix_hand}_${prefix_finger}_r_joint" type="prismatic"> -->
     <joint name="${prefix_hand}_sub_joint" type="prismatic">
       <parent link="${prefix_hand}_sub_r_link"/>
-      <!-- <child link="${prefix_hand}_${prefix_finger}_r_link"/> -->
       <child link="${prefix_hand}_sub_link"/>
       <origin xyz="0.0 -0.04 0.0" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
-      <limit velocity="4.8" effort="1" lower="${-0.055+0.02675}" upper="0.0" />
-      <!-- <mimic joint="${prefix_hand}_${prefix_finger}_l_joint" multiplier="1"/> -->
+      <limit velocity="4.8" effort="1" lower="-1.57" upper="1.57"/>
       <mimic joint="${prefix_hand}_joint" multiplier="-1"/>
     </joint>
 
     <!--  Act 8: Hand Finger (right) -->
-    <!-- <link name="${prefix_hand}_${prefix_finger}_r_link"> -->
     <link name="${prefix_hand}_sub_link">
       <visual>
         <origin xyz="0.0 -0.0 0" rpy="0 ${M_PI} ${M_PI/2}"/>
@@ -149,7 +142,6 @@
 
     <!--  Joint: Hand Tip Left -->
     <joint name="${prefix_hand}_${prefix_finger}_tip_l_joint" type="fixed">
-      <!-- <parent link="${prefix_hand}_${prefix_finger}_l_link"/> -->
       <parent link="${prefix_hand}_link"/>
       <child link="${prefix_hand}_${prefix_finger}_tip_l_link"/>
       <origin xyz="${0.0345+0.0375/2} -0.0145 0.0" rpy="0 0 0"/>
@@ -183,7 +175,6 @@
 
     <!--  Joint: Hand Tip Right -->
     <joint name="${prefix_hand}_${prefix_finger}_tip_r_joint" type="fixed">
-      <!-- <parent link="${prefix_hand}_${prefix_finger}_r_link"/> -->
       <parent link="${prefix_hand}_sub_link"/>
       <child link="${prefix_hand}_${prefix_finger}_tip_r_link"/>
       <origin xyz="${0.0345+0.0375/2} 0.0145 0.0" rpy="0 0 0"/>
