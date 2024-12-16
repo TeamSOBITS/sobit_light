@@ -62,22 +62,18 @@ sudo apt-get install -y \
     ros-$ROS_DISTRO-xacro \
     ros-$ROS_DISTRO-tf-transformations
 
-# Install Gazebo Fortress
-# - Install some necessary tools
+# Install Gazebo Harmonic with binaries
 # sudo apt-get update
-# sudo apt-get install lsb-release gnupg
+# sudo apt-get install -y \
+#     curl \
+#     lsb-release gnupg
 
-# # - Install Ignition Fortress
 # sudo curl https://packages.osrfoundation.org/gazebo.gpg --output /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
 # echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
 # sudo apt-get update
-# sudo apt-get install ignition-fortress
+# sudo apt-get install -y \
+#     gz-harmonic
 
-# ROS2 Control Gazebo Plugins
-# cd ..
-# git clone https://github.com/ros-controls/gz_ros2_control/ -b ${ROS_DISTRO}
-# rosdep update
-# rosdep install --from-paths gz_ros2_control/ -i -y --rosdistro ${ROS_DISTRO}
 
 # Install Gazebo Fortress with binaries
 sudo apt-get install -y \
