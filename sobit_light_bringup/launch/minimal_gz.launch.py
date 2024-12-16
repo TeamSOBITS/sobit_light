@@ -93,19 +93,39 @@ def generate_launch_description():
                     # "/tf" + "@tf2_msgs/msg/TFMessage" + "[ignition.msgs.TFMessage",
                     "/model/sobit_light/pose" + "@geometry_msgs/msg/Pose" + "[ignition.msgs.Pose",
                     "/joint_states" + "@sensor_msgs/msg/JointState" + "[ignition.msgs.Model",
+                    "/base_front_camera/camera_info" + "@sensor_msgs/msg/CameraInfo" + "[ignition.msgs.CameraInfo",
+                    "/base_front_camera/color" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
+                    "/base_front_camera/depth" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
+                    "/base_back_camera/camera_info" + "@sensor_msgs/msg/CameraInfo" + "[ignition.msgs.CameraInfo",
+                    "/base_back_camera/color" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
+                    "/base_back_camera/depth" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
                     "/head_camera/camera_info" + "@sensor_msgs/msg/CameraInfo" + "[ignition.msgs.CameraInfo",
                     "/head_camera/color" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
                     "/head_camera/depth" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
                     "/head_camera/depth/points" + "@sensor_msgs/msg/PointCloud2" + "[ignition.msgs.PointCloudPacked",
+                    "/hand_camera/camera_info" + "@sensor_msgs/msg/CameraInfo" + "[ignition.msgs.CameraInfo",
+                    "/hand_camera/color" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
+                    "/hand_camera/depth" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
+                    "/hand_camera/depth/points" + "@sensor_msgs/msg/PointCloud2" + "[ignition.msgs.PointCloudPacked",
                    ],
         output='screen'
     )
 
-    gz_tf_cam_node = Node(
+    gz_tf_head_cam_node = Node(
         package='tf2_ros',
         executable='static_transform_publisher',
         arguments=['--frame-id', 'head_camera_depth_optical_frame',
                    '--child-frame-id', 'sobit_light/head_pitch_link/head_camera_depth',
+                   '--pitch', '-1.57',
+                   '--roll', '1.57'],
+        output='screen',
+    )
+
+    gz_tf_hand_cam_node = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        arguments=['--frame-id', 'hand_camera_depth_optical_frame',
+                   '--child-frame-id', 'sobit_light/arm_wrist_roll_link/hand_camera_depth',
                    '--pitch', '-1.57',
                    '--roll', '1.57'],
         output='screen',
@@ -120,7 +140,8 @@ def generate_launch_description():
             launch_arguments=[('gz_args', [' -r -v 4 empty.sdf'])]),
         gz_spawn_entity_node,
         gz_bridge_node,
-        gz_tf_cam_node,
+        gz_tf_head_cam_node,
+        gz_tf_hand_cam_node,
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=gz_spawn_entity_node,
