@@ -3,16 +3,73 @@
 <robot name="sobit_light_gazebo" xmlns:xacro="http://ros.org/wiki/xacro">
   <xacro:macro name="gazebo_ros2_control" params="prefix">
 
-    <!-- Sensor: Color -->
-    <gazebo reference="head_camera_color_optical_frame">
-      <sensor name="head_camera_color" type="camera">
-        <ignition_frame_id>head_camera_color_optical_frame</ignition_frame_id>
+    <!-- Sensor: Base Front Camera (Color) -->
+    <gazebo reference="imu_link">
+      <sensor name="imu_sensor" type="imu">
+        <pose>0 0 0 0 0 0</pose>
+
+        <gz_frame_id>camera_front_link</gz_frame_id>
+        <topic>imu</topic>
+        
         <always_on>1</always_on>
-        <update_rate>10</update_rate>
-        <visualize>1</visualize>
+        <visualize>true</visualize>
+        <update_rate>1</update_rate>
+      </sensor>
+    </gazebo>
+
+
+    <!-- [TODO] Sensor: Base Front Camera (Color) -->
+    <!-- <gazebo reference="camera_front_link">
+      <sensor name="base_front_camera_color" type="wideanglecamera">
         <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
-        <topic>/head_camera/color</topic>
-        <camera name="d435">
+
+        <gz_frame_id>camera_front_link</gz_frame_id>
+        <topic>/base_front_camera/color</topic>
+
+        <always_on>1</always_on>
+        <visualize>true</visualize>
+        <update_rate>1</update_rate>
+
+        <camera name="base_front_camera_color">
+          <horizontal_fov>3.14</horizontal_fov>
+          <image>
+            <width>800</width>
+            <height>600</height>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>100</far>
+          </clip>
+          <lens>
+            <type>custom</type>
+            <custom_function>
+              <c1>1.05</c1>
+              <c2>4</c2>
+              <f>1.0</f>
+              <fun>tan</fun>
+            </custom_function>
+            <scale_to_hfov>true</scale_to_hfov>
+            <cutoff_angle>3.1415</cutoff_angle>
+            <env_texture_size>512</env_texture_size>
+          </lens>
+        </camera>
+      </sensor>
+    </gazebo> -->
+
+    <!-- Sensor: Base Front Camera (Color) -->
+    <gazebo reference="camera_front_link">
+      <sensor name="base_front_camera_color" type="camera">
+        <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
+        
+        <ignition_frame_id>base_front_camera_color</ignition_frame_id>
+        <!-- <gz_frame_id>base_front_camera_color</gz_frame_id> -->
+        <topic>/base_front_camera/color</topic>
+
+        <always_on>1</always_on>
+        <visualize>true</visualize>
+        <update_rate>1</update_rate>
+
+        <camera name="base_front_camera">
           <horizontal_fov>1.21126</horizontal_fov>
           <image>
             <width>640</width>
@@ -33,16 +90,193 @@
       </sensor>
     </gazebo>
 
-    <!-- Sensor: Depth -->
+    <!-- [TODO] Sensor: Base Back Camera (Color) -->
+    <!-- <gazebo reference="camera_back_link">
+      <sensor name="base_back_camera_color" type="wideanglecamera">
+        <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
+        
+        <gz_frame_id>camera_back_link</gz_frame_id>
+        <topic>/base_back_camera/color</topic>
+
+        <always_on>1</always_on>
+        <visualize>true</visualize>
+        <update_rate>30</update_rate>
+
+        <camera name="base_back_camera_color">
+          <horizontal_fov>3.14</horizontal_fov>
+          <image>
+            <width>800</width>
+            <height>600</height>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>100</far>
+          </clip>
+          <lens>
+            <type>custom</type>
+            <custom_function>
+              <c1>1.05</c1>
+              <c2>4</c2>
+              <f>1.0</f>
+              <fun>tan</fun>
+            </custom_function>
+            <scale_to_hfov>true</scale_to_hfov>
+            <cutoff_angle>3.1415</cutoff_angle>
+            <env_texture_size>512</env_texture_size>
+          </lens>
+        </camera>
+      </sensor>
+    </gazebo> -->
+
+    <!-- Sensor: Base Back Camera (Color) -->
+    <gazebo reference="camera_back_link">
+      <sensor name="base_back_camera_color" type="camera">
+        <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
+        
+        <ignition_frame_id>camera_back_link</ignition_frame_id>
+        <!-- <gz_frame_id>camera_back_link</gz_frame_id> -->
+        <topic>/base_back_camera/color</topic>
+
+        <always_on>1</always_on>
+        <visualize>true</visualize>
+        <update_rate>1</update_rate>
+
+        <camera name="base_back_camera">
+          <horizontal_fov>1.21126</horizontal_fov>
+          <image>
+            <width>640</width>
+            <height>480</height>
+            <format>RGB_INT8</format>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>10</far>
+          </clip>
+          <!-- TODO: adjust noise -->
+          <!-- <noise>
+            <type>gaussian</type>
+            <mean>0</mean>
+            <stddev>0.007</stddev>
+          </noise> -->
+        </camera>
+      </sensor>
+    </gazebo>
+
+    <!-- Sensor: Head Camera (Color) -->
+    <gazebo reference="head_camera_color_optical_frame">
+      <sensor name="head_camera_color" type="camera">
+        <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
+        
+        <ignition_frame_id>head_camera_color_optical_frame</ignition_frame_id>
+        <!-- <gz_frame_id>head_camera_color_optical_frame</gz_frame_id> -->
+        <topic>/head_camera/color</topic>
+
+        <always_on>1</always_on>
+        <visualize>true</visualize>
+        <update_rate>1</update_rate>
+
+        <camera name="head_camera_color">
+          <horizontal_fov>1.21126</horizontal_fov>
+          <image>
+            <width>640</width>
+            <height>480</height>
+            <format>RGB_INT8</format>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>10</far>
+          </clip>
+          <!-- TODO: adjust noise -->
+          <!-- <noise>
+            <type>gaussian</type>
+            <mean>0</mean>
+            <stddev>0.007</stddev>
+          </noise> -->
+        </camera>
+      </sensor>
+    </gazebo>
+
+    <!-- Sensor: Head Camera (Depth) -->
     <gazebo reference="head_camera_depth_optical_frame">
       <sensor name="head_camera_depth" type="depth">
-        <ignition_frame_id>head_camera_depth_optical_frame</ignition_frame_id>
-        <always_on>1</always_on>
-        <update_rate>10</update_rate>
-        <visualize>0</visualize>
-        <topic>/head_camera/depth</topic>
         <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
-        <camera name="d435">
+        
+        <ignition_frame_id>head_camera_depth_optical_frame</ignition_frame_id>
+        <!-- <gz_frame_id>head_camera_depth_optical_frame</gz_frame_id> -->
+        <topic>/head_camera/depth</topic>
+
+        <always_on>1</always_on>
+        <visualize>true</visualize>
+        <update_rate>1</update_rate>
+
+        <camera name="head_camera_depth">
+          <horizontal_fov>1.48702</horizontal_fov>
+          <image>
+            <width>1280</width>
+            <height>720</height>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>10</far>
+          </clip>
+          <!-- TODO: adjust noise -->
+          <!-- <noise>
+            <type>gaussian</type>
+            <mean>0</mean>
+            <stddev>0.1</stddev>
+          </noise> -->
+        </camera>
+      </sensor>
+    </gazebo>
+
+    <!-- Sensor: Hand Camera (Color) -->
+    <gazebo reference="hand_camera_color_optical_frame">
+      <sensor name="hand_camera_color" type="camera">
+        <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
+        
+        <ignition_frame_id>hand_camera_color_optical_frame</ignition_frame_id>
+        <!-- <gz_frame_id>hand_camera_color_optical_frame</gz_frame_id> -->
+        <topic>/hand_camera/color</topic>
+
+        <always_on>1</always_on>
+        <visualize>true</visualize>
+        <update_rate>1</update_rate>
+
+        <camera name="hand_camera_color">
+          <horizontal_fov>1.21126</horizontal_fov>
+          <image>
+            <width>640</width>
+            <height>480</height>
+            <format>RGB_INT8</format>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>10</far>
+          </clip>
+          <!-- TODO: adjust noise -->
+          <!-- <noise>
+            <type>gaussian</type>
+            <mean>0</mean>
+            <stddev>0.007</stddev>
+          </noise> -->
+        </camera>
+      </sensor>
+    </gazebo>
+
+    <!-- Sensor: Hand Camera (Depth) -->
+    <gazebo reference="hand_camera_depth_optical_frame">
+      <sensor name="hand_camera_depth" type="depth">
+        <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
+        
+        <ignition_frame_id>hand_camera_depth_optical_frame</ignition_frame_id>
+        <!-- <gz_frame_id>hand_camera_depth_optical_frame</gz_frame_id> -->
+        <topic>/hand_camera/depth</topic>
+
+        <always_on>1</always_on>
+        <visualize>true</visualize>
+        <update_rate>1</update_rate>
+
+        <camera name="head_camera_depth">
           <horizontal_fov>1.48702</horizontal_fov>
           <image>
             <width>1280</width>
@@ -66,9 +300,15 @@
     <gazebo reference="sim_laser_frame">
       <sensor name="lidar" type="gpu_lidar">
         <pose>0 0 0 0 0 0</pose>
-        <topic>kachaka/lidar/scan</topic>
+
         <ignition_frame_id>sim_laser_frame</ignition_frame_id>
+        <!-- <gz_frame_id>sim_laser_frame</gz_frame_id> -->
+        <topic>kachaka/lidar/scan</topic>
+
+        <always_on>1</always_on>
+        <visualize>true</visualize>
         <update_rate>10</update_rate>
+
         <ray>
           <scan>
             <horizontal>
@@ -90,8 +330,6 @@
             <resolution>0.01</resolution>
           </range>
         </ray>
-        <always_on>1</always_on>
-        <visualize>true</visualize>
       </sensor>
     </gazebo>
 
@@ -99,9 +337,7 @@
     <!-- Ignition Sensors -->
     <gazebo>
       <!-- <plugin filename="libignition-gazebo-sensors-system.so" name="ignition::gazebo::systems::Sensors"> -->
-      <plugin
-          filename="gz-sim-sensors-system"
-          name="gz::sim::systems::Sensors">
+      <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
         <render_engine>ogre2</render_engine>
       </plugin>
     </gazebo>
@@ -122,9 +358,7 @@
     <!-- Publish Joint States -->
     <gazebo>
       <!-- <plugin filename="ignition-gazebo-joint-state-publisher-system" name="ignition::gazebo::systems::JointStatePublisher"> -->
-      <plugin
-          filename="gz-sim-joint-state-publisher-system"
-          name="gz::sim::systems::JointStatePublisher">
+      <plugin filename="gz-sim-joint-state-publisher-system" name="gz::sim::systems::JointStatePublisher">
         <topic>joint_states</topic>
       </plugin>
     </gazebo>
