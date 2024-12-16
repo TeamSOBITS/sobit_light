@@ -217,11 +217,8 @@
     <!-- Ignition ROS2 Control -->
     <xacro:if value="${$(arg enable_gz)}">
       <gazebo>
-        <plugin
-            filename="ign_ros2_control-system"
-            name="ign_ros2_control::IgnitionROS2ControlPlugin">
-            <!-- filename="gz_ros2_control-system"
-            name="gz_ros2_control::GazeboSimROS2ControlPlugin"> -->
+        <!-- <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin"> -->
+        <plugin filename="ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
           <parameters>$(find sobit_light_control)/config/controllers_gz.yaml</parameters>
         </plugin>
       </gazebo>
