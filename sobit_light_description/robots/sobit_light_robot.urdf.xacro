@@ -5,7 +5,7 @@
   <xacro:include filename="$(find sobit_light_description)/urdf/values.urdf.xacro" />
   <xacro:include filename="$(find sobit_light_description)/urdf/materials.urdf.xacro" />
   <xacro:include filename="$(find sobit_light_description)/urdf/transmission.urdf.xacro" />
-  <xacro:include filename="$(find sobit_light_description)/urdf/dxl_control.urdf.xacro" />
+  <xacro:include filename="$(find sobit_light_description)/urdf/controllers.urdf.xacro" />
 
 
   <!-- Add URDF: links, joints -->
@@ -61,7 +61,7 @@
 
 
   <!-- Add Dynamixel: plugins -->
-  <xacro:dxl_control name="joints_control" enable_gz="$(arg enable_gz)" />
+  <xacro:controllers name="joints_control" enable_gz="$(arg enable_gz)" />
 
 
   <!-- Add Gazebo: plugins -->

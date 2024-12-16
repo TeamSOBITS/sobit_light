@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!-- SOBIT Light (Dynamixel Control) -->
-<robot name="sobit_light_dxl_control" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot name="sobit_light_controllers" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <xacro:macro name="dxl_control" params="name enable_gz:=False">
+  <xacro:macro name="controllers" params="name enable_gz:=False">
 
-    <ros2_control name="${name}" type="system">
+    <ros2_control name="${name}_arm" type="system">
     <!-- <ros2_control name="joints_control" type="system"> -->
       <hardware>
         <xacro:if value="${$(arg enable_gz)}">
@@ -183,7 +183,7 @@
 
     <!-- Differential Drive -->
     <xacro:if value="${$(arg enable_gz)}">
-      <ros2_control name="base_control" type="system">
+      <ros2_control name="${name}_base" type="system">
         <hardware>
           <plugin>ign_ros2_control/IgnitionSystem</plugin>
           <!-- <plugin>gazebo_ros2_control/GazeboHardware</plugin> -->
