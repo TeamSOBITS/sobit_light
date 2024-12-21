@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!-- SOBIT Light (Gazebo) -->
 <robot name="sobit_light_gazebo" xmlns:xacro="http://ros.org/wiki/xacro">
-  <xacro:macro name="gazebo_ros2_control" params="prefix">
+  <xacro:macro name="gazebo_sensors" params="prefix robot_name">
 
     <!-- Sensor: Base Front Camera (Color) -->
     <gazebo reference="imu_link">
       <sensor name="imu_sensor" type="imu">
         <pose>0 0 0 0 0 0</pose>
 
-        <gz_frame_id>camera_front_link</gz_frame_id>
-        <topic>imu</topic>
+        <gz_frame_id>${robot_name}/camera_front_link</gz_frame_id>
+        <topic>${robot_name}/imu</topic>
         
         <always_on>1</always_on>
         <visualize>true</visualize>
@@ -23,8 +23,8 @@
       <sensor name="base_front_camera_color" type="wideanglecamera">
         <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
 
-        <gz_frame_id>camera_front_link</gz_frame_id>
-        <topic>/base_front_camera/color</topic>
+        <gz_frame_id>${robot_name}/camera_front_link</gz_frame_id>
+        <topic>${robot_name}/base_front_camera/color</topic>
 
         <always_on>1</always_on>
         <visualize>true</visualize>
@@ -61,9 +61,9 @@
       <sensor name="base_front_camera_color" type="camera">
         <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
         
-        <ignition_frame_id>base_front_camera_color</ignition_frame_id>
-        <!-- <gz_frame_id>base_front_camera_color</gz_frame_id> -->
-        <topic>/base_front_camera/color</topic>
+        <ignition_frame_id>${robot_name}/base_front_camera_color</ignition_frame_id>
+        <!-- <gz_frame_id>${robot_name}/base_front_camera_color</gz_frame_id> -->
+        <topic>${robot_name}/base_front_camera/color</topic>
 
         <always_on>1</always_on>
         <visualize>true</visualize>
@@ -95,8 +95,8 @@
       <sensor name="base_back_camera_color" type="wideanglecamera">
         <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
         
-        <gz_frame_id>camera_back_link</gz_frame_id>
-        <topic>/base_back_camera/color</topic>
+        <gz_frame_id>${robot_name}/camera_back_link</gz_frame_id>
+        <topic>${robot_name}/base_back_camera/color</topic>
 
         <always_on>1</always_on>
         <visualize>true</visualize>
@@ -133,9 +133,9 @@
       <sensor name="base_back_camera_color" type="camera">
         <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
         
-        <ignition_frame_id>camera_back_link</ignition_frame_id>
-        <!-- <gz_frame_id>camera_back_link</gz_frame_id> -->
-        <topic>/base_back_camera/color</topic>
+        <ignition_frame_id>${robot_name}/camera_back_link</ignition_frame_id>
+        <!-- <gz_frame_id>${robot_name}/camera_back_link</gz_frame_id> -->
+        <topic>${robot_name}/base_back_camera/color</topic>
 
         <always_on>1</always_on>
         <visualize>true</visualize>
@@ -167,9 +167,9 @@
       <sensor name="head_camera_color" type="camera">
         <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
         
-        <ignition_frame_id>head_camera_color_optical_frame</ignition_frame_id>
-        <!-- <gz_frame_id>head_camera_color_optical_frame</gz_frame_id> -->
-        <topic>/head_camera/color</topic>
+        <ignition_frame_id>${robot_name}/head_camera_color_optical_frame</ignition_frame_id>
+        <!-- <gz_frame_id>${robot_name}/head_camera_color_optical_frame</gz_frame_id> -->
+        <topic>${robot_name}/head_camera/color</topic>
 
         <always_on>1</always_on>
         <visualize>true</visualize>
@@ -201,9 +201,9 @@
       <sensor name="head_camera_depth" type="depth">
         <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
         
-        <ignition_frame_id>head_camera_depth_optical_frame</ignition_frame_id>
-        <!-- <gz_frame_id>head_camera_depth_optical_frame</gz_frame_id> -->
-        <topic>/head_camera/depth</topic>
+        <ignition_frame_id>${robot_name}/head_camera_depth_optical_frame</ignition_frame_id>
+        <!-- <gz_frame_id>${robot_name}/head_camera_depth_optical_frame</gz_frame_id> -->
+        <topic>${robot_name}/head_camera/depth</topic>
 
         <always_on>1</always_on>
         <visualize>true</visualize>
@@ -234,9 +234,9 @@
       <sensor name="hand_camera_color" type="camera">
         <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
         
-        <ignition_frame_id>hand_camera_color_optical_frame</ignition_frame_id>
-        <!-- <gz_frame_id>hand_camera_color_optical_frame</gz_frame_id> -->
-        <topic>/hand_camera/color</topic>
+        <ignition_frame_id>${robot_name}/hand_camera_color_optical_frame</ignition_frame_id>
+        <!-- <gz_frame_id>${robot_name}/hand_camera_color_optical_frame</gz_frame_id> -->
+        <topic>${robot_name}/hand_camera/color</topic>
 
         <always_on>1</always_on>
         <visualize>true</visualize>
@@ -268,9 +268,9 @@
       <sensor name="hand_camera_depth" type="depth">
         <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
         
-        <ignition_frame_id>hand_camera_depth_optical_frame</ignition_frame_id>
-        <!-- <gz_frame_id>hand_camera_depth_optical_frame</gz_frame_id> -->
-        <topic>/hand_camera/depth</topic>
+        <ignition_frame_id>${robot_name}/hand_camera_depth_optical_frame</ignition_frame_id>
+        <!-- <gz_frame_id>${robot_name}/hand_camera_depth_optical_frame</gz_frame_id> -->
+        <topic>${robot_name}/hand_camera/depth</topic>
 
         <always_on>1</always_on>
         <visualize>true</visualize>
@@ -301,9 +301,9 @@
       <sensor name="lidar" type="gpu_lidar">
         <pose>0 0 0 0 0 0</pose>
 
-        <ignition_frame_id>sim_laser_frame</ignition_frame_id>
-        <!-- <gz_frame_id>sim_laser_frame</gz_frame_id> -->
-        <topic>kachaka/lidar/scan</topic>
+        <ignition_frame_id>${robot_name}/sim_laser_frame</ignition_frame_id>
+        <!-- <gz_frame_id>${robot_name}/sim_laser_frame</gz_frame_id> -->
+        <topic>${robot_name}/lidar/scan</topic>
 
         <always_on>1</always_on>
         <visualize>true</visualize>
@@ -359,7 +359,7 @@
     <gazebo>
       <!-- <plugin filename="ignition-gazebo-joint-state-publisher-system" name="ignition::gazebo::systems::JointStatePublisher"> -->
       <plugin filename="gz-sim-joint-state-publisher-system" name="gz::sim::systems::JointStatePublisher">
-        <topic>joint_states</topic>
+        <topic>${robot_name}/joint_states</topic>
       </plugin>
     </gazebo>
 

@@ -2,7 +2,7 @@
 <!-- SOBIT Light (Dynamixel Control) -->
 <robot name="sobit_light_controllers" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <xacro:macro name="controllers" params="name enable_gz:=False">
+  <xacro:macro name="controllers" params="name enable_gz:=False robot_name:=sobit_light">
 
     <ros2_control name="${name}_arm" type="system">
     <!-- <ros2_control name="joints_control" type="system"> -->
@@ -219,6 +219,9 @@
       <gazebo>
         <!-- <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin"> -->
         <plugin filename="ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
+          <ros>
+            <namespace>${robot_name}</namespace>
+          </ros>
           <parameters>$(find sobit_light_control)/config/controllers_gz.yaml</parameters>
         </plugin>
       </gazebo>
