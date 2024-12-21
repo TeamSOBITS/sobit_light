@@ -27,32 +27,40 @@ def generate_launch_description():
     robot_description = os.path.join(get_package_share_directory(
         description_pkg), "robots", robot_name + "_robot.urdf.xacro")
     robot_description_config = \
-        xacro.process_file(robot_description, mappings={'enable_gz' : 'True'})
+        xacro.process_file(robot_description, mappings={'enable_gz' : 'True', 'robot_name' : robot_name})
 
 
     joint_state_broadcaster = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
+        cmd=['ros2', 'control', 'load_controller',
+             '--set-state', 'active',
+             '--controller-manager', robot_name+'/controller_manager',
              '--use-sim-time',
              'joint_state_broadcaster'],
         output='screen'
     )
 
     joint_trajectory_controller = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
+        cmd=['ros2', 'control', 'load_controller',
+             '--set-state', 'active',
+             '--controller-manager', robot_name+'/controller_manager',
              '--use-sim-time',
              'joint_trajectory_controller'],
         output='screen'
     )
 
     velocity_controller = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'configured',
+        cmd=['ros2', 'control', 'load_controller',
+             '--set-state', 'active',
+             '--controller-manager', robot_name+'/controller_manager',
              '--use-sim-time',
              'velocity_controller'],
         output='screen'
     )
 
     diff_controller = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
+        cmd=['ros2', 'control', 'load_controller',
+             '--set-state', 'active',
+             '--controller-manager', robot_name+'/controller_manager',
              '--use-sim-time',
              'diff_controller'],
         output='screen'
@@ -62,10 +70,24 @@ def generate_launch_description():
         package="robot_state_publisher",
         executable="robot_state_publisher",
         name="robot_state_publisher",
+        namespace=robot_name,
         parameters=[
+            {"frame_prefix": robot_name+"/"},
             {"robot_description": robot_description_config.toxml()},
             {"use_sim_time": True},],
         output="screen",
+    )
+
+    joint_state_publisher_node = Node(
+        package='joint_state_publisher',
+        executable='joint_state_publisher',
+        name='joint_state_publisher',
+        namespace=robot_name,
+        parameters=[
+            {'frame_prefix': robot_name+'/'},
+            {"robot_description": robot_description_config.toxml()},
+            {'use_sim_time': True},],
+        output="screen"
     )
 
     rviz_node = Node(
@@ -78,8 +100,10 @@ def generate_launch_description():
     gz_spawn_entity_node = Node(
         package='ros_gz_sim',
         executable='create',
+        namespace=robot_name,
         arguments=['-topic', 'robot_description',
-                   '-entity', robot_name],
+                   '-entity', robot_name,
+                   '-x', '0', '-y', '0', '-z', '0',],
         output='screen',
     )
 
@@ -88,25 +112,25 @@ def generate_launch_description():
         executable='parameter_bridge',
         arguments=[
                     "/clock" + "@rosgraph_msgs/msg/Clock" + "[ignition.msgs.Clock",
-                    "/kachaka/lidar/scan" + "@sensor_msgs/msg/LaserScan" + "[ignition.msgs.LaserScan",
-                    "/kachaka/lidar/scan/points" + "@sensor_msgs/msg/PointCloud2" + "[ignition.msgs.PointCloudPacked",
+                    "/sobit_light/lidar/scan" + "@sensor_msgs/msg/LaserScan" + "[ignition.msgs.LaserScan",
+                    "/sobit_light/lidar/scan/points" + "@sensor_msgs/msg/PointCloud2" + "[ignition.msgs.PointCloudPacked",
                     # "/tf" + "@tf2_msgs/msg/TFMessage" + "[ignition.msgs.TFMessage",
-                    "/model/sobit_light/pose" + "@geometry_msgs/msg/Pose" + "[ignition.msgs.Pose",
-                    "/joint_states" + "@sensor_msgs/msg/JointState" + "[ignition.msgs.Model",
-                    "/base_front_camera/camera_info" + "@sensor_msgs/msg/CameraInfo" + "[ignition.msgs.CameraInfo",
-                    "/base_front_camera/color" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
-                    "/base_front_camera/depth" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
-                    "/base_back_camera/camera_info" + "@sensor_msgs/msg/CameraInfo" + "[ignition.msgs.CameraInfo",
-                    "/base_back_camera/color" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
-                    "/base_back_camera/depth" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
-                    "/head_camera/camera_info" + "@sensor_msgs/msg/CameraInfo" + "[ignition.msgs.CameraInfo",
-                    "/head_camera/color" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
-                    "/head_camera/depth" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
-                    "/head_camera/depth/points" + "@sensor_msgs/msg/PointCloud2" + "[ignition.msgs.PointCloudPacked",
-                    "/hand_camera/camera_info" + "@sensor_msgs/msg/CameraInfo" + "[ignition.msgs.CameraInfo",
-                    "/hand_camera/color" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
-                    "/hand_camera/depth" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
-                    "/hand_camera/depth/points" + "@sensor_msgs/msg/PointCloud2" + "[ignition.msgs.PointCloudPacked",
+                    # "/model/sobit_light/pose" + "@geometry_msgs/msg/Pose" + "[ignition.msgs.Pose",
+                    "/sobit_light/joint_states" + "@sensor_msgs/msg/JointState" + "[ignition.msgs.Model",
+                    "/sobit_light/base_front_camera/camera_info" + "@sensor_msgs/msg/CameraInfo" + "[ignition.msgs.CameraInfo",
+                    "/sobit_light/base_front_camera/color" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
+                    "/sobit_light/base_front_camera/depth" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
+                    "/sobit_light/base_back_camera/camera_info" + "@sensor_msgs/msg/CameraInfo" + "[ignition.msgs.CameraInfo",
+                    "/sobit_light/base_back_camera/color" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
+                    "/sobit_light/base_back_camera/depth" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
+                    "/sobit_light/head_camera/camera_info" + "@sensor_msgs/msg/CameraInfo" + "[ignition.msgs.CameraInfo",
+                    "/sobit_light/head_camera/color" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
+                    "/sobit_light/head_camera/depth" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
+                    "/sobit_light/head_camera/depth/points" + "@sensor_msgs/msg/PointCloud2" + "[ignition.msgs.PointCloudPacked",
+                    "/sobit_light/hand_camera/camera_info" + "@sensor_msgs/msg/CameraInfo" + "[ignition.msgs.CameraInfo",
+                    "/sobit_light/hand_camera/color" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
+                    "/sobit_light/hand_camera/depth" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
+                    "/sobit_light/hand_camera/depth/points" + "@sensor_msgs/msg/PointCloud2" + "[ignition.msgs.PointCloudPacked",
                    ],
         output='screen'
     )
@@ -114,7 +138,7 @@ def generate_launch_description():
     gz_tf_head_cam_node = Node(
         package='tf2_ros',
         executable='static_transform_publisher',
-        arguments=['--frame-id', 'head_camera_depth_optical_frame',
+        arguments=['--frame-id', 'sobit_light/head_camera_depth_optical_frame',
                    '--child-frame-id', 'sobit_light/head_pitch_link/head_camera_depth',
                    '--pitch', '-1.57',
                    '--roll', '1.57'],
@@ -124,7 +148,7 @@ def generate_launch_description():
     gz_tf_hand_cam_node = Node(
         package='tf2_ros',
         executable='static_transform_publisher',
-        arguments=['--frame-id', 'hand_camera_depth_optical_frame',
+        arguments=['--frame-id', 'sobit_light/hand_camera_depth_optical_frame',
                    '--child-frame-id', 'sobit_light/arm_wrist_roll_link/hand_camera_depth',
                    '--pitch', '-1.57',
                    '--roll', '1.57'],
@@ -140,8 +164,8 @@ def generate_launch_description():
             launch_arguments=[('gz_args', [' -r -v 4 empty.sdf'])]),
         gz_spawn_entity_node,
         gz_bridge_node,
-        gz_tf_head_cam_node,
-        gz_tf_hand_cam_node,
+        # gz_tf_head_cam_node,
+        # gz_tf_hand_cam_node,
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=gz_spawn_entity_node,
@@ -167,5 +191,6 @@ def generate_launch_description():
             )
         ),
         robot_state_publisher_node,
+        # joint_state_publisher_node,
         rviz_node,
     ])
