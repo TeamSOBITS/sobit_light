@@ -1,4 +1,4 @@
-controller_manager:
+/**/controller_manager:
   ros__parameters:
     update_rate: 100  # Hz
     use_sim_time: True
@@ -16,7 +16,7 @@ controller_manager:
       type: "joint_state_broadcaster/JointStateBroadcaster"
 
 
-velocity_controller:
+/**/velocity_controller:
   ros__parameters:
     joints:
       - arm_shoulder_roll_joint
@@ -30,7 +30,7 @@ velocity_controller:
       - head_yaw_joint
       - head_pitch_joint
 
-joint_trajectory_controller:
+/**/joint_trajectory_controller:
   ros__parameters:
     joints:
       - arm_shoulder_roll_joint
@@ -53,7 +53,7 @@ joint_trajectory_controller:
 
 
 # https://control.ros.org/humble/doc/ros2_controllers/diff_drive_controller/doc/userdoc.html
-diff_controller:
+/**/diff_controller:
   ros__parameters:
     left_wheel_names : ["base_l_drive_wheel_joint"]
     right_wheel_names: ["base_r_drive_wheel_joint"]
