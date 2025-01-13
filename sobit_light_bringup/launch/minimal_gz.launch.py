@@ -162,15 +162,15 @@ def generate_launch_description():
                 [os.path.join(get_package_share_directory('ros_gz_sim'),
                               'launch', 'gz_sim.launch.py')]),
             launch_arguments=[('gz_args', [' -r -v 4 empty.sdf'])]),
-        gz_spawn_entity_node,
-        gz_bridge_node,
-        # gz_tf_head_cam_node,
-        # gz_tf_hand_cam_node,
-        RegisterEventHandler(
-            event_handler=OnProcessExit(
-                target_action=gz_spawn_entity_node,
-                on_exit=[joint_state_broadcaster],
-            )
+            gz_spawn_entity_node,
+            gz_bridge_node,
+            # gz_tf_head_cam_node,
+            # gz_tf_hand_cam_node,
+            RegisterEventHandler(
+                event_handler=OnProcessExit(
+                    target_action=gz_spawn_entity_node,
+                    on_exit=[joint_state_broadcaster],
+                )
         ),
         RegisterEventHandler(
             event_handler=OnProcessExit(
