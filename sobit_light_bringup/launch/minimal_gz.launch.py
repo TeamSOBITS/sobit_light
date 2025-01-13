@@ -164,8 +164,8 @@ def generate_launch_description():
             launch_arguments=[('gz_args', [' -r -v 4 empty.sdf'])]),
             gz_spawn_entity_node,
             gz_bridge_node,
-            # gz_tf_head_cam_node,
-            # gz_tf_hand_cam_node,
+            gz_tf_head_cam_node,
+            gz_tf_hand_cam_node,
             RegisterEventHandler(
                 event_handler=OnProcessExit(
                     target_action=gz_spawn_entity_node,
