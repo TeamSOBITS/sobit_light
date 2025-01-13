@@ -27,7 +27,18 @@ def generate_launch_description():
     robot_description = os.path.join(get_package_share_directory(
         description_pkg), "robots", robot_name + "_robot.urdf.xacro")
     robot_description_config = \
-        xacro.process_file(robot_description, mappings={'enable_gz' : 'True', 'robot_name' : robot_name})
+        xacro.process_file(robot_description, mappings={
+            'enable_gz' : 'True',
+            'robot_name' : robot_name,
+            'enable_gz_front_cam_color' : 'True',
+            'enable_gz_back_cam_color' : 'True',
+            'enable_gz_head_cam_color' : 'True',
+            'enable_gz_head_cam_depth' : 'True',
+            'enable_gz_hand_cam_color' : 'True',
+            'enable_gz_hand_cam_depth' : 'True',
+            'enable_gz_lidar' : 'True',
+            'enable_gz_imu' : 'True',
+        })
 
 
     joint_state_broadcaster = ExecuteProcess(
