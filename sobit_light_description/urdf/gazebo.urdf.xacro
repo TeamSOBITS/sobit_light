@@ -9,7 +9,7 @@
         <sensor name="imu_sensor" type="imu">
           <pose>0 0 0 0 0 0</pose>
 
-          <gz_frame_id>${robot_name}/camera_front_link</gz_frame_id>
+          <ignition_frame_id>${robot_name}/imu_link</ignition_frame_id>
           <topic>${robot_name}/imu</topic>
           
           <always_on>1</always_on>
@@ -349,14 +349,6 @@
       </gazebo>
     </xacro:if>
 
-
-    <!-- Ignition Sensors -->
-    <gazebo>
-      <!-- <plugin filename="libignition-gazebo-sensors-system.so" name="ignition::gazebo::systems::Sensors"> -->
-      <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
-        <render_engine>ogre2</render_engine>
-      </plugin>
-    </gazebo>
 
     <!-- Publish Pose -->
     <!-- <gazebo>
