@@ -25,7 +25,7 @@ def generate_launch_description():
             FindPackageShare('sobit_light_bringup'),
             'rviz',
             'gazebo.rviz'
-        ])
+    ])
     rviz_node = Node(
         package='rviz2',
         executable='rviz2',
