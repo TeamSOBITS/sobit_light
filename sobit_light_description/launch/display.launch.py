@@ -15,24 +15,41 @@ def generate_launch_description():
 
     use_gui = LaunchConfiguration('use_gui', default='True')
 
-    robot_name = "sobit_light"
+    robot_name = "sobit_light_1"
 
-    description_pkg = robot_name + "_description"
 
     rviz_config = os.path.join(get_package_share_directory(
-        description_pkg), "rviz", "display.rviz")
+        'sobit_light_description'), "rviz", "display.rviz")
     
     robot_description = os.path.join(get_package_share_directory(
-        description_pkg), "robots", robot_name + "_robot.urdf.xacro")
-    robot_description_config = \
-        xacro.process_file(robot_description, mappings={'enable_gz' : 'True'})
+        'sobit_light_description'), 
+        'robots',
+        'sobit_light_robot.urdf.xacro'
+    )
+    robot_description_config = xacro.process_file(
+        robot_description,
+        mappings={
+            'enable_gz' : 'True',
+            'robot_name' : robot_name,
+            'enable_gz_front_cam_color' : 'True',
+            'enable_gz_back_cam_color' : 'True',
+            'enable_gz_head_cam_color' : 'True',
+            'enable_gz_head_cam_depth' : 'True',
+            'enable_gz_hand_cam_color' : 'True',
+            'enable_gz_hand_cam_depth' : 'True',
+            'enable_gz_lidar' : 'True',
+            'enable_gz_imu' : 'True',
+        }
+    )
 
 
     robot_state_publisher_node = Node(
         package="robot_state_publisher",
         executable="robot_state_publisher",
         name="robot_state_publisher",
+        namespace=robot_name,
         parameters=[
+            {"frame_prefix": robot_name + '/'},
             {"robot_description": robot_description_config.toxml()},
             {"use_sim_time": True},],
         output="screen",
@@ -42,6 +59,7 @@ def generate_launch_description():
         package='joint_state_publisher',
         executable='joint_state_publisher',
         output='screen',
+        namespace=robot_name,
         condition=UnlessCondition(use_gui)
     )
 
@@ -49,6 +67,7 @@ def generate_launch_description():
         package='joint_state_publisher_gui',
         executable='joint_state_publisher_gui',
         output='screen',
+        namespace=robot_name,
         condition=IfCondition(use_gui)
     )
 
