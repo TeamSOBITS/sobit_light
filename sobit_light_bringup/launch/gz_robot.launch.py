@@ -105,7 +105,7 @@ def launch_gz(context, *args, **kwargs):
 
     velocity_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller',
-             '--set-state', 'active',
+             '--set-state', 'configure',
              '--controller-manager', robot_name+'/controller_manager',
              '--use-sim-time',
              'velocity_controller'
@@ -132,7 +132,6 @@ def launch_gz(context, *args, **kwargs):
             {"frame_prefix": robot_name + '/'},
             {"robot_description": robot_description_config.toxml()},
             {"use_sim_time": True},
-            {"ignore_timestamp": True},
         ],
         output="screen",
     )
@@ -142,13 +141,11 @@ def launch_gz(context, *args, **kwargs):
         executable='create',
         namespace=robot_name,
         arguments=[
-            # '-world', 'default',
             '-topic', '/' + robot_name + '/robot_description',
             '-name', robot_name,
             '-x', robot_coords_x,
             '-y', robot_coords_y,
             '-Y', robot_coords_Y,
-            # '-allow_renaming', 'True',
         ],
         output='screen',
     )
