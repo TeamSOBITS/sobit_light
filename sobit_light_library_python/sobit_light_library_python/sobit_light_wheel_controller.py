@@ -20,7 +20,7 @@ def geoQuat2Yaw(geo_quat):
 
 
 class WheelController(Node):
-  def __init__(self, node_name='sobit_light_wheel_controller'):
+  def __init__(self, node_name='wheel_controller_library'):
     super().__init__(node_name)
 
     # QoS profile for the subscription
