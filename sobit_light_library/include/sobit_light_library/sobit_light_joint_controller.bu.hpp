@@ -16,7 +16,7 @@
 #include <geometry_msgs/msg/point.hpp>
 #include "sobits_interfaces/msg/current_state_array.hpp"
 
-#include "sobit_light_library/sobit_light_library.hpp"
+#include "sobit_light_library/sobit_light_library.bu.hpp"
 
 
 namespace sobit_light {
