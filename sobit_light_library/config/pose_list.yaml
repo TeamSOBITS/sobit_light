@@ -1,4 +1,4 @@
-/**/pose_list:
+/**:
   ros__parameters:
     poses:
       - initial_pose
