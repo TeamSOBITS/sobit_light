@@ -11,8 +11,18 @@
 #include "sobits_interfaces/action/move_hand_to_target_coord.hpp"
 #include "sobits_interfaces/action/move_hand_to_target_tf.hpp"
 
+#include <tf2_ros/buffer.h>
+#include <tf2_ros/transform_broadcaster.h>
+#include <tf2_ros/transform_listener.h>
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2/LinearMath/Matrix3x3.h>
+
 #include "trajectory_msgs/msg/joint_trajectory.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
+#include "geometry_msgs/msg/transform_stamped.hpp"
+#include "geometry_msgs/msg/quaternion.h"
+#include "geometry_msgs/msg/vector3.h"
+#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
@@ -64,6 +74,20 @@ public:
   JointCtrlLibrary();
   ~JointCtrlLibrary();
 
+  geometry_msgs::msg::Vector3 getEulerFromQuat(
+    const geometry_msgs::msg::Quaternion& quat);
+  geometry_msgs::msg::Quaternion getQuatFromEuler(
+    const geometry_msgs::msg::Vector3& rpy);
+  geometry_msgs::msg::TransformStamped getTransformName2Name(
+    const std::string &target_frame,
+    const std::string &base_frame_name);
+  geometry_msgs::msg::TransformStamped getTransformCoord2Name(
+      const geometry_msgs::msg::TransformStamped &target_coord,
+      const std::string &base_frame_name);
+  geometry_msgs::msg::PoseStamped getTransformCoord2Name(
+      const geometry_msgs::msg::PoseStamped &target_coord,
+      const std::string &base_frame_name);
+
 private:
   const std::vector<std::string> kJointNames = {
     "arm_shoulder_roll_joint",
@@ -108,12 +132,67 @@ private:
   void exe_move_hand_to_coord(const std::shared_ptr<GoalHandleMoveHandToCoord> goal_handle);
   void exe_move_hand_to_tf(const std::shared_ptr<GoalHandleMoveHandToTf> goal_handle);
 
-
   rclcpp::Publisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr pub_joint_control_;
   rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr sub_joint_state_;
 
+  std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
+  std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
+
   void joint_state_callback(const sensor_msgs::msg::JointState::SharedPtr msg);
 };
+
+inline geometry_msgs::msg::Vector3 JointCtrlLibrary::getEulerFromQuat(
+    const geometry_msgs::msg::Quaternion& msg_quat) {
+  tf2::Quaternion tf_quat;
+  geometry_msgs::msg::Vector3 euler;
+
+  tf2::fromMsg(msg_quat, tf_quat);
+  tf_quat.normalize();
+  tf2::Matrix3x3(tf_quat).getRPY(euler.x, euler.y, euler.z);
+
+  return euler;  
+}
+
+inline geometry_msgs::msg::Quaternion JointCtrlLibrary::getQuatFromEuler(
+    const geometry_msgs::msg::Vector3& euler) {
+  tf2::Quaternion tf_quat;
+
+  tf_quat.setRPY(euler.x, euler.y, euler.z);
+
+  return tf2::toMsg(tf_quat);
+}
+
+inline geometry_msgs::msg::TransformStamped JointCtrlLibrary::getTransformName2Name(
+    const std::string &target_frame_name, const std::string &base_frame_name) {
+  try {
+    return tf_buffer_->lookupTransform(target_frame_name, base_frame_name, tf2::TimePointZero);
+  } catch (const tf2::TransformException &ex) {
+    RCLCPP_ERROR(this->get_logger(), "Failed to get transform: %s", ex.what());
+    throw;
+  }
+}
+
+inline geometry_msgs::msg::TransformStamped JointCtrlLibrary::getTransformCoord2Name(
+    const geometry_msgs::msg::TransformStamped &target_coord,
+    const std::string &base_frame_name) {
+  try {
+    return tf_buffer_->transform(target_coord, base_frame_name, tf2::durationFromSec(1.0));
+  } catch (const tf2::TransformException &ex) {
+    RCLCPP_ERROR(this->get_logger(), "Transform failed: %s", ex.what());
+    throw;
+  }
+}
+
+inline geometry_msgs::msg::PoseStamped JointCtrlLibrary::getTransformCoord2Name(
+    const geometry_msgs::msg::PoseStamped &target_coord,
+    const std::string &base_frame_name) {
+  try {
+    return tf_buffer_->transform(target_coord, base_frame_name, tf2::durationFromSec(1.0));
+  } catch (const tf2::TransformException &ex) {
+    RCLCPP_ERROR(this->get_logger(), "Transform failed: %s", ex.what());
+    throw;
+  }
+}
 
 } // namespace sobit_light
 
