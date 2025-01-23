@@ -12,8 +12,8 @@
 #include "sobits_interfaces/action/move_hand_to_target_tf.hpp"
 
 #include <tf2_ros/buffer.h>
-#include <tf2_ros/transform_broadcaster.h>
 #include <tf2_ros/transform_listener.h>
+#include <tf2/exceptions.h>
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2/LinearMath/Matrix3x3.h>
 
@@ -64,7 +64,7 @@ public:
   using MoveHandToTargetCoord = sobits_interfaces::action::MoveHandToTargetCoord;
   using MoveHandToTargetTF = sobits_interfaces::action::MoveHandToTargetTF;
 
-  using GoalHandleMoveJoint = rclcpp_action::ServerGoalHandle<sobits_interfaces::action::MoveJoint>;
+  using GoalHandleMoveJoints = rclcpp_action::ServerGoalHandle<sobits_interfaces::action::MoveJoint>;
   using GoalHandleMoveToPose = rclcpp_action::ServerGoalHandle<sobits_interfaces::action::MoveToPose>;
   using GoalHandleMoveHandToCoord = rclcpp_action::ServerGoalHandle<sobits_interfaces::action::MoveHandToTargetCoord>;
   using GoalHandleMoveHandToTf = rclcpp_action::ServerGoalHandle<sobits_interfaces::action::MoveHandToTargetTF>;
@@ -78,15 +78,14 @@ public:
     const geometry_msgs::msg::Quaternion& quat);
   geometry_msgs::msg::Quaternion getQuatFromEuler(
     const geometry_msgs::msg::Vector3& rpy);
-  geometry_msgs::msg::TransformStamped getTransformName2Name(
-    const std::string &target_frame,
-    const std::string &base_frame_name);
-  geometry_msgs::msg::TransformStamped getTransformCoord2Name(
-      const geometry_msgs::msg::TransformStamped &target_coord,
-      const std::string &base_frame_name);
-  geometry_msgs::msg::PoseStamped getTransformCoord2Name(
-      const geometry_msgs::msg::PoseStamped &target_coord,
-      const std::string &base_frame_name);
+  geometry_msgs::msg::TransformStamped forwardKinematics(
+    const std::vector<double> &joint_rad);
+  std::vector<double> inverseKinematics(
+    const geometry_msgs::msg::TransformStamped &target_coord);
+  trajectory_msgs::msg::JointTrajectory setJoints(
+    const std::vector<std::string> &target_joint_names,
+    const std::vector<double> &target_joint_rad,
+    const builtin_interfaces::msg::Duration &time_allowance);
 
 private:
   const std::vector<std::string> kJointNames = {
@@ -106,28 +105,27 @@ private:
   std::map<std::string, double> init_joint_state_;
   std::map<std::string, double> curt_joint_state_;
 
-
-  rclcpp_action::Server<MoveJoint>::SharedPtr action_server_move_joint_;
+  rclcpp_action::Server<MoveJoint>::SharedPtr action_server_move_joints_;
   rclcpp_action::Server<MoveToPose>::SharedPtr action_server_move_to_pose_;
   rclcpp_action::Server<MoveHandToTargetCoord>::SharedPtr action_server_move_hand_to_coord_;
   rclcpp_action::Server<MoveHandToTargetTF>::SharedPtr action_server_move_hand_to_tf_;
 
-  rclcpp_action::GoalResponse handle_move_joint_goal(const rclcpp_action::GoalUUID & uuid, std::shared_ptr<const MoveJoint::Goal> goal);
+  rclcpp_action::GoalResponse handle_move_joints_goal(const rclcpp_action::GoalUUID & uuid, std::shared_ptr<const MoveJoint::Goal> goal);
   rclcpp_action::GoalResponse handle_move_to_pose_goal(const rclcpp_action::GoalUUID & uuid, std::shared_ptr<const MoveToPose::Goal> goal);
   rclcpp_action::GoalResponse handle_move_hand_to_coord_goal(const rclcpp_action::GoalUUID & uuid, std::shared_ptr<const MoveHandToTargetCoord::Goal> goal);
   rclcpp_action::GoalResponse handle_move_hand_to_tf_goal(const rclcpp_action::GoalUUID & uuid, std::shared_ptr<const MoveHandToTargetTF::Goal> goal);
 
-  rclcpp_action::CancelResponse handle_move_joint_cancel(const std::shared_ptr<GoalHandleMoveJoint> goal_handle);
+  rclcpp_action::CancelResponse handle_move_joints_cancel(const std::shared_ptr<GoalHandleMoveJoints> goal_handle);
   rclcpp_action::CancelResponse handle_move_to_pose_cancel(const std::shared_ptr<GoalHandleMoveToPose> goal_handle);
   rclcpp_action::CancelResponse handle_move_hand_to_coord_cancel(const std::shared_ptr<GoalHandleMoveHandToCoord> goal_handle);
   rclcpp_action::CancelResponse handle_move_hand_to_tf_cancel(const std::shared_ptr<GoalHandleMoveHandToTf> goal_handle);
 
-  void handle_move_joint_accepted(const std::shared_ptr<GoalHandleMoveJoint> goal_handle);
+  void handle_move_joints_accepted(const std::shared_ptr<GoalHandleMoveJoints> goal_handle);
   void handle_move_to_pose_accepted(const std::shared_ptr<GoalHandleMoveToPose> goal_handle);
   void handle_move_hand_to_coord_accepted(const std::shared_ptr<GoalHandleMoveHandToCoord> goal_handle);
   void handle_move_hand_to_tf_accepted(const std::shared_ptr<GoalHandleMoveHandToTf> goal_handle);
 
-  void exe_move_joint(const std::shared_ptr<GoalHandleMoveJoint> goal_handle);
+  void exe_move_joints(const std::shared_ptr<GoalHandleMoveJoints> goal_handle);
   void exe_move_to_pose(const std::shared_ptr<GoalHandleMoveToPose> goal_handle);
   void exe_move_hand_to_coord(const std::shared_ptr<GoalHandleMoveHandToCoord> goal_handle);
   void exe_move_hand_to_tf(const std::shared_ptr<GoalHandleMoveHandToTf> goal_handle);
@@ -160,38 +158,6 @@ inline geometry_msgs::msg::Quaternion JointCtrlLibrary::getQuatFromEuler(
   tf_quat.setRPY(euler.x, euler.y, euler.z);
 
   return tf2::toMsg(tf_quat);
-}
-
-inline geometry_msgs::msg::TransformStamped JointCtrlLibrary::getTransformName2Name(
-    const std::string &target_frame_name, const std::string &base_frame_name) {
-  try {
-    return tf_buffer_->lookupTransform(target_frame_name, base_frame_name, tf2::TimePointZero);
-  } catch (const tf2::TransformException &ex) {
-    RCLCPP_ERROR(this->get_logger(), "Failed to get transform: %s", ex.what());
-    throw;
-  }
-}
-
-inline geometry_msgs::msg::TransformStamped JointCtrlLibrary::getTransformCoord2Name(
-    const geometry_msgs::msg::TransformStamped &target_coord,
-    const std::string &base_frame_name) {
-  try {
-    return tf_buffer_->transform(target_coord, base_frame_name, tf2::durationFromSec(1.0));
-  } catch (const tf2::TransformException &ex) {
-    RCLCPP_ERROR(this->get_logger(), "Transform failed: %s", ex.what());
-    throw;
-  }
-}
-
-inline geometry_msgs::msg::PoseStamped JointCtrlLibrary::getTransformCoord2Name(
-    const geometry_msgs::msg::PoseStamped &target_coord,
-    const std::string &base_frame_name) {
-  try {
-    return tf_buffer_->transform(target_coord, base_frame_name, tf2::durationFromSec(1.0));
-  } catch (const tf2::TransformException &ex) {
-    RCLCPP_ERROR(this->get_logger(), "Transform failed: %s", ex.what());
-    throw;
-  }
 }
 
 } // namespace sobit_light

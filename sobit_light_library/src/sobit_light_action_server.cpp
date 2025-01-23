@@ -11,12 +11,12 @@ JointCtrlLibrary::JointCtrlLibrary() :
   qos_profile.reliability(RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT);
   qos_profile.history(RMW_QOS_POLICY_HISTORY_KEEP_LAST);
 
-  this->action_server_move_joint_ = rclcpp_action::create_server<MoveJoint>(
+  this->action_server_move_joints_ = rclcpp_action::create_server<MoveJoint>(
       this,
       "move_joint",
-      std::bind(&JointCtrlLibrary::handle_move_joint_goal, this, std::placeholders::_1, std::placeholders::_2),
-      std::bind(&JointCtrlLibrary::handle_move_joint_cancel, this, std::placeholders::_1),
-      std::bind(&JointCtrlLibrary::handle_move_joint_accepted, this, std::placeholders::_1));
+      std::bind(&JointCtrlLibrary::handle_move_joints_goal, this, std::placeholders::_1, std::placeholders::_2),
+      std::bind(&JointCtrlLibrary::handle_move_joints_cancel, this, std::placeholders::_1),
+      std::bind(&JointCtrlLibrary::handle_move_joints_accepted, this, std::placeholders::_1));
   this->action_server_move_to_pose_ = rclcpp_action::create_server<MoveToPose>(
       this,
       "move_to_pose",
@@ -79,7 +79,7 @@ JointCtrlLibrary::JointCtrlLibrary() :
   RCLCPP_INFO(this->get_logger(), "JointCtrlLibrary has been initialized.");
 }
 JointCtrlLibrary::~JointCtrlLibrary() {
-  this->action_server_move_joint_.reset();
+  this->action_server_move_joints_.reset();
   this->action_server_move_to_pose_.reset();
   this->action_server_move_hand_to_coord_.reset();
   this->action_server_move_hand_to_tf_.reset();
@@ -91,7 +91,7 @@ JointCtrlLibrary::~JointCtrlLibrary() {
 }
 
 
-rclcpp_action::GoalResponse JointCtrlLibrary::handle_move_joint_goal(
+rclcpp_action::GoalResponse JointCtrlLibrary::handle_move_joints_goal(
     const rclcpp_action::GoalUUID & uuid,
     std::shared_ptr<const MoveJoint::Goal> goal) {
   RCLCPP_INFO(this->get_logger(), "Received goal request");
@@ -125,8 +125,8 @@ rclcpp_action::GoalResponse JointCtrlLibrary::handle_move_hand_to_tf_goal(
 }
 
 
-rclcpp_action::CancelResponse JointCtrlLibrary::handle_move_joint_cancel(
-    const std::shared_ptr<GoalHandleMoveJoint> goal_handle) {
+rclcpp_action::CancelResponse JointCtrlLibrary::handle_move_joints_cancel(
+    const std::shared_ptr<GoalHandleMoveJoints> goal_handle) {
   RCLCPP_INFO(this->get_logger(), "Received cancel request");
   (void)goal_handle;
   return rclcpp_action::CancelResponse::ACCEPT;
@@ -151,11 +151,11 @@ rclcpp_action::CancelResponse JointCtrlLibrary::handle_move_hand_to_tf_cancel(
 }
 
 
-void JointCtrlLibrary::handle_move_joint_accepted(
-    const std::shared_ptr<GoalHandleMoveJoint> goal_handle) {
+void JointCtrlLibrary::handle_move_joints_accepted(
+    const std::shared_ptr<GoalHandleMoveJoints> goal_handle) {
   RCLCPP_INFO(this->get_logger(), "Received goal request");
   (void)goal_handle;
-  std::thread{std::bind(&JointCtrlLibrary::exe_move_joint, this, std::placeholders::_1), goal_handle}.detach();
+  std::thread{std::bind(&JointCtrlLibrary::exe_move_joints, this, std::placeholders::_1), goal_handle}.detach();
 }
 void JointCtrlLibrary::handle_move_to_pose_accepted(
     const std::shared_ptr<GoalHandleMoveToPose> goal_handle) {
@@ -177,15 +177,16 @@ void JointCtrlLibrary::handle_move_hand_to_tf_accepted(
 }
 
 
-void JointCtrlLibrary::exe_move_joint(
-    const std::shared_ptr<GoalHandleMoveJoint> goal_handle) {
+void JointCtrlLibrary::exe_move_joints(
+    const std::shared_ptr<GoalHandleMoveJoints> goal_handle) {
   RCLCPP_INFO(this->get_logger(), "Executing goal");
 
   const auto goal = goal_handle->get_goal();
+  auto result = std::make_shared<MoveJoint::Result>();
 
   // Check if the number of joint names and joint rad are the same
   if (goal->target_joint_names.size() != goal->target_joint_rad.size()) {
-    RCLCPP_ERROR(this->get_logger(), "Invalid goal request");
+    RCLCPP_ERROR(this->get_logger(), "Invalid goal request. The number of joint names and joint rad are different");
     auto result = std::make_shared<MoveJoint::Result>();
     goal_handle->abort(result);
     return;
@@ -194,7 +195,7 @@ void JointCtrlLibrary::exe_move_joint(
   // Check if the joint names are valid
   for (size_t i = 0; i < goal->target_joint_names.size(); i++) {
     if (std::find(kJointNames.begin(), kJointNames.end(), goal->target_joint_names[i]) == kJointNames.end()) {
-      RCLCPP_ERROR(this->get_logger(), "Invalid joint name: %s", goal->target_joint_names[i].c_str());
+      RCLCPP_ERROR(this->get_logger(), "The joint name does not exist: %s", goal->target_joint_names[i].c_str());
       auto result = std::make_shared<MoveJoint::Result>();
       goal_handle->abort(result);
       return;
@@ -203,26 +204,37 @@ void JointCtrlLibrary::exe_move_joint(
 
   // TODO: Check if the joint rad are within the joint limits
 
-  // TODO: Create a common funtion to publish the joint trajectory
   // Publish the joint trajectory
-  auto joint_trajectory = trajectory_msgs::msg::JointTrajectory();
-  joint_trajectory.header.stamp = this->now();
-  joint_trajectory.joint_names = goal->target_joint_names;
-  joint_trajectory.points.resize(1);
-  joint_trajectory.points[0].time_from_start = goal->time_allowance;
-  for (size_t i = 0; i < goal->target_joint_names.size(); i++) {
-    joint_trajectory.points[0].positions.push_back(goal->target_joint_rad[i]);
-  }
-  this->pub_joint_control_->publish(joint_trajectory);
+  trajectory_msgs::msg::JointTrajectory joint_trajectory;
+  joint_trajectory = setJoints(goal->target_joint_names, goal->target_joint_rad, goal->time_allowance);
+  // std::vector<double> target_joint_rad_double(goal->target_joint_rad.begin(), goal->target_joint_rad.end());
+  // joint_trajectory = setJoints(goal->target_joint_names, target_joint_rad_double, goal->time_allowance);
 
+  try {
+    this->pub_joint_control_->publish(joint_trajectory);
+  } catch (const std::exception &ex) {
+    RCLCPP_ERROR(this->get_logger(), "Failed to publish the joint trajectory: %s", ex.what());
+
+    result->success = false;
+    result->message = "[FAIL] Failed to publish the joint trajectory";
+    goal_handle->canceled(result);
+
+    return;
+  }
+
+
+  // Publish feedback
   auto start_time = this->now();
   rclcpp::Rate loop_rate(10);
 
   while (this->now() - start_time < goal->time_allowance) {
     if (goal_handle->is_canceling()) {
       RCLCPP_INFO(this->get_logger(), "Goal has been canceled");
-      auto result = std::make_shared<MoveJoint::Result>();
+
+      result->success = false;
+      result->message = "[CANCEL] Goal has been canceled";
       goal_handle->canceled(result);
+  
       return;
     }
 
@@ -240,21 +252,20 @@ void JointCtrlLibrary::exe_move_joint(
 
   }
 
-  auto result = std::make_shared<MoveJoint::Result>();
-  result->message = "Goal has been succeeded";
   result->success = true;
+  result->message = "Goal has been succeeded";
   result->total_elapsed_time.sec = (this->now() - start_time).seconds();
   result->total_elapsed_time.nanosec = (this->now() - start_time).nanoseconds() % int(10E9);
 
   goal_handle->succeed(result);
 }
 
-// TODO: Implement the following functions
 void JointCtrlLibrary::exe_move_to_pose(
     const std::shared_ptr<GoalHandleMoveToPose> goal_handle) {
   RCLCPP_INFO(this->get_logger(), "Executing goal");
 
   const auto goal = goal_handle->get_goal();
+  auto result = std::make_shared<MoveToPose::Result>();
 
   // Check if the pose name is valid
   if (std::find_if(poses_.begin(), poses_.end(), [&](const PoseParams &pose) { return pose.pose_name == goal->pose_name; }) == poses_.end()) {
@@ -281,27 +292,34 @@ void JointCtrlLibrary::exe_move_to_pose(
     }
   }
 
-  // TODO: Create a common funtion to publish the joint trajectory
   // Publish the joint trajectory
-  auto joint_trajectory = trajectory_msgs::msg::JointTrajectory();
-  joint_trajectory.header.stamp = this->now();
-  joint_trajectory.joint_names = kJointNames;
-  joint_trajectory.points.resize(1);
-  joint_trajectory.points[0].time_from_start = goal->time_allowance;
-  for (size_t i = 0; i < kJointNames.size(); i++) {
-    joint_trajectory.points[0].positions.push_back(target_joint_rad[i]);
+  trajectory_msgs::msg::JointTrajectory joint_trajectory;
+  joint_trajectory = setJoints(kJointNames, target_joint_rad, goal->time_allowance);
+
+  try {
+    this->pub_joint_control_->publish(joint_trajectory);
+  } catch (const std::exception &ex) {
+    RCLCPP_ERROR(this->get_logger(), "Failed to publish the joint trajectory: %s", ex.what());
+
+    result->success = false;
+    result->message = "[FAIL] Failed to publish the joint trajectory";
+    goal_handle->canceled(result);
+
+    return;
   }
 
-  this->pub_joint_control_->publish(joint_trajectory);
-
+  // Publish feedback
   auto start_time = this->now();
   rclcpp::Rate loop_rate(10);
 
   while (this->now() - start_time < goal->time_allowance) {
     if (goal_handle->is_canceling()) {
       RCLCPP_INFO(this->get_logger(), "Goal has been canceled");
-      auto result = std::make_shared<MoveToPose::Result>();
+
+      result->success = false;
+      result->message = "[CANCEL] Goal has been canceled";
       goal_handle->canceled(result);
+  
       return;
     }
 
@@ -318,8 +336,7 @@ void JointCtrlLibrary::exe_move_to_pose(
     loop_rate.sleep();
   }
 
-  auto result = std::make_shared<MoveToPose::Result>();
-  result->message = "Goal has been succeeded";
+  result->message = "[SUCCESS] Goal has been succeeded";
   result->success = true;
   result->total_elapsed_time.sec = (this->now() - start_time).seconds();
   result->total_elapsed_time.nanosec = (this->now() - start_time).nanoseconds() % int(10E9);
@@ -332,29 +349,59 @@ void JointCtrlLibrary::exe_move_hand_to_coord(
   RCLCPP_INFO(this->get_logger(), "Executing goal");
 
   const auto goal = goal_handle->get_goal();
-
-  geometry_msgs::msg::PoseStamped goal_coord;
+  auto result = std::make_shared<MoveHandToTargetCoord::Result>();
+  geometry_msgs::msg::TransformStamped goal_coord;
   goal_coord.header = goal->target_coord.header;
   goal_coord.header.frame_id = this->get_name() + std::string("/base_footprint");
 
   try{
-    goal_coord = tf_buffer_->transform(goal->target_coord, goal_coord.header.frame_id, tf2::durationFromSec(1.0));
+    goal_coord = tf_buffer_->transform(
+      goal->target_coord, goal_coord.header.frame_id,
+      tf2::durationFromSec(1.0));
   } catch (const tf2::TransformException &ex) {
-    auto result = std::make_shared<MoveHandToTargetCoord::Result>();
-    result->message = "[FAIL] Not Find of Transform " + goal->target_coord.header.frame_id + " and " + goal_coord.header.frame_id;
-    result->success = false;
-    goal_handle->canceled(result);
     RCLCPP_ERROR(this->get_logger(), "Failed to get transform: %s", ex.what());
+
+    result->success = false;
+    result->message = "[FAIL] Could not transform coords to " + goal_coord.header.frame_id;
+    goal_handle->canceled(result);
+
     return;
   }
 
   // TODO: Inverse kinematics to get the target joint rad
+  std::vector<double> target_joint_rad;
+  target_joint_rad = inverseKinematics(goal_coord);
 
-  // TODO: Create a common funtion to publish the joint trajectory
+  // TODO: Check values with forward kinematics
+  // geometry_msgs::msg::TransformStamped goal_coord_check;
+  // do {
+  //   target_joint_rad = inverseKinematics(goal_coord);
+  //   goal_coord_check = forwardKinematics(target_joint_rad);
+  // } while (goal_coord_check != goal_coord);
 
-  auto result = std::make_shared<MoveHandToTargetCoord::Result>();
-  result->message = "[SUCCESS] Move Hand to Coord has finished";
+  // Publish the joint trajectory
+  trajectory_msgs::msg::JointTrajectory joint_trajectory;
+  joint_trajectory = setJoints(kJointNames, target_joint_rad, goal->time_allowance);
+
+  try {
+    this->pub_joint_control_->publish(joint_trajectory);
+  } catch (const std::exception &ex) {
+    RCLCPP_ERROR(this->get_logger(), "Failed to publish the joint trajectory: %s", ex.what());
+
+    result->success = false;
+    result->message = "[FAIL] Failed to publish the joint trajectory";
+    goal_handle->canceled(result);
+
+    return;
+  }
+
+  // TODO: Publish feedback
+  // string current_state
+  // float32 distance_to_target
+
   result->success = true;
+  result->message = "Goal has been succeeded";
+
   goal_handle->succeed(result);
 }
 
@@ -364,67 +411,90 @@ void JointCtrlLibrary::exe_move_hand_to_tf(
 
   const auto goal = goal_handle->get_goal();
 
-  geometry_msgs::msg::PoseStamped goal_coord;
+  geometry_msgs::msg::TransformStamped goal_coord;
   goal_coord.header = goal->tf_differential.header;
   goal_coord.header.frame_id = this->get_name() + std::string("/base_footprint");
 
-  geometry_msgs::msg::TransformStamped target_coord;
-  geometry_msgs::msg::TransformStamped target_coord_mid;
-  geometry_msgs::msg::TransformStamped target_coord_last;
+  geometry_msgs::msg::TransformStamped goal_coord_shift;
 
   auto result = std::make_shared<MoveHandToTargetTF::Result>();
 
   // Transform the target frame based on the differential tf
   try {
-    target_coord = getTransformName2Name(
-      goal->target_frame, goal->tf_differential.header.frame_id);
+    goal_coord_shift = tf_buffer_->lookupTransform(
+      goal->target_frame, goal->tf_differential.header.frame_id,
+      tf2::TimePointZero);
 
-    geometry_msgs::msg::Vector3 euler_target, euler_shift, euler_target_final;
-    euler_target = getEulerFromQuat(target_coord.transform.rotation);
-    euler_shift = getEulerFromQuat(goal->tf_differential.pose.orientation);
+    geometry_msgs::msg::Vector3 euler_target, euler_shift;
+    euler_target = getEulerFromQuat(goal_coord_shift.transform.rotation);
+    euler_shift = getEulerFromQuat(goal->tf_differential.transform.rotation);
+    euler_target.x += euler_shift.x;
+    euler_target.y += euler_shift.y;
+    euler_target.z += euler_shift.z;
 
-    euler_target_final.x = euler_target.x + euler_shift.x;
-    euler_target_final.y = euler_target.y + euler_shift.y;
-    euler_target_final.z = euler_target.z + euler_shift.z;
-
-    target_coord_mid = target_coord;
-    target_coord_mid.transform.translation.x += goal->tf_differential.pose.position.x;
-    target_coord_mid.transform.translation.y += goal->tf_differential.pose.position.y;
-    target_coord_mid.transform.translation.z += goal->tf_differential.pose.position.z;
-    target_coord_mid.transform.rotation = getQuatFromEuler(euler_target_final);
+    goal_coord_shift.transform.translation.x += goal->tf_differential.transform.translation.x;
+    goal_coord_shift.transform.translation.y += goal->tf_differential.transform.translation.y;
+    goal_coord_shift.transform.translation.z += goal->tf_differential.transform.translation.z;
+    goal_coord_shift.transform.rotation = getQuatFromEuler(euler_target);
   } catch (const tf2::TransformException &ex) {
+    RCLCPP_ERROR(this->get_logger(), "Could not transform %s to %s: %s",
+    goal->target_frame.c_str(), goal->tf_differential.header.frame_id.c_str(),
+    ex.what());
+
     result->success = false;
-    result->message = "[FAIL] Not Find of Transform " + goal->target_frame + " and " + goal->tf_differential.header.frame_id;
+    result->message = "[FAIL] Could not transform " + goal->target_frame + " to " + goal->tf_differential.header.frame_id;
     goal_handle->canceled(result);
-    RCLCPP_ERROR(this->get_logger(), "Failed to get transform: %s", ex.what());
+
     return;
   }
 
   // Transform the target frame based on the robot base frame
   try {
-    target_coord_last = getTransformCoord2Name(
-      target_coord_mid, goal_coord.header.frame_id);
-
-    goal_coord.pose.position.x = target_coord_last.transform.translation.x;
-    goal_coord.pose.position.y = target_coord_last.transform.translation.y;
-    goal_coord.pose.position.z = target_coord_last.transform.translation.z;
-    goal_coord.pose.orientation.x = target_coord_last.transform.rotation.x;
-    goal_coord.pose.orientation.y = target_coord_last.transform.rotation.y;
-    goal_coord.pose.orientation.z = target_coord_last.transform.rotation.z;
+    goal_coord = tf_buffer_->transform(
+      goal_coord_shift, goal_coord.header.frame_id,
+      tf2::durationFromSec(1.0));
   } catch (const tf2::TransformException &ex) {
+    RCLCPP_ERROR(this->get_logger(), "Could not transform coords to %s: %s",
+    goal_coord.header.frame_id.c_str(), ex.what());
+
     result->success = false;
-    result->message = "[FAIL] Not Find of Transform " + goal->target_frame + " and " + goal->tf_differential.header.frame_id;
+    result->message = "[FAIL] Could not transform coords to " + goal_coord.header.frame_id;
     goal_handle->canceled(result);
-    RCLCPP_ERROR(this->get_logger(), "Failed to get transform: %s", ex.what());
+
     return;
   }
 
   // TODO: Inverse kinematics to get the target joint rad
+  std::vector<double> target_joint_rad;
+  target_joint_rad = inverseKinematics(goal_coord);
 
-  // TODO: Create a common funtion to publish the joint trajectory
+  // TODO: Check values with forward kinematics
+  // geometry_msgs::msg::TransformStamped goal_coord_check;
+  // do {
+  //   target_joint_rad = inverseKinematics(goal_coord);
+  //   goal_coord_check = forwardKinematics(target_joint_rad);
+  // } while (goal_coord_check != goal_coord);
 
+  // Publish the joint trajectory
+  trajectory_msgs::msg::JointTrajectory joint_trajectory;
+  joint_trajectory = setJoints(kJointNames, target_joint_rad, goal->time_allowance);
 
-  // Set the result
+  try {
+    this->pub_joint_control_->publish(joint_trajectory);
+  } catch (const std::exception &ex) {
+    RCLCPP_ERROR(this->get_logger(), "Failed to publish the joint trajectory: %s", ex.what());
+
+    result->success = false;
+    result->message = "[FAIL] Failed to publish the joint trajectory";
+    goal_handle->canceled(result);
+
+    return;
+  }
+
+  // TODO: Publish feedback
+  // string current_state
+  // float32 distance_to_target
+
   result->success = true;
   result->message = "Goal has been succeeded";
 
@@ -432,7 +502,8 @@ void JointCtrlLibrary::exe_move_hand_to_tf(
 }
 
 
-void JointCtrlLibrary::joint_state_callback(const sensor_msgs::msg::JointState::SharedPtr msg) {
+void JointCtrlLibrary::joint_state_callback(
+    const sensor_msgs::msg::JointState::SharedPtr msg) {
   RCLCPP_INFO(this->get_logger(), "Received joint state");
 
   for (size_t i = 0; i < msg->name.size(); i++) {
@@ -443,6 +514,41 @@ void JointCtrlLibrary::joint_state_callback(const sensor_msgs::msg::JointState::
   for (const auto &joint : this->curt_joint_state_) {
     RCLCPP_INFO(this->get_logger(), "  %s: %f", joint.first.c_str(), joint.second);
   }
+}
+
+trajectory_msgs::msg::JointTrajectory JointCtrlLibrary::setJoints(
+    const std::vector<std::string> &target_joint_names,
+    const std::vector<double> &target_joint_rad,
+    const builtin_interfaces::msg::Duration &time_allowance) {
+  auto joint_trajectory = trajectory_msgs::msg::JointTrajectory();
+  joint_trajectory.header.stamp = this->now();
+  joint_trajectory.joint_names = target_joint_names;
+  joint_trajectory.points.resize(1);
+  joint_trajectory.points[0].time_from_start = time_allowance;
+  for (size_t i = 0; i < target_joint_names.size(); i++) {
+    joint_trajectory.points[0].positions.push_back(target_joint_rad[i]);
+  }
+
+  return joint_trajectory;
+}
+
+geometry_msgs::msg::TransformStamped JointCtrlLibrary::forwardKinematics(
+    const std::vector<double> &target_joint_rad) {
+  
+  geometry_msgs::msg::TransformStamped target_coord;
+
+  // TODO: Implement the forward kinematics to get the target coord
+
+  return target_coord;
+
+}
+
+std::vector<double> JointCtrlLibrary::inverseKinematics(
+    const geometry_msgs::msg::TransformStamped &goal_coord) {
+  std::vector<double> target_joint_rad;
+  // TODO: Implement the inverse kinematics to get the target joint rad
+
+  return target_joint_rad;
 }
 
 } // namespace sobit_light
