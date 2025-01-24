@@ -20,7 +20,7 @@ def geoQuat2Yaw(geo_quat):
 
 
 class WheelController(Node):
-  def __init__(self, node_name='sobit_light_wheel_controller'):
+  def __init__(self, node_name='wheel_controller_library'):
     super().__init__(node_name)
 
     # QoS profile for the subscription
@@ -32,14 +32,16 @@ class WheelController(Node):
     # 
     self.sub_odom_ = self.create_subscription(
         Odometry,
-        '/kachaka/odometry/odometry',
+        # 'odometry/odometry',
+        'diff_controller/odom',
         self.callbackOdometry,
         qos_profile=qos_policy,
     )
 
     self.pub_cmd_vel_ = self.create_publisher(
         Twist,
-        '/kachaka/manual_control/cmd_vel',
+        # 'manual_control/cmd_vel',
+        'diff_controller/cmd_vel_unstamped',
         qos_profile=qos_policy,
     )
 

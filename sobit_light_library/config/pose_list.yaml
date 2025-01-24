@@ -1,5 +1,10 @@
-sobit_light_pose_list:
+/**:
   ros__parameters:
+    poses:
+      - initial_pose
+      - detecting_pose
+      - following_pose
+
     initial_pose:
       arm_shoulder_roll  : 0.0
       arm_shoulder_pitch : 1.5708

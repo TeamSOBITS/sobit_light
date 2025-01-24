@@ -17,7 +17,7 @@ install(DIRECTORY
   rviz
   urdf
   robots
-  DESTINATION share/${PROJECT_NAME}
+  worlds DESTINATION share/${PROJECT_NAME}
 )
 
 if(BUILD_TESTING)

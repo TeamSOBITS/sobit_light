@@ -1,0 +1,321 @@
+#include "sobit_light_library/sobit_light_wheel_action_server.hpp"
+
+namespace sobit_light{
+
+WheelActionServer::WheelActionServer() : Node("wheel_action_server") {
+  // Configure the QoS profile
+  rclcpp::QoS qos_profile(1); // depth = 1
+  qos_profile.reliability(RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT);
+  qos_profile.history(RMW_QOS_POLICY_HISTORY_KEEP_LAST);
+
+
+  this->action_server_move_wheel_linear_ = rclcpp_action::create_server<MoveWheelLinear>(
+      this,
+      "move_wheel_linear",
+      std::bind(&WheelActionServer::handle_move_wheel_linear_goal, this, std::placeholders::_1, std::placeholders::_2),
+      std::bind(&WheelActionServer::handle_move_wheel_linear_cancel, this, std::placeholders::_1),
+      std::bind(&WheelActionServer::handle_move_wheel_linear_accepted, this, std::placeholders::_1));
+  this->action_server_move_wheel_rotate_ = rclcpp_action::create_server<MoveWheelRotate>(
+      this,
+      "move_wheel_rotate",
+      std::bind(&WheelActionServer::handle_move_wheel_rotate_goal, this, std::placeholders::_1, std::placeholders::_2),
+      std::bind(&WheelActionServer::handle_move_wheel_rotate_cancel, this, std::placeholders::_1),
+      std::bind(&WheelActionServer::handle_move_wheel_rotate_accepted, this, std::placeholders::_1));
+
+
+  this->pub_cmd_vel_ = this->create_publisher<geometry_msgs::msg::TwistStamped>(
+      "diff_controller/cmd_vel", qos_profile);
+      // "cmd_vel", qos_profile);
+  this->sub_odom_ = this->create_subscription<nav_msgs::msg::Odometry>(
+      "odom", qos_profile, std::bind(&WheelActionServer::odom_callback, this, std::placeholders::_1));
+
+
+  RCLCPP_INFO(this->get_logger(), "WheelActionServer has been initialized.");
+}
+WheelActionServer::~WheelActionServer() {
+  this->action_server_move_wheel_linear_.reset();
+  this->action_server_move_wheel_rotate_.reset();
+
+  this->pub_cmd_vel_.reset();
+  this->sub_odom_.reset();
+
+  RCLCPP_INFO(this->get_logger(), "WheelActionServer has been terminated.");
+}
+
+
+rclcpp_action::GoalResponse WheelActionServer::handle_move_wheel_linear_goal(
+    const rclcpp_action::GoalUUID & uuid,
+    std::shared_ptr<const MoveWheelLinear::Goal> goal) {
+  RCLCPP_INFO(this->get_logger(), "Received goal request");
+  (void)uuid;
+  (void)goal;
+  return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
+}
+rclcpp_action::GoalResponse WheelActionServer::handle_move_wheel_rotate_goal(
+    const rclcpp_action::GoalUUID & uuid,
+    std::shared_ptr<const MoveWheelRotate::Goal> goal) {
+  RCLCPP_INFO(this->get_logger(), "Received goal request");
+  (void)uuid;
+  (void)goal;
+  return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
+}
+
+
+rclcpp_action::CancelResponse WheelActionServer::handle_move_wheel_linear_cancel(
+    const std::shared_ptr<GoalHandleMoveWheelLinear> goal_handle) {
+  RCLCPP_INFO(this->get_logger(), "Received cancel request");
+  (void)goal_handle;
+  return rclcpp_action::CancelResponse::ACCEPT;
+}
+rclcpp_action::CancelResponse WheelActionServer::handle_move_wheel_rotate_cancel(
+    const std::shared_ptr<GoalHandleMoveWheelRotate> goal_handle) {
+  RCLCPP_INFO(this->get_logger(), "Received cancel request");
+  (void)goal_handle;
+  return rclcpp_action::CancelResponse::ACCEPT;
+}
+
+
+void WheelActionServer::handle_move_wheel_linear_accepted(
+    const std::shared_ptr<GoalHandleMoveWheelLinear> goal_handle) {
+  RCLCPP_INFO(this->get_logger(), "Received goal request");
+  (void)goal_handle;
+  std::thread{std::bind(&WheelActionServer::exe_move_wheel_linear, this, std::placeholders::_1), goal_handle}.detach();
+}
+void WheelActionServer::handle_move_wheel_rotate_accepted(
+    const std::shared_ptr<GoalHandleMoveWheelRotate> goal_handle) {
+  RCLCPP_INFO(this->get_logger(), "Received goal request");
+  (void)goal_handle;
+  std::thread{std::bind(&WheelActionServer::exe_move_wheel_rotate, this, std::placeholders::_1), goal_handle}.detach();
+}
+
+
+// TODO: goal time allowance is not considered
+void WheelActionServer::exe_move_wheel_linear(
+    const std::shared_ptr<GoalHandleMoveWheelLinear> goal_handle) {
+  RCLCPP_INFO(this->get_logger(), "Executing goal");
+
+  const auto goal = goal_handle->get_goal();
+  auto result = std::make_shared<MoveWheelLinear::Result>();
+
+  // Check if the odometry is updated
+  while (this->curt_odom_.header.stamp == this->init_odom_.header.stamp) {
+    RCLCPP_INFO(this->get_logger(), "Waiting for the odometry to be updated");
+    rclcpp::spin_some(this->get_node_base_interface());
+  }
+
+  // Check if the target point is valid (only x is considered)
+  if (goal->target_point.y != 0.0 || goal->target_point.z != 0.0) {
+    RCLCPP_ERROR(this->get_logger(), "Invalid target point: (%f, %f, %f)",
+        goal->target_point.x, goal->target_point.y, goal->target_point.z);
+    result->success = false;
+    result->message = "[FAIL] Invalid target point";
+    goal_handle->abort(result);
+    return;
+  }
+
+  // Initialize values
+  geometry_msgs::msg::Twist init_vel, out_vel;
+  double goal_dist, curt_dist;
+  goal_dist = std::abs(goal->target_point.x);
+  this->init_odom_ = this->curt_odom_;
+  double integral_dist = 0.0;
+  double prev_error_dist = goal_dist - curt_dist;
+
+  // Set PID parameters
+  // TODO: Get the parameters from the action goal
+  double kp, ki, kd;
+  kp = 0.1;
+  ki = 0.4;
+  kd = 0.8;
+
+  // Set current time
+  auto start_time = this->now();
+  rclcpp::Rate loop_rate(10);
+
+  while (curt_dist < goal_dist) {
+    // Check if the goal has been canceled
+    if (goal_handle->is_canceling()) {
+      RCLCPP_INFO(this->get_logger(), "Goal has been canceled");
+      result->success = false;
+      result->message = "[FAIL] Goal has been canceled";
+      goal_handle->canceled(result);
+      return;
+    }
+
+    // Calculate the current distance
+    double error_dist = goal_dist - curt_dist;
+    integral_dist += error_dist;
+    double derivative_dist = error_dist - prev_error_dist;
+
+    // Calculate the output velocity
+    out_vel.linear.x = 
+        kp * error_dist +
+        ki * integral_dist +
+        kd * derivative_dist;
+
+    out_vel.linear.x = goal->target_point.x > 0 ? out_vel.linear.x : -out_vel.linear.x;
+
+    // Publish the velocity
+    geometry_msgs::msg::TwistStamped cmd_vel;
+    cmd_vel.header.stamp = this->now();
+    cmd_vel.twist = out_vel;
+    this->pub_cmd_vel_->publish(cmd_vel);
+
+    // Update the previous error
+    curt_dist = std::sqrt(
+        std::pow(this->curt_odom_.pose.pose.position.x - this->init_odom_.pose.pose.position.x, 2) +
+        std::pow(this->curt_odom_.pose.pose.position.y - this->init_odom_.pose.pose.position.y, 2));
+    prev_error_dist = error_dist;
+
+    // Publish feedback
+    auto feedback = std::make_shared<MoveWheelLinear::Feedback>();
+    feedback->current_point.x = curt_dist;
+    feedback->move_time.sec = (this->now() - start_time).seconds();
+    feedback->move_time.nanosec = (this->now() - start_time).nanoseconds() % int(10E9);
+    goal_handle->publish_feedback(feedback);
+
+    // Spin the node
+    rclcpp::spin_some(this->get_node_base_interface());
+    loop_rate.sleep();
+
+  }
+
+  // Publish the result
+  result->success = true;
+  result->message = "Goal has been succeeded";
+  result->total_elapsed_time.sec = (this->now() - start_time).seconds();
+  result->total_elapsed_time.nanosec = (this->now() - start_time).nanoseconds() % int(10E9);
+
+  goal_handle->succeed(result);
+}
+
+
+// TODO: goal time allowance is not considered
+void WheelActionServer::exe_move_wheel_rotate(
+    const std::shared_ptr<GoalHandleMoveWheelRotate> goal_handle) {
+  RCLCPP_INFO(this->get_logger(), "Executing goal");
+
+  const auto goal = goal_handle->get_goal();
+  auto result = std::make_shared<MoveWheelRotate::Result>();
+
+  // Check if the odometry is updated
+  while (this->curt_odom_.header.stamp == this->init_odom_.header.stamp) {
+    RCLCPP_INFO(this->get_logger(), "Waiting for the odometry to be updated");
+    rclcpp::spin_some(this->get_node_base_interface());
+  }
+
+  // Initialize values
+  geometry_msgs::msg::Twist init_vel, out_vel;
+  double goal_angle, curt_angle;
+  double prev_real_angle, curt_real_angle, diff_real_angle;
+  goal_angle = std::abs(goal->target_yaw);
+  this->init_odom_ = this->curt_odom_;
+  curt_real_angle = this->getEulerFromQuat(this->curt_odom_.pose.pose.orientation).z;
+  prev_real_angle = this->getEulerFromQuat(this->init_odom_.pose.pose.orientation).z;
+  double integral_angle = 0.0;
+  double prev_error_angle = goal_angle - curt_angle;
+
+  // Set PID parameters
+  // TODO: Get the parameters from the action goal
+  double kp, ki, kd;
+  kp = 0.1;
+  ki = 0.4;
+  kd = 0.8;
+
+  // Set current time
+  auto start_time = this->now();
+  rclcpp::Rate loop_rate(10);
+
+  while (curt_angle < goal_angle) {
+    // Check if the goal has been canceled
+    if (goal_handle->is_canceling()) {
+      RCLCPP_INFO(this->get_logger(), "Goal has been canceled");
+      result->success = false;
+      result->message = "[FAIL] Goal has been canceled";
+      goal_handle->canceled(result);
+      return;
+    }
+
+    // Calculate the current angle
+    double error_angle = goal_angle - curt_angle;
+    integral_angle += error_angle;
+    double derivative_angle = error_angle - prev_error_angle;
+
+    // Calculate the output velocity
+    out_vel.angular.z = 
+        kp * error_angle +
+        ki * integral_angle +
+        kd * derivative_angle;
+
+    out_vel.angular.z = goal->target_yaw > 0 ? out_vel.angular.z : -out_vel.angular.z;
+
+    // Publish the velocity
+    geometry_msgs::msg::TwistStamped cmd_vel;
+    cmd_vel.header.stamp = this->now();
+    cmd_vel.twist = out_vel;
+    this->pub_cmd_vel_->publish(cmd_vel);
+
+    // Update the previous error
+    curt_real_angle = this->getEulerFromQuat(this->curt_odom_.pose.pose.orientation).z;
+    diff_real_angle = curt_real_angle - prev_real_angle;
+    if (diff_real_angle > M_PI) {
+      diff_real_angle -= 2 * M_PI;
+    } else if (diff_real_angle < -M_PI) {
+      diff_real_angle += 2 * M_PI;
+    }
+
+    curt_angle += diff_real_angle;
+    prev_error_angle = error_angle;
+
+    // Publish feedback
+    auto feedback = std::make_shared<MoveWheelRotate::Feedback>();
+    feedback->current_point.z = curt_angle;
+    feedback->move_time.sec = (this->now() - start_time).seconds();
+    feedback->move_time.nanosec = (this->now() - start_time).nanoseconds() % int(10E9);
+    goal_handle->publish_feedback(feedback);
+
+    // Spin the node
+    rclcpp::spin_some(this->get_node_base_interface());
+    loop_rate.sleep();
+
+  }
+
+  // Publish the result
+  result->success = true;
+  result->message = "Goal has been succeeded";
+  result->total_elapsed_time.sec = (this->now() - start_time).seconds();
+  result->total_elapsed_time.nanosec = (this->now() - start_time).nanoseconds() % int(10E9);
+
+  goal_handle->succeed(result);
+}
+
+
+void WheelActionServer::odom_callback(
+    const nav_msgs::msg::Odometry::SharedPtr msg) {
+  RCLCPP_INFO(this->get_logger(), "Received odometry");
+
+  this->curt_odom_ = *msg;
+
+  RCLCPP_INFO(this->get_logger(), "Current odometry:");
+  RCLCPP_INFO(this->get_logger(), "  Position: (%f, %f, %f)",
+      this->curt_odom_.pose.pose.position.x,
+      this->curt_odom_.pose.pose.position.y,
+      this->curt_odom_.pose.pose.position.z);
+  RCLCPP_INFO(this->get_logger(), "  Orientation: (%f, %f, %f, %f)",
+      this->curt_odom_.pose.pose.orientation.x,
+      this->curt_odom_.pose.pose.orientation.y,
+      this->curt_odom_.pose.pose.orientation.z,
+      this->curt_odom_.pose.pose.orientation.w);
+}
+
+} // namespace sobit_light
+
+
+
+int main(int argc, char **argv) {
+  rclcpp::init(argc, argv);
+  auto node = std::make_shared<sobit_light::WheelActionServer>();
+  rclcpp::spin(node);
+  rclcpp::shutdown();
+  return 0;
+}

@@ -34,7 +34,16 @@
 
 
   <!-- Add variables -->
-  <xacro:arg name="enable_gz"       default="False" />
+  <xacro:arg name="enable_gz"                 default="False" />
+  <xacro:arg name="enable_gz_front_cam_color" default="True" />
+  <xacro:arg name="enable_gz_back_cam_color"  default="True" />
+  <xacro:arg name="enable_gz_head_cam_color"  default="True" />
+  <xacro:arg name="enable_gz_head_cam_depth"  default="True" />
+  <xacro:arg name="enable_gz_hand_cam_color"  default="True" />
+  <xacro:arg name="enable_gz_hand_cam_depth"  default="True" />
+  <xacro:arg name="enable_gz_lidar"           default="True" />
+  <xacro:arg name="enable_gz_imu"             default="True" />
+  <xacro:arg name="robot_name"                default="sobit_light" />
 
 
   <!-- Connect the Links and Joints -->
@@ -61,12 +70,21 @@
 
 
   <!-- Add Dynamixel: plugins -->
-  <xacro:controllers name="joints_control" enable_gz="$(arg enable_gz)" />
+  <xacro:controllers name="joints_control" enable_gz="$(arg enable_gz)" robot_name="$(arg robot_name)" />
 
 
   <!-- Add Gazebo: plugins -->
   <xacro:if value="${$(arg enable_gz)}">
-    <xacro:gazebo_ros2_control prefix="base" />
+    <xacro:gazebo_sensors robot_name="$(arg robot_name)"
+      enable_gz_front_cam_color="$(arg enable_gz_front_cam_color)"
+      enable_gz_back_cam_color="$(arg enable_gz_back_cam_color)"
+      enable_gz_head_cam_color="$(arg enable_gz_head_cam_color)"
+      enable_gz_head_cam_depth="$(arg enable_gz_head_cam_depth)"
+      enable_gz_hand_cam_color="$(arg enable_gz_hand_cam_color)"
+      enable_gz_hand_cam_depth="$(arg enable_gz_hand_cam_depth)"
+      enable_gz_lidar="$(arg enable_gz_lidar)"
+      enable_gz_imu="$(arg enable_gz_imu)"
+    />
   </xacro:if>
 
 </robot>
