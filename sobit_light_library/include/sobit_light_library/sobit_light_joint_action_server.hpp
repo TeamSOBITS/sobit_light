@@ -57,7 +57,7 @@ enum JointIds {
   kJointNum
 };
 
-class JointCtrlLibrary : public rclcpp::Node{
+class JointActionServer : public rclcpp::Node{
 public:
   using MoveJoint = sobits_interfaces::action::MoveJoint;
   using MoveToPose = sobits_interfaces::action::MoveToPose;
@@ -70,9 +70,8 @@ public:
   using GoalHandleMoveHandToTf = rclcpp_action::ServerGoalHandle<sobits_interfaces::action::MoveHandToTargetTF>;
 
 
-  // JointActionServer(const rclcpp::NodeOptions & options = rclcpp::NodeOptions())
-  JointCtrlLibrary();
-  ~JointCtrlLibrary();
+  JointActionServer();
+  ~JointActionServer();
 
   geometry_msgs::msg::Vector3 getEulerFromQuat(
     const geometry_msgs::msg::Quaternion& quat);
@@ -139,7 +138,7 @@ private:
   void joint_state_callback(const sensor_msgs::msg::JointState::SharedPtr msg);
 };
 
-inline geometry_msgs::msg::Vector3 JointCtrlLibrary::getEulerFromQuat(
+inline geometry_msgs::msg::Vector3 JointActionServer::getEulerFromQuat(
     const geometry_msgs::msg::Quaternion& msg_quat) {
   tf2::Quaternion tf_quat;
   geometry_msgs::msg::Vector3 euler;
@@ -151,7 +150,7 @@ inline geometry_msgs::msg::Vector3 JointCtrlLibrary::getEulerFromQuat(
   return euler;  
 }
 
-inline geometry_msgs::msg::Quaternion JointCtrlLibrary::getQuatFromEuler(
+inline geometry_msgs::msg::Quaternion JointActionServer::getQuatFromEuler(
     const geometry_msgs::msg::Vector3& euler) {
   tf2::Quaternion tf_quat;
 

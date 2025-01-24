@@ -1,8 +1,8 @@
-#include "sobit_light_library/sobit_light_action_server.hpp"
+#include "sobit_light_library/sobit_light_joint_action_server.hpp"
 
 namespace sobit_light{
 
-JointCtrlLibrary::JointCtrlLibrary() :
+JointActionServer::JointActionServer() :
     Node("joint_ctrl_library"),
     tf_buffer_(std::make_shared<tf2_ros::Buffer>(this->get_clock())),
     tf_listener_(std::make_shared<tf2_ros::TransformListener>(*tf_buffer_)) {
@@ -14,30 +14,30 @@ JointCtrlLibrary::JointCtrlLibrary() :
   this->action_server_move_joints_ = rclcpp_action::create_server<MoveJoint>(
       this,
       "move_joint",
-      std::bind(&JointCtrlLibrary::handle_move_joints_goal, this, std::placeholders::_1, std::placeholders::_2),
-      std::bind(&JointCtrlLibrary::handle_move_joints_cancel, this, std::placeholders::_1),
-      std::bind(&JointCtrlLibrary::handle_move_joints_accepted, this, std::placeholders::_1));
+      std::bind(&JointActionServer::handle_move_joints_goal, this, std::placeholders::_1, std::placeholders::_2),
+      std::bind(&JointActionServer::handle_move_joints_cancel, this, std::placeholders::_1),
+      std::bind(&JointActionServer::handle_move_joints_accepted, this, std::placeholders::_1));
   this->action_server_move_to_pose_ = rclcpp_action::create_server<MoveToPose>(
       this,
       "move_to_pose",
-      std::bind(&JointCtrlLibrary::handle_move_to_pose_goal, this, std::placeholders::_1, std::placeholders::_2),
-      std::bind(&JointCtrlLibrary::handle_move_to_pose_cancel, this, std::placeholders::_1),
-      std::bind(&JointCtrlLibrary::handle_move_to_pose_accepted, this, std::placeholders::_1));
+      std::bind(&JointActionServer::handle_move_to_pose_goal, this, std::placeholders::_1, std::placeholders::_2),
+      std::bind(&JointActionServer::handle_move_to_pose_cancel, this, std::placeholders::_1),
+      std::bind(&JointActionServer::handle_move_to_pose_accepted, this, std::placeholders::_1));
   this->action_server_move_hand_to_coord_ = rclcpp_action::create_server<MoveHandToTargetCoord>(
       this,
       "move_hand_to_coord",
-      std::bind(&JointCtrlLibrary::handle_move_hand_to_coord_goal, this, std::placeholders::_1, std::placeholders::_2),
-      std::bind(&JointCtrlLibrary::handle_move_hand_to_coord_cancel, this, std::placeholders::_1),
-      std::bind(&JointCtrlLibrary::handle_move_hand_to_coord_accepted, this, std::placeholders::_1));
+      std::bind(&JointActionServer::handle_move_hand_to_coord_goal, this, std::placeholders::_1, std::placeholders::_2),
+      std::bind(&JointActionServer::handle_move_hand_to_coord_cancel, this, std::placeholders::_1),
+      std::bind(&JointActionServer::handle_move_hand_to_coord_accepted, this, std::placeholders::_1));
   this->action_server_move_hand_to_tf_ = rclcpp_action::create_server<MoveHandToTargetTF>(
       this,
       "move_hand_to_tf",
-      std::bind(&JointCtrlLibrary::handle_move_hand_to_tf_goal, this, std::placeholders::_1, std::placeholders::_2),
-      std::bind(&JointCtrlLibrary::handle_move_hand_to_tf_cancel, this, std::placeholders::_1),
-      std::bind(&JointCtrlLibrary::handle_move_hand_to_tf_accepted, this, std::placeholders::_1));
+      std::bind(&JointActionServer::handle_move_hand_to_tf_goal, this, std::placeholders::_1, std::placeholders::_2),
+      std::bind(&JointActionServer::handle_move_hand_to_tf_cancel, this, std::placeholders::_1),
+      std::bind(&JointActionServer::handle_move_hand_to_tf_accepted, this, std::placeholders::_1));
 
   this->sub_joint_state_ = this->create_subscription<sensor_msgs::msg::JointState>(
-      "joint_states", qos_profile, std::bind(&JointCtrlLibrary::joint_state_callback, this, std::placeholders::_1));
+      "joint_states", qos_profile, std::bind(&JointActionServer::joint_state_callback, this, std::placeholders::_1));
   this->pub_joint_control_ = this->create_publisher<trajectory_msgs::msg::JointTrajectory>(
       "joint_trajectory_controller/joint_trajectory", qos_profile);
 
@@ -76,9 +76,9 @@ JointCtrlLibrary::JointCtrlLibrary() :
     poses_.push_back(params);
   }
 
-  RCLCPP_INFO(this->get_logger(), "JointCtrlLibrary has been initialized.");
+  RCLCPP_INFO(this->get_logger(), "JointActionServer has been initialized.");
 }
-JointCtrlLibrary::~JointCtrlLibrary() {
+JointActionServer::~JointActionServer() {
   this->action_server_move_joints_.reset();
   this->action_server_move_to_pose_.reset();
   this->action_server_move_hand_to_coord_.reset();
@@ -87,11 +87,11 @@ JointCtrlLibrary::~JointCtrlLibrary() {
   this->sub_joint_state_.reset();
   this->pub_joint_control_.reset();
 
-  RCLCPP_INFO(this->get_logger(), "JointCtrlLibrary has been terminated.");
+  RCLCPP_INFO(this->get_logger(), "JointActionServer has been terminated.");
 }
 
 
-rclcpp_action::GoalResponse JointCtrlLibrary::handle_move_joints_goal(
+rclcpp_action::GoalResponse JointActionServer::handle_move_joints_goal(
     const rclcpp_action::GoalUUID & uuid,
     std::shared_ptr<const MoveJoint::Goal> goal) {
   RCLCPP_INFO(this->get_logger(), "Received goal request");
@@ -99,7 +99,7 @@ rclcpp_action::GoalResponse JointCtrlLibrary::handle_move_joints_goal(
   (void)goal;
   return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
 }
-rclcpp_action::GoalResponse JointCtrlLibrary::handle_move_to_pose_goal(
+rclcpp_action::GoalResponse JointActionServer::handle_move_to_pose_goal(
     const rclcpp_action::GoalUUID & uuid,
     std::shared_ptr<const MoveToPose::Goal> goal) {
   RCLCPP_INFO(this->get_logger(), "Received goal request");
@@ -107,7 +107,7 @@ rclcpp_action::GoalResponse JointCtrlLibrary::handle_move_to_pose_goal(
   (void)goal;
   return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
 }
-rclcpp_action::GoalResponse JointCtrlLibrary::handle_move_hand_to_coord_goal(
+rclcpp_action::GoalResponse JointActionServer::handle_move_hand_to_coord_goal(
     const rclcpp_action::GoalUUID & uuid,
     std::shared_ptr<const MoveHandToTargetCoord::Goal> goal) {
   RCLCPP_INFO(this->get_logger(), "Received goal request");
@@ -115,7 +115,7 @@ rclcpp_action::GoalResponse JointCtrlLibrary::handle_move_hand_to_coord_goal(
   (void)goal;
   return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
 }
-rclcpp_action::GoalResponse JointCtrlLibrary::handle_move_hand_to_tf_goal(
+rclcpp_action::GoalResponse JointActionServer::handle_move_hand_to_tf_goal(
     const rclcpp_action::GoalUUID & uuid,
     std::shared_ptr<const MoveHandToTargetTF::Goal> goal) {
   RCLCPP_INFO(this->get_logger(), "Received goal request");
@@ -125,25 +125,25 @@ rclcpp_action::GoalResponse JointCtrlLibrary::handle_move_hand_to_tf_goal(
 }
 
 
-rclcpp_action::CancelResponse JointCtrlLibrary::handle_move_joints_cancel(
+rclcpp_action::CancelResponse JointActionServer::handle_move_joints_cancel(
     const std::shared_ptr<GoalHandleMoveJoints> goal_handle) {
   RCLCPP_INFO(this->get_logger(), "Received cancel request");
   (void)goal_handle;
   return rclcpp_action::CancelResponse::ACCEPT;
 }
-rclcpp_action::CancelResponse JointCtrlLibrary::handle_move_to_pose_cancel(
+rclcpp_action::CancelResponse JointActionServer::handle_move_to_pose_cancel(
     const std::shared_ptr<GoalHandleMoveToPose> goal_handle) {
   RCLCPP_INFO(this->get_logger(), "Received cancel request");
   (void)goal_handle;
   return rclcpp_action::CancelResponse::ACCEPT;
 }
-rclcpp_action::CancelResponse JointCtrlLibrary::handle_move_hand_to_coord_cancel(
+rclcpp_action::CancelResponse JointActionServer::handle_move_hand_to_coord_cancel(
     const std::shared_ptr<GoalHandleMoveHandToCoord> goal_handle) {
   RCLCPP_INFO(this->get_logger(), "Received cancel request");
   (void)goal_handle;
   return rclcpp_action::CancelResponse::ACCEPT;
 }
-rclcpp_action::CancelResponse JointCtrlLibrary::handle_move_hand_to_tf_cancel(
+rclcpp_action::CancelResponse JointActionServer::handle_move_hand_to_tf_cancel(
     const std::shared_ptr<GoalHandleMoveHandToTf> goal_handle) {
   RCLCPP_INFO(this->get_logger(), "Received cancel request");
   (void)goal_handle;
@@ -151,33 +151,33 @@ rclcpp_action::CancelResponse JointCtrlLibrary::handle_move_hand_to_tf_cancel(
 }
 
 
-void JointCtrlLibrary::handle_move_joints_accepted(
+void JointActionServer::handle_move_joints_accepted(
     const std::shared_ptr<GoalHandleMoveJoints> goal_handle) {
   RCLCPP_INFO(this->get_logger(), "Received goal request");
   (void)goal_handle;
-  std::thread{std::bind(&JointCtrlLibrary::exe_move_joints, this, std::placeholders::_1), goal_handle}.detach();
+  std::thread{std::bind(&JointActionServer::exe_move_joints, this, std::placeholders::_1), goal_handle}.detach();
 }
-void JointCtrlLibrary::handle_move_to_pose_accepted(
+void JointActionServer::handle_move_to_pose_accepted(
     const std::shared_ptr<GoalHandleMoveToPose> goal_handle) {
   RCLCPP_INFO(this->get_logger(), "Received goal request");
   (void)goal_handle;
-  std::thread{std::bind(&JointCtrlLibrary::exe_move_to_pose, this, std::placeholders::_1), goal_handle}.detach();
+  std::thread{std::bind(&JointActionServer::exe_move_to_pose, this, std::placeholders::_1), goal_handle}.detach();
 }
-void JointCtrlLibrary::handle_move_hand_to_coord_accepted(
+void JointActionServer::handle_move_hand_to_coord_accepted(
     const std::shared_ptr<GoalHandleMoveHandToCoord> goal_handle) {
   RCLCPP_INFO(this->get_logger(), "Received goal request");
   (void)goal_handle;
-  std::thread{std::bind(&JointCtrlLibrary::exe_move_hand_to_coord, this, std::placeholders::_1), goal_handle}.detach();
+  std::thread{std::bind(&JointActionServer::exe_move_hand_to_coord, this, std::placeholders::_1), goal_handle}.detach();
 }
-void JointCtrlLibrary::handle_move_hand_to_tf_accepted(
+void JointActionServer::handle_move_hand_to_tf_accepted(
     const std::shared_ptr<GoalHandleMoveHandToTf> goal_handle) {
   RCLCPP_INFO(this->get_logger(), "Received goal request");
   (void)goal_handle;
-  std::thread{std::bind(&JointCtrlLibrary::exe_move_hand_to_tf, this, std::placeholders::_1), goal_handle}.detach();
+  std::thread{std::bind(&JointActionServer::exe_move_hand_to_tf, this, std::placeholders::_1), goal_handle}.detach();
 }
 
 
-void JointCtrlLibrary::exe_move_joints(
+void JointActionServer::exe_move_joints(
     const std::shared_ptr<GoalHandleMoveJoints> goal_handle) {
   RCLCPP_INFO(this->get_logger(), "Executing goal");
 
@@ -260,7 +260,7 @@ void JointCtrlLibrary::exe_move_joints(
   goal_handle->succeed(result);
 }
 
-void JointCtrlLibrary::exe_move_to_pose(
+void JointActionServer::exe_move_to_pose(
     const std::shared_ptr<GoalHandleMoveToPose> goal_handle) {
   RCLCPP_INFO(this->get_logger(), "Executing goal");
 
@@ -344,7 +344,7 @@ void JointCtrlLibrary::exe_move_to_pose(
   goal_handle->succeed(result);
 }
 
-void JointCtrlLibrary::exe_move_hand_to_coord(
+void JointActionServer::exe_move_hand_to_coord(
     const std::shared_ptr<GoalHandleMoveHandToCoord> goal_handle) {
   RCLCPP_INFO(this->get_logger(), "Executing goal");
 
@@ -405,7 +405,7 @@ void JointCtrlLibrary::exe_move_hand_to_coord(
   goal_handle->succeed(result);
 }
 
-void JointCtrlLibrary::exe_move_hand_to_tf(
+void JointActionServer::exe_move_hand_to_tf(
     const std::shared_ptr<GoalHandleMoveHandToTf> goal_handle) {
   RCLCPP_INFO(this->get_logger(), "Executing goal");
 
@@ -502,7 +502,7 @@ void JointCtrlLibrary::exe_move_hand_to_tf(
 }
 
 
-void JointCtrlLibrary::joint_state_callback(
+void JointActionServer::joint_state_callback(
     const sensor_msgs::msg::JointState::SharedPtr msg) {
   RCLCPP_INFO(this->get_logger(), "Received joint state");
 
@@ -516,7 +516,7 @@ void JointCtrlLibrary::joint_state_callback(
   }
 }
 
-trajectory_msgs::msg::JointTrajectory JointCtrlLibrary::setJoints(
+trajectory_msgs::msg::JointTrajectory JointActionServer::setJoints(
     const std::vector<std::string> &target_joint_names,
     const std::vector<double> &target_joint_rad,
     const builtin_interfaces::msg::Duration &time_allowance) {
@@ -532,7 +532,7 @@ trajectory_msgs::msg::JointTrajectory JointCtrlLibrary::setJoints(
   return joint_trajectory;
 }
 
-geometry_msgs::msg::TransformStamped JointCtrlLibrary::forwardKinematics(
+geometry_msgs::msg::TransformStamped JointActionServer::forwardKinematics(
     const std::vector<double> &target_joint_rad) {
   
   geometry_msgs::msg::TransformStamped target_coord;
@@ -543,7 +543,7 @@ geometry_msgs::msg::TransformStamped JointCtrlLibrary::forwardKinematics(
 
 }
 
-std::vector<double> JointCtrlLibrary::inverseKinematics(
+std::vector<double> JointActionServer::inverseKinematics(
     const geometry_msgs::msg::TransformStamped &goal_coord) {
   std::vector<double> target_joint_rad;
   // TODO: Implement the inverse kinematics to get the target joint rad
@@ -557,7 +557,7 @@ std::vector<double> JointCtrlLibrary::inverseKinematics(
 
 int main(int argc, char **argv) {
   rclcpp::init(argc, argv);
-  auto node = std::make_shared<sobit_light::JointCtrlLibrary>();
+  auto node = std::make_shared<sobit_light::JointActionServer>();
   rclcpp::spin(node);
   rclcpp::shutdown();
   return 0;
