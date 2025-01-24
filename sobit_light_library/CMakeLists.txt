@@ -21,7 +21,7 @@ find_package(trajectory_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(sobits_interfaces REQUIRED)
 find_package(geometry_msgs REQUIRED)
-# find_package(nav_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
 find_package(rclcpp_action REQUIRED)
 
 # Find libraries
@@ -105,13 +105,11 @@ add_executable(sobit_light_wheel_action_server src/sobit_light_wheel_action_serv
 ament_target_dependencies(sobit_light_wheel_action_server
   rclcpp
   std_msgs
-  trajectory_msgs
-  sensor_msgs
   geometry_msgs
   tf2_geometry_msgs
+  nav_msgs
   sobits_interfaces
   rclcpp_action
-  tf2_ros
   tf2
 )
 
