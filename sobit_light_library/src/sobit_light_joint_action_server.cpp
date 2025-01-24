@@ -3,7 +3,7 @@
 namespace sobit_light{
 
 JointActionServer::JointActionServer() :
-    Node("joint_ctrl_library"),
+    Node("joint_action_server"),
     tf_buffer_(std::make_shared<tf2_ros::Buffer>(this->get_clock())),
     tf_listener_(std::make_shared<tf2_ros::TransformListener>(*tf_buffer_)) {
   // Configure the QoS profile
