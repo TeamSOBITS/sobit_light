@@ -85,9 +85,9 @@ ament_target_dependencies(sobit_light_param
   std_msgs
 )
 
-add_executable(sobit_light_action_server src/sobit_light_action_server.cpp)
+add_executable(sobit_light_joint_action_server src/sobit_light_joint_action_server.cpp)
 # target_link_libraries(test_control_wheel ${PROJECT_NAME})
-ament_target_dependencies(sobit_light_action_server
+ament_target_dependencies(sobit_light_joint_action_server
   rclcpp
   std_msgs
   trajectory_msgs
@@ -125,7 +125,7 @@ install(
 install(TARGETS
   # test_control_wheel
   sobit_light_param
-  sobit_light_action_server
+  sobit_light_joint_action_server
   DESTINATION lib/${PROJECT_NAME}
 )
 
