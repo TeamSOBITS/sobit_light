@@ -100,6 +100,21 @@ ament_target_dependencies(sobit_light_joint_action_server
   tf2
 )
 
+add_executable(sobit_light_wheel_action_server src/sobit_light_wheel_action_server.cpp)
+# target_link_libraries(test_control_wheel ${PROJECT_NAME})
+ament_target_dependencies(sobit_light_wheel_action_server
+  rclcpp
+  std_msgs
+  trajectory_msgs
+  sensor_msgs
+  geometry_msgs
+  tf2_geometry_msgs
+  sobits_interfaces
+  rclcpp_action
+  tf2_ros
+  tf2
+)
+
 #############
 ## Install ##
 #############
@@ -126,6 +141,7 @@ install(TARGETS
   # test_control_wheel
   sobit_light_param
   sobit_light_joint_action_server
+  sobit_light_wheel_action_server
   DESTINATION lib/${PROJECT_NAME}
 )
 
