@@ -218,10 +218,9 @@ bool JointController::moveHandToTargetCoord(
     const double target_x, const double target_y, const double target_z, 
     const double shift_x , const double shift_y , const double shift_z,
     const int32_t sec , bool is_sleep ) {
-  // sobit_light::WheelController wheel_ctrl;
-  WheelController wheel_ctrl;
+  sobit_light::WheelController wheel_ctrl;
 
-  // // Calculate goal_position_pos + difference(gap)
+  // Calculate goal_position_pos + difference(gap)
   const double goal_position_pos_x = target_x + shift_x;
   const double goal_position_pos_y = target_y + shift_y;
   const double goal_position_pos_z = target_z + shift_z;
@@ -229,13 +228,11 @@ bool JointController::moveHandToTargetCoord(
 
   // Check if the object is graspable
   if (goal_position_pos_z > kArmLength) {
-    // std::cout << "The target is located too tall ("  << goal_position_pos_z << ">80.0)" << std::endl;
-    RCLCPP_WARN(this->get_logger(), "The target is located too tall (%f>80.0)", goal_position_pos_z);
+    RCLCPP_WARN(this->get_logger(), "The target is located too tall (%f < %f)", kArmLength, goal_position_pos_z);
     return is_reached;
 
-  } else if (goal_position_pos_z < -kArmLength) {
-    // std::cout << "The target is located too low (" << goal_position_pos_z << "<35.0) " << std::endl;
-    RCLCPP_WARN(this->get_logger(), "The target is located too low (%f>35.0)", goal_position_pos_z);
+  } else if (goal_position_pos_z < -(kArmLower + kArmGripper)) {
+    RCLCPP_WARN(this->get_logger(), "The target is located too low (%f < %f)", goal_position_pos_z, -(kArmLower + kArmGripper));
     return is_reached;
   }
 
@@ -247,83 +244,48 @@ bool JointController::moveHandToTargetCoord(
   double arm_wrist_roll_joint_rad     = 0.0;
   double hand_joint_rad               = 0.0;
 
+  if (goal_position_pos_z == 0) goal_position_pos_z += 0.01;
+
   double base_to_arm_forearm_roll_joint_x_cm = 0.0;
 
   // Target is above arm_elbow_pitch_join
-  if (kArmUpper < goal_position_pos_z) {
-    // std::cout << "Target (z:" << goal_position_pos_z << ") is above arm_elbow_pitch_joint" << std::endl;
+  if (0 <= goal_position_pos_z) {
     RCLCPP_INFO(this->get_logger(), "Target (z:%f) is above arm_elbow_pitch_joint", goal_position_pos_z);
 
-    // Caution: Calculating until arm_forearm_roll_joint_x_cm (not target)
-    double arm_elbow_pitch_joint_sin = (goal_position_pos_z - kArmUpper) / kArmLower;
-    arm_elbow_pitch_joint_rad = std::asin(arm_elbow_pitch_joint_sin);
-    arm_forearm_roll_joint_rad = -arm_elbow_pitch_joint_rad;
-    arm_shoulder_pitch_joint_rad = 0.0;
-
-    base_to_arm_forearm_roll_joint_x_cm = kArmUpper + kArmLower * std::cos(arm_elbow_pitch_joint_rad);
+    arm_shoulder_pitch_joint_rad = std::asin(goal_position_pos_z / kArmLength);
+    arm_elbow_pitch_joint_rad = -1.57;
+    arm_wrist_pitch_joint_rad = -arm_shoulder_pitch_joint_rad;
   }
 
-  // Target is below arm_elbow_pitch_join and above shoulder_flex_joint
-  else if (0.0 <= goal_position_pos_z && goal_position_pos_z <= kArmUpper) {
-    // std::cout << "Target (z:" << goal_position_pos_z << ") is below arm_elbow_pitch_join and above shoulder_flex_joint" << std::endl;
-    RCLCPP_INFO(this->get_logger(), "Target (z:%f) is below arm_elbow_pitch_join and above shoulder_flex_joint", goal_position_pos_z);
+  // Target is below arm_elbow_pitch_join and above wrist_joint
+  else if (-kArmLower <= goal_position_pos_z) {
+    RCLCPP_INFO(this->get_logger(), "Target (z:%f) is below arm_elbow_pitch_join and above wrist_joint", goal_position_pos_z);
 
-    // Caution: Calculating until arm_forearm_roll_joint_x_cm (not target)
-    double arm_elbow_pitch_joint_sin = (kArmUpper - goal_position_pos_z) / kArmLower;
-    arm_elbow_pitch_joint_rad = -std::asin(arm_elbow_pitch_joint_sin);
-    arm_forearm_roll_joint_rad = -arm_elbow_pitch_joint_rad;
-    arm_shoulder_pitch_joint_rad = 0.0;
-
-    base_to_arm_forearm_roll_joint_x_cm = kArmUpper + kArmLower * std::cos(arm_elbow_pitch_joint_rad);
+    arm_elbow_pitch_joint_rad = std::asin(goal_position_pos_z / kArmLower);
+    arm_wrist_pitch_joint_rad = -(1.57 + arm_elbow_pitch_joint_rad);
   }
 
-  // Target is below shoulder_flex_joint
-  else if (goal_position_pos_z < 0.0) {
-    // std::cout << "Target (z:" << goal_position_pos_z << ") is below shoulder_flex_joint" << std::endl;
-    RCLCPP_INFO(this->get_logger(), "Target (z:%f) is below shoulder_flex_joint", goal_position_pos_z);
+  // Target is below wrist_joint
+  else {
+    RCLCPP_INFO(this->get_logger(), "Target (z:%f) is below wrist_joint", goal_position_pos_z);
 
-    // Caution: Calculating until arm_forearm_roll_joint_x_cm (not target)
-    double arm_elbow_pitch_joint_cos = (kArmUpper - goal_position_pos_z) / kArmLower;
-    arm_elbow_pitch_joint_rad = std::acos(arm_elbow_pitch_joint_cos);
-    arm_forearm_roll_joint_rad = std::asin(arm_elbow_pitch_joint_cos);
-    arm_shoulder_pitch_joint_rad = -wheel_ctrl.deg2Rad(90.0);
-
-    base_to_arm_forearm_roll_joint_x_cm = kArmUpper + kArmLower * std::cos(arm_elbow_pitch_joint_rad);
+    arm_elbow_pitch_joint_rad = std::asin((goal_position_pos_z + kArmGripper) / kArmLower) - 1.57;
+    arm_wrist_pitch_joint_rad = -arm_elbow_pitch_joint_rad;
   }
 
-  // Calculate wheel movement (diagonal)
   // - Rotate the robot
   const double rot_rad = std::atan2(goal_position_pos_y, goal_position_pos_x);
-  // ROS_INFO("rot_rad = %f(deg:%f)", rot_rad, SobitLightWheelController::rad2Deg(rot_rad));
   wheel_ctrl.controlWheelRotateRad(rot_rad);
   rclcpp::sleep_for(std::chrono::seconds(1));
+
   // - Move forward the robot
-  const double linear_m = std::sqrt(std::pow(goal_position_pos_x, 2) + std::pow(goal_position_pos_y, 2)) - base_to_arm_forearm_roll_joint_x_cm;
+  const double linear_m = kArmUpper * std::cos(arm_shoulder_pitch_joint_rad) + 
+                          kArmLower * std::cos(arm_shoulder_pitch_joint_rad + (arm_elbow_pitch_joint_rad + 1.57)) +
+                          kArmGripper * std::cos(arm_shoulder_pitch_joint_rad + (arm_elbow_pitch_joint_rad + 1.57) + arm_wrist_pitch_joint_rad);
+                          
   RCLCPP_INFO(this->get_logger(), "linear_m = %f", linear_m);
   wheel_ctrl.controlWheelLinear(linear_m);
   rclcpp::sleep_for(std::chrono::seconds(1));
-
-  // // Calculate wheel movement (+-90->x_pos->-+90->y_pos) NEEDS CONFIRMATION
-  // // - Rotate the robot
-  // const double rot_deg = goal_position_pos_x > 0.0 ? 90.0:-90.0;
-  // ROS_INFO("rot_deg:%f)", rot_deg);
-  // wheel_ctrl.controlWheelRotateDeg(rot_deg);
-  // rclcpp::sleep_for(std::chrono::seconds(3));
-
-  // // - Move forward the robot
-  // ROS_INFO("linear_m = %f", goal_position_pos_x);
-  // wheel_ctrl.controlWheelLinear(goal_position_pos_x);
-  // rclcpp::sleep_for(std::chrono::seconds(3));
-
-  // // - Rotate the robot
-  // ROS_INFO("rot_deg:%f)", -rot_deg);
-  // wheel_ctrl.controlWheelRotateDeg(-rot_deg);
-  // rclcpp::sleep_for(std::chrono::seconds(3));
-
-  // // - Move forward the robot
-  // ROS_INFO("linear_m = %f", goal_position_pos_y);
-  // wheel_ctrl.controlWheelLinear(goal_position_pos_y);
-  // rclcpp::sleep_for(std::chrono::seconds(3));
 
   // - Move arm (OPEN)
   is_reached = moveArmRad(
@@ -338,7 +300,6 @@ bool JointController::moveHandToTargetCoord(
 
   RCLCPP_INFO(this->get_logger(), "goal_position_pos = (%f, %f, %f)",
       goal_position_pos_x, goal_position_pos_y, goal_position_pos_z);
-  // rclcpp::Duration(2, 0)
 
   return is_reached;
 }
