@@ -1,4 +1,4 @@
-controller_manager:
+/**/controller_manager:
   ros__parameters:
     update_rate: 100  # Hz
 
@@ -11,7 +11,7 @@ controller_manager:
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
-velocity_controller:
+/**/velocity_controller:
   ros__parameters:
     joints:
       - arm_shoulder_roll_joint
@@ -25,7 +25,7 @@ velocity_controller:
       - head_yaw_joint
       - head_pitch_joint
 
-joint_trajectory_controller:
+/**/joint_trajectory_controller:
   ros__parameters:
     joints:
       - arm_shoulder_roll_joint
