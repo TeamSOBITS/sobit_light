@@ -78,13 +78,6 @@ include_directories(include)
 #   sobits_interfaces
 # )
 
-add_executable(sobit_light_param src/sobit_light_param.cpp)
-# target_link_libraries(test_control_wheel ${PROJECT_NAME})
-ament_target_dependencies(sobit_light_param
-  rclcpp
-  std_msgs
-)
-
 add_executable(sobit_light_joint_action_server src/sobit_light_joint_action_server.cpp)
 # target_link_libraries(test_control_wheel ${PROJECT_NAME})
 ament_target_dependencies(sobit_light_joint_action_server
@@ -137,7 +130,6 @@ install(
 
 install(TARGETS
   # test_control_wheel
-  sobit_light_param
   sobit_light_joint_action_server
   sobit_light_wheel_action_server
   DESTINATION lib/${PROJECT_NAME}
