@@ -57,6 +57,11 @@ enum JointIds {
   kJointNum
 };
 
+const double kArmUpper   = 0.128;
+const double kArmLower   = 0.124;
+const double kArmGripper = 0.064 + 0.11225;
+const double kArmLength  = kArmUpper + kArmLower;
+
 class JointActionServer : public rclcpp::Node{
 public:
   using MoveJoint = sobits_interfaces::action::MoveJoint;
@@ -78,7 +83,7 @@ public:
   geometry_msgs::msg::Quaternion getQuatFromEuler(
     const geometry_msgs::msg::Vector3& rpy);
   geometry_msgs::msg::TransformStamped forwardKinematics(
-    const std::vector<double> &joint_rad);
+    const std::vector<double> &joint_rad, const geometry_msgs::msg::TransformStamped &target_coord);
   std::vector<double> inverseKinematics(
     const geometry_msgs::msg::TransformStamped &target_coord);
   trajectory_msgs::msg::JointTrajectory setJoints(

@@ -376,7 +376,7 @@ void JointActionServer::exe_move_hand_to_coord(
   // geometry_msgs::msg::TransformStamped goal_coord_check;
   // do {
   //   target_joint_rad = inverseKinematics(goal_coord);
-  //   goal_coord_check = forwardKinematics(target_joint_rad);
+  //   goal_coord_check = forwardKinematics(target_joint_rad, goal_coord);
   // } while (goal_coord_check != goal_coord);
 
   // Publish the joint trajectory
@@ -472,7 +472,7 @@ void JointActionServer::exe_move_hand_to_tf(
   // geometry_msgs::msg::TransformStamped goal_coord_check;
   // do {
   //   target_joint_rad = inverseKinematics(goal_coord);
-  //   goal_coord_check = forwardKinematics(target_joint_rad);
+  //   goal_coord_check = forwardKinematics(target_joint_rad, goal_coord);
   // } while (goal_coord_check != goal_coord);
 
   // Publish the joint trajectory
@@ -533,27 +533,77 @@ trajectory_msgs::msg::JointTrajectory JointActionServer::setJoints(
 }
 
 geometry_msgs::msg::TransformStamped JointActionServer::forwardKinematics(
-    const std::vector<double> &target_joint_rad) {
+    const std::vector<double> &target_joint_rad, const geometry_msgs::msg::TransformStamped &goal_coord) {
   
   geometry_msgs::msg::TransformStamped target_coord;
 
-  // TODO: Implement the forward kinematics to get the target coord
+  target_coord.transform.translation.x = kArmUpper * std::cos(target_joint_rad[1]) + 
+                                         kArmLower * std::cos(target_joint_rad[1] + (target_joint_rad[3] + 1.57)) +
+                                         kArmGripper * std::cos(target_joint_rad[1] + (target_joint_rad[3] + 1.57) + target_joint_rad[5]);
+  
+  target_coord.transform.rotation.z = std::atan2(goal_coord.transform.translation.y, goal_coord.transform.translation.x);
 
   return target_coord;
-
 }
 
 std::vector<double> JointActionServer::inverseKinematics(
     const geometry_msgs::msg::TransformStamped &goal_coord) {
-  std::vector<double> target_joint_rad;
-  // TODO: Implement the inverse kinematics to get the target joint rad
+
+  double goal_position_pos_z = goal_coord.transform.translation.z;
+  if (goal_position_pos_z == 0) goal_position_pos_z = 0.03;
+
+  std::vector<double> target_joint_rad = {
+    0.0,  // arm_shoulder_roll_joint_rad
+    0.0,  // arm_shoulder_pitch_joint_rad
+    0.0,  // arm_shoulder_pitch_sub_joint_rad
+    0.0,  // arm_elbow_pitch_joint_rad
+    0.0,  // arm_forearm_roll_joint_rad
+    0.0,  // arm_wrist_pitch_joint_rad
+    0.0,  // arm_wrist_roll_joint_rad
+    0.0,  // hand_joint_rad
+    0.0,  // head_yaw_joint_rad
+    0.0   // head_pitch_joint_rad
+  };
+
+  if (goal_position_pos_z > kArmLength) {
+    RCLCPP_WARN(this->get_logger(), "The target is located too tall (%f < %f)", kArmLength, goal_position_pos_z);
+    return target_joint_rad;
+  }
+  
+  else if (goal_position_pos_z < -(kArmLower + kArmGripper)) {
+    RCLCPP_WARN(this->get_logger(), "The target is located too low (%f < %f)", goal_position_pos_z, -(kArmLower + kArmGripper));
+    return target_joint_rad;
+  }
+
+  // Target is above arm_elbow_pitch_join
+  if (0 <= goal_position_pos_z) {
+    RCLCPP_INFO(this->get_logger(), "Target (z:%f) is above arm_elbow_pitch_joint", goal_position_pos_z);
+
+    target_joint_rad[1] = std::asin(goal_position_pos_z / kArmLength);
+    target_joint_rad[3] = -1.57;
+    target_joint_rad[5] = -target_joint_rad[1];
+  }
+
+  // Target is below arm_elbow_pitch_join and above wrist_joint
+  else if (-kArmLower <= goal_position_pos_z) {
+    RCLCPP_INFO(this->get_logger(), "Target (z:%f) is below arm_elbow_pitch_join and above wrist_joint", goal_position_pos_z);
+
+    target_joint_rad[3] = std::asin(goal_position_pos_z / kArmLower);
+    target_joint_rad[5] = -(1.57 + target_joint_rad[3]);
+  }
+
+  // Target is below wrist_joint
+  else {
+    RCLCPP_INFO(this->get_logger(), "Target (z:%f) is below wrist_joint", goal_position_pos_z);
+
+    target_joint_rad[3] = std::asin((goal_position_pos_z + kArmGripper) / kArmLower) - 1.57;
+    target_joint_rad[5] = -target_joint_rad[3];
+  }
 
   return target_joint_rad;
 }
 
 } // namespace sobit_light
-
-
 
 int main(int argc, char **argv) {
   rclcpp::init(argc, argv);
