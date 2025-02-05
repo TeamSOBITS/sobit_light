@@ -229,7 +229,7 @@
           <ros>
             <namespace>${robot_name}</namespace>
           </ros>
-          <parameters>$(find sobit_light_control)/config/controllers_gz.yaml</parameters>
+          <parameters>$(find sobit_light_control)/config/gz_controllers.yaml</parameters>
         </plugin>
       </gazebo>
     </xacro:if>
