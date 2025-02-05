@@ -2,7 +2,8 @@
 
 namespace sobit_light{
 
-WheelActionServer::WheelActionServer() : Node("wheel_action_server") {
+WheelActionServer::WheelActionServer() : Node("wheel_action_server")
+{
   // Configure the QoS profile
   rclcpp::QoS qos_profile(1); // depth = 1
   qos_profile.reliability(RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT);
@@ -32,7 +33,8 @@ WheelActionServer::WheelActionServer() : Node("wheel_action_server") {
 
   RCLCPP_INFO(this->get_logger(), "WheelActionServer has been initialized.");
 }
-WheelActionServer::~WheelActionServer() {
+WheelActionServer::~WheelActionServer()
+{
   this->action_server_move_wheel_linear_.reset();
   this->action_server_move_wheel_rotate_.reset();
 
@@ -44,16 +46,18 @@ WheelActionServer::~WheelActionServer() {
 
 
 rclcpp_action::GoalResponse WheelActionServer::handle_move_wheel_linear_goal(
-    const rclcpp_action::GoalUUID & uuid,
-    std::shared_ptr<const MoveWheelLinear::Goal> goal) {
+  const rclcpp_action::GoalUUID & uuid,
+  std::shared_ptr<const MoveWheelLinear::Goal> goal)
+{
   RCLCPP_INFO(this->get_logger(), "Received goal request");
   (void)uuid;
   (void)goal;
   return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
 }
 rclcpp_action::GoalResponse WheelActionServer::handle_move_wheel_rotate_goal(
-    const rclcpp_action::GoalUUID & uuid,
-    std::shared_ptr<const MoveWheelRotate::Goal> goal) {
+  const rclcpp_action::GoalUUID & uuid,
+  std::shared_ptr<const MoveWheelRotate::Goal> goal)
+{
   RCLCPP_INFO(this->get_logger(), "Received goal request");
   (void)uuid;
   (void)goal;
@@ -62,13 +66,15 @@ rclcpp_action::GoalResponse WheelActionServer::handle_move_wheel_rotate_goal(
 
 
 rclcpp_action::CancelResponse WheelActionServer::handle_move_wheel_linear_cancel(
-    const std::shared_ptr<GoalHandleMoveWheelLinear> goal_handle) {
+  const std::shared_ptr<GoalHandleMoveWheelLinear> goal_handle)
+{
   RCLCPP_INFO(this->get_logger(), "Received cancel request");
   (void)goal_handle;
   return rclcpp_action::CancelResponse::ACCEPT;
 }
 rclcpp_action::CancelResponse WheelActionServer::handle_move_wheel_rotate_cancel(
-    const std::shared_ptr<GoalHandleMoveWheelRotate> goal_handle) {
+  const std::shared_ptr<GoalHandleMoveWheelRotate> goal_handle)
+{
   RCLCPP_INFO(this->get_logger(), "Received cancel request");
   (void)goal_handle;
   return rclcpp_action::CancelResponse::ACCEPT;
@@ -76,13 +82,15 @@ rclcpp_action::CancelResponse WheelActionServer::handle_move_wheel_rotate_cancel
 
 
 void WheelActionServer::handle_move_wheel_linear_accepted(
-    const std::shared_ptr<GoalHandleMoveWheelLinear> goal_handle) {
+  const std::shared_ptr<GoalHandleMoveWheelLinear> goal_handle)
+{
   RCLCPP_INFO(this->get_logger(), "Received goal request");
   (void)goal_handle;
   std::thread{std::bind(&WheelActionServer::exe_move_wheel_linear, this, std::placeholders::_1), goal_handle}.detach();
 }
 void WheelActionServer::handle_move_wheel_rotate_accepted(
-    const std::shared_ptr<GoalHandleMoveWheelRotate> goal_handle) {
+  const std::shared_ptr<GoalHandleMoveWheelRotate> goal_handle)
+{
   RCLCPP_INFO(this->get_logger(), "Received goal request");
   (void)goal_handle;
   std::thread{std::bind(&WheelActionServer::exe_move_wheel_rotate, this, std::placeholders::_1), goal_handle}.detach();
@@ -91,7 +99,8 @@ void WheelActionServer::handle_move_wheel_rotate_accepted(
 
 // TODO: goal time allowance is not considered
 void WheelActionServer::exe_move_wheel_linear(
-    const std::shared_ptr<GoalHandleMoveWheelLinear> goal_handle) {
+  const std::shared_ptr<GoalHandleMoveWheelLinear> goal_handle)
+{
   RCLCPP_INFO(this->get_logger(), "Executing goal");
 
   const auto goal = goal_handle->get_goal();
@@ -115,11 +124,12 @@ void WheelActionServer::exe_move_wheel_linear(
 
   // Initialize values
   geometry_msgs::msg::Twist init_vel, out_vel;
-  double goal_dist, curt_dist;
-  goal_dist = std::abs(goal->target_point.x);
-  this->init_odom_ = this->curt_odom_;
+  double goal_dist = std::abs(goal->target_point.x);
+  double curt_dist=0.0;
   double integral_dist = 0.0;
   double prev_error_dist = goal_dist - curt_dist;
+
+  this->init_odom_ = this->curt_odom_;
 
   // Set PID parameters
   // TODO: Get the parameters from the action goal
@@ -192,7 +202,8 @@ void WheelActionServer::exe_move_wheel_linear(
 
 // TODO: goal time allowance is not considered
 void WheelActionServer::exe_move_wheel_rotate(
-    const std::shared_ptr<GoalHandleMoveWheelRotate> goal_handle) {
+  const std::shared_ptr<GoalHandleMoveWheelRotate> goal_handle)
+{
   RCLCPP_INFO(this->get_logger(), "Executing goal");
 
   const auto goal = goal_handle->get_goal();
@@ -206,14 +217,17 @@ void WheelActionServer::exe_move_wheel_rotate(
 
   // Initialize values
   geometry_msgs::msg::Twist init_vel, out_vel;
-  double goal_angle, curt_angle;
-  double prev_real_angle, curt_real_angle, diff_real_angle;
-  goal_angle = std::abs(goal->target_yaw);
-  this->init_odom_ = this->curt_odom_;
-  curt_real_angle = this->getEulerFromQuat(this->curt_odom_.pose.pose.orientation).z;
-  prev_real_angle = this->getEulerFromQuat(this->init_odom_.pose.pose.orientation).z;
+  double goal_angle = std::abs(goal->target_yaw);
+  double curt_angle=0.0;
+
+  double prev_real_angle = this->get_euler_from_quat(this->init_odom_.pose.pose.orientation).z;
+  double curt_real_angle = this->get_euler_from_quat(this->curt_odom_.pose.pose.orientation).z;
+  double diff_real_angle;
+  
   double integral_angle = 0.0;
   double prev_error_angle = goal_angle - curt_angle;
+
+  this->init_odom_ = this->curt_odom_;
 
   // Set PID parameters
   // TODO: Get the parameters from the action goal
@@ -256,7 +270,7 @@ void WheelActionServer::exe_move_wheel_rotate(
     this->pub_cmd_vel_->publish(cmd_vel);
 
     // Update the previous error
-    curt_real_angle = this->getEulerFromQuat(this->curt_odom_.pose.pose.orientation).z;
+    curt_real_angle = this->get_euler_from_quat(this->curt_odom_.pose.pose.orientation).z;
     diff_real_angle = curt_real_angle - prev_real_angle;
     if (diff_real_angle > M_PI) {
       diff_real_angle -= 2 * M_PI;
@@ -291,7 +305,8 @@ void WheelActionServer::exe_move_wheel_rotate(
 
 
 void WheelActionServer::odom_callback(
-    const nav_msgs::msg::Odometry::SharedPtr msg) {
+  const nav_msgs::msg::Odometry::SharedPtr msg)
+{
   RCLCPP_INFO(this->get_logger(), "Received odometry");
 
   this->curt_odom_ = *msg;
@@ -312,7 +327,8 @@ void WheelActionServer::odom_callback(
 
 
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
   rclcpp::init(argc, argv);
   auto node = std::make_shared<sobit_light::WheelActionServer>();
   rclcpp::spin(node);

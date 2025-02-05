@@ -36,9 +36,9 @@ public:
   WheelActionServer();
   ~WheelActionServer();
 
-  geometry_msgs::msg::Vector3 getEulerFromQuat(
+  geometry_msgs::msg::Vector3 get_euler_from_quat(
     const geometry_msgs::msg::Quaternion& quat);
-  geometry_msgs::msg::Quaternion getQuatFromEuler(
+  geometry_msgs::msg::Quaternion get_quat_from_euler(
     const geometry_msgs::msg::Vector3& rpy);
 
 private:
@@ -67,8 +67,9 @@ private:
   void odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg);
 };
 
-inline geometry_msgs::msg::Vector3 WheelActionServer::getEulerFromQuat(
-    const geometry_msgs::msg::Quaternion& msg_quat) {
+inline geometry_msgs::msg::Vector3 WheelActionServer::get_euler_from_quat(
+  const geometry_msgs::msg::Quaternion& msg_quat)
+{
   tf2::Quaternion tf_quat;
   geometry_msgs::msg::Vector3 euler;
 
@@ -79,8 +80,9 @@ inline geometry_msgs::msg::Vector3 WheelActionServer::getEulerFromQuat(
   return euler;  
 }
 
-inline geometry_msgs::msg::Quaternion WheelActionServer::getQuatFromEuler(
-    const geometry_msgs::msg::Vector3& euler) {
+inline geometry_msgs::msg::Quaternion WheelActionServer::get_quat_from_euler(
+  const geometry_msgs::msg::Vector3& euler)
+{
   tf2::Quaternion tf_quat;
 
   tf_quat.setRPY(euler.x, euler.y, euler.z);
