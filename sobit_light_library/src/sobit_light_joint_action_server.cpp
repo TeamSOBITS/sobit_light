@@ -2,10 +2,11 @@
 
 namespace sobit_light{
 
-JointActionServer::JointActionServer() :
-    Node("joint_action_server"),
-    tf_buffer_(std::make_shared<tf2_ros::Buffer>(this->get_clock())),
-    tf_listener_(std::make_shared<tf2_ros::TransformListener>(*tf_buffer_)) {
+JointActionServer::JointActionServer()
+: Node("joint_action_server"),
+  tf_buffer_(std::make_shared<tf2_ros::Buffer>(this->get_clock())),
+  tf_listener_(std::make_shared<tf2_ros::TransformListener>(*tf_buffer_))
+{
   // Configure the QoS profile
   rclcpp::QoS qos_profile(1); // depth = 1
   qos_profile.reliability(RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT);
@@ -78,7 +79,8 @@ JointActionServer::JointActionServer() :
 
   RCLCPP_INFO(this->get_logger(), "JointActionServer has been initialized.");
 }
-JointActionServer::~JointActionServer() {
+JointActionServer::~JointActionServer()
+{
   this->action_server_move_joints_.reset();
   this->action_server_move_to_pose_.reset();
   this->action_server_move_hand_to_coord_.reset();
@@ -92,32 +94,36 @@ JointActionServer::~JointActionServer() {
 
 
 rclcpp_action::GoalResponse JointActionServer::handle_move_joints_goal(
-    const rclcpp_action::GoalUUID & uuid,
-    std::shared_ptr<const MoveJoint::Goal> goal) {
+  const rclcpp_action::GoalUUID & uuid,
+  std::shared_ptr<const MoveJoint::Goal> goal)
+{
   RCLCPP_INFO(this->get_logger(), "Received goal request");
   (void)uuid;
   (void)goal;
   return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
 }
 rclcpp_action::GoalResponse JointActionServer::handle_move_to_pose_goal(
-    const rclcpp_action::GoalUUID & uuid,
-    std::shared_ptr<const MoveToPose::Goal> goal) {
+  const rclcpp_action::GoalUUID & uuid,
+  std::shared_ptr<const MoveToPose::Goal> goal)
+{
   RCLCPP_INFO(this->get_logger(), "Received goal request");
   (void)uuid;
   (void)goal;
   return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
 }
 rclcpp_action::GoalResponse JointActionServer::handle_move_hand_to_coord_goal(
-    const rclcpp_action::GoalUUID & uuid,
-    std::shared_ptr<const MoveHandToTargetCoord::Goal> goal) {
+  const rclcpp_action::GoalUUID & uuid,
+  std::shared_ptr<const MoveHandToTargetCoord::Goal> goal)
+{
   RCLCPP_INFO(this->get_logger(), "Received goal request");
   (void)uuid;
   (void)goal;
   return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
 }
 rclcpp_action::GoalResponse JointActionServer::handle_move_hand_to_tf_goal(
-    const rclcpp_action::GoalUUID & uuid,
-    std::shared_ptr<const MoveHandToTargetTF::Goal> goal) {
+  const rclcpp_action::GoalUUID & uuid,
+  std::shared_ptr<const MoveHandToTargetTF::Goal> goal)
+{
   RCLCPP_INFO(this->get_logger(), "Received goal request");
   (void)uuid;
   (void)goal;
@@ -126,25 +132,29 @@ rclcpp_action::GoalResponse JointActionServer::handle_move_hand_to_tf_goal(
 
 
 rclcpp_action::CancelResponse JointActionServer::handle_move_joints_cancel(
-    const std::shared_ptr<GoalHandleMoveJoints> goal_handle) {
+  const std::shared_ptr<GoalHandleMoveJoints> goal_handle)
+{
   RCLCPP_INFO(this->get_logger(), "Received cancel request");
   (void)goal_handle;
   return rclcpp_action::CancelResponse::ACCEPT;
 }
 rclcpp_action::CancelResponse JointActionServer::handle_move_to_pose_cancel(
-    const std::shared_ptr<GoalHandleMoveToPose> goal_handle) {
+  const std::shared_ptr<GoalHandleMoveToPose> goal_handle)
+{
   RCLCPP_INFO(this->get_logger(), "Received cancel request");
   (void)goal_handle;
   return rclcpp_action::CancelResponse::ACCEPT;
 }
 rclcpp_action::CancelResponse JointActionServer::handle_move_hand_to_coord_cancel(
-    const std::shared_ptr<GoalHandleMoveHandToCoord> goal_handle) {
+  const std::shared_ptr<GoalHandleMoveHandToCoord> goal_handle)
+{
   RCLCPP_INFO(this->get_logger(), "Received cancel request");
   (void)goal_handle;
   return rclcpp_action::CancelResponse::ACCEPT;
 }
 rclcpp_action::CancelResponse JointActionServer::handle_move_hand_to_tf_cancel(
-    const std::shared_ptr<GoalHandleMoveHandToTf> goal_handle) {
+  const std::shared_ptr<GoalHandleMoveHandToTf> goal_handle)
+{
   RCLCPP_INFO(this->get_logger(), "Received cancel request");
   (void)goal_handle;
   return rclcpp_action::CancelResponse::ACCEPT;
@@ -152,25 +162,29 @@ rclcpp_action::CancelResponse JointActionServer::handle_move_hand_to_tf_cancel(
 
 
 void JointActionServer::handle_move_joints_accepted(
-    const std::shared_ptr<GoalHandleMoveJoints> goal_handle) {
+  const std::shared_ptr<GoalHandleMoveJoints> goal_handle)
+{
   RCLCPP_INFO(this->get_logger(), "Received goal request");
   (void)goal_handle;
   std::thread{std::bind(&JointActionServer::exe_move_joints, this, std::placeholders::_1), goal_handle}.detach();
 }
 void JointActionServer::handle_move_to_pose_accepted(
-    const std::shared_ptr<GoalHandleMoveToPose> goal_handle) {
+  const std::shared_ptr<GoalHandleMoveToPose> goal_handle)
+{
   RCLCPP_INFO(this->get_logger(), "Received goal request");
   (void)goal_handle;
   std::thread{std::bind(&JointActionServer::exe_move_to_pose, this, std::placeholders::_1), goal_handle}.detach();
 }
 void JointActionServer::handle_move_hand_to_coord_accepted(
-    const std::shared_ptr<GoalHandleMoveHandToCoord> goal_handle) {
+  const std::shared_ptr<GoalHandleMoveHandToCoord> goal_handle)
+{
   RCLCPP_INFO(this->get_logger(), "Received goal request");
   (void)goal_handle;
   std::thread{std::bind(&JointActionServer::exe_move_hand_to_coord, this, std::placeholders::_1), goal_handle}.detach();
 }
 void JointActionServer::handle_move_hand_to_tf_accepted(
-    const std::shared_ptr<GoalHandleMoveHandToTf> goal_handle) {
+  const std::shared_ptr<GoalHandleMoveHandToTf> goal_handle)
+{
   RCLCPP_INFO(this->get_logger(), "Received goal request");
   (void)goal_handle;
   std::thread{std::bind(&JointActionServer::exe_move_hand_to_tf, this, std::placeholders::_1), goal_handle}.detach();
@@ -178,7 +192,8 @@ void JointActionServer::handle_move_hand_to_tf_accepted(
 
 
 void JointActionServer::exe_move_joints(
-    const std::shared_ptr<GoalHandleMoveJoints> goal_handle) {
+  const std::shared_ptr<GoalHandleMoveJoints> goal_handle)
+{
   RCLCPP_INFO(this->get_logger(), "Executing goal");
 
   const auto goal = goal_handle->get_goal();
@@ -206,9 +221,9 @@ void JointActionServer::exe_move_joints(
 
   // Publish the joint trajectory
   trajectory_msgs::msg::JointTrajectory joint_trajectory;
-  joint_trajectory = setJoints(goal->target_joint_names, goal->target_joint_rad, goal->time_allowance);
+  joint_trajectory = set_joints(goal->target_joint_names, goal->target_joint_rad, goal->time_allowance);
   // std::vector<double> target_joint_rad_double(goal->target_joint_rad.begin(), goal->target_joint_rad.end());
-  // joint_trajectory = setJoints(goal->target_joint_names, target_joint_rad_double, goal->time_allowance);
+  // joint_trajectory = set_joints(goal->target_joint_names, target_joint_rad_double, goal->time_allowance);
 
   try {
     this->pub_joint_control_->publish(joint_trajectory);
@@ -261,7 +276,8 @@ void JointActionServer::exe_move_joints(
 }
 
 void JointActionServer::exe_move_to_pose(
-    const std::shared_ptr<GoalHandleMoveToPose> goal_handle) {
+  const std::shared_ptr<GoalHandleMoveToPose> goal_handle)
+{
   RCLCPP_INFO(this->get_logger(), "Executing goal");
 
   const auto goal = goal_handle->get_goal();
@@ -294,7 +310,7 @@ void JointActionServer::exe_move_to_pose(
 
   // Publish the joint trajectory
   trajectory_msgs::msg::JointTrajectory joint_trajectory;
-  joint_trajectory = setJoints(kJointNames, target_joint_rad, goal->time_allowance);
+  joint_trajectory = set_joints(kJointNames, target_joint_rad, goal->time_allowance);
 
   try {
     this->pub_joint_control_->publish(joint_trajectory);
@@ -345,7 +361,8 @@ void JointActionServer::exe_move_to_pose(
 }
 
 void JointActionServer::exe_move_hand_to_coord(
-    const std::shared_ptr<GoalHandleMoveHandToCoord> goal_handle) {
+  const std::shared_ptr<GoalHandleMoveHandToCoord> goal_handle)
+{
   RCLCPP_INFO(this->get_logger(), "Executing goal");
 
   const auto goal = goal_handle->get_goal();
@@ -368,20 +385,43 @@ void JointActionServer::exe_move_hand_to_coord(
     return;
   }
 
-  // TODO: Inverse kinematics to get the target joint rad
-  std::vector<double> target_joint_rad;
-  target_joint_rad = inverseKinematics(goal_coord);
+  // Inverse kinematics to get the target joint rad
+  bool is_success = false;
+  std::vector<double> target_joint_rad = {
+    0.0,  // arm_shoulder_roll_joint_rad
+    0.0,  // arm_shoulder_pitch_joint_rad
+    0.0,  // arm_shoulder_pitch_sub_joint_rad
+    0.0,  // arm_elbow_pitch_joint_rad
+    0.0,  // arm_forearm_roll_joint_rad
+    0.0,  // arm_wrist_pitch_joint_rad
+    0.0,  // arm_wrist_roll_joint_rad
+    0.0,  // hand_joint_rad
+    0.0,  // head_yaw_joint_rad
+    0.0   // head_pitch_joint_rad
+  };
+
+  is_success = inverse_kinematics(goal_coord, target_joint_rad);
+
+  if (!is_success) {
+    RCLCPP_ERROR(this->get_logger(), "Failed to calculate the inverse kinematics");
+
+    result->success = false;
+    result->message = "[FAIL] Failed to calculate the inverse kinematics";
+    goal_handle->canceled(result);
+
+    return;
+  }
 
   // TODO: Check values with forward kinematics
   // geometry_msgs::msg::TransformStamped goal_coord_check;
   // do {
-  //   target_joint_rad = inverseKinematics(goal_coord);
-  //   goal_coord_check = forwardKinematics(target_joint_rad, goal_coord);
+  //   target_joint_rad = inverse_kinematics(goal_coord, target_joint_rad);
+  //   goal_coord_check = forward_kinematics(target_joint_rad, goal_coord);
   // } while (goal_coord_check != goal_coord);
 
   // Publish the joint trajectory
   trajectory_msgs::msg::JointTrajectory joint_trajectory;
-  joint_trajectory = setJoints(kJointNames, target_joint_rad, goal->time_allowance);
+  joint_trajectory = set_joints(kJointNames, target_joint_rad, goal->time_allowance);
 
   try {
     this->pub_joint_control_->publish(joint_trajectory);
@@ -406,7 +446,8 @@ void JointActionServer::exe_move_hand_to_coord(
 }
 
 void JointActionServer::exe_move_hand_to_tf(
-    const std::shared_ptr<GoalHandleMoveHandToTf> goal_handle) {
+  const std::shared_ptr<GoalHandleMoveHandToTf> goal_handle)
+{
   RCLCPP_INFO(this->get_logger(), "Executing goal");
 
   const auto goal = goal_handle->get_goal();
@@ -426,8 +467,8 @@ void JointActionServer::exe_move_hand_to_tf(
       tf2::TimePointZero);
 
     geometry_msgs::msg::Vector3 euler_target, euler_shift;
-    euler_target = getEulerFromQuat(goal_coord_shift.transform.rotation);
-    euler_shift = getEulerFromQuat(goal->tf_differential.transform.rotation);
+    euler_target = get_euler_from_quat(goal_coord_shift.transform.rotation);
+    euler_shift = get_euler_from_quat(goal->tf_differential.transform.rotation);
     euler_target.x += euler_shift.x;
     euler_target.y += euler_shift.y;
     euler_target.z += euler_shift.z;
@@ -435,7 +476,7 @@ void JointActionServer::exe_move_hand_to_tf(
     goal_coord_shift.transform.translation.x += goal->tf_differential.transform.translation.x;
     goal_coord_shift.transform.translation.y += goal->tf_differential.transform.translation.y;
     goal_coord_shift.transform.translation.z += goal->tf_differential.transform.translation.z;
-    goal_coord_shift.transform.rotation = getQuatFromEuler(euler_target);
+    goal_coord_shift.transform.rotation = get_quat_from_euler(euler_target);
   } catch (const tf2::TransformException &ex) {
     RCLCPP_ERROR(this->get_logger(), "Could not transform %s to %s: %s",
     goal->target_frame.c_str(), goal->tf_differential.header.frame_id.c_str(),
@@ -465,19 +506,42 @@ void JointActionServer::exe_move_hand_to_tf(
   }
 
   // TODO: Inverse kinematics to get the target joint rad
-  std::vector<double> target_joint_rad;
-  target_joint_rad = inverseKinematics(goal_coord);
+  bool is_success = false;
+  std::vector<double> target_joint_rad = {
+    0.0,  // arm_shoulder_roll_joint_rad
+    0.0,  // arm_shoulder_pitch_joint_rad
+    0.0,  // arm_shoulder_pitch_sub_joint_rad
+    0.0,  // arm_elbow_pitch_joint_rad
+    0.0,  // arm_forearm_roll_joint_rad
+    0.0,  // arm_wrist_pitch_joint_rad
+    0.0,  // arm_wrist_roll_joint_rad
+    0.0,  // hand_joint_rad
+    0.0,  // head_yaw_joint_rad
+    0.0   // head_pitch_joint_rad
+  };
+
+  is_success = inverse_kinematics(goal_coord, target_joint_rad);
+
+  if (!is_success) {
+    RCLCPP_ERROR(this->get_logger(), "Failed to calculate the inverse kinematics");
+
+    result->success = false;
+    result->message = "[FAIL] Failed to calculate the inverse kinematics";
+    goal_handle->canceled(result);
+
+    return;
+  }
 
   // TODO: Check values with forward kinematics
   // geometry_msgs::msg::TransformStamped goal_coord_check;
   // do {
-  //   target_joint_rad = inverseKinematics(goal_coord);
-  //   goal_coord_check = forwardKinematics(target_joint_rad, goal_coord);
+  //   target_joint_rad = inverse_kinematics(goal_coord, target_joint_rad);
+  //   goal_coord_check = forward_kinematics(target_joint_rad, goal_coord);
   // } while (goal_coord_check != goal_coord);
 
   // Publish the joint trajectory
   trajectory_msgs::msg::JointTrajectory joint_trajectory;
-  joint_trajectory = setJoints(kJointNames, target_joint_rad, goal->time_allowance);
+  joint_trajectory = set_joints(kJointNames, target_joint_rad, goal->time_allowance);
 
   try {
     this->pub_joint_control_->publish(joint_trajectory);
@@ -503,7 +567,8 @@ void JointActionServer::exe_move_hand_to_tf(
 
 
 void JointActionServer::joint_state_callback(
-    const sensor_msgs::msg::JointState::SharedPtr msg) {
+  const sensor_msgs::msg::JointState::SharedPtr msg)
+{
   RCLCPP_INFO(this->get_logger(), "Received joint state");
 
   for (size_t i = 0; i < msg->name.size(); i++) {
@@ -516,10 +581,11 @@ void JointActionServer::joint_state_callback(
   }
 }
 
-trajectory_msgs::msg::JointTrajectory JointActionServer::setJoints(
-    const std::vector<std::string> &target_joint_names,
-    const std::vector<double> &target_joint_rad,
-    const builtin_interfaces::msg::Duration &time_allowance) {
+trajectory_msgs::msg::JointTrajectory JointActionServer::set_joints(
+  const std::vector<std::string> &target_joint_names,
+  const std::vector<double> &target_joint_rad,
+  const builtin_interfaces::msg::Duration &time_allowance)
+{
   auto joint_trajectory = trajectory_msgs::msg::JointTrajectory();
   joint_trajectory.header.stamp = this->now();
   joint_trajectory.joint_names = target_joint_names;
@@ -532,80 +598,93 @@ trajectory_msgs::msg::JointTrajectory JointActionServer::setJoints(
   return joint_trajectory;
 }
 
-geometry_msgs::msg::TransformStamped JointActionServer::forwardKinematics(
-    const std::vector<double> &target_joint_rad, const geometry_msgs::msg::TransformStamped &goal_coord) {
-  
-  geometry_msgs::msg::TransformStamped target_coord;
+bool JointActionServer::forward_kinematics(
+  const std::vector<double> &target_joint_rad,
+  const geometry_msgs::msg::TransformStamped &goal_coord)
+{
+  bool is_success = false;
+  geometry_msgs::msg::TransformStamped final_coord;
 
-  target_coord.transform.translation.x = kArmUpper * std::cos(target_joint_rad[1]) + 
-                                         kArmLower * std::cos(target_joint_rad[1] + (target_joint_rad[3] + 1.57)) +
-                                         kArmGripper * std::cos(target_joint_rad[1] + (target_joint_rad[3] + 1.57) + target_joint_rad[5]);
-  
-  target_coord.transform.rotation.z = std::atan2(goal_coord.transform.translation.y, goal_coord.transform.translation.x);
+  final_coord.transform.translation.x = kArmUpper * std::cos(
+      target_joint_rad[JointIds::kArmShoulderPitchJoint]);
+  final_coord.transform.translation.x += kArmLower * std::cos(
+      target_joint_rad[JointIds::kArmShoulderPitchJoint] + 
+      target_joint_rad[JointIds::kArmElbowPitchJoint] + M_PI_2);
+  final_coord.transform.translation.x += kArmGripper * std::cos(
+      target_joint_rad[JointIds::kArmShoulderPitchJoint] +
+      target_joint_rad[JointIds::kArmElbowPitchJoint] + M_PI_2 +
+      target_joint_rad[JointIds::kArmWristPitchJoint]);
 
-  return target_coord;
+  final_coord.transform.rotation.z = std::atan2(
+      goal_coord.transform.translation.y,
+      goal_coord.transform.translation.x);
+
+  // Check the distance between the target and final coords
+  double distance = std::sqrt(
+      std::pow(goal_coord.transform.translation.x - final_coord.transform.translation.x, 2) +
+      std::pow(goal_coord.transform.translation.y - final_coord.transform.translation.y, 2) +
+      std::pow(goal_coord.transform.translation.z - final_coord.transform.translation.z, 2));
+  
+  // TODO: Update the distance threshold as parameter
+  is_success = (distance < 0.01);
+
+  return is_success;
 }
 
-std::vector<double> JointActionServer::inverseKinematics(
-    const geometry_msgs::msg::TransformStamped &goal_coord) {
-
+bool JointActionServer::inverse_kinematics(
+  const geometry_msgs::msg::TransformStamped &goal_coord,
+  std::vector<double> &target_joint_rad)
+{
+  bool is_success = false;
   double goal_position_pos_z = goal_coord.transform.translation.z;
   if (goal_position_pos_z == 0) goal_position_pos_z = 0.03;
 
-  std::vector<double> target_joint_rad = {
-    0.0,  // arm_shoulder_roll_joint_rad
-    0.0,  // arm_shoulder_pitch_joint_rad
-    0.0,  // arm_shoulder_pitch_sub_joint_rad
-    0.0,  // arm_elbow_pitch_joint_rad
-    0.0,  // arm_forearm_roll_joint_rad
-    0.0,  // arm_wrist_pitch_joint_rad
-    0.0,  // arm_wrist_roll_joint_rad
-    0.0,  // hand_joint_rad
-    0.0,  // head_yaw_joint_rad
-    0.0   // head_pitch_joint_rad
-  };
-
   if (goal_position_pos_z > kArmLength) {
-    RCLCPP_WARN(this->get_logger(), "The target is located too tall (%f < %f)", kArmLength, goal_position_pos_z);
-    return target_joint_rad;
+    RCLCPP_WARN(this->get_logger(), "The target position is too tall (max:%f[m] < %f[m])", kArmLength, goal_position_pos_z);
+    return is_success;
   }
   
   else if (goal_position_pos_z < -(kArmLower + kArmGripper)) {
-    RCLCPP_WARN(this->get_logger(), "The target is located too low (%f < %f)", goal_position_pos_z, -(kArmLower + kArmGripper));
-    return target_joint_rad;
+    RCLCPP_WARN(this->get_logger(), "The target position is too low (%f[m] < min:%f[m])", goal_position_pos_z, -(kArmLower + kArmGripper));
+    return is_success;
   }
 
   // Target is above arm_elbow_pitch_join
   if (0 <= goal_position_pos_z) {
-    RCLCPP_INFO(this->get_logger(), "Target (z:%f) is above arm_elbow_pitch_joint", goal_position_pos_z);
+    RCLCPP_INFO(this->get_logger(), "The target position (z:%f[m]) is above arm_elbow_pitch_joint", goal_position_pos_z);
 
-    target_joint_rad[1] = std::asin(goal_position_pos_z / kArmLength);
-    target_joint_rad[3] = -1.57;
-    target_joint_rad[5] = -target_joint_rad[1];
+    target_joint_rad[JointIds::kArmShoulderPitchJoint] = std::asin(goal_position_pos_z / kArmLength);
+    target_joint_rad[JointIds::kArmElbowPitchJoint] = -M_PI_2;
+    target_joint_rad[JointIds::kArmWristPitchJoint] = -target_joint_rad[JointIds::kArmShoulderPitchJoint];
   }
 
   // Target is below arm_elbow_pitch_join and above wrist_joint
   else if (-kArmLower <= goal_position_pos_z) {
-    RCLCPP_INFO(this->get_logger(), "Target (z:%f) is below arm_elbow_pitch_join and above wrist_joint", goal_position_pos_z);
+    RCLCPP_INFO(this->get_logger(), "The target position (z:%f[m]) is below arm_elbow_pitch_join and above wrist_joint", goal_position_pos_z);
 
-    target_joint_rad[3] = std::asin(goal_position_pos_z / kArmLower);
-    target_joint_rad[5] = -(1.57 + target_joint_rad[3]);
+    target_joint_rad[JointIds::kArmElbowPitchJoint] = std::asin(goal_position_pos_z / kArmLower);
+    target_joint_rad[JointIds::kArmWristPitchJoint] = -(M_PI_2 + target_joint_rad[JointIds::kArmElbowPitchJoint]);
   }
 
   // Target is below wrist_joint
   else {
-    RCLCPP_INFO(this->get_logger(), "Target (z:%f) is below wrist_joint", goal_position_pos_z);
+    RCLCPP_INFO(this->get_logger(), "The target position (z:%f[m]) is below wrist_joint", goal_position_pos_z);
 
-    target_joint_rad[3] = std::asin((goal_position_pos_z + kArmGripper) / kArmLower) - 1.57;
-    target_joint_rad[5] = -target_joint_rad[3];
+    target_joint_rad[JointIds::kArmElbowPitchJoint] = std::asin((goal_position_pos_z + kArmGripper) / kArmLower) - M_PI_2;
+    target_joint_rad[JointIds::kArmWristPitchJoint] = -target_joint_rad[JointIds::kArmElbowPitchJoint];
   }
 
-  return target_joint_rad;
+  // Check the result with forward kinematics
+  is_success = forward_kinematics(target_joint_rad, goal_coord);
+
+  return is_success;
 }
 
 } // namespace sobit_light
 
-int main(int argc, char **argv) {
+
+int main(int argc, char **argv)
+{
   rclcpp::init(argc, argv);
   auto node = std::make_shared<sobit_light::JointActionServer>();
   rclcpp::spin(node);

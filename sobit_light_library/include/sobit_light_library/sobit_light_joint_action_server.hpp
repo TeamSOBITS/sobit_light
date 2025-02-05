@@ -30,7 +30,8 @@
 
 namespace sobit_light{
 
-struct PoseParams {
+struct PoseParams 
+{
   std::string pose_name;
   double arm_shoulder_roll;
   double arm_shoulder_pitch;
@@ -43,7 +44,8 @@ struct PoseParams {
   double head_pitch;
 };
 
-enum JointIds {
+enum JointIds
+{
   kArmShoulderRollJoint = 0,
   kArmShoulderPitchJoint,
   kArmShoulderPitchSubJoint,
@@ -57,7 +59,8 @@ enum JointIds {
   kJointNum
 };
 
-class JointActionServer : public rclcpp::Node{
+class JointActionServer : public rclcpp::Node
+{
 public:
   using MoveJoint = sobits_interfaces::action::MoveJoint;
   using MoveToPose = sobits_interfaces::action::MoveToPose;
@@ -73,15 +76,17 @@ public:
   JointActionServer();
   ~JointActionServer();
 
-  geometry_msgs::msg::Vector3 getEulerFromQuat(
+  geometry_msgs::msg::Vector3 get_euler_from_quat(
     const geometry_msgs::msg::Quaternion& quat);
-  geometry_msgs::msg::Quaternion getQuatFromEuler(
+  geometry_msgs::msg::Quaternion get_quat_from_euler(
     const geometry_msgs::msg::Vector3& rpy);
-  geometry_msgs::msg::TransformStamped forwardKinematics(
-    const std::vector<double> &joint_rad, const geometry_msgs::msg::TransformStamped &target_coord);
-  std::vector<double> inverseKinematics(
-    const geometry_msgs::msg::TransformStamped &target_coord);
-  trajectory_msgs::msg::JointTrajectory setJoints(
+  bool forward_kinematics(
+    const std::vector<double> &target_joint_rad,
+    const geometry_msgs::msg::TransformStamped &goal_coord);
+  bool inverse_kinematics(
+    const geometry_msgs::msg::TransformStamped &goal_coord,
+    std::vector<double> &target_joint_rad);
+  trajectory_msgs::msg::JointTrajectory set_joints(
     const std::vector<std::string> &target_joint_names,
     const std::vector<double> &target_joint_rad,
     const builtin_interfaces::msg::Duration &time_allowance);
@@ -100,10 +105,10 @@ private:
     "head_pitch_joint"
   };
 
-  static constexpr double kArmUpper  = 0.128;
-  static constexpr double kArmLower  = 0.124;
+  static constexpr double kArmUpper   = 0.128;
+  static constexpr double kArmLower   = 0.124;
   static constexpr double kArmGripper = 0.064 + 0.11225;
-  static constexpr double kArmLength = kArmUpper + kArmLower;
+  static constexpr double kArmLength  = kArmUpper + kArmLower;
 
   std::vector<PoseParams> poses_;
   std::map<std::string, double> init_joint_state_;
@@ -143,8 +148,9 @@ private:
   void joint_state_callback(const sensor_msgs::msg::JointState::SharedPtr msg);
 };
 
-inline geometry_msgs::msg::Vector3 JointActionServer::getEulerFromQuat(
-    const geometry_msgs::msg::Quaternion& msg_quat) {
+inline geometry_msgs::msg::Vector3 JointActionServer::get_euler_from_quat(
+  const geometry_msgs::msg::Quaternion& msg_quat)
+{
   tf2::Quaternion tf_quat;
   geometry_msgs::msg::Vector3 euler;
 
@@ -155,8 +161,9 @@ inline geometry_msgs::msg::Vector3 JointActionServer::getEulerFromQuat(
   return euler;  
 }
 
-inline geometry_msgs::msg::Quaternion JointActionServer::getQuatFromEuler(
-    const geometry_msgs::msg::Vector3& euler) {
+inline geometry_msgs::msg::Quaternion JointActionServer::get_quat_from_euler(
+  const geometry_msgs::msg::Vector3& euler)
+{
   tf2::Quaternion tf_quat;
 
   tf_quat.setRPY(euler.x, euler.y, euler.z);
