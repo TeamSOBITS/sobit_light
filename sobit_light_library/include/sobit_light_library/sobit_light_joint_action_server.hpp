@@ -57,11 +57,6 @@ enum JointIds {
   kJointNum
 };
 
-const double kArmUpper   = 0.128;
-const double kArmLower   = 0.124;
-const double kArmGripper = 0.064 + 0.11225;
-const double kArmLength  = kArmUpper + kArmLower;
-
 class JointActionServer : public rclcpp::Node{
 public:
   using MoveJoint = sobits_interfaces::action::MoveJoint;
@@ -104,6 +99,11 @@ private:
     "head_yaw_joint",
     "head_pitch_joint"
   };
+
+  static constexpr double kArmUpper  = 0.128;
+  static constexpr double kArmLower  = 0.124;
+  static constexpr double kArmGripper = 0.064 + 0.11225;
+  static constexpr double kArmLength = kArmUpper + kArmLower;
 
   std::vector<PoseParams> poses_;
   std::map<std::string, double> init_joint_state_;
