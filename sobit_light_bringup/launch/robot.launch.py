@@ -70,8 +70,8 @@ def launch_gz(context, *args, **kwargs):
     enable_gz_lidar = LaunchConfiguration('enable_gz_lidar').perform(context)
     enable_gz_imu = LaunchConfiguration('enable_gz_imu').perform(context)
 
-    enable_real_head_cam = LaunchConfiguration('enable_real_head_cam').perform(context)
-    enable_real_hand_cam = LaunchConfiguration('enable_real_hand_cam').perform(context)
+    enable_real_head_cam = LaunchConfiguration('enable_real_head_cam').perform(context) # TODO: Implement
+    enable_real_hand_cam = LaunchConfiguration('enable_real_hand_cam').perform(context) # TODO: Implement
 
     robot_description = os.path.join(get_package_share_directory(
         'sobit_light_description'), 
@@ -92,8 +92,7 @@ def launch_gz(context, *args, **kwargs):
             'enable_gz_lidar' : enable_gz_lidar,
             'enable_gz_imu' : enable_gz_imu,
         })
-
-
+    
     if enable_gz == 'False':
         controller_config = os.path.join(get_package_share_directory(
             'sobit_light_control'),
@@ -112,40 +111,40 @@ def launch_gz(context, *args, **kwargs):
 
     joint_state_broadcaster = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller',
-             '--set-state', 'active',
-             '--controller-manager', robot_name+'/controller_manager',
+            '--set-state', 'active',
+            '--controller-manager', robot_name+'/controller_manager',
             #  '--use-sim-time',
-             'joint_state_broadcaster'
+            'joint_state_broadcaster'
         ],
         output='screen'
     )
 
     joint_trajectory_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller',
-             '--set-state', 'active',
-             '--controller-manager', robot_name+'/controller_manager',
+            '--set-state', 'active',
+            '--controller-manager', robot_name+'/controller_manager',
             #  '--use-sim-time',
-             'joint_trajectory_controller'
+            'joint_trajectory_controller'
         ],
         output='screen'
     )
 
     velocity_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller',
-             '--set-state', 'configure',
-             '--controller-manager', robot_name+'/controller_manager',
+            '--set-state', 'configured',
+            '--controller-manager', robot_name+'/controller_manager',
             #  '--use-sim-time',
-             'velocity_controller'
+            'velocity_controller'
         ],
         output='screen'
     )
 
     diff_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller',
-             '--set-state', 'active',
-             '--controller-manager', robot_name+'/controller_manager',
+            '--set-state', 'active',
+            '--controller-manager', robot_name+'/controller_manager',
             #  '--use-sim-time',
-             'diff_controller'
+            'diff_controller'
         ],
         output='screen'
     )
@@ -229,30 +228,9 @@ def launch_gz(context, *args, **kwargs):
     if enable_gz == 'False':
         return [
             controller_manager,
-            RegisterEventHandler(
-                event_handler=OnProcessExit(
-                    target_action=controller_manager,
-                    on_exit=[joint_state_broadcaster],
-                )
-            ),
-            RegisterEventHandler(
-                event_handler=OnProcessExit(
-                    target_action=joint_state_broadcaster,
-                    on_exit=[joint_trajectory_controller],
-                )
-            ),
-            RegisterEventHandler(
-                event_handler=OnProcessExit(
-                    target_action=joint_state_broadcaster,
-                    on_exit=[velocity_controller],
-                )
-            ),
-            RegisterEventHandler(
-                event_handler=OnProcessExit(
-                    target_action=joint_state_broadcaster,
-                    on_exit=[diff_controller],
-                )
-            ),
+            joint_state_broadcaster,
+            joint_trajectory_controller,
+            velocity_controller,
             robot_state_publisher_node,
         ]
     
