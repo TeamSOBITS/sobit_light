@@ -4,7 +4,7 @@
 
   <xacro:macro name="controllers" params="name enable_gz:=False robot_name:=sobit_light">
 
-    <ros2_control name="${name}_arm" type="system">
+    <ros2_control name="${name}" type="system">
     <!-- <ros2_control name="joints_control" type="system"> -->
       <hardware>
         <xacro:if value="${$(arg enable_gz)}">
@@ -13,7 +13,7 @@
         </xacro:if>
         <xacro:unless value="${$(arg enable_gz)}">
           <plugin>dynamixel_hardware/DynamixelHardware</plugin>
-          <param name="usb_port">/dev/ttyUSB0</param>
+          <param name="usb_port">/dev/input/dx_light</param>
           <param name="baud_rate">1000000</param>
           <!-- <param name="use_dummy">true</param> -->
         </xacro:unless>
