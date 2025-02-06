@@ -840,13 +840,3 @@ bool JointActionServer::inverse_kinematics(
 }
 
 } // namespace sobit_light
-
-
-// int main(int argc, char **argv)
-// {
-//   rclcpp::init(argc, argv);
-//   auto node = std::make_shared<sobit_light::JointActionServer>();
-//   rclcpp::spin(node);
-//   rclcpp::shutdown();
-//   return 0;
-// }
