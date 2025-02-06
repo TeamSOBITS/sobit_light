@@ -20,8 +20,8 @@ public:
   {
     this->action_client_ = rclcpp_action::create_client<MoveWheelRotate>(
         this,
-        "move_hand_to_tf");
-    RCLCPP_INFO(this->get_logger(), "JointActionClient has been initialized.");
+        "move_wheel_rotate");
+    RCLCPP_INFO(this->get_logger(), "WheelActionClient has been initialized.");
 
     this->timer_ = this->create_wall_timer(
         std::chrono::seconds(1),
@@ -31,7 +31,7 @@ public:
   ~WheelRotateActionClient()
   {
     this->action_client_.reset();
-    RCLCPP_INFO(this->get_logger(), "JointActionClient has been terminated.");
+    RCLCPP_INFO(this->get_logger(), "WheelActionClient has been terminated.");
   }
 
   void send_goal()
