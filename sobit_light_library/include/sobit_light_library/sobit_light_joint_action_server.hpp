@@ -1,9 +1,3 @@
-// #ifndef SOBIT_LIGHT_JOINT_ACTION_SERVER_HPP
-// #define SOBIT_LIGHT_JOINT_ACTION_SERVER_HPP
-
-// #include <functional>
-// #include <memory>
-#include <thread>
 #include <map>
 
 #include "sobits_interfaces/action/move_joint.hpp"
@@ -22,13 +16,16 @@
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "geometry_msgs/msg/quaternion.h"
 #include "geometry_msgs/msg/vector3.h"
+#include "geometry_msgs/msg/point.h"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
-// #include "rclcpp_components/register_node_macro.hpp"
+#include <rclcpp_components/register_node_macro.hpp>
 
-namespace sobit_light{
+
+namespace sobit_light
+{
 
 struct PoseParams 
 {
@@ -48,7 +45,7 @@ enum JointIds
 {
   kArmShoulderRollJoint = 0,
   kArmShoulderPitchJoint,
-  kArmShoulderPitchSubJoint,
+  // kArmShoulderPitchSubJoint,
   kArmElbowPitchJoint,
   kArmForearmRollJoint,
   kArmWristPitchJoint,
@@ -73,7 +70,7 @@ public:
   using GoalHandleMoveHandToTf = rclcpp_action::ServerGoalHandle<sobits_interfaces::action::MoveHandToTargetTF>;
 
 
-  JointActionServer();
+  explicit JointActionServer(const rclcpp::NodeOptions & options);
   ~JointActionServer();
 
   geometry_msgs::msg::Vector3 get_euler_from_quat(
@@ -82,7 +79,8 @@ public:
     const geometry_msgs::msg::Vector3& rpy);
   bool forward_kinematics(
     const std::vector<double> &target_joint_rad,
-    const geometry_msgs::msg::TransformStamped &goal_coord);
+    const geometry_msgs::msg::TransformStamped &goal_coord,
+    double &distance);
   bool inverse_kinematics(
     const geometry_msgs::msg::TransformStamped &goal_coord,
     std::vector<double> &target_joint_rad);
@@ -95,7 +93,7 @@ private:
   const std::vector<std::string> kJointNames = {
     "arm_shoulder_roll_joint",
     "arm_shoulder_pitch_joint",
-    "arm_shoulder_pitch_sub_joint",
+    // "arm_shoulder_pitch_sub_joint",
     "arm_elbow_pitch_joint",
     "arm_forearm_roll_joint",
     "arm_wrist_pitch_joint",
@@ -103,6 +101,15 @@ private:
     "hand_joint",
     "head_yaw_joint",
     "head_pitch_joint"
+  };
+  const std::vector<std::string> kArmJointNames = {
+    "arm_shoulder_roll_joint",
+    "arm_shoulder_pitch_joint",
+    // "arm_shoulder_pitch_sub_joint",
+    "arm_elbow_pitch_joint",
+    "arm_forearm_roll_joint",
+    "arm_wrist_pitch_joint",
+    "arm_wrist_roll_joint",
   };
 
   static constexpr double kArmUpper   = 0.128;
@@ -146,7 +153,7 @@ private:
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
 
   void joint_state_callback(const sensor_msgs::msg::JointState::SharedPtr msg);
-};
+}; // class JointActionServer
 
 inline geometry_msgs::msg::Vector3 JointActionServer::get_euler_from_quat(
   const geometry_msgs::msg::Quaternion& msg_quat)
@@ -173,4 +180,4 @@ inline geometry_msgs::msg::Quaternion JointActionServer::get_quat_from_euler(
 
 } // namespace sobit_light
 
-// #endif // SOBIT_LIGHT_JOINT_ACTION_SERVER_HPP
+RCLCPP_COMPONENTS_REGISTER_NODE(sobit_light::JointActionServer)

@@ -2,8 +2,8 @@
 
 namespace sobit_light{
 
-JointActionServer::JointActionServer()
-: Node("joint_action_server"),
+JointActionServer::JointActionServer(const rclcpp::NodeOptions & options = rclcpp::NodeOptions())
+: Node("joint_action_server", options),
   tf_buffer_(std::make_shared<tf2_ros::Buffer>(this->get_clock())),
   tf_listener_(std::make_shared<tf2_ros::TransformListener>(*tf_buffer_))
 {
@@ -11,6 +11,8 @@ JointActionServer::JointActionServer()
   rclcpp::QoS qos_profile(1); // depth = 1
   qos_profile.reliability(RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT);
   qos_profile.history(RMW_QOS_POLICY_HISTORY_KEEP_LAST);
+  qos_profile.durability(RMW_QOS_POLICY_DURABILITY_VOLATILE);
+
 
   this->action_server_move_joints_ = rclcpp_action::create_server<MoveJoint>(
       this,
@@ -199,6 +201,12 @@ void JointActionServer::exe_move_joints(
   const auto goal = goal_handle->get_goal();
   auto result = std::make_shared<MoveJoint::Result>();
 
+  // Spin while waiting for the joint state to be updated
+  while (this->curt_joint_state_.empty()) {
+    RCLCPP_INFO(this->get_logger(), "Waiting for the joint state to be updated");
+    rclcpp::spin_some(this->get_node_base_interface());
+  }
+
   // Check if the number of joint names and joint rad are the same
   if (goal->target_joint_names.size() != goal->target_joint_rad.size()) {
     RCLCPP_ERROR(this->get_logger(), "Invalid goal request. The number of joint names and joint rad are different");
@@ -222,8 +230,6 @@ void JointActionServer::exe_move_joints(
   // Publish the joint trajectory
   trajectory_msgs::msg::JointTrajectory joint_trajectory;
   joint_trajectory = set_joints(goal->target_joint_names, goal->target_joint_rad, goal->time_allowance);
-  // std::vector<double> target_joint_rad_double(goal->target_joint_rad.begin(), goal->target_joint_rad.end());
-  // joint_trajectory = set_joints(goal->target_joint_names, target_joint_rad_double, goal->time_allowance);
 
   try {
     this->pub_joint_control_->publish(joint_trajectory);
@@ -232,11 +238,10 @@ void JointActionServer::exe_move_joints(
 
     result->success = false;
     result->message = "[FAIL] Failed to publish the joint trajectory";
-    goal_handle->canceled(result);
+    goal_handle->abort(result);
 
     return;
   }
-
 
   // Publish feedback
   auto start_time = this->now();
@@ -263,10 +268,29 @@ void JointActionServer::exe_move_joints(
 
     goal_handle->publish_feedback(feedback);
 
+    rclcpp::spin_some(this->get_node_base_interface());
     loop_rate.sleep();
 
   }
 
+  // Check if goal was reached
+  for (size_t i = 0; i < goal->target_joint_names.size(); i++) {
+    // TODO: set tolerance with parameter or msg
+    if (std::abs(this->curt_joint_state_[goal->target_joint_names[i]] - goal->target_joint_rad[i]) > 0.01) {
+      RCLCPP_ERROR(this->get_logger(), "Failed to reach the goal");
+
+      result->success = false;
+      result->message = "[FAIL] Failed to reach the goal";
+      goal_handle->abort(result);
+
+      return;
+    }
+  }
+
+  // Clear the current joint state
+  curt_joint_state_.clear();
+
+  // Publish the result
   result->success = true;
   result->message = "Goal has been succeeded";
   result->total_elapsed_time.sec = (this->now() - start_time).seconds();
@@ -283,6 +307,12 @@ void JointActionServer::exe_move_to_pose(
   const auto goal = goal_handle->get_goal();
   auto result = std::make_shared<MoveToPose::Result>();
 
+  // Spin while waiting for the joint state to be updated
+  while (this->curt_joint_state_.empty()) {
+    RCLCPP_INFO(this->get_logger(), "Waiting for the joint state to be updated");
+    rclcpp::spin_some(this->get_node_base_interface());
+  }
+
   // Check if the pose name is valid
   if (std::find_if(poses_.begin(), poses_.end(), [&](const PoseParams &pose) { return pose.pose_name == goal->pose_name; }) == poses_.end()) {
     RCLCPP_ERROR(this->get_logger(), "Invalid pose name: %s", goal->pose_name.c_str());
@@ -297,6 +327,7 @@ void JointActionServer::exe_move_to_pose(
     if (pose.pose_name == goal->pose_name) {
       target_joint_rad.push_back(pose.arm_shoulder_roll);
       target_joint_rad.push_back(pose.arm_shoulder_pitch);
+      // target_joint_rad.push_back(-pose.arm_shoulder_pitch);
       target_joint_rad.push_back(pose.arm_elbow_pitch);
       target_joint_rad.push_back(pose.arm_forearm_roll);
       target_joint_rad.push_back(pose.arm_wrist_pitch);
@@ -319,7 +350,7 @@ void JointActionServer::exe_move_to_pose(
 
     result->success = false;
     result->message = "[FAIL] Failed to publish the joint trajectory";
-    goal_handle->canceled(result);
+    goal_handle->abort(result);
 
     return;
   }
@@ -349,9 +380,28 @@ void JointActionServer::exe_move_to_pose(
 
     goal_handle->publish_feedback(feedback);
 
+    rclcpp::spin_some(this->get_node_base_interface());
     loop_rate.sleep();
   }
 
+  // Check if goal was reached
+  for (size_t i = 0; i < kJointNames.size(); i++) {
+    // TODO: set tolerance with parameter or msg
+    if (std::abs(this->curt_joint_state_[kJointNames[i]] - target_joint_rad[i]) > 0.01) {
+      RCLCPP_ERROR(this->get_logger(), "Failed to reach the goal");
+
+      result->success = false;
+      result->message = "[FAIL] Failed to reach the goal";
+      goal_handle->abort(result);
+
+      return;
+    }
+  }
+
+  // Clear the current joint state
+  curt_joint_state_.clear();
+
+  // Publish the result
   result->message = "[SUCCESS] Goal has been succeeded";
   result->success = true;
   result->total_elapsed_time.sec = (this->now() - start_time).seconds();
@@ -371,6 +421,12 @@ void JointActionServer::exe_move_hand_to_coord(
   goal_coord.header = goal->target_coord.header;
   goal_coord.header.frame_id = this->get_name() + std::string("/base_footprint");
 
+  // Spin while waiting for the joint state to be updated
+  while (this->curt_joint_state_.empty()) {
+    RCLCPP_INFO(this->get_logger(), "Waiting for the joint state to be updated");
+    rclcpp::spin_some(this->get_node_base_interface());
+  }
+
   try{
     goal_coord = tf_buffer_->transform(
       goal->target_coord, goal_coord.header.frame_id,
@@ -380,7 +436,7 @@ void JointActionServer::exe_move_hand_to_coord(
 
     result->success = false;
     result->message = "[FAIL] Could not transform coords to " + goal_coord.header.frame_id;
-    goal_handle->canceled(result);
+    goal_handle->abort(result);
 
     return;
   }
@@ -390,14 +446,11 @@ void JointActionServer::exe_move_hand_to_coord(
   std::vector<double> target_joint_rad = {
     0.0,  // arm_shoulder_roll_joint_rad
     0.0,  // arm_shoulder_pitch_joint_rad
-    0.0,  // arm_shoulder_pitch_sub_joint_rad
+    // 0.0,  // arm_shoulder_pitch_sub_joint_rad
     0.0,  // arm_elbow_pitch_joint_rad
     0.0,  // arm_forearm_roll_joint_rad
     0.0,  // arm_wrist_pitch_joint_rad
     0.0,  // arm_wrist_roll_joint_rad
-    0.0,  // hand_joint_rad
-    0.0,  // head_yaw_joint_rad
-    0.0   // head_pitch_joint_rad
   };
 
   is_success = inverse_kinematics(goal_coord, target_joint_rad);
@@ -407,7 +460,7 @@ void JointActionServer::exe_move_hand_to_coord(
 
     result->success = false;
     result->message = "[FAIL] Failed to calculate the inverse kinematics";
-    goal_handle->canceled(result);
+    goal_handle->abort(result);
 
     return;
   }
@@ -421,7 +474,7 @@ void JointActionServer::exe_move_hand_to_coord(
 
   // Publish the joint trajectory
   trajectory_msgs::msg::JointTrajectory joint_trajectory;
-  joint_trajectory = set_joints(kJointNames, target_joint_rad, goal->time_allowance);
+  joint_trajectory = set_joints(kArmJointNames, target_joint_rad, goal->time_allowance);
 
   try {
     this->pub_joint_control_->publish(joint_trajectory);
@@ -430,17 +483,62 @@ void JointActionServer::exe_move_hand_to_coord(
 
     result->success = false;
     result->message = "[FAIL] Failed to publish the joint trajectory";
-    goal_handle->canceled(result);
+    goal_handle->abort(result);
 
     return;
   }
 
-  // TODO: Publish feedback
-  // string current_state
-  // float32 distance_to_target
+  // Publish feedback
+  auto start_time = this->now();
+  rclcpp::Rate loop_rate(10);
+  double distance = 0.0;
 
+  while (this->now() - start_time < goal->time_allowance) {
+    if (goal_handle->is_canceling()) {
+      RCLCPP_INFO(this->get_logger(), "Goal has been canceled");
+
+      result->success = false;
+      result->message = "[CANCEL] Goal has been canceled";
+      goal_handle->canceled(result);
+  
+      return;
+    }
+
+    auto feedback = std::make_shared<MoveHandToTargetCoord::Feedback>();
+    feedback->current_state = "Moving";
+    std::vector<double> current_arm_joint_rad;
+    for (const auto &joint_name : kArmJointNames) {
+      current_arm_joint_rad.push_back(this->curt_joint_state_[joint_name]);
+    }
+    forward_kinematics(current_arm_joint_rad, goal_coord, distance);
+    feedback->distance_to_target = distance;
+
+    goal_handle->publish_feedback(feedback);
+
+    rclcpp::spin_some(this->get_node_base_interface());
+    loop_rate.sleep();
+  }
+
+  // Check if goal was reached
+  // TODO: set tolerance with parameter or msg
+  if (distance > 0.01) {
+    RCLCPP_ERROR(this->get_logger(), "Failed to reach the goal");
+
+    result->success = false;
+    result->message = "[FAIL] Failed to reach the goal";
+    goal_handle->abort(result);
+
+    return;
+  }
+
+  // Clear the current joint state
+  curt_joint_state_.clear();
+
+  // Publish the result
   result->success = true;
   result->message = "Goal has been succeeded";
+  // result->moved_linear = ...; // TODO: Calculate the moved linear distance
+  // result->moved_yaw = ...; // TODO: Calculate the moved angular distance
 
   goal_handle->succeed(result);
 }
@@ -459,6 +557,12 @@ void JointActionServer::exe_move_hand_to_tf(
   geometry_msgs::msg::TransformStamped goal_coord_shift;
 
   auto result = std::make_shared<MoveHandToTargetTF::Result>();
+
+  // Spin while waiting for the joint state to be updated
+  while (this->curt_joint_state_.empty()) {
+    RCLCPP_INFO(this->get_logger(), "Waiting for the joint state to be updated");
+    rclcpp::spin_some(this->get_node_base_interface());
+  }
 
   // Transform the target frame based on the differential tf
   try {
@@ -484,7 +588,7 @@ void JointActionServer::exe_move_hand_to_tf(
 
     result->success = false;
     result->message = "[FAIL] Could not transform " + goal->target_frame + " to " + goal->tf_differential.header.frame_id;
-    goal_handle->canceled(result);
+    goal_handle->abort(result);
 
     return;
   }
@@ -500,24 +604,20 @@ void JointActionServer::exe_move_hand_to_tf(
 
     result->success = false;
     result->message = "[FAIL] Could not transform coords to " + goal_coord.header.frame_id;
-    goal_handle->canceled(result);
+    goal_handle->abort(result);
 
     return;
   }
 
-  // TODO: Inverse kinematics to get the target joint rad
   bool is_success = false;
   std::vector<double> target_joint_rad = {
     0.0,  // arm_shoulder_roll_joint_rad
     0.0,  // arm_shoulder_pitch_joint_rad
-    0.0,  // arm_shoulder_pitch_sub_joint_rad
+    // 0.0,  // arm_shoulder_pitch_sub_joint_rad
     0.0,  // arm_elbow_pitch_joint_rad
     0.0,  // arm_forearm_roll_joint_rad
     0.0,  // arm_wrist_pitch_joint_rad
     0.0,  // arm_wrist_roll_joint_rad
-    0.0,  // hand_joint_rad
-    0.0,  // head_yaw_joint_rad
-    0.0   // head_pitch_joint_rad
   };
 
   is_success = inverse_kinematics(goal_coord, target_joint_rad);
@@ -541,7 +641,7 @@ void JointActionServer::exe_move_hand_to_tf(
 
   // Publish the joint trajectory
   trajectory_msgs::msg::JointTrajectory joint_trajectory;
-  joint_trajectory = set_joints(kJointNames, target_joint_rad, goal->time_allowance);
+  joint_trajectory = set_joints(kArmJointNames, target_joint_rad, goal->time_allowance);
 
   try {
     this->pub_joint_control_->publish(joint_trajectory);
@@ -550,17 +650,63 @@ void JointActionServer::exe_move_hand_to_tf(
 
     result->success = false;
     result->message = "[FAIL] Failed to publish the joint trajectory";
-    goal_handle->canceled(result);
+    goal_handle->abort(result);
 
     return;
   }
 
-  // TODO: Publish feedback
-  // string current_state
-  // float32 distance_to_target
+  // Publish feedback
+  auto start_time = this->now();
+  rclcpp::Rate loop_rate(10);
+  double distance = 0.0;
 
+  while (this->now() - start_time < goal->time_allowance) {
+    if (goal_handle->is_canceling()) {
+      RCLCPP_INFO(this->get_logger(), "Goal has been canceled");
+
+      result->success = false;
+      result->message = "[CANCEL] Goal has been canceled";
+      goal_handle->canceled(result);
+
+      return;
+    }
+
+    auto feedback = std::make_shared<MoveHandToTargetTF::Feedback>();
+    feedback->current_state = "Moving";
+    std::vector<double> current_arm_joint_rad;
+    for (const auto &joint_name : kArmJointNames) {
+      current_arm_joint_rad.push_back(this->curt_joint_state_[joint_name]);
+    }
+    forward_kinematics(current_arm_joint_rad, goal_coord, distance);
+    feedback->distance_to_target = distance;
+    feedback->object_detected = true; // Object must have been detected (TF is available)
+
+    goal_handle->publish_feedback(feedback);
+
+    rclcpp::spin_some(this->get_node_base_interface());
+    loop_rate.sleep();
+  }
+
+  // Check if goal was reached
+  // TODO: set tolerance with parameter or msg
+  if (distance > 0.01) {
+    RCLCPP_ERROR(this->get_logger(), "Failed to reach the goal");
+
+    result->success = false;
+    result->message = "[FAIL] Failed to reach the goal";
+    goal_handle->abort(result);
+
+    return;
+  }
+
+  // Clear the current joint state
+  curt_joint_state_.clear();
+
+  // Publish the result
   result->success = true;
   result->message = "Goal has been succeeded";
+  // result->moved_linear = ...; // TODO: Calculate the linear distance
+  // result->moved_yaw = ...; // TODO: Calculate the angular distance
 
   goal_handle->succeed(result);
 }
@@ -572,6 +718,10 @@ void JointActionServer::joint_state_callback(
   RCLCPP_INFO(this->get_logger(), "Received joint state");
 
   for (size_t i = 0; i < msg->name.size(); i++) {
+    // Skip sub joints
+    if (msg->name[i] == "arm_shoulder_pitch_sub_joint") {
+      continue;
+    }
     this->curt_joint_state_[msg->name[i]] = msg->position[i];
   }
 
@@ -588,11 +738,18 @@ trajectory_msgs::msg::JointTrajectory JointActionServer::set_joints(
 {
   auto joint_trajectory = trajectory_msgs::msg::JointTrajectory();
   joint_trajectory.header.stamp = this->now();
-  joint_trajectory.joint_names = target_joint_names;
+  // joint_trajectory.joint_names = target_joint_names;
   joint_trajectory.points.resize(1);
   joint_trajectory.points[0].time_from_start = time_allowance;
   for (size_t i = 0; i < target_joint_names.size(); i++) {
     joint_trajectory.points[0].positions.push_back(target_joint_rad[i]);
+    joint_trajectory.joint_names.push_back(target_joint_names[i]);
+
+    // Add sub joints
+    if (joint_trajectory.joint_names[i] == kJointNames[JointIds::kArmShoulderPitchJoint]) {
+      joint_trajectory.points[0].positions.push_back(-target_joint_rad[i]);
+      joint_trajectory.joint_names.push_back("arm_shoulder_pitch_sub_joint");
+    }
   }
 
   return joint_trajectory;
@@ -600,7 +757,8 @@ trajectory_msgs::msg::JointTrajectory JointActionServer::set_joints(
 
 bool JointActionServer::forward_kinematics(
   const std::vector<double> &target_joint_rad,
-  const geometry_msgs::msg::TransformStamped &goal_coord)
+  const geometry_msgs::msg::TransformStamped &goal_coord,
+  double &distance)
 {
   bool is_success = false;
   geometry_msgs::msg::TransformStamped final_coord;
@@ -620,7 +778,7 @@ bool JointActionServer::forward_kinematics(
       goal_coord.transform.translation.x);
 
   // Check the distance between the target and final coords
-  double distance = std::sqrt(
+  distance = std::sqrt(
       std::pow(goal_coord.transform.translation.x - final_coord.transform.translation.x, 2) +
       std::pow(goal_coord.transform.translation.y - final_coord.transform.translation.y, 2) +
       std::pow(goal_coord.transform.translation.z - final_coord.transform.translation.z, 2));
@@ -675,7 +833,8 @@ bool JointActionServer::inverse_kinematics(
   }
 
   // Check the result with forward kinematics
-  is_success = forward_kinematics(target_joint_rad, goal_coord);
+  double distance = 0.0;
+  is_success = forward_kinematics(target_joint_rad, goal_coord, distance);
 
   return is_success;
 }
@@ -683,11 +842,11 @@ bool JointActionServer::inverse_kinematics(
 } // namespace sobit_light
 
 
-int main(int argc, char **argv)
-{
-  rclcpp::init(argc, argv);
-  auto node = std::make_shared<sobit_light::JointActionServer>();
-  rclcpp::spin(node);
-  rclcpp::shutdown();
-  return 0;
-}
+// int main(int argc, char **argv)
+// {
+//   rclcpp::init(argc, argv);
+//   auto node = std::make_shared<sobit_light::JointActionServer>();
+//   rclcpp::spin(node);
+//   rclcpp::shutdown();
+//   return 0;
+// }
