@@ -2,12 +2,14 @@
 
 namespace sobit_light{
 
-WheelActionServer::WheelActionServer() : Node("wheel_action_server")
+WheelActionServer::WheelActionServer(const rclcpp::NodeOptions & options = rclcpp::NodeOptions())
+: Node("wheel_action_server", options)
 {
   // Configure the QoS profile
   rclcpp::QoS qos_profile(1); // depth = 1
   qos_profile.reliability(RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT);
   qos_profile.history(RMW_QOS_POLICY_HISTORY_KEEP_LAST);
+  qos_profile.durability(RMW_QOS_POLICY_DURABILITY_VOLATILE);
 
 
   this->action_server_move_wheel_linear_ = rclcpp_action::create_server<MoveWheelLinear>(
@@ -324,14 +326,3 @@ void WheelActionServer::odom_callback(
 }
 
 } // namespace sobit_light
-
-
-
-int main(int argc, char **argv)
-{
-  rclcpp::init(argc, argv);
-  auto node = std::make_shared<sobit_light::WheelActionServer>();
-  rclcpp::spin(node);
-  rclcpp::shutdown();
-  return 0;
-}

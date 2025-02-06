@@ -1,10 +1,3 @@
-// #ifndef SOBIT_LIGHT_WHEEL_ACTION_SERVER_HPP
-// #define SOBIT_LIGHT_WHEEL_ACTION_SERVER_HPP
-
-#include <thread>
-#include <map>
-#include <vector>
-
 #include "sobits_interfaces/action/move_wheel_linear.hpp"
 #include "sobits_interfaces/action/move_wheel_rotate.hpp"
 
@@ -20,12 +13,14 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
-// #include "rclcpp_components/register_node_macro.hpp"
-
-namespace sobit_light{
+#include <rclcpp_components/register_node_macro.hpp>
 
 
-class WheelActionServer : public rclcpp::Node{
+namespace sobit_light
+{
+
+class WheelActionServer : public rclcpp::Node
+{
 public:
   using MoveWheelLinear = sobits_interfaces::action::MoveWheelLinear;
   using MoveWheelRotate = sobits_interfaces::action::MoveWheelRotate;
@@ -33,7 +28,7 @@ public:
   using GoalHandleMoveWheelLinear = rclcpp_action::ServerGoalHandle<sobits_interfaces::action::MoveWheelLinear>;
   using GoalHandleMoveWheelRotate = rclcpp_action::ServerGoalHandle<sobits_interfaces::action::MoveWheelRotate>;
 
-  WheelActionServer();
+  explicit WheelActionServer(const rclcpp::NodeOptions & options);
   ~WheelActionServer();
 
   geometry_msgs::msg::Vector3 get_euler_from_quat(
@@ -65,7 +60,7 @@ private:
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr sub_odom_;
 
   void odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg);
-};
+}; // class WheelActionServer
 
 inline geometry_msgs::msg::Vector3 WheelActionServer::get_euler_from_quat(
   const geometry_msgs::msg::Quaternion& msg_quat)
@@ -92,4 +87,4 @@ inline geometry_msgs::msg::Quaternion WheelActionServer::get_quat_from_euler(
 
 } // namespace sobit_light
 
-// #endif // SOBIT_LIGHT_WHEEL_ACTION_SERVER_HPP
+RCLCPP_COMPONENTS_REGISTER_NODE(sobit_light::WheelActionServer)
