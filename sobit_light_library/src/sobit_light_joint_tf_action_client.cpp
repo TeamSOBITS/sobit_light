@@ -11,13 +11,13 @@
 
 namespace sobit_light{
 
-class JointMoveActionClient : public rclcpp::Node
+class JointTfActionClient : public rclcpp::Node
 {
 public:
   using MoveHandToTargetTF = sobits_interfaces::action::MoveHandToTargetTF;
   using GoalHandleMoveHandToTf = rclcpp_action::ClientGoalHandle<sobits_interfaces::action::MoveHandToTargetTF>;
 
-  explicit JointMoveActionClient(const rclcpp::NodeOptions & options)
+  explicit JointTfActionClient(const rclcpp::NodeOptions & options)
   : Node("joint_tf_action_client", options)
   {
     this->action_client_ = rclcpp_action::create_client<MoveHandToTargetTF>(
@@ -27,10 +27,10 @@ public:
 
     this->timer_ = this->create_wall_timer(
         std::chrono::seconds(1),
-        std::bind(&JointMoveActionClient::send_goal, this));
+        std::bind(&JointTfActionClient::send_goal, this));
 
   }
-  ~JointMoveActionClient()
+  ~JointTfActionClient()
   {
     this->action_client_.reset();
     RCLCPP_INFO(this->get_logger(), "JointActionClient has been terminated.");
@@ -59,11 +59,11 @@ public:
 
     auto send_goal_options = rclcpp_action::Client<MoveHandToTargetTF>::SendGoalOptions();
     send_goal_options.goal_response_callback =
-        std::bind(&JointMoveActionClient::goal_response_callback_joint_action_client, this, std::placeholders::_1);
+        std::bind(&JointTfActionClient::goal_response_callback_joint_action_client, this, std::placeholders::_1);
     send_goal_options.feedback_callback =
-        std::bind(&JointMoveActionClient::feedback_callback_joint_action_client, this, std::placeholders::_1, std::placeholders::_2);
+        std::bind(&JointTfActionClient::feedback_callback_joint_action_client, this, std::placeholders::_1, std::placeholders::_2);
     send_goal_options.result_callback =
-        std::bind(&JointMoveActionClient::result_callback_joint_action_client, this, std::placeholders::_1);
+        std::bind(&JointTfActionClient::result_callback_joint_action_client, this, std::placeholders::_1);
     this->action_client_->async_send_goal(goal, send_goal_options);
   }
 
@@ -113,8 +113,8 @@ private:
 
     rclcpp::shutdown();
   }
-}; // class JointMoveActionClient
+}; // class JointTfActionClient
 
 } // namespace sobit_light
 
-RCLCPP_COMPONENTS_REGISTER_NODE(sobit_light::JointMoveActionClient)
+RCLCPP_COMPONENTS_REGISTER_NODE(sobit_light::JointTfActionClient)
