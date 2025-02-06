@@ -202,10 +202,10 @@ void JointActionServer::exe_move_joints(
   auto result = std::make_shared<MoveJoint::Result>();
 
   // Spin while waiting for the joint state to be updated
-  while (this->curt_joint_state_.empty()) {
-    RCLCPP_INFO(this->get_logger(), "Waiting for the joint state to be updated");
-    rclcpp::spin_some(this->get_node_base_interface());
-  }
+  // while (this->curt_joint_state_.empty()) {
+  //   RCLCPP_INFO(this->get_logger(), "Waiting for the joint state to be updated");
+  //   rclcpp::spin_some(this->get_node_base_interface());
+  // }
 
   // Check if the number of joint names and joint rad are the same
   if (goal->target_joint_names.size() != goal->target_joint_rad.size()) {
@@ -245,7 +245,7 @@ void JointActionServer::exe_move_joints(
 
   // Publish feedback
   auto start_time = this->now();
-  rclcpp::Rate loop_rate(10);
+  // rclcpp::Rate loop_rate(10);
 
   while (this->now() - start_time < goal->time_allowance) {
     if (goal_handle->is_canceling()) {
@@ -268,15 +268,15 @@ void JointActionServer::exe_move_joints(
 
     goal_handle->publish_feedback(feedback);
 
-    rclcpp::spin_some(this->get_node_base_interface());
-    loop_rate.sleep();
+    // rclcpp::spin_some(this->get_node_base_interface());
+    // loop_rate.sleep();
 
   }
 
   // Check if goal was reached
   for (size_t i = 0; i < goal->target_joint_names.size(); i++) {
     // TODO: set tolerance with parameter or msg
-    if (std::abs(this->curt_joint_state_[goal->target_joint_names[i]] - goal->target_joint_rad[i]) > 0.01) {
+    if (std::abs(this->curt_joint_state_[goal->target_joint_names[i]] - goal->target_joint_rad[i]) > 0.1) {
       RCLCPP_ERROR(this->get_logger(), "Failed to reach the goal");
 
       result->success = false;
@@ -308,10 +308,10 @@ void JointActionServer::exe_move_to_pose(
   auto result = std::make_shared<MoveToPose::Result>();
 
   // Spin while waiting for the joint state to be updated
-  while (this->curt_joint_state_.empty()) {
-    RCLCPP_INFO(this->get_logger(), "Waiting for the joint state to be updated");
-    rclcpp::spin_some(this->get_node_base_interface());
-  }
+  // while (this->curt_joint_state_.empty()) {
+  //   RCLCPP_INFO(this->get_logger(), "Waiting for the joint state to be updated");
+  //   rclcpp::spin_some(this->get_node_base_interface());
+  // }
 
   // Check if the pose name is valid
   if (std::find_if(poses_.begin(), poses_.end(), [&](const PoseParams &pose) { return pose.pose_name == goal->pose_name; }) == poses_.end()) {
@@ -380,14 +380,14 @@ void JointActionServer::exe_move_to_pose(
 
     goal_handle->publish_feedback(feedback);
 
-    rclcpp::spin_some(this->get_node_base_interface());
-    loop_rate.sleep();
+    // rclcpp::spin_some(this->get_node_base_interface());
+    // loop_rate.sleep();
   }
 
   // Check if goal was reached
   for (size_t i = 0; i < kJointNames.size(); i++) {
     // TODO: set tolerance with parameter or msg
-    if (std::abs(this->curt_joint_state_[kJointNames[i]] - target_joint_rad[i]) > 0.01) {
+    if (std::abs(this->curt_joint_state_[kJointNames[i]] - target_joint_rad[i]) > 0.1) {
       RCLCPP_ERROR(this->get_logger(), "Failed to reach the goal");
 
       result->success = false;
@@ -417,15 +417,19 @@ void JointActionServer::exe_move_hand_to_coord(
 
   const auto goal = goal_handle->get_goal();
   auto result = std::make_shared<MoveHandToTargetCoord::Result>();
+
+  // Get namespace and delete the first slash
+  std::string ns = this->get_namespace();
+  ns.erase(0, 1);
   geometry_msgs::msg::TransformStamped goal_coord;
   goal_coord.header = goal->target_coord.header;
-  goal_coord.header.frame_id = this->get_name() + std::string("/base_footprint");
+  goal_coord.header.frame_id = ns + std::string("/base_footprint");
 
   // Spin while waiting for the joint state to be updated
-  while (this->curt_joint_state_.empty()) {
-    RCLCPP_INFO(this->get_logger(), "Waiting for the joint state to be updated");
-    rclcpp::spin_some(this->get_node_base_interface());
-  }
+  // while (this->curt_joint_state_.empty()) {
+  //   RCLCPP_INFO(this->get_logger(), "Waiting for the joint state to be updated");
+  //   rclcpp::spin_some(this->get_node_base_interface());
+  // }
 
   try{
     goal_coord = tf_buffer_->transform(
@@ -490,7 +494,7 @@ void JointActionServer::exe_move_hand_to_coord(
 
   // Publish feedback
   auto start_time = this->now();
-  rclcpp::Rate loop_rate(10);
+  // rclcpp::Rate loop_rate(10);
   double distance = 0.0;
 
   while (this->now() - start_time < goal->time_allowance) {
@@ -515,8 +519,8 @@ void JointActionServer::exe_move_hand_to_coord(
 
     goal_handle->publish_feedback(feedback);
 
-    rclcpp::spin_some(this->get_node_base_interface());
-    loop_rate.sleep();
+    // rclcpp::spin_some(this->get_node_base_interface());
+    // loop_rate.sleep();
   }
 
   // Check if goal was reached
@@ -550,19 +554,22 @@ void JointActionServer::exe_move_hand_to_tf(
 
   const auto goal = goal_handle->get_goal();
 
+  // Get namespace and delete the first slash
+  std::string ns = this->get_namespace();
+  ns.erase(0, 1);
   geometry_msgs::msg::TransformStamped goal_coord;
   goal_coord.header = goal->tf_differential.header;
-  goal_coord.header.frame_id = this->get_name() + std::string("/base_footprint");
+  goal_coord.header.frame_id = ns + std::string("/base_footprint");
 
   geometry_msgs::msg::TransformStamped goal_coord_shift;
 
   auto result = std::make_shared<MoveHandToTargetTF::Result>();
 
   // Spin while waiting for the joint state to be updated
-  while (this->curt_joint_state_.empty()) {
-    RCLCPP_INFO(this->get_logger(), "Waiting for the joint state to be updated");
-    rclcpp::spin_some(this->get_node_base_interface());
-  }
+  // while (this->curt_joint_state_.empty()) {
+  //   RCLCPP_INFO(this->get_logger(), "Waiting for the joint state to be updated");
+  //   rclcpp::spin_some(this->get_node_base_interface());
+  // }
 
   // Transform the target frame based on the differential tf
   try {
@@ -657,7 +664,7 @@ void JointActionServer::exe_move_hand_to_tf(
 
   // Publish feedback
   auto start_time = this->now();
-  rclcpp::Rate loop_rate(10);
+  // rclcpp::Rate loop_rate(10);
   double distance = 0.0;
 
   while (this->now() - start_time < goal->time_allowance) {
@@ -683,8 +690,8 @@ void JointActionServer::exe_move_hand_to_tf(
 
     goal_handle->publish_feedback(feedback);
 
-    rclcpp::spin_some(this->get_node_base_interface());
-    loop_rate.sleep();
+    // rclcpp::spin_some(this->get_node_base_interface());
+    // loop_rate.sleep();
   }
 
   // Check if goal was reached
@@ -715,7 +722,7 @@ void JointActionServer::exe_move_hand_to_tf(
 void JointActionServer::joint_state_callback(
   const sensor_msgs::msg::JointState::SharedPtr msg)
 {
-  RCLCPP_INFO(this->get_logger(), "Received joint state");
+  // RCLCPP_INFO(this->get_logger(), "Received joint state");
 
   for (size_t i = 0; i < msg->name.size(); i++) {
     // Skip sub joints
@@ -725,10 +732,10 @@ void JointActionServer::joint_state_callback(
     this->curt_joint_state_[msg->name[i]] = msg->position[i];
   }
 
-  RCLCPP_INFO(this->get_logger(), "Current joint state:");
-  for (const auto &joint : this->curt_joint_state_) {
-    RCLCPP_INFO(this->get_logger(), "  %s: %f", joint.first.c_str(), joint.second);
-  }
+  // RCLCPP_INFO(this->get_logger(), "Current joint state:");
+  // for (const auto &joint : this->curt_joint_state_) {
+  //   RCLCPP_INFO(this->get_logger(), "  %s: %f", joint.first.c_str(), joint.second);
+  // }
 }
 
 trajectory_msgs::msg::JointTrajectory JointActionServer::set_joints(
@@ -736,18 +743,29 @@ trajectory_msgs::msg::JointTrajectory JointActionServer::set_joints(
   const std::vector<double> &target_joint_rad,
   const builtin_interfaces::msg::Duration &time_allowance)
 {
+  // Get current joint state from kCurrentJointState
+  std::vector<double> full_target_joint_rad;
+  for (size_t i = 0; i < kJointNames.size(); i++) {
+    full_target_joint_rad.push_back(this->curt_joint_state_[kJointNames[i]]);
+  }
+  
+  // Update the target joint rad
+  for (size_t i = 0; i < target_joint_names.size(); i++) {
+    auto it = std::find(kJointNames.begin(), kJointNames.end(), target_joint_names[i]);
+    full_target_joint_rad[std::distance(kJointNames.begin(), it)] = target_joint_rad[i];
+  }
+
   auto joint_trajectory = trajectory_msgs::msg::JointTrajectory();
   joint_trajectory.header.stamp = this->now();
-  // joint_trajectory.joint_names = target_joint_names;
   joint_trajectory.points.resize(1);
   joint_trajectory.points[0].time_from_start = time_allowance;
-  for (size_t i = 0; i < target_joint_names.size(); i++) {
-    joint_trajectory.points[0].positions.push_back(target_joint_rad[i]);
-    joint_trajectory.joint_names.push_back(target_joint_names[i]);
+  for (size_t i = 0; i < kJointNames.size(); i++) {
+    joint_trajectory.points[0].positions.push_back(full_target_joint_rad[i]);
+    joint_trajectory.joint_names.push_back(kJointNames[i]);
 
     // Add sub joints
     if (joint_trajectory.joint_names[i] == kJointNames[JointIds::kArmShoulderPitchJoint]) {
-      joint_trajectory.points[0].positions.push_back(-target_joint_rad[i]);
+      joint_trajectory.points[0].positions.push_back(-full_target_joint_rad[i]);
       joint_trajectory.joint_names.push_back("arm_shoulder_pitch_sub_joint");
     }
   }
