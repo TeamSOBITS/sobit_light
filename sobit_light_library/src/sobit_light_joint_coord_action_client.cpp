@@ -44,11 +44,15 @@ public:
       rclcpp::shutdown();
     }
 
+    // Get namespace and delete the first slash
+    std::string ns = this->get_namespace();
+    ns.erase(0, 1);
+
     geometry_msgs::msg::TransformStamped target_coord;
-    target_coord.header.frame_id = "hand_end_effector_link";
-    target_coord.transform.translation.x = 0.3;
+    target_coord.header.frame_id = ns + std::string("/hand_end_effector_link");
+    target_coord.transform.translation.x = 0.05;
     target_coord.transform.translation.y = 0.0;
-    target_coord.transform.translation.z = 0.1;
+    target_coord.transform.translation.z = 0.05;
 
     auto goal = MoveHandToTargetCoord::Goal();
     goal.target_coord = target_coord;

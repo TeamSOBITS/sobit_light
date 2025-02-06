@@ -44,8 +44,12 @@ public:
       rclcpp::shutdown();
     }
 
+    // Get namespace and delete the first slash
+    std::string ns = this->get_namespace();
+    ns.erase(0, 1);
+
     geometry_msgs::msg::TransformStamped tf_differential;
-    tf_differential.header.frame_id = "hand_end_effector_link";
+    tf_differential.header.frame_id = ns + std::string("/hand_end_effector_link");
     tf_differential.transform.translation.x = 0.001;
     tf_differential.transform.translation.y = 0.0;
     tf_differential.transform.translation.z = 0.03;
