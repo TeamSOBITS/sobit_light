@@ -89,7 +89,7 @@ sudo apt-get install -y \
 
 
 # # Setting up Dynamixel USB configuration (SOBIT LIGHT: Head and Arm Robot Mechanism)
-echo "SUBSYSTEM==\"tty\", ATTRS{idVendor}==\"0403\", ATTRS{idProduct}==\"6014\", SYMLINK+=\"input/dx_light\", MODE=\"0666\"" | sudo tee /etc/udev/rules.d/dx_light.rules
+echo "SUBSYSTEM==\"tty\", ATTRS{idVendor}==\"0403\", ATTRS{idProduct}==\"6014\", ATTRS{serial}==\"FT8ISSV2\", SYMLINK+=\"ttyUSB-DXL_light\", MODE=\"0666\", GROUP:=\"dialout\"," | sudo tee /etc/udev/rules.d/dxl_light.rules
 sudo usermod -aG dialout $USER
 
 # # Setting up PS4 Joystick USB configuration

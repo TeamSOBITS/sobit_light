@@ -13,7 +13,8 @@
         </xacro:if>
         <xacro:unless value="${$(arg enable_gz)}">
           <plugin>dynamixel_hardware/DynamixelHardware</plugin>
-          <param name="usb_port">/dev/input/dx_light</param>
+          <!-- <param name="usb_port">/dev/ttyUSB-DXL_light</param> -->
+          <param name="usb_port">/dev/ttyUSB0</param>
           <param name="baud_rate">1000000</param>
           <!-- <param name="use_dummy">true</param> -->
         </xacro:unless>
