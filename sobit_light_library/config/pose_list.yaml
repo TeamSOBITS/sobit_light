@@ -7,7 +7,7 @@
 
     initial_pose:
       arm_shoulder_roll  : 0.0
-      arm_shoulder_pitch : 1.5708
+      arm_shoulder_pitch : -1.5708
       arm_elbow_pitch    : 0.0
       arm_forearm_roll   : 0.0
       arm_wrist_pitch    : 0.0
@@ -18,7 +18,7 @@
 
     detecting_pose:
       arm_shoulder_roll  : 0.0
-      arm_shoulder_pitch : 1.5708
+      arm_shoulder_pitch : -1.5708
       arm_elbow_pitch    : 0.0
       arm_forearm_roll   : 0.0
       arm_wrist_pitch    : 0.0
@@ -29,7 +29,7 @@
 
     following_pose:
       arm_shoulder_roll  : 0.0
-      arm_shoulder_pitch : 1.5708
+      arm_shoulder_pitch : -1.5708
       arm_elbow_pitch    : 0.0
       arm_forearm_roll   : 0.0
       arm_wrist_pitch    : 0.0
