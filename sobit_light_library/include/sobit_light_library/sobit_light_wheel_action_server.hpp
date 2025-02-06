@@ -7,7 +7,6 @@
 #include "geometry_msgs/msg/quaternion.h"
 #include "geometry_msgs/msg/vector3.h"
 #include "geometry_msgs/msg/twist.hpp"
-#include "geometry_msgs/msg/twist_stamped.hpp"
 #include "nav_msgs/msg/odometry.hpp"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 
@@ -56,7 +55,7 @@ private:
   void exe_move_wheel_rotate(const std::shared_ptr<GoalHandleMoveWheelRotate> goal_handle);
 
 
-  rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr pub_cmd_vel_;
+  rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr pub_cmd_vel_;
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr sub_odom_;
 
   void odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg);
