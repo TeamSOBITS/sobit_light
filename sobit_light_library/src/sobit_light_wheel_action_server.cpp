@@ -26,11 +26,12 @@ WheelActionServer::WheelActionServer(const rclcpp::NodeOptions & options = rclcp
       std::bind(&WheelActionServer::handle_move_wheel_rotate_accepted, this, std::placeholders::_1));
 
 
-  this->pub_cmd_vel_ = this->create_publisher<geometry_msgs::msg::TwistStamped>(
-      "diff_controller/cmd_vel", qos_profile);
-      // "cmd_vel", qos_profile);
+  this->pub_cmd_vel_ = this->create_publisher<geometry_msgs::msg::Twist>(
+      // "diff_controller/cmd_vel", qos_profile);
+      "manual_control/cmd_vel", qos_profile);
   this->sub_odom_ = this->create_subscription<nav_msgs::msg::Odometry>(
-      "odom", qos_profile, std::bind(&WheelActionServer::odom_callback, this, std::placeholders::_1));
+      // "odom", qos_profile, std::bind(&WheelActionServer::odom_callback, this, std::placeholders::_1));
+      "odometry/odometry", qos_profile, std::bind(&WheelActionServer::odom_callback, this, std::placeholders::_1));
 
 
   RCLCPP_INFO(this->get_logger(), "WheelActionServer has been initialized.");
@@ -109,10 +110,10 @@ void WheelActionServer::exe_move_wheel_linear(
   auto result = std::make_shared<MoveWheelLinear::Result>();
 
   // Check if the odometry is updated
-  while (this->curt_odom_.header.stamp == this->init_odom_.header.stamp) {
-    RCLCPP_INFO(this->get_logger(), "Waiting for the odometry to be updated");
-    rclcpp::spin_some(this->get_node_base_interface());
-  }
+  // while (this->curt_odom_.header.stamp == this->init_odom_.header.stamp) {
+  //   RCLCPP_INFO(this->get_logger(), "Waiting for the odometry to be updated");
+  //   rclcpp::spin_some(this->get_node_base_interface());
+  // }
 
   // Check if the target point is valid (only x is considered)
   if (goal->target_point.y != 0.0 || goal->target_point.z != 0.0) {
@@ -142,7 +143,7 @@ void WheelActionServer::exe_move_wheel_linear(
 
   // Set current time
   auto start_time = this->now();
-  rclcpp::Rate loop_rate(10);
+  // rclcpp::Rate loop_rate(10);
 
   while (curt_dist < goal_dist) {
     // Check if the goal has been canceled
@@ -168,10 +169,7 @@ void WheelActionServer::exe_move_wheel_linear(
     out_vel.linear.x = goal->target_point.x > 0 ? out_vel.linear.x : -out_vel.linear.x;
 
     // Publish the velocity
-    geometry_msgs::msg::TwistStamped cmd_vel;
-    cmd_vel.header.stamp = this->now();
-    cmd_vel.twist = out_vel;
-    this->pub_cmd_vel_->publish(cmd_vel);
+    this->pub_cmd_vel_->publish(out_vel);
 
     // Update the previous error
     curt_dist = std::sqrt(
@@ -187,8 +185,8 @@ void WheelActionServer::exe_move_wheel_linear(
     goal_handle->publish_feedback(feedback);
 
     // Spin the node
-    rclcpp::spin_some(this->get_node_base_interface());
-    loop_rate.sleep();
+    // rclcpp::spin_some(this->get_node_base_interface());
+    // loop_rate.sleep();
 
   }
 
@@ -212,24 +210,21 @@ void WheelActionServer::exe_move_wheel_rotate(
   auto result = std::make_shared<MoveWheelRotate::Result>();
 
   // Check if the odometry is updated
-  while (this->curt_odom_.header.stamp == this->init_odom_.header.stamp) {
-    RCLCPP_INFO(this->get_logger(), "Waiting for the odometry to be updated");
-    rclcpp::spin_some(this->get_node_base_interface());
-  }
+  // while (this->curt_odom_.header.stamp == this->init_odom_.header.stamp) {
+  //   RCLCPP_INFO(this->get_logger(), "Waiting for the odometry to be updated");
+  //   rclcpp::spin_some(this->get_node_base_interface());
+  // }
 
   // Initialize values
-  geometry_msgs::msg::Twist init_vel, out_vel;
-  double goal_angle = std::abs(goal->target_yaw);
-  double curt_angle=0.0;
-
-  double prev_real_angle = this->get_euler_from_quat(this->init_odom_.pose.pose.orientation).z;
-  double curt_real_angle = this->get_euler_from_quat(this->curt_odom_.pose.pose.orientation).z;
-  double diff_real_angle;
-  
-  double integral_angle = 0.0;
-  double prev_error_angle = goal_angle - curt_angle;
-
   this->init_odom_ = this->curt_odom_;
+  double init_real_angle = this->get_euler_from_quat(this->init_odom_.pose.pose.orientation).z;
+  double curt_real_angle = this->get_euler_from_quat(this->curt_odom_.pose.pose.orientation).z;
+  double prev_real_angle = init_real_angle;
+
+  geometry_msgs::msg::Twist out_vel;
+  double moved_angle = 0.0;
+  double goal_angle = std::abs(goal->target_yaw);
+  double goal_angle_deg = goal_angle * 180.0 / M_PI;
 
   // Set PID parameters
   // TODO: Get the parameters from the action goal
@@ -238,11 +233,14 @@ void WheelActionServer::exe_move_wheel_rotate(
   ki = 0.4;
   kd = 0.8;
 
+  double vel_diff = kp * goal->target_yaw;
+  double max_angular_speed = 0.7;
+
   // Set current time
   auto start_time = this->now();
-  rclcpp::Rate loop_rate(10);
+  // rclcpp::Rate loop_rate(10);
 
-  while (curt_angle < goal_angle) {
+  while (moved_angle < goal_angle) {
     // Check if the goal has been canceled
     if (goal_handle->is_canceling()) {
       RCLCPP_INFO(this->get_logger(), "Goal has been canceled");
@@ -252,47 +250,55 @@ void WheelActionServer::exe_move_wheel_rotate(
       return;
     }
 
-    // Calculate the current angle
-    double error_angle = goal_angle - curt_angle;
-    integral_angle += error_angle;
-    double derivative_angle = error_angle - prev_error_angle;
+    // Get the current time
+    auto curt_time = this->now();
 
-    // Calculate the output velocity
-    out_vel.angular.z = 
-        kp * error_angle +
-        ki * integral_angle +
-        kd * derivative_angle;
+    // Calculate the elapsed time
+    rclcpp::Duration dur_elapsed_time = curt_time - start_time;
+    double elapsed_time = dur_elapsed_time.nanoseconds() / 1e9; 
 
-    out_vel.angular.z = goal->target_yaw > 0 ? out_vel.angular.z : -out_vel.angular.z;
+    double vel_angular = 0.0;
 
-    // Publish the velocity
-    geometry_msgs::msg::TwistStamped cmd_vel;
-    cmd_vel.header.stamp = this->now();
-    cmd_vel.twist = out_vel;
-    this->pub_cmd_vel_->publish(cmd_vel);
-
-    // Update the previous error
-    curt_real_angle = this->get_euler_from_quat(this->curt_odom_.pose.pose.orientation).z;
-    diff_real_angle = curt_real_angle - prev_real_angle;
-    if (diff_real_angle > M_PI) {
-      diff_real_angle -= 2 * M_PI;
-    } else if (diff_real_angle < -M_PI) {
-      diff_real_angle += 2 * M_PI;
+    if (goal_angle_deg < 30) {
+      vel_angular = kp * (goal_angle + 0.001 - moved_angle)
+                  - kd * vel_diff
+                  + ki / 0.8 * (goal_angle + 0.001 - moved_angle) * pow(elapsed_time, 2);
+    }
+    else {
+      vel_angular = kp * (goal_angle + 0.001 - moved_angle)
+                  - kd * vel_diff
+                  + ki / (8.0 / goal_angle) * (goal_angle + 0.001 - moved_angle) * pow(elapsed_time, 2);
     }
 
-    curt_angle += diff_real_angle;
-    prev_error_angle = error_angle;
+    // Apply the maximum speed limit
+    vel_angular = vel_angular > 0 ? std::min(vel_angular, max_angular_speed) : -std::min(std::abs(vel_angular), max_angular_speed);
+    out_vel.angular.z = vel_angular;
+    vel_diff = vel_angular;
+
+    // Publish the velocity
+    this->pub_cmd_vel_->publish(out_vel);
 
     // Publish feedback
     auto feedback = std::make_shared<MoveWheelRotate::Feedback>();
-    feedback->current_point.z = curt_angle;
+    feedback->current_point.z = moved_angle;
     feedback->move_time.sec = (this->now() - start_time).seconds();
     feedback->move_time.nanosec = (this->now() - start_time).nanoseconds() % int(10E9);
     goal_handle->publish_feedback(feedback);
 
+    // Calculate the moved distance
+    curt_real_angle = this->get_euler_from_quat(this->curt_odom_.pose.pose.orientation).z;
+
+    double delta_angle = curt_real_angle - prev_real_angle;
+
+    if (delta_angle > M_PI)       delta_angle -= 2 * M_PI;
+    else if (delta_angle < -M_PI) delta_angle += 2 * M_PI;
+
+    moved_angle += std::abs(delta_angle);
+    prev_real_angle = curt_real_angle;
+
     // Spin the node
-    rclcpp::spin_some(this->get_node_base_interface());
-    loop_rate.sleep();
+    // rclcpp::spin_some(this->get_node_base_interface());
+    // loop_rate.sleep();
 
   }
 
