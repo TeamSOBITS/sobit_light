@@ -162,8 +162,8 @@ Preferred Robotics(c)が開発した[カチャカ](https://kachaka.life/home/)�
     $ source ~/.bashrc
     ```
 
-> [!NOTE]
-> ここで作成したコンテナに関して，もしカチャカのIPアドレスが変わった場合は一度Dockerコンテナを消して1から行ってください．
+<!-- > [!NOTE]
+> ここで作成したコンテナに関して，もしカチャカのIPアドレスが変わった場合は一度Dockerコンテナを消して1から行ってください． -->
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
@@ -218,6 +218,9 @@ SOBIT LIGHTにはGazebo Fortressのシミュレーション環境が用意され
 ```sh
 $ ros2 launch sobit_light_bringup gz_minimal.launch.py
 ```
+
+正常に動作した場合は，次のようなGazeboの画面が表示されます．
+![SOBIT LIGHT Gazebo Fortress](sobit_light/docs/img/sobit_light_gz_sim.png)
 
 > [!WARNING]
 > 実機と同じようなセンサも搭載されていますので，パソコンによって処理が重くなる可能性がありますので，必要なセンサだけを[gz_minimal.launch.py](sobit_light_bringup/launch/gz_minimal.launch.py)で選択してください．
