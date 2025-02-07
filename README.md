@@ -33,6 +33,7 @@
         <li><a href="#移動機構のみを使用する場合">移動機構のみを使用する場合</a></li>
         <li><a href="#Rviz上の可視化">Rviz上の可視化</a></li>
       </ul>
+    　<a href="#シミュレータの実行方法">シミュレータの実行方法</a>
     </li>
     <li>
     　<a href="#ソフトウェア">ソフトウェア</a>
@@ -65,11 +66,10 @@
 
 ![SOBIT LIGHT](sobit_light/docs/img/sobit_light.png)
 
-SOBITSが開発した[カチャカ](https://kachaka.life/home/)を用いたモバイルマニピュレータ（SOBIT LIGHT）を動かすためのライブラリです．
+Preferred Robotics(c)が開発した[カチャカ](https://kachaka.life/home/)を用いたSOBITS自作のモバイルマニピュレータを動かすためのライブラリです．
 
 > [!WARNING]
 > 初心者の場合，実機のロボットを扱う際に，先輩方に付き添ってもらいながらロボットを動かしましょう．
-> また，SOBIT LIGHTの使用はDockerの使用を必須とすることに留意してください．
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
@@ -91,6 +91,7 @@ SOBITSが開発した[カチャカ](https://kachaka.life/home/)を用いたモ�
 | Ubuntu | 22.04 (Jammy Jellyfish) |
 | ROS    | Humble Hawksbill |
 | Python | 3.10 |
+| Docker | latest |
 
 > [!NOTE]
 > `Ubuntu`や`ROS`のインストール方法に関しては，[SOBITS Manual](https://github.com/TeamSOBITS/sobits_manual#%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6)に参照してください．
@@ -100,48 +101,66 @@ SOBITSが開発した[カチャカ](https://kachaka.life/home/)を用いたモ�
 
 ### インストール方法
 
-- SOBIT LIGHTを使用したい開発環境，またはDocker内で行う内容
-    1. ROSの`src`フォルダに移動します．
-        ```sh
-        $ cd ~/colcon_ws/src/
-        ```
-    2. 本レポジトリをcloneします．
-        ```sh
-        $ git clone https://github.com/TeamSOBITS/sobit_light
-        ```
-    3. レポジトリの中へ移動します．
-        ```sh
-        $ cd sobit_light/
-        ```
-    4. 依存パッケージをインストールします．
-        ```sh
-        $ bash install.sh
-        ```
-    5. パッケージをコンパイルします．
-        ```sh
-        $ cd ~/colcon_ws/
-        $ colcon build --symlink-install
-        $ source ~/colcon_ws/install/setup.sh
-        ```
+**SOBIT LIGHTを使用するローカル環境，またはコンテナ内でのセットアップ内容**
+1. ROSの`src`フォルダに移動します．
+    ```sh
+    $ cd ~/colcon_ws/src/
+    ```
 
-- ローカルで行う内容(2回目以降は4だけで良い)
-    1. Kachaka APIをgit clone
-        ```sh
-        $ cd
-        $ git clone https://github.com/TeamSOBITS/kachaka-api.git
-        ```
-    2. KachakaのIPアドレスを確認
-        Kachakaが起動していることを確認して，Kachakaに「ねぇカチャカ，IPアドレスを教えて」と声で指示してください．\
-        するとKachakaからIPアドレスが読み上げられる．
-    3. デフォルトでKachakaのコマンドとなるように登録
-        ```sh
-        $ echo 'alias kachaka="cd ~/kachaka-api/tools/ros2_bridge && ./start_bridge.sh "' >> ~/.bashrc
-        ```
-    4. Kachaka用のDockerコンテナを作成
-        ```
-        $ kachaka XXX.XXX.XX.XX
-        ```
-        ※ XXX.XXX.XX.XXはカチャカのIPアドレスにしてください。
+2. 本レポジトリをcloneします．
+    ```sh
+    $ git clone https://github.com/TeamSOBITS/sobit_light
+    ```
+
+3. レポジトリの中へ移動します．
+    ```sh
+    $ cd sobit_light/
+    ```
+
+4. 依存パッケージをインストールします．
+    ```sh
+    $ bash install.sh
+    ```
+
+5. パッケージをコンパイルします．
+    ```sh
+    $ cd ~/colcon_ws/
+    $ colcon build --symlink-install
+    $ source ~/colcon_ws/install/setup.sh
+    ```
+
+**ローカル環境でのセットアップ内容**
+1. Kachaka APIのリポジトリをcloneします．
+    ```sh
+    $ cd ~/
+    $ git clone https://github.com/TeamSOBITS/kachaka-api.git
+    ```
+
+2. 最新のDockerイメージをビルドします．
+    ```sh
+    $ cd kachaka-api/
+    $ docker buildx build -t kachaka-api --target kachaka-grpc-ros2-bridge -f Dockerfile.ros2 . --build-arg BASE_ARCH=x86_64 --load
+    ```
+
+3. `ROS_DOMAIN_IP`を設定します．一例として，`10`とします．
+    ```sh
+    $ echo 'export ROS_DOMAIN_IP=10"' >> ~/.bashrc
+    $ source ~/.bashrc
+    ```
+
+> [!IMPORTANT]
+> データ通信のため，ローカル環境以外(Docker等)でROSのワークスペースを使用している場合は，`ROS_DOMAIN_IP`の値を統一させる必要があることを忘れないでください．
+
+4. KachakaのIPアドレスを確認します．
+    1. 一つの方法は，Kachakaに「`ねぇカチャカ，IPアドレスを教えて`」と声で指示することです．    
+    するとKachakaからIPアドレスが読み上げてくれます．
+    2. もう一つの方法は，Kachakaのアプリから`設定タブ`を開き，`設定・情報`カテゴリの`アプリ情報`をタップし，`カチャカ`カテゴリの`IPアドレス`欄を確認できます．
+
+5. KachakaとのROS Bridgeを簡単に立ち上げられるようにするために，`alias`を設定します．
+    ```sh
+    $ echo 'alias kachaka="bash ~/kachaka-api/tools/ros2_bridge/start_bridge.sh"' >> ~/.bashrc
+    $ source ~/.bashrc
+    ```
 
 > [!NOTE]
 > ここで作成したコンテナに関して，もしカチャカのIPアドレスが変わった場合は一度Dockerコンテナを消して1から行ってください．
@@ -152,10 +171,30 @@ SOBITSが開発した[カチャカ](https://kachaka.life/home/)を用いたモ�
 <!-- 実行・操作方法 -->
 ## 実行・操作方法
 
-1. [minimal.launch](sobit_light_bringup/launch/minimal.launch.py)というlaunchファイルを実行します．
+1. [ローカル環境] KachakaとのROS BridgeのDockerコンテナを立ち上げます．
+    ```
+    $ kachaka <カチャカのIPアドレス> sobit_light no
+    ```
+> [!NOTE]
+> `sobit_light`を書くことによって，ロボットの`namespace`を設定しています．また，`no`では，Kachaka側のrobot_descriptionの発行を停止します．詳細については，[Dockerを使ったros2_bridgeの起動](https://github.com/pf-robotics/TeamSOBITS/blob/main/docs/ROS2.md#%E3%83%96%E3%83%AA%E3%83%83%E3%82%B8%E3%81%AE%E8%B5%B7%E5%8B%95)を確認してください．
+
+> [!WARNING]
+> KachakaのIPが変わる可能性がありますので，ご注意ください．
+
+2. SOBIT LIGHTをインストールしている環境内で[real_minimal.launch](sobit_light_bringup/launch/real_minimal.launch.py)というlaunchファイルを実行します．
    ```sh
-   $ ros2 launch sobit_light_bringup minimal.launch.py
+   $ ros2 launch sobit_light_bringup real_minimal.launch.py
    ```
+
+3. ロボットが立ち上がらない・Kachakaとの通信ができていない場合は，次の項目を確認してください．
+
+    - 緊急停止ボタンが押下されていないか
+    - バッテリが十分に充電されているか 
+    - USB hubがパソコンと接続されているか
+    - [TODO] Dynamixel Dongleの名前は`/dev/ttyUSB0`なのか
+    - - 確認するために`$ ls /dev`を書いて，`/dev/ttyUSB1`が表示される場合，[controllers.urdf.xacro](sobit_light_description/urdf/controllers.urdf.xacro)の`usb_port`を更新してください．
+    - Kachaka IPが正しいか
+    - ROS_DOMAIN_IDがカチャカ側と開発環境側と同じか
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
@@ -167,10 +206,88 @@ SOBITSが開発した[カチャカ](https://kachaka.life/home/)を用いたモ�
 $ ros2 launch sobit_light_description display.launch.py
 ```
 
-正常に動作した場合は，次のようにRvizが表示されます．
+正常に動作した場合は，次のようなRviz画面が表示されます．
 ![SOBIT LIGHT Display with Rviz](sobit_light/docs/img/sobit_light_rviz.png)
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
+
+### シミュレータの実行方法
+
+SOBIT LIGHTにはGazebo Fortressのシミュレーション環境が用意されておりますので，実機がなくても，動作確認が可能です．
+
+```sh
+$ ros2 launch sobit_light_bringup gz_minimal.launch.py
+```
+
+> [!WARNING]
+> 実機と同じようなセンサも搭載されていますので，パソコンによって処理が重くなる可能性がありますので，必要なセンサだけを[gz_minimal.launch.py](sobit_light_bringup/launch/gz_minimal.launch.py)で選択してください．
+
+```python
+'enable_gz_front_cam_color' : 'True',
+'enable_gz_back_cam_color' : 'True',
+'enable_gz_head_cam_color' : 'True',
+'enable_gz_head_cam_depth' : 'True',
+'enable_gz_hand_cam_color' : 'True',
+'enable_gz_hand_cam_depth' : 'True',
+'enable_gz_lidar' : 'True',
+'enable_gz_imu' : 'True',
+```
+
+また，複数のSOBIT LIGHTを同じシミュレーション環境でも出現できます．
+そのために，[gz_minimal.launch.py](sobit_light_bringup/launch/gz_minimal.launch.py)でロボットの数に合わせて`gz_robot.launch.py`が実行されるようにその設定を加えてください．
+
+一例はこちらとなります．
+```python
+# Launch Robot No. 1
+IncludeLaunchDescription(
+    PythonLaunchDescriptionSource([
+        PathJoinSubstitution([
+            FindPackageShare('sobit_light_bringup'),
+            'launch',
+            'robot.launch.py'
+        ])
+    ]),
+    launch_arguments={
+        'robot_name': 'sobit_light_1',
+        'robot_coords_x': '0', # x 
+        'robot_coords_y': '0', # y
+        'robot_coords_Y': '0', # yaw
+        'enable_gz' : 'True',
+        'enable_gz_front_cam_color' : 'True',
+        'enable_gz_back_cam_color' : 'True',
+        'enable_gz_head_cam_color' : 'True',
+        'enable_gz_head_cam_depth' : 'True',
+        'enable_gz_hand_cam_color' : 'True',
+        'enable_gz_hand_cam_depth' : 'True',
+        'enable_gz_lidar' : 'True',
+        'enable_gz_imu' : 'True',
+    }.items()
+),
+# Launch Robot No. 2
+IncludeLaunchDescription(
+    PythonLaunchDescriptionSource([
+        PathJoinSubstitution([
+            FindPackageShare('sobit_light_bringup'),
+            'launch',
+            'gz_robot.launch.py'
+        ])
+    ]),
+    launch_arguments={
+        'robot_name': 'sobit_light_2',
+        'robot_coords_x': '0', # x 
+        'robot_coords_y': '2', # y
+        'robot_coords_Y': '0', # yaw
+        'enable_gz_front_cam_color' : 'True',
+        'enable_gz_back_cam_color' : 'True',
+        'enable_gz_head_cam_color' : 'True',
+        'enable_gz_head_cam_depth' : 'True',
+        'enable_gz_hand_cam_color' : 'True',
+        'enable_gz_hand_cam_depth' : 'True',
+        'enable_gz_lidar' : 'True',
+        'enable_gz_imu' : 'True',
+    }.items()
+),
+```
 
 
 ## ソフトウェア
@@ -186,138 +303,89 @@ SOBIT LIGHTのパンチルト機構とマニピュレータを動かすための
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
 
-#### 動作関数
+#### アクション
 
-1.  `moveToPose()` : 決められたポーズに動かします．
-    ```cpp
-    bool moveToPose(
-        const std::string& pose_name,               // ポーズ名
-        const double sec = 5.0                      // 動作時間 [s]
-        bool is_sleep = true                        // 回転後に待機するかどうか
-    );
+1.  `move_to_pose` : 決められたポーズに動かします．
+    ```yaml
+    # MoveToPose.action
+    # Goal
+    string pose_name                                # 事前に定義したポーズ名
+    builtin_interfaces/Duration time_allowance      # 制限時間
+    ---
+    # Result
+    bool success                                    # 成功/失敗
+    string message                                  # 結果メッセージ
+    builtin_interfaces/Duration total_elapsed_time  # かかった時間
+    ---
+    # Feedback
+    string[] current_joint_names                    # 現在の稼働関節名リスト
+    float32[] current_joint_rad                     # 現在の稼働関節角度リスト
+    # float32[] current_joint_vel                   # 現在の稼働関節の速度リスト
+    builtin_interfaces/Duration move_time           # 現在までにかかった時間
     ```
 
 > [!NOTE]
 > 既存のポーズは[sobit_light_pose.yaml](sobit_light_library/config/sobit_light_pose.yaml)に確認できます．ポーズの作成方法については[ポーズの設定方法](#ポーズの設定方法)をご参照ください．
 
-2.  `moveAllJointsRad()` : すべてのジョイントを任意の角度に動かします．
-    ```cpp
-    bool sobit::SobitProJointController::moveAllJointsRad (
-        const double arm_shoulder_pitch_joint,       // 回転角度 [rad]
-        const double arm_elbow_upper_pitch_joint,    // 回転角度 [rad]
-        const double arm_elbow_lower_pitch_joint,    // 回転角度 [rad]
-        const double arm_elbow_lower_yaw_joint,     // 回転角度 [rad]
-        const double arm_wrist_pitch_joint,          // 回転角度 [rad]
-        const double hand_joint,                    // 回転角度 [rad]
-        const double head_yaw_joint,                // 回転角度 [rad]
-        const double head_pitch_joint,               // 回転角度 [rad]
-        const double sec = 5.0,                     // 回転時間 [s]
-        bool is_sleep = true                        // 回転後に待機するかどうか
-    );
-    ```
-
-3.  `moveJointRad()` : 指定されたジョイントを任意の角度に動かします．
-    ```cpp
-    bool sobit::SobitProJointController::moveJointRad (
-        const Joint joint_num,                      // ジョイント名 (定数名)
-        const double rad,                           // 回転角度 [rad]
-        const double sec = 5.0,                     // 回転時間 [s]
-        bool is_sleep = true                        // 回転後に待機するかどうか
-    );
+2.  `move_joint` : 指定されたジョイント(複数でも可)を任意の角度に動かします．
+    ```yaml
+    # MoveJoint.action
+    # Goal
+    string[] target_joint_names                     # 稼働関節名リスト
+    float64[] target_joint_rad                      # 稼働関節角度リスト
+    builtin_interfaces/Duration time_allowance      # 制限時間
+    ---
+    # Result
+    bool success                                    # 成功/失敗
+    string message                                  # 結果メッセージ
+    builtin_interfaces/Duration total_elapsed_time  # かかった時間
+    ---
+    # Feedback
+    string[] current_joint_names                    # 現在の稼働関節名リスト
+    float64[] current_joint_rad                     # 現在の稼働関節角度リスト
+    # float32[] current_joint_vel                   # 現在の稼働関節の速度リスト
+    builtin_interfaces/Duration move_time           # 現在までにかかった時間
     ```
 
 > [!NOTE]
-> `ジョイント名`は[ジョイント名](#ジョイント名)をご確認ください．
- 
-4.  `moveArmRad()` : アームの関節を任意の角度に動かします．
-    ```cpp
-    bool sobit::SobitProJointController::moveArmRad(
-        const double arm_shoulder_pitch_joint,       // 回転角度 [rad]
-        const double arm_elbow_upper_pitch_joint,    // 回転角度 [rad]
-        const double arm_elbow_lower_pitch_joint,    // 回転角度 [rad]
-        const double arm_elbow_lower_yaw_joint,     // 回転角度 [rad]
-        const double arm_wrist_pitch_joint,          // 回転角度 [rad]
-        const double sec = 5.0,                     // 回転時間 [s]
-        bool is_sleep = true                        // 回転後に待機するかどうか
-    );
+> ジョイント名については[ジョイント名](#ジョイント名)をご確認ください．
+
+3.  `move_hand_to_coord` : ハンドをxyz座標に動かします（把持モード）．
+    ```yaml
+    # MoveHandToTargetCoord.action
+    # Goal
+    geometry_msgs/TransformStamped target_coord  # 目標座標
+    builtin_interfaces/Duration time_allowance   # 制限時間
+    ---
+    # Result
+    bool success                            # 成功/失敗
+    string message                          # 結果メッセージ
+    geometry_msgs/Point moved_linear        # 把持に関して動いた水平距離
+    float32 moved_yaw                       # 把持に関して動いた回転量
+    ---
+    # Feedback
+    string current_state                    # 現在の動作状態
+    float32 distance_to_target              # 対象物までの距離
     ```
 
-5.  `moveHeadRad()` : パンチルト機構を任意の角度に動かす．
-    ```cpp
-    bool sobit::SobitProJointController::moveHeadRad(
-        const double head_camera_pan,               // 回転角度 [rad]
-        const double head_camera_tilt,              // 回転角度 [rad]
-        const double sec = 5.0,                     // 移動時間 [s]
-        bool is_sleep = true                        // 回転後に待機するかどうか
-    );
-    ```
-
-6.  `moveHandToTargetCoord()` : ハンドをxyz座標に動かします（把持モード）．
-    ```cpp
-    bool sobit::SobitProJointController::moveHandToTargetCoord(
-        const double target_pos_x,                  // 把持目的地のx [m]
-        const double target_pos_y,                  // 把持目的地のy [m]
-        const double target_pos_z,                  // 把持目的地のz [m]
-        const double shift_x,                       // xyz座標のx軸をシフトする [m]
-        const double shift_y,                       // xyz座標のy軸をシフトする [m]
-        const double shift_z                        // xyz座標のz軸をシフトする [m]
-        const double sec = 5.0,                     // 移動時間 [s]
-        bool is_sleep = true                        // 回転後に待機するかどうか
-    );
-    ```
-
-7.  `moveHandToTargetTF()` : ハンドをtf名に動かします（把持モード）．
-    ```cpp
-    bool sobit::SobitProJointController::moveHandToTargetTF(
-        const std::string& target_name,             // 把持目的tf名
-        const double shift_x,                       // xyz座標のx軸をシフトする [m]
-        const double shift_y,                       // xyz座標のy軸をシフトする [m]
-        const double shift_z                        // xyz座標のz軸をシフトする [m]
-        const double sec = 5.0,                     // 移動時間 [s]
-        bool is_sleep = true                        // 回転後に待機するかどうか
-    );
-    ```
-
-8.  `moveHandToPlaceCoord()` : ハンドをxyz座標に動かします（配置モード）．
-    ```cpp
-    bool sobit::SobitProJointController::moveHandToPlaceCoord(
-        const double target_pos_x,                  // 配置目的地のx [m]
-        const double target_pos_y,                  // 配置目的地のy [m]
-        const double target_pos_z,                  // 配置目的地のz [m]
-        const double shift_x,                       // xyz座標のx軸をシフトする [m]
-        const double shift_y,                       // xyz座標のy軸をシフトする [m]
-        const double shift_z                        // xyz座標のz軸をシフトする [m]
-        const double sec = 5.0,                     // 移動時間 [s]
-        bool is_sleep = true                        // 回転後に待機するかどうか
-    ); 
-    ```
-
-9.  `moveHandToPlaceTF()` : ハンドをtf名に動かします（配置モード）．
-    ```cpp
-    bool sobit::SobitProJointController::moveHandToPlaceTF(
-        const std::string& target_name,             // 配置目的tf名
-        const double shift_x,                       // xyz座標のx軸をシフトする [m]
-        const double shift_y,                       // xyz座標のy軸をシフトする [m]
-        const double shift_z                        // xyz座標のz軸をシフトする [m]
-        const double sec = 5.0,                     // 移動時間 [s]
-        bool is_sleep = true                        // 回転後に待機するかどうか
-    );
-    ```
-
-10.  `graspDecision()` : ハンドに流れる電流値に応じて，把持判定が決まります．
-    ```cpp
-    bool sobit::SobitProJointController::graspDecision(
-        const int min_curr = 300,                   // 最小電流値
-        const int max_curr = 1000                   // 最大電流値
-    );
-    ```
-
-11.  `placeDecision()` : ハンドに流れる電流値に応じて，配置判定が決まります．
-    ```cpp
-    bool sobit::SobitProJointController::placeDecision(
-        const int min_curr = 500,                   // 最小電流値
-        const int max_curr = 1000                   // 最大電流値
-    );
+7.  `move_hand_to_tf` : ハンドをtf名に動かします（把持モード）．
+    ```yaml
+    # MoveHandToTargetTF.action
+    # Goal
+    string target_frame                             # 把持対象のTFフレーム名
+    geometry_msgs/TransformStamped tf_differential  # target_frameからの差分
+    builtin_interfaces/Duration time_allowance      # 制限時間
+    ---
+    # Result
+    bool success                               # 成功/失敗
+    string message                             # 結果メッセージ
+    geometry_msgs/Point moved_linear           # 把持に関して動いた水平距離
+    float32 moved_yaw                          # 把持に関して動いた回転量
+    ---
+    # Feedback
+    string current_state                       # 現在の動作状態
+    float32 distance_to_target                 # 対象物までの距離
+    bool object_detected                       # 対象物が検出されているか
     ```
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
@@ -329,72 +397,84 @@ SOBIT LIGHTのジョイント名とその定数名を以下の通りです．
 
 | ジョイント番号 | ジョイント名 | ジョイント定数名 |
 | :---: | --- | --- |
-| 0 | arm_shoulder_roll_joint | kArmShoulderRollJoint |
+| 0 | arm_shoulder_roll_joint  | kArmShoulderRollJoint  |
 | 1 | arm_shoulder_pitch_joint | kArmShoulderPitchJoint |
-| 2 | arm_shoulder_pitch_sub_joint | kArmShoulderPitchSubJoint |
-| 3 | arm_elbow_pitch_joint | kArmElbowPitchJoint |
-| 4 | arm_forearm_roll_joint | kArmForearmRollJoint |
-| 5 | arm_wrist_pitch_joint | kArmWristPitchJoint |
-| 6 | arm_wrist_roll_joint | kArmWristRollJoint |
-| 7 | hand_joint | kHandJoint |
-| 8 | head_yaw_joint | kHeadYawJoint |
-| 9 | head_pitch_joint | kHeadPitchJoint |
+| 2 | arm_elbow_pitch_joint    | kArmElbowPitchJoint    |
+| 3 | arm_forearm_roll_joint   | kArmForearmRollJoint   |
+| 4 | arm_wrist_pitch_joint    | kArmWristPitchJoint    |
+| 5 | arm_wrist_roll_joint     | kArmWristRollJoint     |
+| 6 | hand_joint               | kHandJoint             |
+| 7 | head_yaw_joint           | kHeadYawJoint          |
+| 8 | head_pitch_joint         | kHeadPitchJoint        |
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
 
 #### ポーズの設定方法
 
-TODO!
+[pose_list.yaml](sobit_light_library/config/pose_list.yaml)というファイルでポーズの追加・編集ができます．以下のようなフォーマットになります．
 
-<!-- [sobit_light_pose.yaml](sobit_light_library_python/config/pose_list.yaml)というファイルでポーズの追加・編集ができます．以下のようなフォーマットになります． -->
-<!-- 
 ```yaml
-sobit_light_pose:
-    - { 
-        pose_name: "pose_name",
-        arm_shoulder_1_pitch_joint: 1.57,
-        arm_elbow_upper_1_pitch_joint: 1.57,
-        arm_elbow_lower_pitch_joint: 0.0,
-        arm_elbow_lower_yaw_joint: -1.57,
-        arm_wrist_pitch_joint: -1.57,
-        hand_joint: 0.0,
-        head_yaw_joint: 0.0,
-        head_pitch_joint: 0.0
-    }
-    ...
-```   -->
+poses:
+    - initial_pose
+    - detecting_pose
+    - following_pose
 
-[sobit_light_joint_controller.py](/sobit_light_library_python/sobit_light_library_python/sobit_light_joint_controller.py)のPoseを定義しているところで設定する．\
-poses.namesのリストに定義したいPose名を追加，その後poses.(定義したPose名)のリストに各ジョイントの角度を設定する．
+initial_pose:
+    arm_shoulder_roll  : 0.0
+    arm_shoulder_pitch : -1.5708
+    arm_elbow_pitch    : 0.0
+    arm_forearm_roll   : 0.0
+    arm_wrist_pitch    : 0.0
+    arm_wrist_roll     : 0.0
+    hand               : 0.0
+    head_yaw           : 0.0
+    head_pitch         : 0.0
+...
+```  
+
+定義したいポース名を`poses`に追加し，その後ポース名の下に各ジョイントの角度を設定します．
 
 ### ホイールコントローラ
 
-SOBIT LIGHTの移動機構を動かすための情報まとめです．
+SOBIT LIGHTの移動機構(Kachaka)を動かすための情報まとめです．
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
 
-#### 動作関数
+#### アクション
 
-1.  `controlWheelLinear()` : 並進（直進移動・斜め移動・横移動）に移動させます．
-    ```cpp
-    bool sobit::SobitProWheelController::controlWheelLinear (
-        const double distance_x,                    // x方向への直進移動距離 [m]
-        const double distance_y,                    // y方向への直進移動距離 [m]
-    )
+1.  `move_wheel_linear` : 並進（前進・後退のみ）に移動させます．(弧度法：meters)
+    ```yaml
+    # MoveWheelLinear.action
+    # Goal
+    geometry_msgs/Point target_point                # 水平移動したい距離（差動二輪機構：x,全方向移動機構：x,y有効）
+    builtin_interfaces/Duration time_allowance      # 制限時間
+    ---
+    # Result
+    bool success                                    # 成功/失敗
+    string message                                  # 結果メッセージ
+    builtin_interfaces/Duration total_elapsed_time  # かかった時間
+    ---
+    # Feedback
+    geometry_msgs/Point current_point               # 現在までに移動した距離
+    builtin_interfaces/Duration move_time           # 現在までにかかった時間
     ```  
-2.  `controlWheelRotateRad()` : 回転運動を行う(弧度法：Radian)
-    ```cpp
-    bool sobit::SobitProWheelController::controlWheelRotateRad (
-        const double angle_rad,                     // 中心回転角度 [rad]
-    )
-    ```  
-3.  `controlWheelRotateDeg()` : 回転運動を行う(度数法：Degree)
-    ```cpp
-    bool sobit::SobitProWheelController::controlWheelRotateDeg ( 
-        const double angle_deg,                     // 中心回転角度 (deg)
-    )
+2.  `move_wheel_rotate` : 回転運動を行う．(弧度法：Radian)
+    ```yaml
+    # MoveWheelRotate.action
+    # Goal
+    float32 target_yaw                              # 回転したい角度
+    builtin_interfaces/Duration time_allowance      # 制限時間
+    ---
+    # Result
+    bool success                                    # 成功/失敗
+    string message                                  # 結果メッセージ
+    builtin_interfaces/Duration total_elapsed_time  # かかった時間
+    ---
+    # Feedback
+    geometry_msgs/Point current_point               # 現在までに移動した距離
+    builtin_interfaces/Duration move_time           # 現在までにかかった時間
     ```
 
 </details>
@@ -497,10 +577,10 @@ TBD
 <!-- マイルストーン -->
 ## マイルストーン
 
-- [o] OSS
+- [x] OSS
     - [x] ドキュメンテーションの充実
     - [x] コーディングスタイルの統一
-- Abundant update
+- [x] アクションへの対応
 
 現時点のバッグや新規機能の依頼を確認するために[Issueページ][issues-url] をご覧ください．
 
