@@ -30,10 +30,9 @@
     <li>
     　<a href="#実行操作方法">実行・操作方法</a>
       <ul>
-        <li><a href="#移動機構のみを使用する場合">移動機構のみを使用する場合</a></li>
         <li><a href="#Rviz上の可視化">Rviz上の可視化</a></li>
+        <li><a href="#シミュレータの実行方法">シミュレータの実行方法</a></li>
       </ul>
-    　<a href="#シミュレータの実行方法">シミュレータの実行方法</a>
     </li>
     <li>
     　<a href="#ソフトウェア">ソフトウェア</a>
@@ -152,9 +151,9 @@ Preferred Robotics(c)が開発した[カチャカ](https://kachaka.life/home/)�
 > データ通信のため，ローカル環境以外(Docker等)でROSのワークスペースを使用している場合は，`ROS_DOMAIN_IP`の値を統一させる必要があることを忘れないでください．
 
 4. KachakaのIPアドレスを確認します．
-    1. 一つの方法は，Kachakaに「`ねぇカチャカ，IPアドレスを教えて`」と声で指示することです．    
-    するとKachakaからIPアドレスが読み上げてくれます．
-    2. もう一つの方法は，Kachakaのアプリから`設定タブ`を開き，`設定・情報`カテゴリの`アプリ情報`をタップし，`カチャカ`カテゴリの`IPアドレス`欄を確認できます．
+    1. One way is to ask Kachaka by saying, "Hey Kachaka, what's your IP address?"    
+        Kachaka will then read out the IP address.
+    2. Another way is to open the `Settings` tab in the Kachaka app, tap on `App Information` in the `Settings & Information` category, and check the `IP Address` field in the `Kachaka` category.
 
 5. KachakaとのROS Bridgeを簡単に立ち上げられるようにするために，`alias`を設定します．
     ```sh
@@ -176,7 +175,7 @@ Preferred Robotics(c)が開発した[カチャカ](https://kachaka.life/home/)�
     $ kachaka <カチャカのIPアドレス> sobit_light no
     ```
 > [!NOTE]
-> `sobit_light`を書くことによって，ロボットの`namespace`を設定しています．また，`no`では，Kachaka側のrobot_descriptionの発行を停止します．詳細については，[Dockerを使ったros2_bridgeの起動](https://github.com/pf-robotics/TeamSOBITS/blob/main/docs/ROS2.md#%E3%83%96%E3%83%AA%E3%83%83%E3%82%B8%E3%81%AE%E8%B5%B7%E5%8B%95)を確認してください．
+> `sobit_light`を書くことによって，ロボットの`namespace`を設定しています．また，`no`では，Kachaka側のrobot_descriptionの発行を停止します．詳細については，[Dockerを使ったros2_bridgeの起動](https://github.com/TeamSOBITS/kachaka-api/blob/main/docs/ROS2.md#%E3%83%96%E3%83%AA%E3%83%83%E3%82%B8%E3%81%AE%E8%B5%B7%E5%8B%95)を確認してください．
 
 > [!WARNING]
 > KachakaのIPが変わる可能性がありますので，ご注意ください．
@@ -194,7 +193,7 @@ Preferred Robotics(c)が開発した[カチャカ](https://kachaka.life/home/)�
     - [TODO] Dynamixel Dongleの名前は`/dev/ttyUSB0`なのか
     - - 確認するために`$ ls /dev`を書いて，`/dev/ttyUSB1`が表示される場合，[controllers.urdf.xacro](sobit_light_description/urdf/controllers.urdf.xacro)の`usb_port`を更新してください．
     - Kachaka IPが正しいか
-    - ROS_DOMAIN_IDがカチャカ側と開発環境側と同じか
+    - `ROS_DOMAIN_ID`がカチャカ側と開発環境側と同じか
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
@@ -239,8 +238,13 @@ $ ros2 launch sobit_light_bringup gz_minimal.launch.py
 また，複数のSOBIT LIGHTを同じシミュレーション環境でも出現できます．
 そのために，[gz_minimal.launch.py](sobit_light_bringup/launch/gz_minimal.launch.py)でロボットの数に合わせて`gz_robot.launch.py`が実行されるようにその設定を加えてください．
 
+`robot_name`はロボット間で異なる値を持つ必要があります．
+さらに，`robot_coords_x`，`robot_coords_y`，および`robot_coords_z`でロボットの出現座標を変更できます．
+
 一例はこちらとなります．
+
 ```python
+...
 # Launch Robot No. 1
 IncludeLaunchDescription(
     PythonLaunchDescriptionSource([
@@ -255,15 +259,7 @@ IncludeLaunchDescription(
         'robot_coords_x': '0', # x 
         'robot_coords_y': '0', # y
         'robot_coords_Y': '0', # yaw
-        'enable_gz' : 'True',
-        'enable_gz_front_cam_color' : 'True',
-        'enable_gz_back_cam_color' : 'True',
-        'enable_gz_head_cam_color' : 'True',
-        'enable_gz_head_cam_depth' : 'True',
-        'enable_gz_hand_cam_color' : 'True',
-        'enable_gz_hand_cam_depth' : 'True',
-        'enable_gz_lidar' : 'True',
-        'enable_gz_imu' : 'True',
+        ...
     }.items()
 ),
 # Launch Robot No. 2
@@ -280,17 +276,13 @@ IncludeLaunchDescription(
         'robot_coords_x': '0', # x 
         'robot_coords_y': '2', # y
         'robot_coords_Y': '0', # yaw
-        'enable_gz_front_cam_color' : 'True',
-        'enable_gz_back_cam_color' : 'True',
-        'enable_gz_head_cam_color' : 'True',
-        'enable_gz_head_cam_depth' : 'True',
-        'enable_gz_hand_cam_color' : 'True',
-        'enable_gz_hand_cam_depth' : 'True',
-        'enable_gz_lidar' : 'True',
-        'enable_gz_imu' : 'True',
+        ...
     }.items()
 ),
+...
 ```
+
+<p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
 
 ## ソフトウェア
@@ -328,7 +320,7 @@ SOBIT LIGHTのパンチルト機構とマニピュレータを動かすための
     ```
 
 > [!NOTE]
-> 既存のポーズは[sobit_light_pose.yaml](sobit_light_library/config/sobit_light_pose.yaml)に確認できます．ポーズの作成方法については[ポーズの設定方法](#ポーズの設定方法)をご参照ください．
+> 既存のポーズは[pose_list.yaml](sobit_light_library/config/pose_list.yaml)に確認できます．ポーズの作成方法については[ポーズの設定方法](#ポーズの設定方法)をご参照ください．
 
 2.  `move_joint` : 指定されたジョイント(複数でも可)を任意の角度に動かします．
     ```yaml
@@ -371,7 +363,7 @@ SOBIT LIGHTのパンチルト機構とマニピュレータを動かすための
     float32 distance_to_target              # 対象物までの距離
     ```
 
-7.  `move_hand_to_tf` : ハンドをtf名に動かします（把持モード）．
+4.  `move_hand_to_tf` : ハンドをtf名に動かします（把持モード）．
     ```yaml
     # MoveHandToTargetTF.action
     # Goal
@@ -438,6 +430,9 @@ initial_pose:
 
 定義したいポース名を`poses`に追加し，その後ポース名の下に各ジョイントの角度を設定します．
 
+<p align="right">(<a href="#readme-top">上に戻る</a>)</p>
+
+
 ### ホイールコントローラ
 
 SOBIT LIGHTの移動機構(Kachaka)を動かすための情報まとめです．
@@ -463,6 +458,7 @@ SOBIT LIGHTの移動機構(Kachaka)を動かすための情報まとめです．
     geometry_msgs/Point current_point               # 現在までに移動した距離
     builtin_interfaces/Duration move_time           # 現在までにかかった時間
     ```  
+
 2.  `move_wheel_rotate` : 回転運動を行う．(弧度法：Radian)
     ```yaml
     # MoveWheelRotate.action
