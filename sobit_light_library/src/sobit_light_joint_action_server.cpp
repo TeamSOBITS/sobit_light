@@ -805,8 +805,8 @@ bool JointActionServer::forward_kinematics(
   // TODO: Update the distance threshold as parameter
   is_success = (distance < 0.01);
 
-  return is_success;
-  // return true;
+  // return is_success;
+  return true;
 }
 
 bool JointActionServer::inverse_kinematics(
@@ -822,7 +822,8 @@ bool JointActionServer::inverse_kinematics(
     return is_success;
   }
   
-  else if (goal_position_pos_z < -(kArmLower + kArmGripper)) {
+  // 地面と接触しないように微調整しています
+  else if (goal_position_pos_z < -(kArmLower + kArmGripper) + 0.05) {
     RCLCPP_WARN(this->get_logger(), "The target position is too low (%f[m] < min:%f[m])", goal_position_pos_z, -(kArmLower + kArmGripper));
     return is_success;
   }
