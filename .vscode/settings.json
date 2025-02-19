@@ -9,5 +9,6 @@
         "unordered_set": "cpp",
         "vector": "cpp",
         "system_error": "cpp"
-    }
+    },
+    "cmake.sourceDirectory": "/home/hagiwaralabadmin/colcon_ws/src/sobit_light/sobit_light"
 }
