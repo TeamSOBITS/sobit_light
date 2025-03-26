@@ -280,7 +280,7 @@ void WheelActionServer::exe_move_wheel_rotate(
 
     // Publish feedback
     auto feedback = std::make_shared<MoveWheelRotate::Feedback>();
-    feedback->current_point.z = moved_angle;
+    feedback->current_yaw = moved_angle;
     feedback->move_time.sec = (this->now() - start_time).seconds();
     feedback->move_time.nanosec = (this->now() - start_time).nanoseconds() % int(10E9);
     goal_handle->publish_feedback(feedback);

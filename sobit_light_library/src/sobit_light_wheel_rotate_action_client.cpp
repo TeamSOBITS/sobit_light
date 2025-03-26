@@ -78,7 +78,7 @@ private:
   {
     std::stringstream ss;
     ss << "Feedback: ";
-    ss << "current_point: (" << feedback->current_point.x << ", " << feedback->current_point.y << ", " << feedback->current_point.z << ")";
+    ss << "current_yaw: " << feedback->current_yaw << ")";
     ss << ", move_time: " << feedback->move_time.sec << "." << feedback->move_time.nanosec;
     RCLCPP_INFO(this->get_logger(), ss.str().c_str());
   }
