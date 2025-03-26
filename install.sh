@@ -11,7 +11,7 @@ cd ..
 ros_packages=(
     "sobits_msgs" \
     "dynamixel_hardware" \
-    "realsense_ros"
+    "realsense_ros" \
     "kachaka-api"
 )
 
@@ -74,7 +74,9 @@ sudo apt-get install -y \
     ros-$ROS_DISTRO-tf2-geometry-msgs \
     ros-$ROS_DISTRO-tf2-ros \
     ros-$ROS_DISTRO-tf2 \
-    ros-$ROS_DISTRO-tf-transformations
+    ros-$ROS_DISTRO-tf-transformations \
+    ros-$ROS_DISTRO-launch \
+    ros-$ROS_DISTRO-launch-ros
 
 # Install Gazebo Harmonic with binaries
 # sudo apt-get update
