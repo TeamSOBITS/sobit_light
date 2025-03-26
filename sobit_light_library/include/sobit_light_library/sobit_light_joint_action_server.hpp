@@ -2,8 +2,10 @@
 
 #include "sobits_interfaces/action/move_joint.hpp"
 #include "sobits_interfaces/action/move_to_pose.hpp"
-#include "sobits_interfaces/action/move_hand_to_target_coord.hpp"
-#include "sobits_interfaces/action/move_hand_to_target_tf.hpp"
+#include "sobits_interfaces/srv/move_hand_to_target_coord.hpp"
+#include "sobits_interfaces/srv/move_hand_to_target_tf.hpp"
+// #include "sobits_interfaces/action/move_hand_to_target_coord.hpp"
+// #include "sobits_interfaces/action/move_hand_to_target_tf.hpp"
 
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
@@ -61,13 +63,16 @@ class JointActionServer : public rclcpp::Node
 public:
   using MoveJoint = sobits_interfaces::action::MoveJoint;
   using MoveToPose = sobits_interfaces::action::MoveToPose;
-  using MoveHandToTargetCoord = sobits_interfaces::action::MoveHandToTargetCoord;
-  using MoveHandToTargetTF = sobits_interfaces::action::MoveHandToTargetTF;
+  using MoveHandToTargetCoord = sobits_interfaces::srv::MoveHandToTargetCoord;
+  using MoveHandToTargetTF = sobits_interfaces::srv::MoveHandToTargetTF;
+  // using MoveHandToTargetCoord = sobits_interfaces::action::MoveHandToTargetCoord;
+  // using MoveHandToTargetTF = sobits_interfaces::action::MoveHandToTargetTF;
+
 
   using GoalHandleMoveJoints = rclcpp_action::ServerGoalHandle<sobits_interfaces::action::MoveJoint>;
   using GoalHandleMoveToPose = rclcpp_action::ServerGoalHandle<sobits_interfaces::action::MoveToPose>;
-  using GoalHandleMoveHandToCoord = rclcpp_action::ServerGoalHandle<sobits_interfaces::action::MoveHandToTargetCoord>;
-  using GoalHandleMoveHandToTf = rclcpp_action::ServerGoalHandle<sobits_interfaces::action::MoveHandToTargetTF>;
+  // using GoalHandleMoveHandToCoord = rclcpp_action::ServerGoalHandle<sobits_interfaces::action::MoveHandToTargetCoord>;
+  // using GoalHandleMoveHandToTf = rclcpp_action::ServerGoalHandle<sobits_interfaces::action::MoveHandToTargetTF>;
 
 
   explicit JointActionServer(const rclcpp::NodeOptions & options);
@@ -123,28 +128,32 @@ private:
 
   rclcpp_action::Server<MoveJoint>::SharedPtr action_server_move_joints_;
   rclcpp_action::Server<MoveToPose>::SharedPtr action_server_move_to_pose_;
-  rclcpp_action::Server<MoveHandToTargetCoord>::SharedPtr action_server_move_hand_to_coord_;
-  rclcpp_action::Server<MoveHandToTargetTF>::SharedPtr action_server_move_hand_to_tf_;
+  rclcpp::Service<MoveHandToTargetCoord>::SharedPtr service_move_hand_to_coord_;
+  rclcpp::Service<MoveHandToTargetTF>::SharedPtr service_move_hand_to_tf_;
+  // rclcpp_action::Server<MoveHandToTargetCoord>::SharedPtr action_server_move_hand_to_coord_;
+  // rclcpp_action::Server<MoveHandToTargetTF>::SharedPtr action_server_move_hand_to_tf_;
 
   rclcpp_action::GoalResponse handle_move_joints_goal(const rclcpp_action::GoalUUID & uuid, std::shared_ptr<const MoveJoint::Goal> goal);
   rclcpp_action::GoalResponse handle_move_to_pose_goal(const rclcpp_action::GoalUUID & uuid, std::shared_ptr<const MoveToPose::Goal> goal);
-  rclcpp_action::GoalResponse handle_move_hand_to_coord_goal(const rclcpp_action::GoalUUID & uuid, std::shared_ptr<const MoveHandToTargetCoord::Goal> goal);
-  rclcpp_action::GoalResponse handle_move_hand_to_tf_goal(const rclcpp_action::GoalUUID & uuid, std::shared_ptr<const MoveHandToTargetTF::Goal> goal);
+  // rclcpp_action::GoalResponse handle_move_hand_to_coord_goal(const rclcpp_action::GoalUUID & uuid, std::shared_ptr<const MoveHandToTargetCoord::Goal> goal);
+  // rclcpp_action::GoalResponse handle_move_hand_to_tf_goal(const rclcpp_action::GoalUUID & uuid, std::shared_ptr<const MoveHandToTargetTF::Goal> goal);
 
   rclcpp_action::CancelResponse handle_move_joints_cancel(const std::shared_ptr<GoalHandleMoveJoints> goal_handle);
   rclcpp_action::CancelResponse handle_move_to_pose_cancel(const std::shared_ptr<GoalHandleMoveToPose> goal_handle);
-  rclcpp_action::CancelResponse handle_move_hand_to_coord_cancel(const std::shared_ptr<GoalHandleMoveHandToCoord> goal_handle);
-  rclcpp_action::CancelResponse handle_move_hand_to_tf_cancel(const std::shared_ptr<GoalHandleMoveHandToTf> goal_handle);
+  // rclcpp_action::CancelResponse handle_move_hand_to_coord_cancel(const std::shared_ptr<GoalHandleMoveHandToCoord> goal_handle);
+  // rclcpp_action::CancelResponse handle_move_hand_to_tf_cancel(const std::shared_ptr<GoalHandleMoveHandToTf> goal_handle);
 
   void handle_move_joints_accepted(const std::shared_ptr<GoalHandleMoveJoints> goal_handle);
   void handle_move_to_pose_accepted(const std::shared_ptr<GoalHandleMoveToPose> goal_handle);
-  void handle_move_hand_to_coord_accepted(const std::shared_ptr<GoalHandleMoveHandToCoord> goal_handle);
-  void handle_move_hand_to_tf_accepted(const std::shared_ptr<GoalHandleMoveHandToTf> goal_handle);
+  // void handle_move_hand_to_coord_accepted(const std::shared_ptr<GoalHandleMoveHandToCoord> goal_handle);
+  // void handle_move_hand_to_tf_accepted(const std::shared_ptr<GoalHandleMoveHandToTf> goal_handle);
 
   void exe_move_joints(const std::shared_ptr<GoalHandleMoveJoints> goal_handle);
   void exe_move_to_pose(const std::shared_ptr<GoalHandleMoveToPose> goal_handle);
-  void exe_move_hand_to_coord(const std::shared_ptr<GoalHandleMoveHandToCoord> goal_handle);
-  void exe_move_hand_to_tf(const std::shared_ptr<GoalHandleMoveHandToTf> goal_handle);
+  void get_pos_to_coord(const std::shared_ptr<MoveHandToTargetCoord::Request> request, std::shared_ptr<MoveHandToTargetCoord::Response> response);
+  void get_pos_to_tf(const std::shared_ptr<MoveHandToTargetTF::Request> request, std::shared_ptr<MoveHandToTargetTF::Response> response);
+  // void exe_move_hand_to_coord(const std::shared_ptr<GoalHandleMoveHandToCoord> goal_handle);
+  // void exe_move_hand_to_tf(const std::shared_ptr<GoalHandleMoveHandToTf> goal_handle);
 
   rclcpp::Publisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr pub_joint_control_;
   rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr sub_joint_state_;
