@@ -9,6 +9,28 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <depend>launch</depend>
+  <depend>launch_ros</depend>
+  <depend>xacro</depend>
+  <depend>rviz2</depend>
+
+  <depend>controller_manager</depend>
+  <depend>ros2_control</depend>
+  <depend>ros2_controllers</depend>
+  <depend>robot_state_publisher</depend>
+  <depend>joint_state_broadcaster</depend>
+  <depend>joint_trajectory_controller</depend>
+  <depend>velocity_controllers</depend>
+  <depend>position_controllers</depend>
+  <depend>diff_drive_controller</depend>
+  <depend>tf2_ros</depend>
+
+  <depend>ros_gz_bridge</depend>
+  <depend>ros_gz_sim</depend>
+
+  <depend>sobit_light_description</depend>
+  <depend>sobit_light_control</depend>
+
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 

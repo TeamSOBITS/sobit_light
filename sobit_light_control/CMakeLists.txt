@@ -7,9 +7,17 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
+
+find_package(controller_manager REQUIRED)
+find_package(ros2_control REQUIRED)
+find_package(ros2_controllers REQUIRED)
+find_package(robot_state_publisher REQUIRED)
+find_package(joint_state_broadcaster REQUIRED)
+find_package(joint_trajectory_controller REQUIRED)
+find_package(velocity_controllers REQUIRED)
+find_package(position_controllers REQUIRED)
+find_package(diff_drive_controller REQUIRED)
+
 
 install(DIRECTORY
   config
