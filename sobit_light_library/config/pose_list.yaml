@@ -1,10 +1,9 @@
 /**:
   ros__parameters:
     poses:
-      - pose_check_door
-      - pose_check_sign
-      - pose_detect_customer
-      - pose_find_object
+      - initial_pose
+      - detecting_pose
+      - following_pose
 
     pose_check_door:
       arm_shoulder_roll  : 0.0
