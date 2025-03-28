@@ -33,6 +33,11 @@
   <xacro:include filename="$(find sobit_light_description)/urdf/gazebo.urdf.xacro" />
 
 
+  <!-- Add Kachaka -->
+  <xacro:include filename="$(find kachaka_description)/urdf/_values.urdf.xacro" />
+  <xacro:include filename="$(find kachaka_description)/urdf/_kachaka.urdf.xacro" />
+
+
   <!-- Add variables -->
   <xacro:arg name="enable_gz"                 default="False" />
   <xacro:arg name="enable_gz_front_cam_color" default="True" />
@@ -47,17 +52,10 @@
 
 
   <!-- Connect the Links and Joints -->
-  <xacro:if value="${$(arg enable_gz)}">
-    <link               name="base_footprint"/>
-    <xacro:base         prefix="base"         parent="base_footprint" />
-    <xacro:wheel        prefix="base"         parent="base_link" />
-    <xacro:lidar        prefix="lidar"        parent="base_link" />
-    <xacro:tof          prefix="tof"          parent="base_link" />
-    <xacro:imu          prefix="imu"          parent="base_link" />
-    <xacro:camera_front prefix="camera_front" parent="base_link" />
-    <xacro:camera_back  prefix="camera_back"  parent="base_link" />
-  </xacro:if>
-
+  <link name="base_footprint" />
+  <xacro:kachaka_robot parent="base_footprint">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </xacro:kachaka_robot>
   <xacro:plate          prefix="plate"        parent="base_link" />
   <xacro:arm            prefix="arm"          parent="plate_middle_link" />
   <xacro:hand           prefix_hand="hand"    prefix_finger="finger" parent="arm_hand_link" />

@@ -11,7 +11,8 @@ cd ..
 ros_packages=(
     "sobits_msgs" \
     "dynamixel_hardware" \
-    "realsense_ros"
+    "realsense_ros" \
+    "kachaka-api"
 )
 
 #Clone all packages
@@ -25,6 +26,11 @@ for ((i = 0; i < ${#ros_packages[@]}; i++)) {
         cd ${ros_packages[i]}
         bash install.sh
         cd ..
+    fi
+    # If kachaka-api, delete kachaka_grpc_ros2_bridge
+    if [ ${ros_packages[i]} == "kachaka-api" ]; then
+        echo "Deleting kachaka_grpc_ros2_bridge"
+        rm -rf kachaka-api/ros2/kachaka_grpc_ros2_bridge
     fi
 }
 
@@ -60,7 +66,17 @@ sudo apt-get install -y \
     ros-$ROS_DISTRO-urdf \
     ros-$ROS_DISTRO-urdf-launch \
     ros-$ROS_DISTRO-xacro \
-    ros-$ROS_DISTRO-tf-transformations
+    ros-$ROS_DISTRO-std-msgs \
+    ros-$ROS_DISTRO-geometry-msgs \
+    ros-$ROS_DISTRO-sensor-msgs \
+    ros-$ROS_DISTRO-nav-msgs \
+    ros-$ROS_DISTRO-trajectory-msgs \
+    ros-$ROS_DISTRO-tf2-geometry-msgs \
+    ros-$ROS_DISTRO-tf2-ros \
+    ros-$ROS_DISTRO-tf2 \
+    ros-$ROS_DISTRO-tf-transformations \
+    ros-$ROS_DISTRO-launch \
+    ros-$ROS_DISTRO-launch-ros
 
 # Install Gazebo Harmonic with binaries
 # sudo apt-get update
@@ -83,7 +99,8 @@ sudo apt-get install -y \
 
 
 # # Setting up Dynamixel USB configuration (SOBIT LIGHT: Head and Arm Robot Mechanism)
-# echo "SUBSYSTEM==\"tty\", ATTRS{idVendor}==\"0403\", ATTRS{idProduct}==\"6015\", SYMLINK+=\"input/dx_upper\", MODE=\"0666\"" | sudo tee /etc/udev/rules.d/dx_upper.rules
+echo "SUBSYSTEM==\"tty\", ATTRS{idVendor}==\"0403\", ATTRS{idProduct}==\"6014\", ATTRS{serial}==\"FT8ISSV2\", SYMLINK+=\"ttyUSB-DXL_light\", MODE=\"0666\", GROUP:=\"dialout\"," | sudo tee /etc/udev/rules.d/dxl_light.rules
+sudo usermod -aG dialout $USER
 
 # # Setting up PS4 Joystick USB configuration
 # echo "KERNEL==\"uinput\", MODE=\"0666\"
@@ -93,10 +110,10 @@ sudo apt-get install -y \
 #       KERNEL==\"hidraw*\", SUBSYSTEM==\"hidraw\", KERNELS==\"0005:054C:09CC.*\", MODE=\"0666\"" | sudo tee /etc/udev/rules.d/50-ds4drv.rules
 
 # # Reload udev rules
-# sudo udevadm control --reload-rules
+sudo udevadm control --reload-rules
 
 # # Trigger the new rules
-# sudo udevadm trigger
+sudo udevadm trigger
 
 # Go back to previous directory
 cd ${DIR}

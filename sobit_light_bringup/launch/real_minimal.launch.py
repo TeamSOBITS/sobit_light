@@ -1,100 +1,44 @@
-# Copyright 2020 Yutaka Kondo <yutaka.kondo@youtalk.jp>
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-import os
-
-from ament_index_python.packages import get_package_share_directory
-
 from launch import LaunchDescription
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import PathJoinSubstitution
+from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import Node
-
-import xacro
 
 
 def generate_launch_description():
-    robot_name = "sobit_light"
+    robot_name = 'sobit_light'
+    robot_id = 0
 
-    bringup_pkg = robot_name + "_bringup"
-    description_pkg = robot_name + "_description"
-    controller_pkg = robot_name + "_control"
-
-    rviz_config = os.path.join(get_package_share_directory(
-        bringup_pkg), "rviz", "real.rviz")
-    
-    robot_description = os.path.join(get_package_share_directory(
-        description_pkg), "robots", robot_name + "_robot.urdf.xacro")
-    robot_description_config = \
-        xacro.process_file(robot_description, mappings={'enable_gz' : 'False'})
-
-    controller_config = os.path.join(
-        get_package_share_directory(
-            controller_pkg), "config", "controllers.yaml"
-    )
-
-
-    ros2_control_node = Node(
-        package="controller_manager",
-        executable="ros2_control_node",
-        parameters=[
-            {"robot_description": robot_description_config.toxml()}, controller_config],
-        output="screen",
-    )
-
-    joint_state_broadcaster_node = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["joint_state_broadcaster", "--controller-manager", "/controller_manager"],
-        output="screen",
-    )
-
-    velocity_controller_node = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["velocity_controller", "-c", "/controller_manager"],
-        output="screen",
-    )
-
-    joint_trajectory_controller_node = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["joint_trajectory_controller", "-c", "/controller_manager"],
-        output="screen",
-    )
-
-    robot_state_publisher_node = Node(
-        package="robot_state_publisher",
-        executable="robot_state_publisher",
-        name="robot_state_publisher",
-        parameters=[
-            {"robot_description": robot_description_config.toxml()},
-            {"use_sim_time": 'False'},],
-        output="screen",
-    )
-
-    rviz2_node = Node(
-        package="rviz2",
-        executable="rviz2",
-        name="rviz2",
-        arguments=["-d", rviz_config],
-        output="screen",
+    rviz_config = PathJoinSubstitution([
+            FindPackageShare('sobit_light_bringup'),
+            'rviz',
+            'real.rviz'
+    ])
+    rviz_node = Node(
+        package='rviz2',
+        executable='rviz2',
+        name='rviz2',
+        arguments=['-d', rviz_config],
+        output='screen',
     )
 
     return LaunchDescription([
-        ros2_control_node,
-        joint_state_broadcaster_node,
-        velocity_controller_node,
-        joint_trajectory_controller_node,
-        robot_state_publisher_node,
-        rviz2_node,
+        # Launch Robot No. 1
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([
+                PathJoinSubstitution([
+                    FindPackageShare('sobit_light_bringup'),
+                    'launch',
+                    'robot.launch.py'
+                ])
+            ]),
+            launch_arguments={
+                'robot_name': robot_name if robot_id == 0 else robot_name + '_' + str(robot_id),
+                'enable_gz' : 'False',
+                'enable_real_head_cam' : 'False', # TODO: toggle head camera
+                'enable_real_hand_cam' : 'False', # TODO: toggle hand camera
+            }.items()
+        ),
+        rviz_node,
     ])

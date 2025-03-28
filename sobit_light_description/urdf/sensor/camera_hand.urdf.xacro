@@ -3,14 +3,14 @@
   <xacro:include filename="$(find realsense2_description)/urdf/_d405.urdf.xacro" />
   <xacro:macro name="camera_hand" params="prefix parent">
 
-    <!-- Joint: Hand Camera Base -->
+    <!-- Joint - Hand Camera Base -->
     <joint name="${prefix}_base_joint" type="fixed">
       <origin xyz="0.03685 0.0 0.0408" rpy="0 0 0"/>
       <parent link="${parent}"/>
       <child link="${prefix}_base_link"/>
     </joint>
 
-    <!-- Link: Hand Camera Base -->
+    <!-- Link - Hand Camera Base -->
     <link name="${prefix}_base_link">
       <visual>
         <origin xyz="0.0 0.0 0.0" rpy="0 0 ${M_PI/2}"/>
