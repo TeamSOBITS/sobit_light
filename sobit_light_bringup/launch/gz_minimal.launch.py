@@ -19,7 +19,7 @@ def generate_launch_description():
         executable='parameter_bridge',
         arguments=[
                     "/clock" + "@rosgraph_msgs/msg/Clock" + "[ignition.msgs.Clock",
-                    "/tf" + "@tf2_msgs/msg/TFMessage" + "[ignition.msgs.TFMessage",
+                    "/tf" + "@tf2_msgs/msg/TFMessage" + "[ignition.msgs.Pose_V",
                    ],
         output='screen'
     )
