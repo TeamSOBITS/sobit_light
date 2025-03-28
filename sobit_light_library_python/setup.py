@@ -1,3 +1,5 @@
+import os
+from glob import glob
 from setuptools import find_packages, setup
 
 package_name = 'sobit_light_library_python'
@@ -10,6 +12,7 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        (os.path.join('share', package_name, 'launch'), glob(os.path.join('launch', '*launch.[pxy][yma]*')))
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -17,11 +20,11 @@ setup(
     maintainer_email='kvalentincardenas@hotmail.com',
     description='TODO: Package description',
     license='TODO: License declaration',
-    tests_require=['pytest'],
     entry_points={
         'console_scripts': [
             'sobit_light_wheel_controller = sobit_light_library_python.sobit_light_wheel_controller:main',
-            'sobit_light_joint_controller = sobit_light_library_python.sobit_light_joint_controller:main'
+            'sobit_light_joint_controller = sobit_light_library_python.sobit_light_joint_controller:main',
+            'test_control_arm = sobit_light_library_python.test_control_arm:main'
         ],
     },
 )

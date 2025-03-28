@@ -9,7 +9,7 @@ from rclpy.node import Node
 from tf_transformations import euler_from_quaternion
 
 from nav_msgs.msg import Odometry
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Twist, TwistStamped
 
 def geoQuat2Yaw(geo_quat):
   quat_list = [geo_quat.x, geo_quat.y, geo_quat.z, geo_quat.w]
@@ -20,7 +20,7 @@ def geoQuat2Yaw(geo_quat):
 
 
 class WheelController(Node):
-  def __init__(self, node_name='sobit_light_wheel_controller'):
+  def __init__(self, node_name='wheel_controller_library'):
     super().__init__(node_name)
 
     # QoS profile for the subscription
@@ -32,14 +32,16 @@ class WheelController(Node):
     # 
     self.sub_odom_ = self.create_subscription(
         Odometry,
-        '/kachaka/odometry/odometry',
+        # 'odometry/odometry',
+        'diff_controller/odom',
         self.callbackOdometry,
         qos_profile=qos_policy,
     )
 
     self.pub_cmd_vel_ = self.create_publisher(
-        Twist,
-        '/kachaka/manual_control/cmd_vel',
+        TwistStamped,
+        # 'manual_control/cmd_vel',
+        'diff_controller/cmd_vel',
         qos_profile=qos_policy,
     )
 
@@ -111,7 +113,11 @@ class WheelController(Node):
       output_vel.linear.x = vel_linear if distance > 0 else -vel_linear
       vel_diff = vel_linear
 
-      self.pub_cmd_vel_.publish(output_vel)
+      # Publish the velocity
+      cmd_vel = TwistStamped()
+      cmd_vel.header.stamp = self.get_clock().now().to_msg()
+      cmd_vel.twist = output_vel
+      self.pub_cmd_vel_.publish(cmd_vel)
 
       # Calculate the moved distance
       x_diff = self.curt_odom_.pose.pose.position.x - init_odom.pose.pose.position.x
@@ -124,7 +130,10 @@ class WheelController(Node):
     
     # Stop the robot after the target distance is reached
     output_vel.linear.x = 0.0
-    self.pub_cmd_vel_.publish(output_vel)
+    cmd_vel = TwistStamped()
+    cmd_vel.header.stamp = self.get_clock().now().to_msg()
+    cmd_vel.twist = output_vel
+    self.pub_cmd_vel_.publish(cmd_vel)
 
   def controlWheelRotateRad(self, angle_rad):
     while not(self.is_running_):
@@ -183,7 +192,12 @@ class WheelController(Node):
       vel_angular = min(vel_angular, max_angular_speed) if angle_rad > 0 else -min(abs(vel_angular), max_angular_speed)
       output_vel.angular.z = vel_angular
       vel_diff = vel_angular
-      self.pub_cmd_vel_.publish(output_vel)
+
+      # Publish the velocity
+      cmd_vel = TwistStamped()
+      cmd_vel.header.stamp = self.get_clock().now().to_msg()
+      cmd_vel.twist = output_vel
+      self.pub_cmd_vel_.publish(cmd_vel)
 
       # Calculate the moved distance
       curt_yaw = geoQuat2Yaw(self.curt_odom_.pose.pose.orientation)
@@ -206,7 +220,10 @@ class WheelController(Node):
 
     # Stop the robot after the target angle is reached
     output_vel.angular.z = 0.0
-    self.pub_cmd_vel_.publish(output_vel)
+    cmd_vel = TwistStamped()
+    cmd_vel.header.stamp = self.get_clock().now().to_msg()
+    cmd_vel.twist = output_vel
+    self.pub_cmd_vel_.publish(cmd_vel)
 
   def controlWheelRotateDeg(self, angle_deg):
     self.controlWheelRotateRad(radians(angle_deg))

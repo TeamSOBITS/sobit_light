@@ -1,19 +1,18 @@
 Panels:
   - Class: rviz_common/Displays
-    Help Height: 78
+    Help Height: 0
     Name: Displays
     Property Tree Widget:
       Expanded:
         - /Global Options1
-        - /Status1
+        - /RobotModel1
         - /TF1
       Splitter Ratio: 0.5905882120132446
-    Tree Height: 799
+    Tree Height: 702
   - Class: rviz_common/Selection
     Name: Selection
   - Class: rviz_common/Tool Properties
-    Expanded:
-      - /Publish Point1
+    Expanded: ~
     Name: Tool Properties
     Splitter Ratio: 0.5886790156364441
   - Class: rviz_common/Views
@@ -53,7 +52,7 @@ Visualization Manager:
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /robot_description
+        Value: /sobit_light_1/robot_description
       Enabled: true
       Links:
         All Links Enabled: true
@@ -328,7 +327,7 @@ Visualization Manager:
         Inertia: false
         Mass: false
       Name: RobotModel
-      TF Prefix: ""
+      TF Prefix: sobit_light_1
       Update Interval: 0
       Value: true
       Visual Enabled: true
@@ -337,121 +336,121 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        arm_base_link:
+        sobit_light_1/arm_base_link:
           Value: true
-        arm_elbow_pitch_link:
+        sobit_light_1/arm_elbow_pitch_link:
           Value: true
-        arm_forearm_roll_link:
+        sobit_light_1/arm_forearm_roll_link:
           Value: true
-        arm_hand_link:
+        sobit_light_1/arm_hand_link:
           Value: true
-        arm_platform_link:
+        sobit_light_1/arm_platform_link:
           Value: true
-        arm_shoulder_pitch_link:
+        sobit_light_1/arm_shoulder_pitch_link:
           Value: true
-        arm_shoulder_pitch_sub_link:
+        sobit_light_1/arm_shoulder_pitch_sub_link:
           Value: true
-        arm_shoulder_roll_link:
+        sobit_light_1/arm_shoulder_roll_link:
           Value: true
-        arm_wrist_pitch_link:
+        sobit_light_1/arm_wrist_pitch_link:
           Value: true
-        arm_wrist_roll_link:
+        sobit_light_1/arm_wrist_roll_link:
           Value: true
-        back_base_link:
+        sobit_light_1/back_base_link:
           Value: true
-        base_footprint:
+        sobit_light_1/base_footprint:
           Value: true
-        base_l_drive_wheel_link:
+        sobit_light_1/base_l_drive_wheel_link:
           Value: true
-        base_link:
+        sobit_light_1/base_link:
           Value: true
-        base_r_drive_wheel_link:
+        sobit_light_1/base_r_drive_wheel_link:
           Value: true
-        camera_back_link:
+        sobit_light_1/camera_back_link:
           Value: true
-        camera_front_link:
+        sobit_light_1/camera_front_link:
           Value: true
-        docking_link:
+        sobit_light_1/docking_link:
           Value: true
-        hand_camera_base_link:
+        sobit_light_1/hand_camera_base_link:
           Value: true
-        hand_camera_bottom_screw_frame:
+        sobit_light_1/hand_camera_bottom_screw_frame:
           Value: true
-        hand_camera_color_frame:
+        sobit_light_1/hand_camera_color_frame:
           Value: true
-        hand_camera_color_optical_frame:
+        sobit_light_1/hand_camera_color_optical_frame:
           Value: true
-        hand_camera_depth_frame:
+        sobit_light_1/hand_camera_depth_frame:
           Value: true
-        hand_camera_depth_optical_frame:
+        sobit_light_1/hand_camera_depth_optical_frame:
           Value: true
-        hand_camera_infra1_frame:
+        sobit_light_1/hand_camera_infra1_frame:
           Value: true
-        hand_camera_infra1_optical_frame:
+        sobit_light_1/hand_camera_infra1_optical_frame:
           Value: true
-        hand_camera_infra2_frame:
+        sobit_light_1/hand_camera_infra2_frame:
           Value: true
-        hand_camera_infra2_optical_frame:
+        sobit_light_1/hand_camera_infra2_optical_frame:
           Value: true
-        hand_camera_link:
+        sobit_light_1/hand_camera_link:
           Value: true
-        hand_end_effector_link:
+        sobit_light_1/hand_end_effector_link:
           Value: true
-        hand_finger_tip_l_link:
+        sobit_light_1/hand_finger_tip_l_link:
           Value: true
-        hand_finger_tip_r_link:
+        sobit_light_1/hand_finger_tip_r_link:
           Value: true
-        hand_link:
+        sobit_light_1/hand_link:
           Value: true
-        hand_sub_l_link:
+        sobit_light_1/hand_sub_l_link:
           Value: true
-        hand_sub_link:
+        sobit_light_1/hand_sub_link:
           Value: true
-        hand_sub_r_link:
+        sobit_light_1/hand_sub_r_link:
           Value: true
-        head_base_link:
+        sobit_light_1/head_base_link:
           Value: true
-        head_camera_base_link:
+        sobit_light_1/head_camera_base_link:
           Value: true
-        head_camera_bottom_screw_frame:
+        sobit_light_1/head_camera_bottom_screw_frame:
           Value: true
-        head_camera_color_frame:
+        sobit_light_1/head_camera_color_frame:
           Value: true
-        head_camera_color_optical_frame:
+        sobit_light_1/head_camera_color_optical_frame:
           Value: true
-        head_camera_depth_frame:
+        sobit_light_1/head_camera_depth_frame:
           Value: true
-        head_camera_depth_optical_frame:
+        sobit_light_1/head_camera_depth_optical_frame:
           Value: true
-        head_camera_infra1_frame:
+        sobit_light_1/head_camera_infra1_frame:
           Value: true
-        head_camera_infra1_optical_frame:
+        sobit_light_1/head_camera_infra1_optical_frame:
           Value: true
-        head_camera_infra2_frame:
+        sobit_light_1/head_camera_infra2_frame:
           Value: true
-        head_camera_infra2_optical_frame:
+        sobit_light_1/head_camera_infra2_optical_frame:
           Value: true
-        head_camera_link:
+        sobit_light_1/head_camera_link:
           Value: true
-        head_pitch_link:
+        sobit_light_1/head_pitch_link:
           Value: true
-        head_yaw_link:
+        sobit_light_1/head_yaw_link:
           Value: true
-        imu_link:
+        sobit_light_1/imu_link:
           Value: true
-        laser_frame:
+        sobit_light_1/laser_frame:
           Value: true
-        mic_link:
+        sobit_light_1/mic_link:
           Value: true
-        plate_bottom_link:
+        sobit_light_1/plate_bottom_link:
           Value: true
-        plate_middle_link:
+        sobit_light_1/plate_middle_link:
           Value: true
-        sim_laser_frame:
+        sobit_light_1/sim_laser_frame:
           Value: true
-        speaker_base_link:
+        sobit_light_1/speaker_base_link:
           Value: true
-        tof_link:
+        sobit_light_1/tof_link:
           Value: true
       Marker Scale: 0.30000001192092896
       Name: TF
@@ -459,92 +458,92 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        base_footprint:
-          base_link:
-            base_l_drive_wheel_link:
+        sobit_light_1/base_footprint:
+          sobit_light_1/base_link:
+            sobit_light_1/base_l_drive_wheel_link:
               {}
-            base_r_drive_wheel_link:
+            sobit_light_1/base_r_drive_wheel_link:
               {}
-            camera_back_link:
+            sobit_light_1/camera_back_link:
               {}
-            camera_front_link:
+            sobit_light_1/camera_front_link:
               {}
-            docking_link:
+            sobit_light_1/docking_link:
               {}
-            imu_link:
+            sobit_light_1/imu_link:
               {}
-            laser_frame:
-              sim_laser_frame:
+            sobit_light_1/laser_frame:
+              sobit_light_1/sim_laser_frame:
                 {}
-            plate_bottom_link:
-              back_base_link:
-                head_base_link:
-                  head_yaw_link:
-                    head_pitch_link:
-                      head_camera_base_link:
-                        head_camera_bottom_screw_frame:
-                          head_camera_link:
-                            head_camera_color_frame:
-                              head_camera_color_optical_frame:
+            sobit_light_1/plate_bottom_link:
+              sobit_light_1/back_base_link:
+                sobit_light_1/head_base_link:
+                  sobit_light_1/head_yaw_link:
+                    sobit_light_1/head_pitch_link:
+                      sobit_light_1/head_camera_base_link:
+                        sobit_light_1/head_camera_bottom_screw_frame:
+                          sobit_light_1/head_camera_link:
+                            sobit_light_1/head_camera_color_frame:
+                              sobit_light_1/head_camera_color_optical_frame:
                                 {}
-                            head_camera_depth_frame:
-                              head_camera_depth_optical_frame:
+                            sobit_light_1/head_camera_depth_frame:
+                              sobit_light_1/head_camera_depth_optical_frame:
                                 {}
-                            head_camera_infra1_frame:
-                              head_camera_infra1_optical_frame:
+                            sobit_light_1/head_camera_infra1_frame:
+                              sobit_light_1/head_camera_infra1_optical_frame:
                                 {}
-                            head_camera_infra2_frame:
-                              head_camera_infra2_optical_frame:
+                            sobit_light_1/head_camera_infra2_frame:
+                              sobit_light_1/head_camera_infra2_optical_frame:
                                 {}
-                      mic_link:
+                      sobit_light_1/mic_link:
                         {}
-                speaker_base_link:
+                sobit_light_1/speaker_base_link:
                   {}
-              plate_middle_link:
-                arm_platform_link:
-                  arm_base_link:
-                    arm_shoulder_roll_link:
-                      arm_shoulder_pitch_link:
-                        arm_elbow_pitch_link:
-                          arm_forearm_roll_link:
-                            arm_wrist_pitch_link:
-                              arm_wrist_roll_link:
-                                arm_hand_link:
-                                  hand_sub_l_link:
-                                    hand_link:
-                                      hand_finger_tip_l_link:
+              sobit_light_1/plate_middle_link:
+                sobit_light_1/arm_platform_link:
+                  sobit_light_1/arm_base_link:
+                    sobit_light_1/arm_shoulder_roll_link:
+                      sobit_light_1/arm_shoulder_pitch_link:
+                        sobit_light_1/arm_elbow_pitch_link:
+                          sobit_light_1/arm_forearm_roll_link:
+                            sobit_light_1/arm_wrist_pitch_link:
+                              sobit_light_1/arm_wrist_roll_link:
+                                sobit_light_1/arm_hand_link:
+                                  sobit_light_1/hand_sub_l_link:
+                                    sobit_light_1/hand_link:
+                                      sobit_light_1/hand_finger_tip_l_link:
                                         {}
-                                  hand_sub_r_link:
-                                    hand_sub_link:
-                                      hand_finger_tip_r_link:
+                                  sobit_light_1/hand_sub_r_link:
+                                    sobit_light_1/hand_sub_link:
+                                      sobit_light_1/hand_finger_tip_r_link:
                                         {}
-                                hand_camera_base_link:
-                                  hand_camera_bottom_screw_frame:
-                                    hand_camera_link:
-                                      hand_camera_color_frame:
-                                        hand_camera_color_optical_frame:
+                                sobit_light_1/hand_camera_base_link:
+                                  sobit_light_1/hand_camera_bottom_screw_frame:
+                                    sobit_light_1/hand_camera_link:
+                                      sobit_light_1/hand_camera_color_frame:
+                                        sobit_light_1/hand_camera_color_optical_frame:
                                           {}
-                                      hand_camera_depth_frame:
-                                        hand_camera_depth_optical_frame:
+                                      sobit_light_1/hand_camera_depth_frame:
+                                        sobit_light_1/hand_camera_depth_optical_frame:
                                           {}
-                                      hand_camera_infra1_frame:
-                                        hand_camera_infra1_optical_frame:
+                                      sobit_light_1/hand_camera_infra1_frame:
+                                        sobit_light_1/hand_camera_infra1_optical_frame:
                                           {}
-                                      hand_camera_infra2_frame:
-                                        hand_camera_infra2_optical_frame:
+                                      sobit_light_1/hand_camera_infra2_frame:
+                                        sobit_light_1/hand_camera_infra2_optical_frame:
                                           {}
-                                hand_end_effector_link:
+                                sobit_light_1/hand_end_effector_link:
                                   {}
-                      arm_shoulder_pitch_sub_link:
+                      sobit_light_1/arm_shoulder_pitch_sub_link:
                         {}
-            tof_link:
+            sobit_light_1/tof_link:
               {}
       Update Interval: 0
       Value: true
   Enabled: true
   Global Options:
     Background Color: 225; 225; 225
-    Fixed Frame: base_footprint
+    Fixed Frame: sobit_light_1/base_footprint
     Frame Rate: 30
   Name: root
   Tools:
@@ -562,14 +561,14 @@ Visualization Manager:
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /initialpose
+        Value: /sobit_light_1/initialpose
     - Class: rviz_default_plugins/SetGoal
       Topic:
         Depth: 5
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /move_base_simple/goal
+        Value: /sobit_light_1/move_base_simple/goal
     - Class: rviz_default_plugins/PublishPoint
       Single click: true
       Topic:
@@ -577,7 +576,7 @@ Visualization Manager:
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /clicked_point
+        Value: /sobit_light_1/clicked_point
   Transformation:
     Current:
       Class: rviz_default_plugins/TF
@@ -585,7 +584,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/ThirdPersonFollower
-      Distance: 2.6829326152801514
+      Distance: 2.1496920585632324
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -611,7 +610,7 @@ Window Geometry:
   Height: 1016
   Hide Left Dock: false
   Hide Right Dock: true
-  QMainWindow State: 000000ff00000000fd0000000400000000000001ab000003a6fc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c0061007900730100000039000003a6000000c500fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261000000010000010f000003a6fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a005600690065007700730000000039000003a60000009d00fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000004420000003efc0100000002fb0000000800540069006d00650100000000000004420000000000000000fb0000000800540069006d0065010000000000000450000000000000000000000589000003a600000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000400000000000001ab000003a6fc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c0061007900730100000039000002f7000000c500fffffffb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000336000000a90000005c00fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261000000010000010f000003a6fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a005600690065007700730000000039000003a60000009d00fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000004420000003efc0100000002fb0000000800540069006d00650100000000000004420000000000000000fb0000000800540069006d0065010000000000000450000000000000000000000589000003a600000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Tool Properties:

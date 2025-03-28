@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- OpenManipulator X1000 (ROS Control: Transmission) -->
+<!-- OpenManipulator X1000 (ROS Control - Transmission) -->
 <robot name="arm_transmission" xmlns:xacro="http://ros.org/wiki/xacro">
   <xacro:macro name="arm_transmission" params="prefix">
 

@@ -30,8 +30,8 @@
     <li>
     　<a href="#launch-and-usage">Launch and Usage</a>
       <ul>
-        <li><a href="#if-only-using-mobile-mechanism">If only using mobile mechanism</a></li>
         <li><a href="#visualization-on-rviz<">Visualization on Rviz</a></li>
+        <li><a href="#visualization-on-rviz<">Run on GZ Sim</a></li>
       </ul>
     </li>
     <li>
@@ -69,7 +69,6 @@ This is a library to operate the [Kachaka](https://kachaka.life/home/)-integrate
 
 > [!WARNING]
 > If you have no previous experience controlling this robot, please have a senior colleague accompany you while you want to use this robot.
-> Please note that the use of SOBIT LIGHT requires the use of Docker.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -91,60 +90,77 @@ First, please set up the following environment before proceeding to the next ins
 | Ubuntu | 22.04 (Jammy Jellyfish) |
 | ROS    | Humble Hawksbill |
 | Python | 3.10 |
+| Docker | latest |
 
 > [!NOTE]
 > If you need to install `Ubuntu` or `ROS`, please check our [SOBITS Manual](https://github.com/TeamSOBITS/sobits_manual#%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6).
 
-<p align="right">(<a href="#readme-top">上に戻る</a>)</p>
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 ### Installation
 
-- What to do in the development environment where you want to use SOBIT LIGHT or in Docker
-    1. Go to the `src` folder of ROS.
-        ```sh
-        $ cd ~/colcon_ws/src/
-        ```
-    2. Clone this repository.
-        ```sh
-        $ git clone https://github.com/TeamSOBITS/sobit_light
-        ```
-    3. Navigate into the repository.
-        ```sh
-        $ cd sobit_light/
-        ```
-    4. Install the dependent packages.
-        ```sh
-        $ bash install.sh
-        ```
-    5. Compile the package.
-        ```sh
-        $ cd ~/colcon_ws/
-        $ colcon build --symlink-install
-        $ source ~/colcon_ws/install/setup.sh
-        ```
+**Development environment (local or Docker) where you will use SOBIT LIGHT:**
+1. Go to the `src` folder of ROS.
+    ```sh
+    $ cd ~/colcon_ws/src/
+    ```
 
-- What to do locally (after the second time, only 4 is needed)
-    1. Clone the Kachaka API
-        ```sh
-        $ cd
-        $ git clone https://github.com/TeamSOBITS/kachaka-api.git
-        ```
-    2. Check the Kachaka IP address
-        bringup the Kachaka.Please call out, “ねぇカチャカ，IPアドレスを教えて”\
-        IP address is read out from Kachaka.
-    3. Set up the Command
-        ```sh
-        $ echo 'alias kachaka="cd ~/kachaka-api/tools/ros2_bridge && ./start_bridge.sh "' >> ~/.bashrc
-        ```
-    4. Create the Docker container of Kachaka
-        ```
-        $ kachaka XXX.XXX.XX.XX
-        ```
-        ※ XXX.XXX.XX.XX is Kachaka IP address
+2. Clone this repository.
+    ```sh
+    $ git clone https://github.com/TeamSOBITS/sobit_light
+    ```
 
-> [!NOTE]
-> If the IP address of the container created here is changed, delete the Docker container and start from scratch.
+3. Navigate into the repository.
+    ```sh
+    $ cd sobit_light/
+    ```
+
+4. Install the dependent packages.
+    ```sh
+    $ bash install.sh
+    ```
+
+5. Compile the package.
+    ```sh
+    $ cd ~/colcon_ws/
+    $ colcon build --symlink-install
+    $ source ~/colcon_ws/install/setup.sh
+    ```
+
+**Local Enviroment-only:**
+1. Clone the Kachaka API
+    ```sh
+    $ cd
+    $ git clone https://github.com/TeamSOBITS/kachaka-api.git
+    ```
+
+2. Build the latest Docker Image.
+    ```sh
+    $ cd kachaka-api/
+    $ docker buildx build -t kachaka-api --target kachaka-grpc-ros2-bridge -f Dockerfile.ros2 . --build-arg BASE_ARCH=x86_64 --load
+    ```
+
+3. Let's configure `ROS_DOMAIN_IP`. In this case, we will set it to `10` as an example．
+    ```sh
+    $ echo 'export ROS_DOMAIN_IP=10"' >> ~/.bashrc
+    $ source ~/.bashrc
+    ```
+
+> [!IMPORTANT]
+> `ROS_DOMAIN_IP` must match with Local Environment and Development Environment to allow data communication within the Kachaka and the computer.
+
+4. Check the Kachaka IP address.
+    1. Ask the Kachaka directly, “ねぇカチャカ，IPアドレスを教えて (nee kachaka, IP address wo oshiete)”.\\
+    Then, IP address is read out from Kachaka,
+    2. or check it out from the Kachaka App.\\
+    Open the `Settings` tab in the Kachaka app, tap on `App Information` in the `Settings & Information` category, and check the `IP Address` field in the `Kachaka` category.
+
+5. Set up an alias to facilitate the connection with Kachaka and ROS Bridge.
+    ```sh
+    $ echo 'alias kachaka="bash ~/kachaka-api/tools/ros2_bridge/start_bridge.sh"' >> ~/.bashrc
+    $ source ~/.bashrc
+    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -152,10 +168,31 @@ First, please set up the following environment before proceeding to the next ins
 <!-- LAUNCH AND USAGE EXAMPLES -->
 ## Launch and Usage
 
-1. Execute the launch file [minimal.launch](sobit_light_bringup/launch/minimal.launch.py).
-    ```sh
-    $ roslaunch sobit_light_bringup minimal.launch.py
+1. Bring up the ROS Bridge to connect Kachaka in your **local environment**.
     ```
+    $ kachaka <Kachaka IP> sobit_light no
+    ```
+
+> [!NOTE]
+> By writing `sobit_light`, you are setting the `namespace` of the robot. Additionally, `no` stops Kachaka from publishing the robot_description. For more details, please refer to [Starting ros2_bridge using Docker](https://github.com/TeamSOBITS/kachaka-api/blob/main/docs/ROS2.md#%E3%83%96%E3%83%AA%E3%83%83%E3%82%B8%E3%81%AE%E8%B5%B7%E5%8B%95).
+
+> [!WARNING]
+> Please note that the Kachaka IP might have changed.
+
+2. Execute the launch file [minimal.launch](sobit_light_bringup/launch/minimal.launch.py) in your **development environment**.
+    ```sh
+   $ ros2 launch sobit_light_bringup real_minimal.launch.py
+    ```
+
+3. If you did not succeed in connecting to Kachaka, check the following points:
+
+    - Ensure the emergency stop button is not pressed.
+    - Verify the battery is sufficiently charged.
+    - Confirm the USB hub is connected to the computer.
+    - [TODO] Check if the Dynamixel Dongle is named `/dev/ttyUSB0`.
+    - - To verify, run `$ ls /dev` and if `/dev/ttyUSB1` is displayed, update the `usb_port` in [controllers.urdf.xacro](sobit_light_description/urdf/controllers.urdf.xacro).
+    - Ensure the Kachaka IP is correct.
+    - Verify that the `ROS_DOMAIN_ID` is the same on both the Kachaka and the development environment.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -169,6 +206,80 @@ $ ros2 launch sobit_light_description display.launch.py
 
 If it works correctly, Rviz will be displayed as follows.
 ![SOBIT LIGHT Display with Rviz](sobit_light/docs/img/sobit_light_rviz.png)
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### Run on GZ Sim
+
+SOBIT LIGHT has a simulation environment with Gazebo Fortress, allowing you to verify operations even without the actual machine.
+
+```sh
+$ ros2 launch sobit_light_bringup gz_minimal.launch.py
+```
+
+If it works correctly, the following Gazebo screen will be displayed.
+![SOBIT LIGHT Gazebo Fortress](sobit_light/docs/img/sobit_light_gz_sim.png)
+
+> [!WARNING]
+> Since it is equipped with sensors similar to the actual machine, the processing may become heavy depending on the computer. Please select only the necessary sensors in [gz_minimal.launch.py](sobit_light_bringup/launch/gz_minimal.launch.py).
+
+```python
+'enable_gz_front_cam_color' : 'True',
+'enable_gz_back_cam_color' : 'True',
+'enable_gz_head_cam_color' : 'True',
+'enable_gz_head_cam_depth' : 'True',
+'enable_gz_hand_cam_color' : 'True',
+'enable_gz_hand_cam_depth' : 'True',
+'enable_gz_lidar' : 'True',
+'enable_gz_imu' : 'True',
+```
+
+Additionally, multiple SOBIT LIGHTs can be spawned in the same simulation environment. To do this, configure [gz_minimal.launch.py](sobit_light_bringup/launch/gz_minimal.launch.py) to execute `gz_robot.launch.py` according to the number of robots.
+
+Please, make sure that `robot_name` must have a different value among robots.
+Moreover, you can change the spawining coordinates of the robot in `robot_coords_x`, `robot_coords_y` and `robot_coords_z`.
+
+Here is an example.
+
+一例はこちらとなります．
+```python
+...
+# Launch Robot No. 1
+IncludeLaunchDescription(
+    PythonLaunchDescriptionSource([
+        PathJoinSubstitution([
+            FindPackageShare('sobit_light_bringup'),
+            'launch',
+            'robot.launch.py'
+        ])
+    ]),
+    launch_arguments={
+        'robot_name': 'sobit_light_1',
+        'robot_coords_x': '0', # x 
+        'robot_coords_y': '0', # y
+        'robot_coords_Y': '0', # yaw
+        ...
+    }.items()
+),
+# Launch Robot No. 2
+IncludeLaunchDescription(
+    PythonLaunchDescriptionSource([
+        PathJoinSubstitution([
+            FindPackageShare('sobit_light_bringup'),
+            'launch',
+            'gz_robot.launch.py'
+        ])
+    ]),
+    launch_arguments={
+        'robot_name': 'sobit_light_2',
+        'robot_coords_x': '0', # x 
+        'robot_coords_y': '2', # y
+        'robot_coords_Y': '0', # yaw
+        ...
+    }.items()
+),
+...
+```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -188,136 +299,87 @@ This is a summary of information for moving the pan-tilt mechanism and manipulat
 
 #### Movement Methods
 
-1.  `moveToPose()` : Move it to a predetermined pose.
-    ```cpp
-    bool moveToPose(
-        const std::string& pose_name,               // Pose name
-        const double sec = 5.0                      // Moving duration [s]
-        bool is_sleep = true                        // Flag for sleep after movement
-    );
+1.  `move_to_pose` : Move it to a predetermined pose.
+    ```yaml
+    # MoveToPose.action
+    # Goal
+    string pose_name                                # Target pose name
+    builtin_interfaces/Duration time_allowance      # Target time length
+    ---
+    # Result
+    bool success                                    # Success / Failure
+    string message                                  # Result message
+    builtin_interfaces/Duration total_elapsed_time  # Finished time length
+    ---
+    # Feedback
+    string[] current_joint_names                    # Currently moving joint name(s)
+    float32[] current_joint_rad                     # Currently moving joint position(s)
+    # float32[] current_joint_vel                   # Currently moving joint velocity(s)
+    builtin_interfaces/Duration move_time           # Elapsed time length
     ```
 
 > [!NOTE]
-> Existing poses are found in [sobit_light_pose.yaml](sobit_light_library/config/sobit_light_pose.yaml). Please refer to [How to set new poses](#how-to-set-new-poses) for how to create poses.
+> Existing poses can be found in [pose_list.yaml](sobit_light_library/config/pose_list.yaml). Please refer to [How to set new poses](#how-to-set-new-poses) for how to create poses.
 
-2.  `moveAllJoint()` : Moves all joints to an arbitrary angle.
-    ```cpp
-    bool sobit::SobitProJointController::moveAllJoint (
-        const double arm_shoulder_tilt_joint,       // Moving Angle [rad]
-        const double arm_elbow_upper_tilt_joint,    // Moving Angle [rad]
-        const double arm_elbow_lower_tilt_joint,    // Moving Angle [rad]
-        const double arm_elbow_lower_pan_joint,     // Moving Angle [rad]
-        const double arm_wrist_tilt_joint,          // Moving Angle [rad]
-        const double hand_joint,                    // Moving Angle [rad]
-        const double head_pan_joint,                // Moving Angle [rad]
-        const double head_tilt_joint,               // Moving Angle [rad]
-        const double sec = 5.0,                     // Moving Angle [s]
-        bool is_sleep = true                        // Flag for sleep after movement
-    );
-    ```
-
-3.  `moveJoint()` : Moves a specified joint to an arbitrary angle.
-    ```cpp
-    bool sobit::SobitProJointController::moveJoint (
-        const Joint joint_num,                      // Joint Number (Defined)
-        const double rad,                           // Moving Angle [rad]
-        const double sec = 5.0,                     // Moving Duration [s]
-        bool is_sleep = true                        // Flag for sleep after movement
-    );
+2.  `move_joint` : Moves any joint to an arbitrary angle.
+    ```yaml
+    # MoveJoint.action
+    # Goal
+    string[] target_joint_names                     # Target joint name(s)
+    float64[] target_joint_rad                      # Target joint position(s)
+    builtin_interfaces/Duration time_allowance      # Target time length
+    ---
+    # Result
+    bool success                                    # Success / Failure
+    string message                                  # Result message
+    builtin_interfaces/Duration total_elapsed_time  # Finished time length
+    ---
+    # Feedback
+    string[] current_joint_names                    # Currently moving joint name(s)
+    float64[] current_joint_rad                     # Currently moving joint position(s)
+    # float32[] current_joint_vel                   # Currently moving joint velocity(s)
+    builtin_interfaces/Duration move_time           # Elapsed time length
     ```
 
 > [!NOTE]
-> `Joint Number` please check [Joints Name](#joints-name).
+> Please check the previously defined joint names in the [Joints Name](#joints-name) section.
  
-4.  `moveArm()` : Moves the robot arm joints to an arbitrary angle.
-    ```cpp
-    bool sobit::SobitProJointController::moveArm(
-        const double arm_shoulder_tilt_joint,       // Moving Angle [rad]
-        const double arm_elbow_upper_tilt_joint,    // Moving Angle [rad]
-        const double arm_elbow_lower_tilt_joint,    // Moving Angle [rad]
-        const double arm_elbow_lower_pan_joint,     // Moving Angle [rad]
-        const double arm_wrist_tilt_joint,          // Moving Angle [rad]
-        const double sec = 5.0,                     // Moving Duration [s]
-        bool is_sleep = true                        // Flag for sleep after movement
-    );
+3.  `move_hand_to_coord` : Move the hand to xyz coordinates (grasp mode).
+    ```yaml
+    # MoveHandToTargetCoord.action
+    # Goal
+    geometry_msgs/TransformStamped target_coord  # Target coordinates
+    builtin_interfaces/Duration time_allowance   # Target time length
+    ---
+    # Result
+    bool success                            # Success / Failure
+    string message                          # Result message
+    geometry_msgs/Point moved_linear        # Move linear to grasp
+    float32 moved_yaw                       # Move yaw to grasp
+    ---
+    # Feedback
+    string current_state                    # Current state message
+    float32 distance_to_target              # Distance to the target object
     ```
 
-5.  `moveHeadPanTilt()` : Moves the pan-tilt mechanism to an arbitrary angle.
-    ```cpp
-    bool sobit::SobitProJointController::moveHeadPanTilt(
-        const double head_camera_pan,               // Moving Angle [rad]
-        const double head_camera_tilt,              // Moving Angle [rad]
-        const double sec = 5.0,                     // Moving Duration [s]
-        bool is_sleep = true                        // Flag for sleep after movement
-    );
-    ```
-
-6.  `moveHandToTargetCoord()` : Move the hand to xyz coordinates (grasp mode).
-    ```cpp
-    bool sobit::SobitProJointController::moveHandToTargetCoord(
-        const double target_pos_x,                  // Grasp destination x [m]
-        const double target_pos_y,                  // Grasp destination y [m]
-        const double target_pos_z,                  // Grasp destination z [m]
-        const double shift_x,                       // Shift the x-axis [m]
-        const double shift_y,                       // Shift the y-axis [m]
-        const double shift_z                        // Shift the z-axis [m]
-        const double sec = 5.0,                     // Moving Duration [s]
-        bool is_sleep = true                        // Flag for sleep after movement
-    );
-    ```
-
-7.  `moveHandToTargetTF()` : Moves the hand to the tf name (grasp mode).
-    ```cpp
-    bool sobit::SobitProJointController::moveHandToTargetTF(
-        const std::string& target_name,             // Grasp Target tf name
-        const double shift_x,                       // Shift the x-axis [m]
-        const double shift_y,                       // Shift the y-axis [m]
-        const double shift_z                        // Shift the z-axis [m]
-        const double sec = 5.0,                     // Moving Duration [s]
-        bool is_sleep = true                        // Flag for sleep after movement
-    );
-    ```
-
-8.  `moveHandToPlaceCoord()` : Moves the hand to xyz coordinates (placement mode).
-    ```cpp
-    bool sobit::SobitProJointController::moveHandToPlaceCoord(
-        const double target_pos_x,                  // Place destination x [m]
-        const double target_pos_y,                  // Place destination y [m]
-        const double target_pos_z,                  // Place destination z [m]
-        const double shift_x,                       // Shift the x-axis [m]
-        const double shift_y,                       // Shift the y-axis [m]
-        const double shift_z                        // Shift the z-axis [m]
-        const double sec = 5.0,                     // Moving Duration [s]
-        bool is_sleep = true                        // Flag for sleep after movement
-    ); 
-    ```
-
-9.  `moveHandToPlaceTF()` : Moves the hand to the tf name (placement mode).
-    ```cpp
-    bool sobit::SobitProJointController::moveHandToPlaceTF(
-        const std::string& target_name,             // Place Target tf name
-        const double shift_x,                       // Shift the x-axis [m]
-        const double shift_y,                       // Shift the y-axis [m]
-        const double shift_z                        // Shift the z-axis [m]
-        const double sec = 5.0,                     // Moving Duration [s]
-        bool is_sleep = true                        // Flag for sleep after movement
-    );
-    ```
-
-10.  `graspDecision()` : Based on the hand current value , the grasp judgment is returned.
-    ```cpp
-    bool sobit::SobitProJointController::graspDecision(
-        const int min_curr = 300,                   // Minimum current value
-        const int max_curr = 1000                   // Maximum current value
-    );
-    ```
-
-11.  `placeDecision()` : Based on the hand current value , the place judgment is returned.
-    ```cpp
-    bool sobit::SobitProJointController::placeDecision(
-        const int min_curr = 500,                   // Minimum current value
-        const int max_curr = 1000                   // Maximum current value
-    );
+4.  `move_hand_to_tf` : Moves the hand to the tf name (grasp mode).
+    ```yaml
+    # MoveHandToTargetTF.action
+    # Goal
+    string target_frame                             # Target TF name
+    geometry_msgs/TransformStamped tf_differential  # Target TF-related shift
+    builtin_interfaces/Duration time_allowance      # Target time length
+    ---
+    # Result
+    bool success                               # Success / Failure
+    string message                             # Result message
+    geometry_msgs/Point moved_linear           # Move linear to grasp
+    float32 moved_yaw                          # Move yaw to grasp
+    ---
+    # Feedback
+    string current_state                       # Current state message
+    float32 distance_to_target                 # Distance to the target object
+    bool object_detected                       # Object Detection Flag
     ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -329,44 +391,46 @@ The joint names of SOBIT LIGHT and their constants are listed below.
 
 | Joint Number | Joint Name | Joint Constant Name |
 | :---: | --- | --- |
-| 0 | arm_shoulder_1_tilt_joint | ARM_SHOULDER_1_TILT_JOINT |
-| 1 | arm_shoulder_2_tilt_joint | ARM_SHOULDER_2_TILT_JOINT |
-| 2 | arm_elbow_upper_1_tilt_joint | ARM_ELBOW_UPPER_1_TILT_JOINT |
-| 3 | arm_elbow_upper_2_tilt_joint | ARM_ELBOW_UPPER_2_TILT_JOINT |
-| 4 | arm_elbow_lower_tilt_joint | ARM_ELBOW_LOWER_TILT_JOINT |
-| 5 | arm_elbow_lower_pan_joint | ARM_ELBOW_LOWER_PAN_JOINT |
-| 6 | arm_wrist_tilt_joint | ARM_WRIST_TILT_JOINT |
-| 7 | hand_joint | HAND_JOINT |
-| 8 | head_pan_joint | HEAD_PAN_JOINT |
-| 9 | head_tilt_joint | HEAD_TILT_JOINT |
+| 0 | arm_shoulder_roll_joint  | kArmShoulderRollJoint  |
+| 1 | arm_shoulder_pitch_joint | kArmShoulderPitchJoint |
+| 2 | arm_elbow_pitch_joint    | kArmElbowPitchJoint    |
+| 3 | arm_forearm_roll_joint   | kArmForearmRollJoint   |
+| 4 | arm_wrist_pitch_joint    | kArmWristPitchJoint    |
+| 5 | arm_wrist_roll_joint     | kArmWristRollJoint     |
+| 6 | hand_joint               | kHandJoint             |
+| 7 | head_yaw_joint           | kHeadYawJoint          |
+| 8 | head_pitch_joint         | kHeadPitchJoint        |
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 #### How to set new poses
 
-TODO!
-
-<!-- Poses can be added and edited in the file [sobit_light_pose.yaml](sobit_light_library/config/sobit_light_pose.yaml). The format is as follows:
+Poses can be added and edited in the file [pose_list.yaml](sobit_light_library/config/pose_list.yaml). The format is as follows:
 
 ```yaml
-sobit_light_pose:
-    - { 
-        pose_name: "pose_name",
-        arm_shoulder_1_tilt_joint: 1.57,
-        arm_elbow_upper_1_tilt_joint: 1.57,
-        arm_elbow_lower_tilt_joint: 0.0,
-        arm_elbow_lower_pan_joint: -1.57,
-        arm_wrist_tilt_joint: -1.57,
-        hand_joint: 0.0,
-        head_pan_joint: 0.0,
-        head_tilt_joint: 0.0
-    }
-    ...
-```   -->
+poses:
+    - initial_pose
+    - detecting_pose
+    - following_pose
 
-Set where Pose is defined in [sobit_light_joint_controller.py](/sobit_light_library_python/sobit_light_library_python/sobit_light_joint_controller.py).\
-Add the Pose name you wish to define to the poses.names list, and then set the angle of each joint in the poses.(Pose name) list.
+initial_pose:
+    arm_shoulder_roll  : 0.0
+    arm_shoulder_pitch : -1.5708
+    arm_elbow_pitch    : 0.0
+    arm_forearm_roll   : 0.0
+    arm_wrist_pitch    : 0.0
+    arm_wrist_roll     : 0.0
+    hand               : 0.0
+    head_yaw           : 0.0
+    head_pitch         : 0.0
+...
+```  
+
+Add the desired pose name to `poses`, and then set the angles for each joint under the pose name.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 
 ### Wheel Controller
 
@@ -377,24 +441,38 @@ This is a summary of information for moving the SOBIT LIGHT moving mechanism.
 
 #### Moving Methods
 
-1.  `controlWheelLinear()` : Perform translational motion (straight-line, diagonal, or lateral movement).
-    ```cpp
-    bool sobit::SobitProWheelController::controlWheelLinear (
-        const double distance_x,                    // Straight travel distance in x direction [m]
-        const double distance_y,                    // Straight travel distance in y direction [m]
-    )
+1.  `move_wheel_linear` : Perform translational motion (straight-line only).
+    ```yaml
+    # MoveWheelLinear.action
+    # Goal
+    geometry_msgs/Point target_point                # Target Translational Distance
+    builtin_interfaces/Duration time_allowance      # Target time length
+    ---
+    # Result
+    bool success                                    # Success / Failure
+    string message                                  # Result message
+    builtin_interfaces/Duration total_elapsed_time  # Finished time length
+    ---
+    # Feedback
+    geometry_msgs/Point current_point               # Currently displaced distance
+    builtin_interfaces/Duration move_time           # Currently elapsed time
     ```  
-2.  `controlWheelRotateRad()` : Perform rotational motion (method: Radian)
-    ```cpp
-    bool sobit::SobitProWheelController::controlWheelRotateRad (
-        const double angle_rad,                     // Center Rotation Angle [rad]
-    )
-    ```  
-3.  `controlWheelRotateDeg()` : Perform rotational motion (method: Degree)
-    ```cpp
-    bool sobit::SobitProWheelController::controlWheelRotateDeg ( 
-        const double angle_deg,                     // Center Rotation Angle (deg)
-    )
+
+2.  `move_wheel_rotate` : Perform rotational motion (units: Radian)
+    ```yaml
+    # MoveWheelRotate.action
+    # Goal
+    float32 target_yaw                              # Target Rotational Distance
+    builtin_interfaces/Duration time_allowance      # Target time length
+    ---
+    # Result
+    bool success                                    # Success / Failure
+    string message                                  # Result message
+    builtin_interfaces/Duration total_elapsed_time  # Finished time length
+    ---
+    # Feedback
+    geometry_msgs/Point current_point               # Currently displaced distance
+    builtin_interfaces/Duration move_time           # Currently elapsed time
     ```
 
 </details>
@@ -496,9 +574,10 @@ TBD
 <!-- MILESTONE -->
 ## Milestone
 
-- [o] OSS
+- [x] OSS
     - [x] Improved documentation
     - [x] Unified coding style
+- [x] Add support to Action Communication
 
 See the [open issues][issues-url] for a full list of proposed features (and known issues).
 

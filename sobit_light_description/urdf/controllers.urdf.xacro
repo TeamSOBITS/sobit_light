@@ -2,24 +2,25 @@
 <!-- SOBIT Light (Dynamixel Control) -->
 <robot name="sobit_light_controllers" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <xacro:macro name="controllers" params="name enable_gz:=False">
+  <xacro:macro name="controllers" params="name enable_gz:=False robot_name:=sobit_light">
 
-    <ros2_control name="${name}_arm" type="system">
+    <ros2_control name="${name}" type="system">
     <!-- <ros2_control name="joints_control" type="system"> -->
       <hardware>
         <xacro:if value="${$(arg enable_gz)}">
           <plugin>ign_ros2_control/IgnitionSystem</plugin>
-          <!-- <plugin>gazebo_ros2_control/GazeboHardware</plugin> -->
+          <!-- <plugin>gz_ros2_control/GazeboSimSystem</plugin> -->
         </xacro:if>
         <xacro:unless value="${$(arg enable_gz)}">
           <plugin>dynamixel_hardware/DynamixelHardware</plugin>
+          <!-- <param name="usb_port">/dev/ttyUSB-DXL_light</param> -->
           <param name="usb_port">/dev/ttyUSB0</param>
           <param name="baud_rate">1000000</param>
           <!-- <param name="use_dummy">true</param> -->
         </xacro:unless>
       </hardware>
 
-      <!-- Position Drive: Arm -->
+      <!-- Position Drive - Arm -->
       <joint name="arm_shoulder_roll_joint">
         <xacro:unless value="${$(arg enable_gz)}">
           <param name="id">1</param>
@@ -39,11 +40,18 @@
         <xacro:unless value="${$(arg enable_gz)}">
           <param name="id">2</param>
         </xacro:unless>
-        <!-- <param name="mimic">arm_shoulder_pitch_joint</param> -->
-        <!-- <param name="multiplier">-1</param> -->
-        <command_interface name="position"/>
+        <!-- <param name="mimic">arm_shoulder_pitch_joint</param>
+        <param name="multiplier">-1</param> -->
+        <!-- <command_interface name="position"/> -->
+        <command_interface name="position">
+          <param name="min">-1.570796327</param>
+          <param name="max">1.570796327</param>
+        </command_interface>
         <command_interface name="velocity"/>
-        <state_interface name="position"/>
+        <state_interface name="position">
+          <param name="initial_value">1.57</param>
+        </state_interface>
+        <!-- <state_interface name="position"/> -->
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
@@ -123,7 +131,7 @@
         <state_interface name="effort"/>
       </joint>
 
-      <!-- Position Drive: Hand -->
+      <!-- Position Drive - Hand -->
       <joint name="hand_joint">
         <xacro:unless value="${$(arg enable_gz)}">
           <param name="id">8</param>
@@ -148,7 +156,7 @@
         </joint>
       </xacro:if>
 
-      <!-- Position Drive: Head -->
+      <!-- Position Drive - Head -->
       <joint name="head_yaw_joint">
         <xacro:unless value="${$(arg enable_gz)}">
           <param name="id">11</param>
@@ -186,7 +194,7 @@
       <ros2_control name="${name}_base" type="system">
         <hardware>
           <plugin>ign_ros2_control/IgnitionSystem</plugin>
-          <!-- <plugin>gazebo_ros2_control/GazeboHardware</plugin> -->
+          <!-- <plugin>gz_ros2_control/GazeboSimSystem</plugin> -->
         </hardware>
 
         <joint name="base_l_drive_wheel_joint">
@@ -217,9 +225,11 @@
     <!-- Ignition ROS2 Control -->
     <xacro:if value="${$(arg enable_gz)}">
       <gazebo>
-        <!-- <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin"> -->
         <plugin filename="ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
-          <parameters>$(find sobit_light_control)/config/controllers_gz.yaml</parameters>
+          <ros>
+            <namespace>${robot_name}</namespace>
+          </ros>
+          <parameters>$(find sobit_light_control)/config/gz_controllers.yaml</parameters>
         </plugin>
       </gazebo>
     </xacro:if>

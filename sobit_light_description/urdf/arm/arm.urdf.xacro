@@ -4,14 +4,14 @@
   <xacro:include filename="$(find sobit_light_description)/urdf/arm/arm.transmission.xacro" />
   <xacro:macro name="arm" params="prefix parent">
 
-    <!-- Joint: Platform -->
+    <!-- Joint - Platform -->
     <joint name="${prefix}_platform_joint" type="fixed">
       <parent link="${parent}"/>
       <child link="${prefix}_platform_link"/>
       <origin xyz="0.122 0.0 0.0" rpy="0 0 0"/>
     </joint>
 
-    <!-- Link: Platform -->
+    <!-- Link - Platform -->
     <link name="${prefix}_platform_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
@@ -37,14 +37,14 @@
       </inertial>
     </link>
 
-    <!-- Joint: Base -->
+    <!-- Joint - Base -->
     <joint name="${prefix}_base_joint" type="fixed">
       <parent link="${prefix}_platform_link"/>
       <child link="${prefix}_base_link"/>
       <origin xyz="${-0.0112-0.016/2} 0.0 0.008" rpy="0 0 0"/>
     </joint>
 
-    <!-- Link: Base -->
+    <!-- Link - Base -->
     <link name="${prefix}_base_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
@@ -70,7 +70,7 @@
       </inertial>
     </link>
 
-    <!-- Act 1: Shoulder Roll -->
+    <!-- Act 1 - Shoulder Roll -->
     <joint name="${prefix}_shoulder_roll_joint" type="revolute">
       <parent link="${prefix}_base_link"/>
       <child link="${prefix}_shoulder_roll_link"/>
@@ -79,7 +79,7 @@
       <limit velocity="4.8" effort="25" lower="${-M_PI}" upper="${M_PI}" />
     </joint>
 
-    <!--  Act 1: Shoulder Roll -->
+    <!--  Act 1 - Shoulder Roll -->
     <link name="${prefix}_shoulder_roll_link">
       <visual>
         <origin xyz="0 0 0.0" rpy="0 0 ${M_PI/2}"/>
@@ -105,7 +105,7 @@
       </inertial>
     </link>
 
-    <!--  Act 2: Shoulder Pitch (right) -->
+    <!--  Act 2 - Shoulder Pitch (right) -->
     <joint name="${prefix}_shoulder_pitch_joint" type="revolute">
       <parent link="${prefix}_shoulder_roll_link"/>
       <child link="${prefix}_shoulder_pitch_link"/>
@@ -114,7 +114,7 @@
       <limit velocity="4.8" effort="25" lower="${-M_PI/2}" upper="${M_PI/2}" />
     </joint>
 
-    <!--  Act 2: Shoulder Pitch (right) -->
+    <!--  Act 2 - Shoulder Pitch (right) -->
     <link name="${prefix}_shoulder_pitch_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
@@ -140,33 +140,18 @@
       </inertial>
     </link>
 
-    <!--  Act 3: Shoulder Pitch (left) -->
+    <!--  Act 3 - Shoulder Pitch (left) -->
     <joint name="${prefix}_shoulder_pitch_sub_joint" type="revolute">
       <parent link="${prefix}_shoulder_roll_link"/>
       <child link="${prefix}_shoulder_pitch_sub_link"/>
       <origin xyz="0.0 0.0 0.05095" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
       <limit velocity="4.8" effort="25" lower="${-M_PI/2}" upper="${M_PI/2}" />
-      <mimic joint="${prefix}_shoulder_pitch_joint" multiplier="-1" offset="0"/>
+      <!-- <mimic joint="${prefix}_shoulder_pitch_joint" multiplier="-1" offset="0"/> -->
     </joint>
 
-    <!--  Act 3: Shoulder Pitch (left) -->
+    <!--  Act 3 - Shoulder Pitch (left) -->
     <link name="${prefix}_shoulder_pitch_sub_link">
-      <!-- <visual>
-        <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
-        <geometry>
-          <mesh filename="file://$(find sobit_light_description)/meshes/arm/omx1_link3.stl" scale="0.001 0.001 0.001"/>
-        </geometry>
-        <material name="black"/>
-      </visual> -->
-
-      <!-- <collision>
-        <origin xyz="${0.03575-0.0585/2} 0.0 ${-0.016+(0.14475+0.016)/2}" rpy="0 0 0"/>
-        <geometry>
-          <box size="0.0585 0.0440 ${0.14475+0.016}"/>
-        </geometry>
-      </collision> -->
-
       <inertial>
         <origin xyz="${0.03575-0.0585/2} 0.0 ${-0.016+(0.14475+0.016)/2}" rpy="0 0 0"/>
         <mass value="0.261" />
@@ -176,7 +161,7 @@
       </inertial>
     </link>
 
-    <!--  Act 4: Elbow Pitch -->
+    <!--  Act 4 - Elbow Pitch -->
     <joint name="${prefix}_elbow_pitch_joint" type="revolute">
       <parent link="${prefix}_shoulder_pitch_link"/>
       <child link="${prefix}_elbow_pitch_link"/>
@@ -185,7 +170,7 @@
       <limit velocity="4.8" effort="25" lower="${-M_PI/2}" upper="${M_PI/2}" />
     </joint>
 
-    <!--  Act 4: Elbow Pitch -->
+    <!--  Act 4 - Elbow Pitch -->
     <link name="${prefix}_elbow_pitch_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
@@ -211,7 +196,7 @@
       </inertial>
     </link>
 
-    <!--  Act 5: Forearm Roll -->
+    <!--  Act 5 - Forearm Roll -->
     <joint name="${prefix}_forearm_roll_joint" type="revolute">
       <parent link="${prefix}_elbow_pitch_link"/>
       <child link="${prefix}_forearm_roll_link"/>
@@ -220,7 +205,7 @@
       <limit velocity="4.8" effort="25" lower="${-M_PI}" upper="${M_PI}" />
     </joint>
 
-    <!--  Act 5: Forearm Roll -->
+    <!--  Act 5 - Forearm Roll -->
     <link name="${prefix}_forearm_roll_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
@@ -246,7 +231,7 @@
       </inertial>
     </link>
 
-    <!--  Act 6: Wrist Pitch -->
+    <!--  Act 6 - Wrist Pitch -->
     <joint name="${prefix}_wrist_pitch_joint" type="revolute">
       <parent link="${prefix}_forearm_roll_link"/>
       <child link="${prefix}_wrist_pitch_link"/>
@@ -255,7 +240,7 @@
       <limit velocity="4.8" effort="25" lower="${-M_PI/2}" upper="${M_PI/2}" />
     </joint>
 
-    <!--  Act 6: Wrist Pitch -->
+    <!--  Act 6 - Wrist Pitch -->
     <link name="${prefix}_wrist_pitch_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
@@ -281,7 +266,7 @@
       </inertial>
     </link>
 
-    <!--  Act 7: Wrist Roll -->
+    <!--  Act 7 - Wrist Roll -->
     <joint name="${prefix}_wrist_roll_joint" type="revolute">
       <parent link="${prefix}_wrist_pitch_link"/>
       <child link="${prefix}_wrist_roll_link"/>
@@ -290,7 +275,7 @@
       <limit velocity="4.8" effort="25" lower="${-M_PI}" upper="${M_PI}" />
     </joint>
 
-    <!--  Act 7: Wrist Roll -->
+    <!--  Act 7 - Wrist Roll -->
     <link name="${prefix}_wrist_roll_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
@@ -316,14 +301,14 @@
       </inertial>
     </link>
 
-    <!--  Joint: Hand Base -->
+    <!--  Joint - Hand Base -->
     <joint name="${prefix}_hand_joint" type="fixed">
       <parent link="${prefix}_wrist_roll_link"/>
       <child link="${prefix}_hand_link"/>
       <origin xyz="0.05 0.0 0.0" rpy="0 0 0"/>
     </joint>
 
-    <!--  Link: Hand Base -->
+    <!--  Link - Hand Base -->
     <link name="${prefix}_hand_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>

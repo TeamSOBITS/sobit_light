@@ -1,8 +1,13 @@
-sobit_light_pose_list:
+/**:
   ros__parameters:
+    poses:
+      - initial_pose
+      - detecting_pose
+      - following_pose
+
     initial_pose:
       arm_shoulder_roll  : 0.0
-      arm_shoulder_pitch : 1.5708
+      arm_shoulder_pitch : -1.5708
       arm_elbow_pitch    : 0.0
       arm_forearm_roll   : 0.0
       arm_wrist_pitch    : 0.0
@@ -13,7 +18,7 @@ sobit_light_pose_list:
 
     detecting_pose:
       arm_shoulder_roll  : 0.0
-      arm_shoulder_pitch : 1.5708
+      arm_shoulder_pitch : -1.5708
       arm_elbow_pitch    : 0.0
       arm_forearm_roll   : 0.0
       arm_wrist_pitch    : 0.0
@@ -24,7 +29,7 @@ sobit_light_pose_list:
 
     following_pose:
       arm_shoulder_roll  : 0.0
-      arm_shoulder_pitch : 1.5708
+      arm_shoulder_pitch : -1.5708
       arm_elbow_pitch    : 0.0
       arm_forearm_roll   : 0.0
       arm_wrist_pitch    : 0.0
