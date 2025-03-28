@@ -81,16 +81,16 @@ def launch_gz(context, *args, **kwargs):
     robot_description_config = xacro.process_file(
         robot_description,
         mappings={
-            'enable_gz' : enable_gz,
+            'enable_gz'  : enable_gz,
             'robot_name' : robot_name,
             'enable_gz_front_cam_color' : enable_gz_front_cam_color,
-            'enable_gz_back_cam_color' : enable_gz_back_cam_color,
-            'enable_gz_head_cam_color' : enable_gz_head_cam_color,
-            'enable_gz_head_cam_depth' : enable_gz_head_cam_depth,
-            'enable_gz_hand_cam_color' : enable_gz_hand_cam_color,
-            'enable_gz_hand_cam_depth' : enable_gz_hand_cam_depth,
+            'enable_gz_back_cam_color'  : enable_gz_back_cam_color,
+            'enable_gz_head_cam_color'  : enable_gz_head_cam_color,
+            'enable_gz_head_cam_depth'  : enable_gz_head_cam_depth,
+            'enable_gz_hand_cam_color'  : enable_gz_hand_cam_color,
+            'enable_gz_hand_cam_depth'  : enable_gz_hand_cam_depth,
             'enable_gz_lidar' : enable_gz_lidar,
-            'enable_gz_imu' : enable_gz_imu,
+            'enable_gz_imu'   : enable_gz_imu,
         })
     
     if enable_gz == 'False':
@@ -113,7 +113,7 @@ def launch_gz(context, *args, **kwargs):
         cmd=['ros2', 'control', 'load_controller',
             '--set-state', 'active',
             '--controller-manager', robot_name+'/controller_manager',
-            #  '--use-sim-time',
+            # '--use-sim-time',
             'joint_state_broadcaster'
         ],
         output='screen'
@@ -123,7 +123,7 @@ def launch_gz(context, *args, **kwargs):
         cmd=['ros2', 'control', 'load_controller',
             '--set-state', 'active',
             '--controller-manager', robot_name+'/controller_manager',
-            #  '--use-sim-time',
+            # '--use-sim-time',
             'joint_trajectory_controller'
         ],
         output='screen'
@@ -133,7 +133,7 @@ def launch_gz(context, *args, **kwargs):
         cmd=['ros2', 'control', 'load_controller',
             '--set-state', 'configured',
             '--controller-manager', robot_name+'/controller_manager',
-            #  '--use-sim-time',
+            # '--use-sim-time',
             'velocity_controller'
         ],
         output='screen'
@@ -143,7 +143,7 @@ def launch_gz(context, *args, **kwargs):
         cmd=['ros2', 'control', 'load_controller',
             '--set-state', 'active',
             '--controller-manager', robot_name+'/controller_manager',
-            #  '--use-sim-time',
+            # '--use-sim-time',
             'diff_controller'
         ],
         output='screen'
