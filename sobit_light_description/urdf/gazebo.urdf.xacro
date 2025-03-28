@@ -3,7 +3,7 @@
 <robot name="sobit_light_gazebo" xmlns:xacro="http://ros.org/wiki/xacro">
   <xacro:macro name="gazebo_sensors" params="robot_name enable_gz_front_cam_color:=True enable_gz_back_cam_color:=True enable_gz_head_cam_color:=True enable_gz_head_cam_depth:=True enable_gz_hand_cam_color:=True enable_gz_hand_cam_depth:=True enable_gz_lidar:=True enable_gz_imu:=True">
 
-    <!-- Sensor: Base Front Camera (Color) -->
+    <!-- Sensor - Base Front Camera (Color) -->
     <xacro:if value="${enable_gz_front_cam_color}">
       <gazebo reference="imu_link">
         <sensor name="imu_sensor" type="imu">
@@ -20,7 +20,7 @@
     </xacro:if>
 
 
-    <!-- [TODO] Sensor: Base Front Camera (Color) -->
+    <!-- [TODO] Sensor - Base Front Camera (Color) -->
     <!-- <gazebo reference="camera_front_link">
       <sensor name="base_front_camera_color" type="wideanglecamera">
         <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
@@ -58,7 +58,7 @@
       </sensor>
     </gazebo> -->
 
-    <!-- Sensor: Base Front Camera (Color) -->
+    <!-- Sensor - Base Front Camera (Color) -->
     <xacro:if value="${enable_gz_front_cam_color}">
       <gazebo reference="camera_front_link">
         <sensor name="base_front_camera_color" type="camera">
@@ -83,7 +83,7 @@
               <near>0.1</near>
               <far>10</far>
             </clip>
-            <!-- TODO: adjust noise -->
+            <!-- TODO - adjust noise -->
             <!-- <noise>
               <type>gaussian</type>
               <mean>0</mean>
@@ -94,7 +94,7 @@
       </gazebo>
     </xacro:if>
 
-    <!-- [TODO] Sensor: Base Back Camera (Color) -->
+    <!-- [TODO] Sensor - Base Back Camera (Color) -->
     <!-- <gazebo reference="camera_back_link">
       <sensor name="base_back_camera_color" type="wideanglecamera">
         <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
@@ -132,7 +132,7 @@
       </sensor>
     </gazebo> -->
 
-    <!-- Sensor: Base Back Camera (Color) -->
+    <!-- Sensor - Base Back Camera (Color) -->
     <xacro:if value="${enable_gz_back_cam_color}">
       <gazebo reference="camera_back_link">
         <sensor name="base_back_camera_color" type="camera">
@@ -157,7 +157,7 @@
               <near>0.1</near>
               <far>10</far>
             </clip>
-            <!-- TODO: adjust noise -->
+            <!-- TODO - adjust noise -->
             <!-- <noise>
               <type>gaussian</type>
               <mean>0</mean>
@@ -168,7 +168,7 @@
       </gazebo>
     </xacro:if>
 
-    <!-- Sensor: Head Camera (Color) -->
+    <!-- Sensor - Head Camera (Color) -->
     <xacro:if value="${enable_gz_head_cam_color}">
       <gazebo reference="head_camera_color_optical_frame">
         <sensor name="head_camera_color" type="camera">
@@ -193,7 +193,7 @@
               <near>0.1</near>
               <far>10</far>
             </clip>
-            <!-- TODO: adjust noise -->
+            <!-- TODO - adjust noise -->
             <!-- <noise>
               <type>gaussian</type>
               <mean>0</mean>
@@ -204,7 +204,7 @@
       </gazebo>
     </xacro:if>
 
-    <!-- Sensor: Head Camera (Depth) -->
+    <!-- Sensor - Head Camera (Depth) -->
     <xacro:if value="${enable_gz_head_cam_depth}">
       <gazebo reference="head_camera_depth_optical_frame">
         <sensor name="head_camera_depth" type="depth">
@@ -228,7 +228,7 @@
               <near>0.1</near>
               <far>10</far>
             </clip>
-            <!-- TODO: adjust noise -->
+            <!-- TODO - adjust noise -->
             <!-- <noise>
               <type>gaussian</type>
               <mean>0</mean>
@@ -239,7 +239,7 @@
       </gazebo>
     </xacro:if>
 
-    <!-- Sensor: Hand Camera (Color) -->
+    <!-- Sensor - Hand Camera (Color) -->
     <xacro:if value="${enable_gz_hand_cam_color}">
       <gazebo reference="hand_camera_color_optical_frame">
         <sensor name="hand_camera_color" type="camera">
@@ -264,7 +264,7 @@
               <near>0.1</near>
               <far>10</far>
             </clip>
-            <!-- TODO: adjust noise -->
+            <!-- TODO - adjust noise -->
             <!-- <noise>
               <type>gaussian</type>
               <mean>0</mean>
@@ -275,7 +275,7 @@
       </gazebo>
     </xacro:if>
 
-    <!-- Sensor: Hand Camera (Depth) -->
+    <!-- Sensor - Hand Camera (Depth) -->
     <xacro:if value="${enable_gz_hand_cam_depth}">
       <gazebo reference="hand_camera_depth_optical_frame">
         <sensor name="hand_camera_depth" type="depth">
@@ -299,7 +299,7 @@
               <near>0.1</near>
               <far>10</far>
             </clip>
-            <!-- TODO: adjust noise -->
+            <!-- TODO - adjust noise -->
             <!-- <noise>
               <type>gaussian</type>
               <mean>0</mean>
@@ -310,7 +310,7 @@
       </gazebo>
     </xacro:if>
 
-    <!-- Sensor: LiDAR -->
+    <!-- Sensor - LiDAR -->
     <xacro:if value="${enable_gz_lidar}">
       <gazebo reference="sim_laser_frame">
         <sensor name="lidar" type="gpu_lidar">
@@ -350,22 +350,8 @@
     </xacro:if>
 
 
-    <!-- Publish Pose -->
-    <!-- <gazebo>
-      <plugin
-          filename="gz-sim-pose-publisher-system"
-          name="gz::sim::systems::PosePublisher">
-        <publish_link_pose>true</publish_link_pose>
-        <publish_collision_pose>false</publish_collision_pose>
-        <publish_visual_pose>false</publish_visual_pose>
-        <publish_sensor_pose>false</publish_sensor_pose>
-        <publish_nested_model_pose>true</publish_nested_model_pose>
-      </plugin>
-    </gazebo> -->
-
     <!-- Publish Joint States -->
     <gazebo>
-      <!-- <plugin filename="ignition-gazebo-joint-state-publisher-system" name="ignition::gazebo::systems::JointStatePublisher"> -->
       <plugin filename="gz-sim-joint-state-publisher-system" name="gz::sim::systems::JointStatePublisher">
         <topic>${robot_name}/joint_states</topic>
       </plugin>

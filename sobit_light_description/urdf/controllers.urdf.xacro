@@ -9,7 +9,7 @@
       <hardware>
         <xacro:if value="${$(arg enable_gz)}">
           <plugin>ign_ros2_control/IgnitionSystem</plugin>
-          <!-- <plugin>gazebo_ros2_control/GazeboHardware</plugin> -->
+          <!-- <plugin>gz_ros2_control/GazeboSimSystem</plugin> -->
         </xacro:if>
         <xacro:unless value="${$(arg enable_gz)}">
           <plugin>dynamixel_hardware/DynamixelHardware</plugin>
@@ -20,7 +20,7 @@
         </xacro:unless>
       </hardware>
 
-      <!-- Position Drive: Arm -->
+      <!-- Position Drive - Arm -->
       <joint name="arm_shoulder_roll_joint">
         <xacro:unless value="${$(arg enable_gz)}">
           <param name="id">1</param>
@@ -131,7 +131,7 @@
         <state_interface name="effort"/>
       </joint>
 
-      <!-- Position Drive: Hand -->
+      <!-- Position Drive - Hand -->
       <joint name="hand_joint">
         <xacro:unless value="${$(arg enable_gz)}">
           <param name="id">8</param>
@@ -156,7 +156,7 @@
         </joint>
       </xacro:if>
 
-      <!-- Position Drive: Head -->
+      <!-- Position Drive - Head -->
       <joint name="head_yaw_joint">
         <xacro:unless value="${$(arg enable_gz)}">
           <param name="id">11</param>
@@ -194,7 +194,7 @@
       <ros2_control name="${name}_base" type="system">
         <hardware>
           <plugin>ign_ros2_control/IgnitionSystem</plugin>
-          <!-- <plugin>gazebo_ros2_control/GazeboHardware</plugin> -->
+          <!-- <plugin>gz_ros2_control/GazeboSimSystem</plugin> -->
         </hardware>
 
         <joint name="base_l_drive_wheel_joint">
@@ -225,7 +225,6 @@
     <!-- Ignition ROS2 Control -->
     <xacro:if value="${$(arg enable_gz)}">
       <gazebo>
-        <!-- <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin"> -->
         <plugin filename="ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
           <ros>
             <namespace>${robot_name}</namespace>

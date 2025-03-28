@@ -3,14 +3,14 @@
   <xacro:include filename="$(find sobit_light_description)/urdf/hand/hand.transmission.xacro" />
   <xacro:macro name="hand" params="prefix_hand prefix_finger parent">
 
-    <!--  Joint: Hand left sub -->
+    <!--  Joint - Hand left sub -->
     <joint name="${prefix_hand}_sub_l_joint" type="fixed">
       <parent link="${parent}"/>
       <child link="${prefix_hand}_sub_l_link"/>
       <origin xyz="0.009 0.015 0.0" rpy="0 0 0"/>
     </joint>
 
-    <!--  Link: Hand left sub -->
+    <!--  Link - Hand left sub -->
     <link name="${prefix_hand}_sub_l_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
@@ -36,14 +36,14 @@
       </inertial>
     </link>
 
-    <!--  Joint: Hand right sub -->
+    <!--  Joint - Hand right sub -->
     <joint name="${prefix_hand}_sub_r_joint" type="fixed">
       <parent link="${parent}"/>
       <child link="${prefix_hand}_sub_r_link"/>
       <origin xyz="0.009 -0.015 0.0" rpy="0 0 0"/>
     </joint>
 
-    <!--  Link: Hand right sub -->
+    <!--  Link - Hand right sub -->
     <link name="${prefix_hand}_sub_r_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 ${M_PI} ${M_PI/2}"/>
@@ -69,7 +69,7 @@
       </inertial>
     </link>
 
-    <!--  Act 8: Hand Finger (left) -->
+    <!--  Act 8 - Hand Finger (left) -->
     <joint name="${prefix_hand}_joint" type="prismatic">
       <parent link="${prefix_hand}_sub_l_link"/>
       <child link="${prefix_hand}_link"/>
@@ -78,7 +78,7 @@
       <limit velocity="4.8" effort="1" lower="0.0" upper="${0.02675-0.055}" />
     </joint>
 
-    <!--  Act 8: Hand Finger (left) -->
+    <!--  Act 8 - Hand Finger (left) -->
     <link name="${prefix_hand}_link">
       <visual>
         <origin xyz="0.0 0.0 0" rpy="0 0 ${M_PI/2}"/>
@@ -104,7 +104,7 @@
       </inertial>
     </link>
 
-    <!--  Act 8: Hand Finger (right) -->
+    <!--  Act 8 - Hand Finger (right) -->
     <joint name="${prefix_hand}_sub_joint" type="prismatic">
       <parent link="${prefix_hand}_sub_r_link"/>
       <child link="${prefix_hand}_sub_link"/>
@@ -114,7 +114,7 @@
       <mimic joint="${prefix_hand}_joint" multiplier="-1"/>
     </joint>
 
-    <!--  Act 8: Hand Finger (right) -->
+    <!--  Act 8 - Hand Finger (right) -->
     <link name="${prefix_hand}_sub_link">
       <visual>
         <origin xyz="0.0 -0.0 0" rpy="0 ${M_PI} ${M_PI/2}"/>
@@ -140,14 +140,14 @@
       </inertial>
     </link>
 
-    <!--  Joint: Hand Tip Left -->
+    <!--  Joint - Hand Tip Left -->
     <joint name="${prefix_hand}_${prefix_finger}_tip_l_joint" type="fixed">
       <parent link="${prefix_hand}_link"/>
       <child link="${prefix_hand}_${prefix_finger}_tip_l_link"/>
       <origin xyz="${0.0345+0.0375/2} -0.0145 0.0" rpy="0 0 0"/>
     </joint>
 
-    <!--  Link: Hand Tip Left -->
+    <!--  Link - Hand Tip Left -->
     <link name="${prefix_hand}_${prefix_finger}_tip_l_link">
       <visual>
         <origin xyz="0.0 -0.0 0" rpy="0 0 ${M_PI/2}"/>
@@ -173,14 +173,14 @@
       </inertial>
     </link>
 
-    <!--  Joint: Hand Tip Right -->
+    <!--  Joint - Hand Tip Right -->
     <joint name="${prefix_hand}_${prefix_finger}_tip_r_joint" type="fixed">
       <parent link="${prefix_hand}_sub_link"/>
       <child link="${prefix_hand}_${prefix_finger}_tip_r_link"/>
       <origin xyz="${0.0345+0.0375/2} 0.0145 0.0" rpy="0 0 0"/>
     </joint>
 
-    <!--  Link: Hand Tip Right -->
+    <!--  Link - Hand Tip Right -->
     <link name="${prefix_hand}_${prefix_finger}_tip_r_link">
       <visual>
         <origin xyz="0.0 -0.0 0" rpy="0 ${M_PI} ${M_PI/2}"/>
@@ -206,14 +206,14 @@
       </inertial>
     </link>
 
-    <!-- Joint: End Effector -->
+    <!-- Joint - End Effector -->
     <joint name="end_effector_joint" type="fixed">
       <origin xyz="${0.0935+0.0375/2} 0.0 0.0" rpy="0 0 0"/>
       <parent link="arm_wrist_roll_link"/>
       <child link="${prefix_hand}_end_effector_link"/>
     </joint>
 
-    <!-- Link: End Effector -->
+    <!-- Link - End Effector -->
     <link name="${prefix_hand}_end_effector_link">
       <visual>
         <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
