@@ -5,46 +5,35 @@
       - detecting_pose
       - following_pose
 
-    pose_check_door:
+    initial_pose:
       arm_shoulder_roll  : 0.0
-      arm_shoulder_pitch : -1.8
-      arm_elbow_pitch    : 1.5
+      arm_shoulder_pitch : -1.5708
+      arm_elbow_pitch    : 0.0
       arm_forearm_roll   : 0.0
-      arm_wrist_pitch    : 0.5
+      arm_wrist_pitch    : 0.0
       arm_wrist_roll     : 0.0
       hand               : 0.0
       head_yaw           : 0.0
-      head_pitch         : 0.7
+      head_pitch         : 0.0
 
-    pose_check_sign:
+    detecting_pose:
       arm_shoulder_roll  : 0.0
-      arm_shoulder_pitch : -1.8
-      arm_elbow_pitch    : 1.5
+      arm_shoulder_pitch : -1.5708
+      arm_elbow_pitch    : 0.0
       arm_forearm_roll   : 0.0
-      arm_wrist_pitch    : 0.5
+      arm_wrist_pitch    : 0.0
       arm_wrist_roll     : 0.0
       hand               : 0.0
       head_yaw           : 0.0
-      head_pitch         : 0.3
+      head_pitch         : 0.0
 
-    pose_detect_customer:
+    following_pose:
       arm_shoulder_roll  : 0.0
-      arm_shoulder_pitch : -1.8
-      arm_elbow_pitch    : 1.5
+      arm_shoulder_pitch : -1.5708
+      arm_elbow_pitch    : 0.0
       arm_forearm_roll   : 0.0
-      arm_wrist_pitch    : 0.5
+      arm_wrist_pitch    : 0.0
       arm_wrist_roll     : 0.0
       hand               : 0.0
       head_yaw           : 0.0
-      head_pitch         : -0.1
-
-    pose_find_object:
-      arm_shoulder_roll  : 0.0
-      arm_shoulder_pitch : -1.8
-      arm_elbow_pitch    : 1.5
-      arm_forearm_roll   : 0.0
-      arm_wrist_pitch    : 0.5
-      arm_wrist_roll     : 0.0
-      hand               : 0.0
-      head_yaw           : 0.0
-      head_pitch         : 0.2
+      head_pitch         : 0.0

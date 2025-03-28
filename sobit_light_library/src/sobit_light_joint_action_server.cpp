@@ -712,7 +712,6 @@ void JointActionServer::exe_move_hand_to_tf(
   // Publish the result
   result->success = true;
   result->message = "Goal has been succeeded";
-  // shigemori
   // result->moved_linear = ...; // TODO: Calculate the linear distance
   // result->moved_yaw = ...; // TODO: Calculate the angular distance
 
@@ -814,7 +813,7 @@ bool JointActionServer::inverse_kinematics(
   std::vector<double> &target_joint_rad)
 {
   bool is_success = false;
-  // base_footprint_zからarm_hand_link_z基準に
+  // arm_hand_link_z as reference point for ik
   double goal_position_pos_z = goal_coord.transform.translation.z - 0.3;
 
   if (goal_position_pos_z > kArmLength) {
@@ -822,7 +821,7 @@ bool JointActionServer::inverse_kinematics(
     return is_success;
   }
   
-  // 地面と接触しないように微調整しています
+  // Add 0.05 [m] to avoid collision with ground
   else if (goal_position_pos_z < -(kArmLower + kArmGripper) + 0.05) {
     RCLCPP_WARN(this->get_logger(), "The target position is too low (%f[m] < min:%f[m])", goal_position_pos_z, -(kArmLower + kArmGripper));
     return is_success;
