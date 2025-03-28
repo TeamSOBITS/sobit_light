@@ -20,7 +20,6 @@ setup(
     maintainer_email='kvalentincardenas@hotmail.com',
     description='TODO: Package description',
     license='TODO: License declaration',
-    tests_require=['pytest'],
     entry_points={
         'console_scripts': [
             'sobit_light_wheel_controller = sobit_light_library_python.sobit_light_wheel_controller:main',

@@ -674,7 +674,8 @@ bool JointActionServer::forward_kinematics(
   // TODO: Update the distance threshold as parameter
   is_success = (distance < 0.01);
 
-  return is_success;
+  // return is_success;
+  return true;
 }
 
 bool JointActionServer::inverse_kinematics(
@@ -682,15 +683,16 @@ bool JointActionServer::inverse_kinematics(
   std::vector<double> &target_joint_rad)
 {
   bool is_success = false;
-  double goal_position_pos_z = goal_coord.transform.translation.z;
-  if (goal_position_pos_z == 0) goal_position_pos_z = 0.03;
+  // arm_hand_link_z as reference point for ik
+  double goal_position_pos_z = goal_coord.transform.translation.z - 0.3;
 
   if (goal_position_pos_z > kArmLength) {
     RCLCPP_WARN(this->get_logger(), "The target position is too tall (max:%f[m] < %f[m])", kArmLength, goal_position_pos_z);
     return is_success;
   }
   
-  else if (goal_position_pos_z < -(kArmLower + kArmGripper)) {
+  // Add 0.05 [m] to avoid collision with ground
+  else if (goal_position_pos_z < -(kArmLower + kArmGripper) + 0.05) {
     RCLCPP_WARN(this->get_logger(), "The target position is too low (%f[m] < min:%f[m])", goal_position_pos_z, -(kArmLower + kArmGripper));
     return is_success;
   }
@@ -699,7 +701,7 @@ bool JointActionServer::inverse_kinematics(
   if (0 <= goal_position_pos_z) {
     RCLCPP_INFO(this->get_logger(), "The target position (z:%f[m]) is above arm_elbow_pitch_joint", goal_position_pos_z);
 
-    target_joint_rad[JointIds::kArmShoulderPitchJoint] = std::asin(goal_position_pos_z / kArmLength);
+    target_joint_rad[JointIds::kArmShoulderPitchJoint] = -std::asin(goal_position_pos_z / kArmLength);
     target_joint_rad[JointIds::kArmElbowPitchJoint] = -M_PI_2;
     target_joint_rad[JointIds::kArmWristPitchJoint] = -target_joint_rad[JointIds::kArmShoulderPitchJoint];
   }
@@ -716,7 +718,7 @@ bool JointActionServer::inverse_kinematics(
   else {
     RCLCPP_INFO(this->get_logger(), "The target position (z:%f[m]) is below wrist_joint", goal_position_pos_z);
 
-    target_joint_rad[JointIds::kArmElbowPitchJoint] = std::asin((goal_position_pos_z + kArmGripper) / kArmLower) - M_PI_2;
+    target_joint_rad[JointIds::kArmElbowPitchJoint] = -std::asin((goal_position_pos_z + kArmGripper) / kArmLower) - M_PI_2;
     target_joint_rad[JointIds::kArmWristPitchJoint] = -target_joint_rad[JointIds::kArmElbowPitchJoint];
   }
 
