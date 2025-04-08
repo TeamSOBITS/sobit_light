@@ -510,7 +510,7 @@ void JointActionServer::get_pos_to_tf(
   // Transform the target frame based on the differential tf
   try {
     goal_coord_shift = tf_buffer_->lookupTransform(
-      request->target_frame, request->tf_differential.header.frame_id,
+      request->tf_differential.header.frame_id, request->target_frame,
       tf2::TimePointZero);
 
     geometry_msgs::msg::Vector3 euler_target, euler_shift;
