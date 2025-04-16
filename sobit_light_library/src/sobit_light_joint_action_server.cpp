@@ -478,7 +478,29 @@ void JointActionServer::get_pos_to_coord(
   //   goal_coord_check = forward_kinematics(target_joint_rad, goal_coord);
   // } while (goal_coord_check != goal_coord);
 
+  // Calculate the target yaw angle
+  double target_yaw = std::atan2(
+      goal_coord.transform.translation.y,goal_coord.transform.translation.x);
+
+  // Create a quaternion from Euler angles (roll, pitch, yaw)
+  tf2::Quaternion tf2_quat;
+  tf2_quat.setRPY(0.0, 0.0, target_yaw);
+  geometry_msgs::msg::Quaternion quat_msg = tf2::toMsg(tf2_quat);
+
+
+  // Calculate the target linear distance
+  geometry_msgs::msg::TransformStamped test_goal_coord = forward_kinematics(target_joint_rad);
+
+  double target_linear = std::sqrt(
+      std::pow(goal_coord.transform.translation.x, 2) +
+      std::pow(goal_coord.transform.translation.y, 2)) -
+      std::sqrt(
+          std::pow(test_goal_coord.transform.translation.x, 2) +
+          std::pow(test_goal_coord.transform.translation.y, 2));
+
   // Set the response
+  response->move_pose.position.x = target_linear ;
+  response->move_pose.orientation = quat_msg;
   response->target_joint_names = kArmJointNames;
   response->target_joint_rad = target_joint_rad;
   response->success = true;
@@ -580,7 +602,29 @@ void JointActionServer::get_pos_to_tf(
   //   goal_coord_check = forward_kinematics(target_joint_rad, goal_coord);
   // } while (goal_coord_check != goal_coord);
 
+  // Calculate the target yaw angle
+  double target_yaw = std::atan2(
+    goal_coord.transform.translation.y,goal_coord.transform.translation.x);
+
+  // Create a quaternion from Euler angles (roll, pitch, yaw)
+  tf2::Quaternion tf2_quat;
+  tf2_quat.setRPY(0.0, 0.0, target_yaw);
+  geometry_msgs::msg::Quaternion quat_msg = tf2::toMsg(tf2_quat);
+
+
+  // Calculate the target linear distance
+  geometry_msgs::msg::TransformStamped test_goal_coord = forward_kinematics(target_joint_rad);
+
+  double target_linear = std::sqrt(
+      std::pow(goal_coord.transform.translation.x, 2) +
+      std::pow(goal_coord.transform.translation.y, 2)) -
+      std::sqrt(
+          std::pow(test_goal_coord.transform.translation.x, 2) +
+          std::pow(test_goal_coord.transform.translation.y, 2));
+
   // Set the response
+  response->move_pose.position.x = target_linear ;
+  response->move_pose.orientation = quat_msg;
   response->target_joint_names = kArmJointNames;
   response->target_joint_rad = target_joint_rad;
   response->success = true;
@@ -643,15 +687,25 @@ trajectory_msgs::msg::JointTrajectory JointActionServer::set_joints(
   return joint_trajectory;
 }
 
-bool JointActionServer::forward_kinematics(
-  const std::vector<double> &target_joint_rad,
-  const geometry_msgs::msg::TransformStamped &goal_coord,
-  double &distance)
+geometry_msgs::msg::TransformStamped JointActionServer::forward_kinematics(
+  const std::vector<double> &target_joint_rad)
 {
   bool is_success = false;
   geometry_msgs::msg::TransformStamped final_coord;
 
-  final_coord.transform.translation.x = kArmUpper * std::cos(
+  // TODO: Obtain the arm_base position from the TF, instead of hardcoding
+  double x = 172.75 / 1000.0;
+  double y = 0.0;
+  double z = 312.87864 / 1000.0;
+
+  final_coord.transform.translation.x = x;
+  final_coord.transform.translation.y = y;
+  final_coord.transform.translation.z = z;
+
+  double kArmUpperDiag = std::sqrt(
+      std::pow(kArmUpper, 2) + std::pow(kShoElbDiff, 2));
+
+  final_coord.transform.translation.x += kArmUpperDiag * std::cos(
       target_joint_rad[JointIds::kArmShoulderPitchJoint]);
   final_coord.transform.translation.x += kArmLower * std::cos(
       target_joint_rad[JointIds::kArmShoulderPitchJoint] + 
@@ -661,21 +715,7 @@ bool JointActionServer::forward_kinematics(
       target_joint_rad[JointIds::kArmElbowPitchJoint] + M_PI_2 +
       target_joint_rad[JointIds::kArmWristPitchJoint]);
 
-  final_coord.transform.rotation.z = std::atan2(
-      goal_coord.transform.translation.y,
-      goal_coord.transform.translation.x);
-
-  // Check the distance between the target and final coords
-  distance = std::sqrt(
-      std::pow(goal_coord.transform.translation.x - final_coord.transform.translation.x, 2) +
-      std::pow(goal_coord.transform.translation.y - final_coord.transform.translation.y, 2) +
-      std::pow(goal_coord.transform.translation.z - final_coord.transform.translation.z, 2));
-  
-  // TODO: Update the distance threshold as parameter
-  is_success = (distance < 0.01);
-
-  // return is_success;
-  return true;
+  return final_coord;
 }
 
 bool JointActionServer::inverse_kinematics(
@@ -722,11 +762,9 @@ bool JointActionServer::inverse_kinematics(
     target_joint_rad[JointIds::kArmWristPitchJoint] = -target_joint_rad[JointIds::kArmElbowPitchJoint];
   }
 
-  // Check the result with forward kinematics
-  double distance = 0.0;
-  is_success = forward_kinematics(target_joint_rad, goal_coord, distance);
+  // TODO: Check the result with forward kinematics
 
-  return is_success;
+  return true;
 }
 
 } // namespace sobit_light

@@ -82,10 +82,8 @@ public:
     const geometry_msgs::msg::Quaternion& quat);
   geometry_msgs::msg::Quaternion get_quat_from_euler(
     const geometry_msgs::msg::Vector3& rpy);
-  bool forward_kinematics(
-    const std::vector<double> &target_joint_rad,
-    const geometry_msgs::msg::TransformStamped &goal_coord,
-    double &distance);
+  geometry_msgs::msg::TransformStamped forward_kinematics(
+    const std::vector<double> &target_joint_rad);
   bool inverse_kinematics(
     const geometry_msgs::msg::TransformStamped &goal_coord,
     std::vector<double> &target_joint_rad);
@@ -121,6 +119,8 @@ private:
   static constexpr double kArmLower   = 0.124;
   static constexpr double kArmGripper = 0.064 + 0.11225;
   static constexpr double kArmLength  = kArmUpper + kArmLower;
+
+  static constexpr double kShoElbDiff = 0.022; // axis shift from shoulder to elbow
 
   std::vector<PoseParams> poses_;
   std::map<std::string, double> init_joint_state_;
