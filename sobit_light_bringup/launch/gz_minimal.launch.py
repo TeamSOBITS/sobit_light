@@ -12,7 +12,7 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     robot_name = 'sobit_light'
-    robot_id = 1
+    robot_id = 0
 
     gz_bridge_node = Node(
         package='ros_gz_bridge',
