@@ -27,11 +27,11 @@ WheelActionServer::WheelActionServer(const rclcpp::NodeOptions & options = rclcp
 
 
   this->pub_cmd_vel_ = this->create_publisher<geometry_msgs::msg::Twist>(
-      // "diff_controller/cmd_vel_unstamped", qos_profile);
-      "manual_control/cmd_vel", qos_profile);
+      "diff_controller/cmd_vel_unstamped", qos_profile);
+      // "manual_control/cmd_vel", qos_profile);
   this->sub_odom_ = this->create_subscription<nav_msgs::msg::Odometry>(
-      // "diff_controller/odom", qos_profile, std::bind(&WheelActionServer::odom_callback, this, std::placeholders::_1));
-      "odometry/odometry", qos_profile, std::bind(&WheelActionServer::odom_callback, this, std::placeholders::_1));
+      "diff_controller/odom", qos_profile, std::bind(&WheelActionServer::odom_callback, this, std::placeholders::_1));
+      // "odometry/odometry", qos_profile, std::bind(&WheelActionServer::odom_callback, this, std::placeholders::_1));
 
 
   RCLCPP_INFO(this->get_logger(), "WheelActionServer has been initialized.");
@@ -129,10 +129,6 @@ void WheelActionServer::exe_move_wheel_linear(
   geometry_msgs::msg::Twist init_vel, out_vel;
   double goal_dist = std::abs(goal->target_point.x);
   double curt_dist=0.0;
-  double integral_dist = 0.0;
-  double prev_error_dist = goal_dist - curt_dist;
-
-  this->init_odom_ = this->curt_odom_;
 
   // Set PID parameters
   // TODO: Get the parameters from the action goal
@@ -141,32 +137,51 @@ void WheelActionServer::exe_move_wheel_linear(
   ki = 0.4;
   kd = 0.8;
 
+  double vel_diff = kp * goal_dist;
+
   // Set current time
   auto start_time = this->now();
-  // rclcpp::Rate loop_rate(10);
+  this->init_odom_ = this->curt_odom_;
+  rclcpp::Rate loop_rate(10);
 
   while (curt_dist < goal_dist) {
     // Check if the goal has been canceled
     if (goal_handle->is_canceling()) {
       RCLCPP_INFO(this->get_logger(), "Goal has been canceled");
+      this->pub_cmd_vel_->publish(init_vel);
+
       result->success = false;
       result->message = "[FAIL] Goal has been canceled";
+      result->total_elapsed_time.sec = (this->now() - start_time).seconds();
+      result->total_elapsed_time.nanosec = (this->now() - start_time).nanoseconds() % int(10E9);
+
       goal_handle->canceled(result);
       return;
     }
 
-    // Calculate the current distance
-    double error_dist = goal_dist - curt_dist;
-    integral_dist += error_dist;
-    double derivative_dist = error_dist - prev_error_dist;
+    // Get the current time
+    auto curt_time = this->now();
+
+    // Calculate the elapsed time
+    rclcpp::Duration dur_elapsed_time = curt_time - start_time;
+    double elapsed_time = dur_elapsed_time.nanoseconds() / 1e9; 
+
+    double vel_linear = 0.0;
+
+    // PID
+    if ( goal_dist <= 0.1 ) {
+      vel_linear =  kp * ( goal_dist + 0.001 - curt_dist )
+                  - kd * vel_diff
+                  + ki * ( goal_dist + 0.001 - curt_dist ) * std::pow( elapsed_time, 2 );
+    } else {
+      vel_linear =  kp * ( goal_dist + 0.001 - curt_dist )
+                  - kd * vel_diff
+                  + ki * ( goal_dist + 0.001 - curt_dist ) * std::pow( elapsed_time, 2 ) / 8.0 * goal_dist;
+    }
 
     // Calculate the output velocity
-    out_vel.linear.x = 
-        kp * error_dist +
-        ki * integral_dist +
-        kd * derivative_dist;
-
-    out_vel.linear.x = goal->target_point.x > 0 ? out_vel.linear.x : -out_vel.linear.x;
+    out_vel.linear.x = vel_linear * std::cos(std::atan2(goal->target_point.y, goal->target_point.x));
+    out_vel.linear.y = vel_linear * std::sin(std::atan2(goal->target_point.y, goal->target_point.x));
 
     // Publish the velocity
     this->pub_cmd_vel_->publish(out_vel);
@@ -175,20 +190,21 @@ void WheelActionServer::exe_move_wheel_linear(
     curt_dist = std::sqrt(
         std::pow(this->curt_odom_.pose.pose.position.x - this->init_odom_.pose.pose.position.x, 2) +
         std::pow(this->curt_odom_.pose.pose.position.y - this->init_odom_.pose.pose.position.y, 2));
-    prev_error_dist = error_dist;
 
     // Publish feedback
     auto feedback = std::make_shared<MoveWheelLinear::Feedback>();
-    feedback->current_point.x = curt_dist;
+    feedback->current_point.x = curt_dist * std::cos(std::atan2(goal->target_point.y, goal->target_point.x));
+    feedback->current_point.y = curt_dist * std::sin(std::atan2(goal->target_point.y, goal->target_point.x));
     feedback->move_time.sec = (this->now() - start_time).seconds();
     feedback->move_time.nanosec = (this->now() - start_time).nanoseconds() % int(10E9);
     goal_handle->publish_feedback(feedback);
 
-    // Spin the node
-    // rclcpp::spin_some(this->get_node_base_interface());
-    // loop_rate.sleep();
-
+    // 
+    loop_rate.sleep();
   }
+
+  // Stop the robot
+  this->pub_cmd_vel_->publish(init_vel);
 
   // Publish the result
   result->success = true;
