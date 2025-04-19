@@ -331,16 +331,16 @@ void WheelActionServer::exe_move_wheel_rotate(
 void WheelActionServer::odom_callback(
   const nav_msgs::msg::Odometry::SharedPtr msg)
 {
-  RCLCPP_INFO(this->get_logger(), "Received odometry");
+  RCLCPP_DEBUG(this->get_logger(), "Received odometry");
 
   this->curt_odom_ = *msg;
 
-  RCLCPP_INFO(this->get_logger(), "Current odometry:");
-  RCLCPP_INFO(this->get_logger(), "  Position: (%f, %f, %f)",
+  RCLCPP_DEBUG(this->get_logger(), "Current odometry:");
+  RCLCPP_DEBUG(this->get_logger(), "  Position: (%f, %f, %f)",
       this->curt_odom_.pose.pose.position.x,
       this->curt_odom_.pose.pose.position.y,
       this->curt_odom_.pose.pose.position.z);
-  RCLCPP_INFO(this->get_logger(), "  Orientation: (%f, %f, %f, %f)",
+      RCLCPP_DEBUG(this->get_logger(), "  Orientation: (%f, %f, %f, %f)",
       this->curt_odom_.pose.pose.orientation.x,
       this->curt_odom_.pose.pose.orientation.y,
       this->curt_odom_.pose.pose.orientation.z,
