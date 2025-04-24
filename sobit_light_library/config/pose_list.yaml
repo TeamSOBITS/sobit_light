@@ -36,10 +36,10 @@
 
     initial_moving_pose:
       arm_shoulder_roll  : 0.0
-      arm_shoulder_pitch : -1.5708
-      arm_elbow_pitch    : 0.0
+      arm_shoulder_pitch : -2.2
+      arm_elbow_pitch    : -1.5708
       arm_forearm_roll   : 0.0
-      arm_wrist_pitch    : 0.0
+      arm_wrist_pitch    : 2.15
       arm_wrist_roll     : 0.0
       hand               : 0.0
       head_yaw           : 0.0
