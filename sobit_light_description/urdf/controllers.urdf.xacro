@@ -135,6 +135,7 @@
       <joint name="hand_joint">
         <xacro:unless value="${$(arg enable_gz)}">
           <param name="id">8</param>
+          <param name="mode">curr_pos</param>
         </xacro:unless>
         <command_interface name="position"/>
         <command_interface name="velocity"/>
