@@ -9,7 +9,8 @@
       - grasp_raise_hand_pose
       - pass_pose
       - pre_table_grasp_pose
-      - pre_table_release_pose
+      - pre_table_put_pose
+      - pre_shelf_put_pose
       - grasp_detecting_pose
 
     shutdown_pose:
@@ -74,7 +75,7 @@
       arm_forearm_roll   : 0.0
       arm_wrist_pitch    : 0.0
       arm_wrist_roll     : 0.0
-      hand               : 1.3
+      hand               : 2.5
       head_yaw           : 0.0
       head_pitch         : 0.523
       
@@ -85,7 +86,7 @@
       arm_forearm_roll   : 0.0
       arm_wrist_pitch    : 0.0
       arm_wrist_roll     : 0.0
-      hand               : 1.5708
+      hand               : 2.5
       head_yaw           : 0.0
       head_pitch         : 0.0
 
@@ -100,14 +101,25 @@
       head_yaw           : 0.0
       head_pitch         : 0.0
 
-    pre_table_release_pose:
+    pre_table_put_pose:
       arm_shoulder_roll  : 0.0
       arm_shoulder_pitch : -2.2
       arm_elbow_pitch    : -1.04
       arm_forearm_roll   : 0.0
       arm_wrist_pitch    : 0.0
       arm_wrist_roll     : 0.0
-      hand               : 1.5708
+      hand               : 2.5
+      head_yaw           : 0.0
+      head_pitch         : 0.0
+
+    pre_shelf_put_pose:
+      arm_shoulder_roll  : 0.0
+      arm_shoulder_pitch : -1.047
+      arm_elbow_pitch    : -0.583
+      arm_forearm_roll   : 0.0
+      arm_wrist_pitch    : 1.5708
+      arm_wrist_roll     : 0.0
+      hand               : 2.5
       head_yaw           : 0.0
       head_pitch         : 0.0
 
@@ -118,6 +130,6 @@
       arm_forearm_roll   : 1.5708
       arm_wrist_pitch    : 1.5708
       arm_wrist_roll     : 0.0
-      hand               : 1.3
+      hand               : 2.5
       head_yaw           : 0.0
       head_pitch         : 0.523
