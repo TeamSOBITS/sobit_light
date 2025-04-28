@@ -99,7 +99,7 @@
       arm_wrist_roll     : 0.0
       hand               : 0.0
       head_yaw           : 0.0
-      head_pitch         : 0.0
+      head_pitch         : 0.523
 
     pre_table_put_pose:
       arm_shoulder_roll  : 0.0
