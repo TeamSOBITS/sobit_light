@@ -55,7 +55,7 @@
       arm_wrist_roll     : 0.0
       hand               : 0.0
       head_yaw           : 0.0
-      head_pitch         : 0.523
+      head_pitch         : 0.6108
 
     following_pose:
       arm_shoulder_roll  : 0.0
@@ -110,15 +110,15 @@
       arm_wrist_roll     : 0.0
       hand               : 2.5
       head_yaw           : 0.0
-      head_pitch         : 0.0
+      head_pitch         : 0.523
 
     pre_shelf_put_pose:
       arm_shoulder_roll  : 0.0
       arm_shoulder_pitch : -1.047
-      arm_elbow_pitch    : -0.583
+      arm_elbow_pitch    : 0.423
       arm_forearm_roll   : 0.0
-      arm_wrist_pitch    : 1.5708
-      arm_wrist_roll     : 0.0
+      arm_wrist_pitch    : -1.047
+      arm_wrist_roll     : -1.5708
       hand               : 2.5
       head_yaw           : 0.0
       head_pitch         : 0.0
@@ -133,3 +133,5 @@
       hand               : 2.5
       head_yaw           : 0.0
       head_pitch         : 0.523
+
+
