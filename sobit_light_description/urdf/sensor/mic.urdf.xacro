@@ -33,10 +33,5 @@
       </inertial>
     </link>
 
-
-    <!-- <gazebo reference="${prefix}_base_link">
-      <material>Gazebo/Black</material>
-    </gazebo> -->
-
   </xacro:macro>
 </robot>

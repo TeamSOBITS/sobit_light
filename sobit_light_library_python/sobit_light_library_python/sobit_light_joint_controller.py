@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from math import (sin, cos, asin, acos, atan2, sqrt, pow, pi, radians, degrees)
-import asyncio
 
 import rclpy
 from rclpy.node import Node
@@ -17,14 +16,10 @@ from control_msgs.action import FollowJointTrajectory
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 from sensor_msgs.msg import JointState
 from tf2_geometry_msgs import TransformStamped, do_transform_point
-from geometry_msgs.msg import Point, PointStamped
+from geometry_msgs.msg import Point
 from sobits_interfaces.msg import CurrentStateArray, CurrentState
 
-import sys
-import os
-sys.path.append(os.path.join("/home/sobits/colcon_ws/src/sobit_light/sobit_light_library_python/sobit_light_library_python"))
-
-from sobit_light_wheel_controller import WheelController
+from sobit_light_library_python.sobit_light_wheel_controller import WheelController
 
 from rclpy.parameter import Parameter
 from rclpy.parameter import ParameterType as Type
@@ -63,7 +58,7 @@ kJointNames = [
 
 
 class JointController(Node):
-  def __init__(self, node_name='sobit_light_joint_controller'):
+  def __init__(self, node_name='joint_controller_library'):
     super().__init__(node_name)
     self.declare_parameters(
         namespace='',
@@ -93,31 +88,31 @@ class JointController(Node):
 
     # self.pub_arm_control_ = self.create_publisher(
     #     JointTrajectory,
-    #     '/arm_trajectory_controller/command',
+    #     'arm_trajectory_controller/command',
     #     qos_profile=qos_policy,
     # )
 
     # self.pub_head_control_ = self.create_publisher(
     #     JointTrajectory,
-    #     '/head_trajectory_controller/command',
+    #     'head_trajectory_controller/command',
     #     qos_profile=qos_policy,
     # )
 
     self.action_joints_client_ = ActionClient(
         self,
         FollowJointTrajectory,
-        '/joint_trajectory_controller/follow_joint_trajectory',
+        'joint_trajectory_controller/follow_joint_trajectory',
     )
 
     self.pub_joints_control_ = self.create_publisher(
         JointState,
-        '/joint_states',
+        'joint_states',
         qos_profile=qos_policy,
     )
 
     self.sub_joint_state_ = self.create_subscription(
         JointState,
-        '/joint_states',
+        'joint_states',
         self.callbackJointState,
         qos_profile=qos_policy,
     )
@@ -533,7 +528,8 @@ class JointController(Node):
     while transformStamped.transform.translation.z == 0:
       try:
         rclpy.spin_once(self)
-        transformStamped = self.tf_buffer_.lookup_transform('base_link', target_name, rclpy.time.Time())
+        # TODO: change robot name based on namespace
+        transformStamped = self.tf_buffer_.lookup_transform('sobit_pro_1/base_link', target_name, rclpy.time.Time())
       except TransformException as e:
         self.get_logger().error('Failed to get transform: %s' % e)
 

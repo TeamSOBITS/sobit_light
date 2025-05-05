@@ -7,9 +7,14 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
+
+find_package(xacro REQUIRED)
+find_package(rviz2 REQUIRED)
+
+find_package(robot_state_publisher REQUIRED)
+# find_package(joint_state_publisher REQUIRED)
+# find_package(joint_state_publisher_gui REQUIRED)
+
 
 install(DIRECTORY
   launch
@@ -17,7 +22,7 @@ install(DIRECTORY
   rviz
   urdf
   robots
-  DESTINATION share/${PROJECT_NAME}
+  worlds DESTINATION share/${PROJECT_NAME}
 )
 
 if(BUILD_TESTING)

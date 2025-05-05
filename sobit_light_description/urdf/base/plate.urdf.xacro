@@ -17,12 +17,12 @@
         <material name="black" />
       </visual>
 
-      <collision>
+      <!-- <collision>
         <origin xyz="0.0 0.0 -${0.1408/2}" rpy="0 0 0"/>
         <geometry>
           <box size="0.320 0.375 0.1408"/>
         </geometry>
-      </collision>
+      </collision> -->
 
       <inertial>
         <origin xyz="0.0 0.0 -${0.1408/2}" rpy="0 0 0"/>
