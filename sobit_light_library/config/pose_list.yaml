@@ -16,9 +16,9 @@
     shutdown_pose:
       arm_shoulder_roll  : 0.0
       arm_shoulder_pitch : -2.45
-      arm_elbow_pitch    : 0.44
+      arm_elbow_pitch    : 1.3
       arm_forearm_roll   : 0.0
-      arm_wrist_pitch    : 2.15
+      arm_wrist_pitch    : 1.04
       arm_wrist_roll     : 0.0
       hand               : 0.0
       head_yaw           : 0.0
@@ -55,7 +55,7 @@
       arm_wrist_roll     : 0.0
       hand               : 0.0
       head_yaw           : 0.0
-      head_pitch         : 0.6108
+      head_pitch         : 0.523
     
     grasp_raise_hand_pose:
       arm_shoulder_roll  : 0.0
@@ -103,10 +103,10 @@
     
     shelf_put_first_pose:
       arm_shoulder_roll  : 0.0
-      arm_shoulder_pitch : -1.5708
+      arm_shoulder_pitch : -1.92
       arm_elbow_pitch    : 0.0
       arm_forearm_roll   : 0.0
-      arm_wrist_pitch    : 1.5708
+      arm_wrist_pitch    : 1.92
       arm_wrist_roll     : 0.0
       hand               : 2.5
       head_yaw           : 0.0
@@ -114,24 +114,24 @@
 
     shelf_put_second_pose:
       arm_shoulder_roll  : 0.0
-      arm_shoulder_pitch : -0.2
-      arm_elbow_pitch    : -1.5708
-      arm_forearm_roll   : 0.0
-      arm_wrist_pitch    : 0.0
-      arm_wrist_roll     : -1.0
-      hand               : 2.5
-      head_yaw           : 0.0
-      head_pitch         : 0.0
-
-    shelf_put_third_pose:
-      arm_shoulder_roll  : 0.0
       arm_shoulder_pitch : -1.047
       arm_elbow_pitch    : 0.423
       arm_forearm_roll   : 0.0
       arm_wrist_pitch    : -1.047
-      arm_wrist_roll     : -1.5708
+      arm_wrist_roll     : -1.05
       hand               : 2.5
       head_yaw           : 0.0
-      head_pitch         : 0.0
+      head_pitch         : 0.523
+
+    shelf_put_third_pose:
+      arm_shoulder_roll  : 0.0
+      arm_shoulder_pitch : -0.35
+      arm_elbow_pitch    : -0.69
+      arm_forearm_roll   : 0.0
+      arm_wrist_pitch    : -0.52
+      arm_wrist_roll     : 0.0
+      hand               : 2.5
+      head_yaw           : 0.0
+      head_pitch         : 0.523
 
 
