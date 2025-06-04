@@ -750,7 +750,7 @@ bool JointActionServer::inverse_kinematics(
   else if (-kArmLower <= goal_position_pos_z) {
     RCLCPP_INFO(this->get_logger(), "The target position (z:%f[m]) is below arm_elbow_pitch_join and above wrist_joint", goal_position_pos_z);
 
-    target_joint_rad[JointIds::kArmElbowPitchJoint] = std::asin(goal_position_pos_z / kArmLower);
+    target_joint_rad[JointIds::kArmElbowPitchJoint] = -std::acos(goal_position_pos_z / kArmLower);
     target_joint_rad[JointIds::kArmWristPitchJoint] = -(M_PI_2 + target_joint_rad[JointIds::kArmElbowPitchJoint]);
   }
 
@@ -758,7 +758,7 @@ bool JointActionServer::inverse_kinematics(
   else {
     RCLCPP_INFO(this->get_logger(), "The target position (z:%f[m]) is below wrist_joint", goal_position_pos_z);
 
-    target_joint_rad[JointIds::kArmElbowPitchJoint] = -std::asin((goal_position_pos_z + kArmGripper) / kArmLower) - M_PI_2;
+    target_joint_rad[JointIds::kArmElbowPitchJoint] = -std::acos((goal_position_pos_z + kArmGripper) / kArmLower);
     target_joint_rad[JointIds::kArmWristPitchJoint] = -target_joint_rad[JointIds::kArmElbowPitchJoint];
   }
 
