@@ -725,7 +725,6 @@ bool JointActionServer::inverse_kinematics(
   bool is_success = false;
   // arm_hand_link_z as reference point for ik
   double goal_position_pos_z = goal_coord.transform.translation.z - 0.3;
-
   if (goal_position_pos_z > kArmLength) {
     RCLCPP_WARN(this->get_logger(), "The target position is too tall (max:%f[m] < %f[m])", kArmLength, goal_position_pos_z);
     return is_success;
@@ -750,7 +749,7 @@ bool JointActionServer::inverse_kinematics(
   else if (-kArmLower <= goal_position_pos_z) {
     RCLCPP_INFO(this->get_logger(), "The target position (z:%f[m]) is below arm_elbow_pitch_join and above wrist_joint", goal_position_pos_z);
 
-    target_joint_rad[JointIds::kArmElbowPitchJoint] = -std::acos(goal_position_pos_z / kArmLower);
+    target_joint_rad[JointIds::kArmElbowPitchJoint] = -std::acos(abs(goal_position_pos_z) / kArmLower);
     target_joint_rad[JointIds::kArmWristPitchJoint] = -(M_PI_2 + target_joint_rad[JointIds::kArmElbowPitchJoint]);
   }
 
@@ -758,7 +757,7 @@ bool JointActionServer::inverse_kinematics(
   else {
     RCLCPP_INFO(this->get_logger(), "The target position (z:%f[m]) is below wrist_joint", goal_position_pos_z);
 
-    target_joint_rad[JointIds::kArmElbowPitchJoint] = -std::acos((goal_position_pos_z + kArmGripper) / kArmLower);
+    target_joint_rad[JointIds::kArmElbowPitchJoint] = -std::acos(abs(goal_position_pos_z + kArmGripper) / kArmLower);
     target_joint_rad[JointIds::kArmWristPitchJoint] = -target_joint_rad[JointIds::kArmElbowPitchJoint];
   }
 
