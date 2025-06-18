@@ -27,6 +27,8 @@
 
 /**/joint_trajectory_controller:
   ros__parameters:
+  
+    allow_partial_joints_goal: true
     joints:
       - arm_shoulder_roll_joint
       - arm_shoulder_pitch_joint

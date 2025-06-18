@@ -19,6 +19,9 @@ setup(
     license='Apache-2.0',
     entry_points={
         'console_scripts': [
+            'keyboard_nav_teleop = sobit_light_teleop.keyboard_nav_teleop:main',
+            'keyboard_arm_teleop = sobit_light_teleop.keyboard_arm_teleop:main',
+            'keyboard_all_teleop = sobit_light_teleop.keyboard_all_teleop:main'
         ],
     },
 )
