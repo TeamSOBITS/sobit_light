@@ -21,7 +21,9 @@ setup(
         'console_scripts': [
             'keyboard_nav_teleop = sobit_light_teleop.keyboard_nav_teleop:main',
             'keyboard_arm_teleop = sobit_light_teleop.keyboard_arm_teleop:main',
-            'keyboard_all_teleop = sobit_light_teleop.keyboard_all_teleop:main'
+            'keyboard_all_teleop = sobit_light_teleop.keyboard_all_teleop:main',
+            'vr_teleop_1 = sobit_light_teleop.vr_teleop_1:main',
+            'vr_teleop_2 = sobit_light_teleop.vr_teleop_2:main',
         ],
     },
 )
