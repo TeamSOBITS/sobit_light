@@ -141,14 +141,14 @@ First, please set up the following environment before proceeding to the next ins
     $ docker buildx build -t kachaka-api --target kachaka-grpc-ros2-bridge -f Dockerfile.ros2 . --build-arg BASE_ARCH=x86_64 --load
     ```
 
-3. Let's configure `ROS_DOMAIN_IP`. In this case, we will set it to `10` as an example．
+3. Let's configure `ROS_DOMAIN_ID`. In this case, we will set it to `10` as an example．
     ```sh
-    $ echo 'export ROS_DOMAIN_IP=10"' >> ~/.bashrc
+    $ echo 'export ROS_DOMAIN_ID=10' >> ~/.bashrc
     $ source ~/.bashrc
     ```
 
 > [!IMPORTANT]
-> `ROS_DOMAIN_IP` must match with Local Environment and Development Environment to allow data communication within the Kachaka and the computer.
+> `ROS_DOMAIN_ID` must match with Local Environment and Development Environment to allow data communication within the Kachaka and the computer.
 
 4. Check the Kachaka IP address.
     1. Ask the Kachaka directly, “ねぇカチャカ，IPアドレスを教えて (nee kachaka, IP address wo oshiete)”.\\

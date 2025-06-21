@@ -141,14 +141,14 @@ Preferred Robotics(c)が開発した[カチャカ](https://kachaka.life/home/)�
     $ docker buildx build -t kachaka-api --target kachaka-grpc-ros2-bridge -f Dockerfile.ros2 . --build-arg BASE_ARCH=x86_64 --load
     ```
 
-3. `ROS_DOMAIN_IP`を設定します．一例として，`10`とします．
+3. `ROS_DOMAIN_ID`を設定します．一例として，`10`とします．
     ```sh
-    $ echo 'export ROS_DOMAIN_IP=10"' >> ~/.bashrc
+    $ echo 'export ROS_DOMAIN_ID=10' >> ~/.bashrc
     $ source ~/.bashrc
     ```
 
 > [!IMPORTANT]
-> データ通信のため，ローカル環境以外(Docker等)でROSのワークスペースを使用している場合は，`ROS_DOMAIN_IP`の値を統一させる必要があることを忘れないでください．
+> データ通信のため，ローカル環境以外(Docker等)でROSのワークスペースを使用している場合は，`ROS_DOMAIN_ID`の値を統一させる必要があることを忘れないでください．
 
 4. KachakaのIPアドレスを確認します．
     1. One way is to ask Kachaka by saying, "Hey Kachaka, what's your IP address?"    
