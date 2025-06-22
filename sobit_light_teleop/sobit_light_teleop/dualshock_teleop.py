@@ -6,6 +6,7 @@ from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Joy,JointState
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy
+
 class DualShock_Teleop(Node):
     def __init__(self):
         super().__init__('dualshock_teleop')
@@ -84,6 +85,7 @@ class DualShock_Teleop(Node):
         self.current_buttons = [0] *13
         self.move_flag = False
         self.home_pose_sent = False
+        self.chage_pose_sent = False
         self.grip_flag = False
         self.grip_pressed = False
         self.send_home_pose()
@@ -127,6 +129,7 @@ class DualShock_Teleop(Node):
 
         buttons = self.current_buttons
         axes = self.current_axes
+        accelrate = 1.5 #R2push rate
 
         # Base
         if buttons[self.BUTTONS["L1"]] == 1:
@@ -149,6 +152,10 @@ class DualShock_Teleop(Node):
         if buttons[self.BUTTONS["SQUARE"]] == 1:
             degree_x = self.check_sign(axes[self.AXES["LEFT_X"]])
             degree_y = self.check_sign(axes[self.AXES["LEFT_Y"]])
+            
+            if axes[self.AXES["R2"]] == -1:
+                degree_x = degree_x*accelrate
+                degree_y = degree_y*accelrate
             if degree_x != 0:
                 self.move_joint(self.JOINTS["Shoulder_Roll"], -degree_x*0.4)
             if degree_y != 0:
@@ -158,6 +165,9 @@ class DualShock_Teleop(Node):
         if buttons[self.BUTTONS["CROSS"]] == 1:
             degree_x = self.check_sign(axes[self.AXES["LEFT_X"]])
             degree_y = self.check_sign(axes[self.AXES["LEFT_Y"]])
+            if axes[self.AXES["R2"]] == -1:
+                degree_x = degree_x*accelrate
+                degree_y = degree_y*accelrate
             if degree_x != 0:
                 self.move_joint(self.JOINTS["Forearm_Roll"], -degree_x*0.4)
             if degree_y != 0:
@@ -167,6 +177,9 @@ class DualShock_Teleop(Node):
         if buttons[self.BUTTONS["CIRCLE"]] == 1:
             degree_x = self.check_sign(axes[self.AXES["LEFT_X"]])
             degree_y = self.check_sign(axes[self.AXES["LEFT_Y"]])
+            if axes[self.AXES["R2"]] == -1:
+                degree_x = degree_x*accelrate
+                degree_y = degree_y*accelrate
             if degree_x != 0:
                 self.move_joint(self.JOINTS["Wrist_Roll"], -degree_x*0.4)
             if degree_y != 0:
@@ -182,14 +195,14 @@ class DualShock_Teleop(Node):
             self.grip_pressed = True
 
             if not self.grip_flag:
-                self.grip(-2.20)  # 閉じる
+                self.grip(-2.20)  
             else:
-                self.grip(0.00)   # 開く
+                self.grip(0.00) 
 
-            self.grip_flag = not self.grip_flag  # トグル切り替え
+            self.grip_flag = not self.grip_flag 
 
         elif buttons[self.BUTTONS["R_STICK"]] == 0:
-            self.grip_pressed = False  # 離されたらリセット
+            self.grip_pressed = False
 
         #initial_pose
         if buttons[self.BUTTONS["OPTION"]] == 1 and not self.home_pose_sent:
@@ -197,7 +210,6 @@ class DualShock_Teleop(Node):
             self.home_pose_sent = True
         elif buttons[self.BUTTONS["OPTION"]] == 0:
             self.home_pose_sent = False
-
 
             
     def move_base(self, stick_x, stick_y, l2):
@@ -257,7 +269,7 @@ class DualShock_Teleop(Node):
             self.JOINTS['Forearm_Roll']: 0.0,
             self.JOINTS['Wrist_Pitch']: 0.0,
             self.JOINTS['Wrist_Roll']: 0.0,
-            self.JOINTS['Hand']: 0.0,
+            # self.JOINTS['Hand']: 0.0,
             self.JOINTS['Head_Yaw']: 0.0,
             self.JOINTS['Head_Pitch']: 0.0,
         }
