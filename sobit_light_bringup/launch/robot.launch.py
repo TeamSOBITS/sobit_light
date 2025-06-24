@@ -1,14 +1,13 @@
 import os
 from ament_index_python.packages import get_package_share_directory
 
-from launch_ros.actions import Node
-
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, ExecuteProcess, OpaqueFunction
-from launch.actions import RegisterEventHandler
+from launch.actions import DeclareLaunchArgument, ExecuteProcess, OpaqueFunction, IncludeLaunchDescription, RegisterEventHandler
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.event_handlers import OnProcessExit
-from launch.substitutions import LaunchConfiguration
-
+from launch.substitutions import PathJoinSubstitution, LaunchConfiguration
+from launch.conditions import LaunchConfigurationEquals
+from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import Node
 
 import xacro
@@ -226,12 +225,38 @@ def launch_gz(context, *args, **kwargs):
         )
 
     if enable_gz == 'False':
+        hand_camera_launch = IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([
+                PathJoinSubstitution([
+                    FindPackageShare('sobit_light_bringup'),
+                    'launch',
+                    'include',
+                    'rs_d405_hand_cam.launch.py'
+                ])
+            ]),
+            condition=LaunchConfigurationEquals('enable_real_hand_cam', 'True')
+        )
+
+        head_camera_launch = IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([
+                PathJoinSubstitution([
+                    FindPackageShare('sobit_light_bringup'),
+                    'launch',
+                    'include',
+                    'rs_d415_head_cam.launch.py'
+                ])
+            ]),
+            condition=LaunchConfigurationEquals('enable_real_head_cam', 'True')
+        )
+    
         return [
             controller_manager,
             joint_state_broadcaster,
             joint_trajectory_controller,
             velocity_controller,
             robot_state_publisher_node,
+            hand_camera_launch,
+            head_camera_launch,
         ]
     
     else:
