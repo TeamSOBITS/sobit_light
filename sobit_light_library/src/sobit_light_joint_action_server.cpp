@@ -65,7 +65,6 @@ JointActionServer::JointActionServer(const rclcpp::NodeOptions & options = rclcp
     this->declare_parameter(pose_name + ".arm_forearm_roll"  , rclcpp::PARAMETER_DOUBLE);
     this->declare_parameter(pose_name + ".arm_wrist_pitch"   , rclcpp::PARAMETER_DOUBLE);
     this->declare_parameter(pose_name + ".arm_wrist_roll"    , rclcpp::PARAMETER_DOUBLE);
-    this->declare_parameter(pose_name + ".hand"              , rclcpp::PARAMETER_DOUBLE);
     this->declare_parameter(pose_name + ".head_yaw"          , rclcpp::PARAMETER_DOUBLE);
     this->declare_parameter(pose_name + ".head_pitch"        , rclcpp::PARAMETER_DOUBLE);
 
@@ -78,7 +77,7 @@ JointActionServer::JointActionServer(const rclcpp::NodeOptions & options = rclcp
     params.arm_forearm_roll   = this->get_parameter(pose_name + ".arm_forearm_roll").as_double();
     params.arm_wrist_pitch    = this->get_parameter(pose_name + ".arm_wrist_pitch").as_double();
     params.arm_wrist_roll     = this->get_parameter(pose_name + ".arm_wrist_roll").as_double();
-    params.hand               = this->get_parameter(pose_name + ".hand").as_double();
+    params.hand               = 0.0;
     params.head_yaw           = this->get_parameter(pose_name + ".head_yaw").as_double();
     params.head_pitch         = this->get_parameter(pose_name + ".head_pitch").as_double();
 
@@ -338,7 +337,7 @@ void JointActionServer::exe_move_to_pose(
       target_joint_rad.push_back(pose.arm_forearm_roll);
       target_joint_rad.push_back(pose.arm_wrist_pitch);
       target_joint_rad.push_back(pose.arm_wrist_roll);
-      target_joint_rad.push_back(pose.hand);
+      target_joint_rad.push_back(curt_joint_state_["hand_joint"]); // Use current hand joint state
       target_joint_rad.push_back(pose.head_yaw);
       target_joint_rad.push_back(pose.head_pitch);
       break;
