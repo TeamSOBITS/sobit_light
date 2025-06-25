@@ -20,7 +20,6 @@
       arm_forearm_roll   : 0.0
       arm_wrist_pitch    : 1.04
       arm_wrist_roll     : 0.0
-      hand               : 0.0
       head_yaw           : 0.0
       head_pitch         : 1.68
 
@@ -31,7 +30,6 @@
       arm_forearm_roll   : 0.0
       arm_wrist_pitch    : 0.0
       arm_wrist_roll     : 0.0
-      hand               : 0.0
       head_yaw           : 0.0
       head_pitch         : 0.0
 
@@ -42,7 +40,6 @@
       arm_forearm_roll   : 0.0
       arm_wrist_pitch    : 2.15
       arm_wrist_roll     : 0.0
-      hand               : 0.0
       head_yaw           : 0.0
       head_pitch         : 0.0
 
@@ -53,7 +50,6 @@
       arm_forearm_roll   : 1.5708
       arm_wrist_pitch    : 1.5708
       arm_wrist_roll     : 0.0
-      hand               : 0.0
       head_yaw           : 0.0
       head_pitch         : 0.523
     
@@ -64,7 +60,6 @@
       arm_forearm_roll   : 0.0
       arm_wrist_pitch    : 0.0
       arm_wrist_roll     : 0.0
-      hand               : 0.0
       head_yaw           : 0.0
       head_pitch         : 0.523
 
@@ -75,7 +70,6 @@
       arm_forearm_roll   : 0.0
       arm_wrist_pitch    : 2.15
       arm_wrist_roll     : 0.0
-      hand               : 0.0
       head_yaw           : 0.0
       head_pitch         : 0.523
 
@@ -86,7 +80,6 @@
       arm_forearm_roll   : 0.0
       arm_wrist_pitch    : 0.0
       arm_wrist_roll     : 0.0
-      hand               : 0.0
       head_yaw           : 0.0
       head_pitch         : 0.523
 
@@ -97,7 +90,6 @@
       arm_forearm_roll   : 1.5708
       arm_wrist_pitch    : 1.5708
       arm_wrist_roll     : 0.0
-      hand               : 0.0
       head_yaw           : 0.0
       head_pitch         : 0.523
     
@@ -108,7 +100,6 @@
       arm_forearm_roll   : 0.0
       arm_wrist_pitch    : 1.92
       arm_wrist_roll     : 0.0
-      hand               : 0.0
       head_yaw           : 0.0
       head_pitch         : 0.523
 
@@ -119,7 +110,6 @@
       arm_forearm_roll   : 0.0
       arm_wrist_pitch    : -1.047
       arm_wrist_roll     : -1.05
-      hand               : 0.0
       head_yaw           : 0.0
       head_pitch         : 0.523
 
@@ -130,8 +120,5 @@
       arm_forearm_roll   : 0.0
       arm_wrist_pitch    : -0.52
       arm_wrist_roll     : 0.0
-      hand               : 0.0
       head_yaw           : 0.0
       head_pitch         : 0.523
-
-
