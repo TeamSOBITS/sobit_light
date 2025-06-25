@@ -51,6 +51,8 @@
       - position
       - velocity
 
+    allow_partial_joints_goal: true
+
 
 # https://control.ros.org/humble/doc/ros2_controllers/diff_drive_controller/doc/userdoc.html
 /**/diff_controller:
