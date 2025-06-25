@@ -73,7 +73,7 @@ class DualShock_Teleop(Node):
             'arm_forearm_roll_joint': (-3.14, 3.14),
             'arm_wrist_pitch_joint': (-1.57, 1.57),
             'arm_wrist_roll_joint': (-3.13, 3.14),
-            'hand_joint': (-2.26, 2.26),
+            'hand_joint': (-0.01791787, 0.02901195),
             'head_yaw_joint': (-2.32, 2.32),
             'head_pitch_joint': (-1.26, 1.57),
         }
@@ -195,9 +195,9 @@ class DualShock_Teleop(Node):
             self.grip_pressed = True
 
             if not self.grip_flag:
-                self.grip(-2.20)  
+                self.grip(0.02901195)  
             else:
-                self.grip(0.00) 
+                self.grip(-0.01791787) 
 
             self.grip_flag = not self.grip_flag 
 
