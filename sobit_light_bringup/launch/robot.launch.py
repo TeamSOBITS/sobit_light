@@ -161,6 +161,16 @@ def launch_gz(context, *args, **kwargs):
         output="screen",
     )
 
+    robot_library_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            PathJoinSubstitution([
+                FindPackageShare('sobit_light_library'),
+                'launch',
+                'action_server.launch.py'
+            ])
+        ]),
+    )
+
     if enable_gz == 'True':
         gz_spawn_entity_node = Node(
             package='ros_gz_sim',
@@ -255,8 +265,24 @@ def launch_gz(context, *args, **kwargs):
             joint_trajectory_controller,
             velocity_controller,
             robot_state_publisher_node,
-            hand_camera_launch,
-            head_camera_launch,
+            RegisterEventHandler(
+                event_handler=OnProcessExit(
+                    target_action=joint_state_broadcaster,
+                    on_exit=[hand_camera_launch],
+                )
+            ),
+            RegisterEventHandler(
+                event_handler=OnProcessExit(
+                    target_action=joint_state_broadcaster,
+                    on_exit=[head_camera_launch],
+                )
+            ),
+            RegisterEventHandler(
+                event_handler=OnProcessExit(
+                    target_action=joint_state_broadcaster,
+                    on_exit=[robot_library_launch],
+                )
+            ),
         ]
     
     else:
@@ -287,6 +313,12 @@ def launch_gz(context, *args, **kwargs):
                 event_handler=OnProcessExit(
                     target_action=joint_state_broadcaster,
                     on_exit=[diff_controller],
+                )
+            ),
+            RegisterEventHandler(
+                event_handler=OnProcessExit(
+                    target_action=joint_state_broadcaster,
+                    on_exit=[robot_library_launch],
                 )
             ),
             robot_state_publisher_node,
