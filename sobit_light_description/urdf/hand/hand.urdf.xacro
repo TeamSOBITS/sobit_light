@@ -3,91 +3,22 @@
   <xacro:include filename="$(find sobit_light_description)/urdf/hand/hand.transmission.xacro" />
   <xacro:macro name="hand" params="prefix_hand prefix_finger parent">
 
-    <!--  Joint - Hand left sub -->
-    <joint name="${prefix_hand}_sub_l_joint" type="fixed">
-      <parent link="${parent}"/>
-      <child link="${prefix_hand}_sub_l_link"/>
-      <origin xyz="0.009 0.015 0.0" rpy="0 0 0"/>
-    </joint>
-
-    <!--  Link - Hand left sub -->
-    <link name="${prefix_hand}_sub_l_link">
-      <visual>
-        <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
-        <geometry>
-          <mesh filename="file://$(find sobit_light_description)/meshes/hand/omx1_link9-10_hand.stl" scale="0.001 0.001 0.001"/>
-        </geometry>
-        <material name="black"/>
-      </visual>
-
-      <collision>
-        <origin xyz="${0.0035/2} ${0.04/2} 0.0" rpy="0 0 0"/>
-        <geometry>
-          <box size="0.0035 0.0520 0.0120"/>
-        </geometry>
-      </collision>
-
-      <inertial>
-        <origin xyz="${0.0035/2} ${0.04/2} 0.0" rpy="0 0 0"/>
-        <mass value="0.002" />
-        <inertia  ixx="${1/12*0.002*(0.0035**2+0.0120**2)}" ixy="0.0" ixz="0.0"
-                  iyy="${1/12*0.002*(0.0520**2+0.0120**2)}" iyz="0.0"
-                  izz="${1/12*0.002*(0.0035**2+0.0520**2)}" />
-      </inertial>
-    </link>
-
-    <!--  Joint - Hand right sub -->
-    <joint name="${prefix_hand}_sub_r_joint" type="fixed">
-      <parent link="${parent}"/>
-      <child link="${prefix_hand}_sub_r_link"/>
-      <origin xyz="0.009 -0.015 0.0" rpy="0 0 0"/>
-    </joint>
-
-    <!--  Link - Hand right sub -->
-    <link name="${prefix_hand}_sub_r_link">
-      <visual>
-        <origin xyz="0 0 0" rpy="0 ${M_PI} ${M_PI/2}"/>
-        <geometry>
-          <mesh filename="file://$(find sobit_light_description)/meshes/hand/omx1_link9-10_hand.stl" scale="0.001 0.001 0.001"/>
-        </geometry>
-        <material name="black"/>
-      </visual>
-
-      <collision>
-        <origin xyz="${0.0035/2} -${0.04/2} 0.0" rpy="0 0 0"/>
-        <geometry>
-          <box size="0.0035 0.0520 0.0120"/>
-        </geometry>
-      </collision>
-
-      <inertial>
-        <origin xyz="${0.0035/2} -${0.04/2} 0.0" rpy="0 0 0"/>
-        <mass value="0.002" />
-        <inertia  ixx="${1/12*0.002*(0.0035**2+0.0120**2)}" ixy="0.0" ixz="0.0"
-                  iyy="${1/12*0.002*(0.0520**2+0.0120**2)}" iyz="0.0"
-                  izz="${1/12*0.002*(0.0035**2+0.0520**2)}" />
-      </inertial>
-    </link>
-
     <!--  Act 8 - Hand Finger (left) -->
     <joint name="${prefix_hand}_joint" type="prismatic">
       <!-- <parent link="${prefix_hand}_sub_l_link"/> -->
       <parent link="${parent}"/>
       <child link="${prefix_hand}_link"/>
-      <!-- <origin xyz="0.0 0.04 0.0" rpy="0 0 0"/> -->
-      <origin xyz="0.0093 0.021 0.0" rpy="0 0 0"/>
+      <origin xyz="0.059 0.05498805 0.0" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
-      <limit velocity="4.8" effort="1" lower="-0.01" upper="0.019" />
+      <limit velocity="4.8" effort="1" lower="-0.01791787" upper="0.02901195" />
     </joint>
 
     <!--  Act 8 - Hand Finger (left) -->
     <link name="${prefix_hand}_link">
       <visual>
-        <!-- <origin xyz="0.0 0.0 0.0" rpy="0 0 ${M_PI/2}"/> -->
-        <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+        <origin xyz="0.0 0.0 0.0" rpy="0 0 ${M_PI/2}"/>
         <geometry>
-          <!-- <mesh filename="file://$(find sobit_light_description)/meshes/hand/omx1_link11-12_finger.stl" scale="0.001 0.001 0.001"/> -->
-          <mesh filename="file://$(find sobit_light_description)/meshes/hand/omx1_link11-12_finger_new.stl" scale="0.001 0.001 0.001"/>
+          <mesh filename="file://$(find sobit_light_description)/meshes/hand/omx1_link11-12_finger.stl" scale="0.001 0.001 0.001"/>
         </geometry>
         <material name="black"/>
       </visual>
@@ -110,11 +41,9 @@
 
     <!--  Act 8 - Hand Finger (right) -->
     <joint name="${prefix_hand}_sub_joint" type="prismatic">
-      <!-- <parent link="${prefix_hand}_sub_r_link"/> -->
       <parent link="${parent}"/>
       <child link="${prefix_hand}_sub_link"/>
-      <!-- <origin xyz="0.0 -0.04 0.0" rpy="0 0 0"/> -->
-      <origin xyz="0.0093 -0.021 0.0" rpy="0 0 0"/>
+      <origin xyz="0.059 -0.05498805 0.0" rpy="0 0 0"/>
       <axis xyz="0 -1 0"/>
       <limit velocity="4.8" effort="1" lower="-1.57" upper="1.57"/>
       <mimic joint="${prefix_hand}_joint" multiplier="1"/>
@@ -123,11 +52,9 @@
     <!--  Act 8 - Hand Finger (right) -->
     <link name="${prefix_hand}_sub_link">
       <visual>
-        <!-- <origin xyz="0.0 0.0 0.0" rpy="0 ${M_PI} ${M_PI/2}"/> -->
-        <origin xyz="0.0 0.0 0.0" rpy="${M_PI} 0 0"/>
+        <origin xyz="0.0 0.0 0.0" rpy="0 ${M_PI} ${M_PI/2}"/>
         <geometry>
-          <!-- <mesh filename="file://$(find sobit_light_description)/meshes/hand/omx1_link11-12_finger.stl" scale="0.001 0.001 0.001"/> -->
-          <mesh filename="file://$(find sobit_light_description)/meshes/hand/omx1_link11-12_finger_new.stl" scale="0.001 0.001 0.001"/>
+          <mesh filename="file://$(find sobit_light_description)/meshes/hand/omx1_link11-12_finger.stl" scale="0.001 0.001 0.001"/>
         </geometry>
         <material name="black"/>
       </visual>
@@ -217,7 +144,7 @@
     <!-- Joint - End Effector -->
     <joint name="end_effector_joint" type="fixed">
       <origin xyz="${0.0935+0.0375/2} 0.0 0.0" rpy="0 0 0"/>
-      <parent link="arm_wrist_roll_link"/>
+      <parent link="${parent}"/>
       <child link="${prefix_hand}_end_effector_link"/>
     </joint>
 

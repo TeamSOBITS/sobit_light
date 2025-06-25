@@ -5,7 +5,7 @@
 
     <!-- Joint - Hand Camera Base -->
     <joint name="${prefix}_base_joint" type="fixed">
-      <origin xyz="0.03685 0.0 0.0438" rpy="0 0 0"/>
+      <origin xyz="0.03341 0.0 0.0504366" rpy="0 ${25*M_PI/180} 0"/>
       <parent link="${parent}"/>
       <child link="${prefix}_base_link"/>
     </joint>
@@ -38,7 +38,7 @@
 
 
     <xacro:sensor_d405 parent="${prefix}_base_link" name="${prefix}" use_nominal_extrinsics="true" >
-      <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+      <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
     </xacro:sensor_d405>
 
   </xacro:macro>

@@ -288,7 +288,7 @@
       <collision>
         <origin xyz="${0.0505/2} 0.0 ${0.03775-0.0495/2}" rpy="0 0 0"/>
         <geometry>
-          <box size="0.0505 0.0335 0.0495"/>
+          <box size="0.0505 0.1886 0.0495"/>
         </geometry>
       </collision>
 
@@ -298,39 +298,6 @@
         <inertia  ixx="${1/12*0.134*(0.0505**2+0.0495**2)}" ixy="0.0" ixz="0.0"
                   iyy="${1/12*0.134*(0.0335**2+0.0495**2)}" iyz="0.0"
                   izz="${1/12*0.134*(0.0505**2+0.0335**2)}" />
-      </inertial>
-    </link>
-
-    <!--  Joint - Hand Base -->
-    <joint name="${prefix}_hand_joint" type="fixed">
-      <parent link="${prefix}_wrist_roll_link"/>
-      <child link="${prefix}_hand_link"/>
-      <origin xyz="0.05 0.0 0.0" rpy="0 0 0"/>
-    </joint>
-
-    <!--  Link - Hand Base -->
-    <link name="${prefix}_hand_link">
-      <visual>
-        <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
-        <geometry>
-          <mesh filename="file://$(find sobit_light_description)/meshes/arm/omx1_link8_hand.stl" scale="0.001 0.001 0.001"/>
-        </geometry>
-        <material name="black"/>
-      </visual>
-
-      <collision>
-        <origin xyz="${0.008/2} 0.0 0.0" rpy="0 ${M_PI/2} 0"/>
-        <geometry>
-          <cylinder radius="0.011" length="0.008"/>
-        </geometry>
-      </collision>
-
-      <inertial>
-        <origin xyz="${0.008/2} 0.0 0.0" rpy="0 ${M_PI/2} 0"/>
-        <mass value="0.003" />
-        <inertia  ixx="${1/12*0.003*(3*0.011**2+0.008**2)}" ixy="0.0" ixz="0.0"
-                  iyy="${1/12*0.003*(3*0.011**2+0.008**2)}" iyz="0.0"
-                  izz="${1/12*0.003*(3*0.011**2+0.008**2)}" />
       </inertial>
     </link>
 
