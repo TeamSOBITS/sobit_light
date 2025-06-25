@@ -17,12 +17,12 @@ class DualShock_Teleop(Node):
             depth=10
         )
         #publisher
-        self.base_pub = self.create_publisher(Twist, '/sobit_light/manual_control/cmd_vel', 10) #kachaka base
-        self.joint_pub = self.create_publisher(JointTrajectory,'/sobit_light/joint_trajectory_controller/joint_trajectory',joint_qos_profile) #joint
+        self.base_pub = self.create_publisher(Twist, 'manual_control/cmd_vel', 10) #kachaka base
+        self.joint_pub = self.create_publisher(JointTrajectory,'joint_trajectory_controller/joint_trajectory',joint_qos_profile) #joint
         
         #subscriber
-        self.dualshock_sub = self.create_subscription(Joy, '/sobit_light/joy', self.joy_callback, 10) #dualshock
-        self.joint_sub = self.create_subscription(JointState,'/sobit_light/joint_states',self.joint_state_callback,10) #joint_state
+        self.dualshock_sub = self.create_subscription(Joy, 'joy', self.joy_callback, 10) #dualshock
+        self.joint_sub = self.create_subscription(JointState,'joint_states',self.joint_state_callback,10) #joint_state
 
         self.timer = self.create_timer(0.01, self.process)  # 20Hzでprocess()を呼ぶ
 
