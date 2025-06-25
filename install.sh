@@ -75,6 +75,7 @@ sudo apt-get install -y \
     ros-$ROS_DISTRO-tf2-ros \
     ros-$ROS_DISTRO-tf2 \
     ros-$ROS_DISTRO-tf-transformations \
+    ros-$ROS_DISTRO-joy-linux \
     ros-$ROS_DISTRO-launch \
     ros-$ROS_DISTRO-launch-ros
 

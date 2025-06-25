@@ -1,4 +1,6 @@
 from setuptools import find_packages, setup
+from glob import glob
+
 
 package_name = 'sobit_light_teleop'
 
@@ -10,6 +12,8 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        ('share/' + package_name + '/launch', 
+            glob('launch/*.launch.py')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -19,6 +23,12 @@ setup(
     license='Apache-2.0',
     entry_points={
         'console_scripts': [
+            'keyboard_nav_teleop = sobit_light_teleop.keyboard_nav_teleop:main',
+            'keyboard_arm_teleop = sobit_light_teleop.keyboard_arm_teleop:main',
+            'keyboard_all_teleop = sobit_light_teleop.keyboard_all_teleop:main',
+            'vr_teleop_1 = sobit_light_teleop.vr_teleop_1:main',
+            'vr_teleop_2 = sobit_light_teleop.vr_teleop_2:main',
+            'dualshock_teleop = sobit_light_teleop.dualshock_teleop:main'
         ],
     },
 )
