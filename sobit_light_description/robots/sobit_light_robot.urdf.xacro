@@ -58,7 +58,7 @@
   </xacro:kachaka_robot>
   <xacro:plate          prefix="plate"        parent="base_link" />
   <xacro:arm            prefix="arm"          parent="plate_middle_link" />
-  <xacro:hand           prefix_hand="hand"    prefix_finger="finger" parent="arm_hand_link" />
+  <xacro:hand           prefix_hand="hand"    prefix_finger="finger" parent="arm_wrist_roll_link" />
   <xacro:back           prefix="back"         parent="plate_bottom_link" />
   <xacro:head           prefix="head"         parent="back_base_link" />
   <xacro:mic            prefix="mic"          parent="head_pitch_link" />
