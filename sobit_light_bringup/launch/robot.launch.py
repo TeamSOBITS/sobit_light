@@ -161,7 +161,7 @@ def launch_gz(context, *args, **kwargs):
         output="screen",
     )
 
-    robot_library_launch = IncludeLaunchDescription(
+    action_server_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             PathJoinSubstitution([
                 FindPackageShare('sobit_light_library'),
@@ -169,6 +169,10 @@ def launch_gz(context, *args, **kwargs):
                 'action_server.launch.py'
             ])
         ]),
+        launch_arguments={
+            'robot_name': robot_name,
+            'enable_gz': enable_gz,
+        }.items(),
     )
 
     if enable_gz == 'True':
@@ -280,7 +284,7 @@ def launch_gz(context, *args, **kwargs):
             RegisterEventHandler(
                 event_handler=OnProcessExit(
                     target_action=joint_state_broadcaster,
-                    on_exit=[robot_library_launch],
+                    on_exit=[action_server_launch],
                 )
             ),
         ]
@@ -318,7 +322,7 @@ def launch_gz(context, *args, **kwargs):
             RegisterEventHandler(
                 event_handler=OnProcessExit(
                     target_action=joint_state_broadcaster,
-                    on_exit=[robot_library_launch],
+                    on_exit=[action_server_launch],
                 )
             ),
             robot_state_publisher_node,
