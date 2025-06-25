@@ -4,15 +4,12 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
-        - /Global Options1
-        - /Status1
         - /RobotModel1/Description Topic1
         - /LaserScan1/Topic1
-        - /FrontCamera1/Topic1
         - /BackCamera1/Topic1
         - /TofCamera1/Topic1
       Splitter Ratio: 0.5568862557411194
-    Tree Height: 396
+    Tree Height: 272
   - Class: rviz_common/Selection
     Name: Selection
   - Class: rviz_common/Tool Properties
@@ -390,11 +387,23 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
+        sobit_light/L01:
+          Value: true
         sobit_light/L02:
           Value: true
-        sobit_light/S01:
+        sobit_light/L03:
           Value: true
-        sobit_light/S01_home:
+        sobit_light/L04:
+          Value: true
+        sobit_light/L05:
+          Value: true
+        sobit_light/L06:
+          Value: true
+        sobit_light/L07:
+          Value: true
+        sobit_light/L08:
+          Value: true
+        sobit_light/L09:
           Value: true
         sobit_light/__CHARGER__:
           Value: true
@@ -530,10 +539,6 @@ Visualization Manager:
           Value: true
         sobit_light/plate_middle_link:
           Value: true
-        sobit_light/shelf_pose_estimation_0:
-          Value: true
-        sobit_light/shelf_pose_estimation_1:
-          Value: true
         sobit_light/speaker_base_link:
           Value: true
         sobit_light/tof_camera:
@@ -547,11 +552,23 @@ Visualization Manager:
       Show Names: true
       Tree:
         sobit_light/map:
+          sobit_light/L01:
+            {}
           sobit_light/L02:
             {}
-          sobit_light/S01:
+          sobit_light/L03:
             {}
-          sobit_light/S01_home:
+          sobit_light/L04:
+            {}
+          sobit_light/L05:
+            {}
+          sobit_light/L06:
+            {}
+          sobit_light/L07:
+            {}
+          sobit_light/L08:
+            {}
+          sobit_light/L09:
             {}
           sobit_light/global_map-grid-base:
             {}
@@ -614,14 +631,16 @@ Visualization Manager:
                                 sobit_light/arm_wrist_pitch_link:
                                   sobit_light/arm_wrist_roll_link:
                                     sobit_light/arm_hand_link:
+                                      sobit_light/hand_link:
+                                        sobit_light/hand_finger_tip_l_link:
+                                          {}
                                       sobit_light/hand_sub_l_link:
-                                        sobit_light/hand_link:
-                                          sobit_light/hand_finger_tip_l_link:
-                                            {}
+                                        {}
+                                      sobit_light/hand_sub_link:
+                                        sobit_light/hand_finger_tip_r_link:
+                                          {}
                                       sobit_light/hand_sub_r_link:
-                                        sobit_light/hand_sub_link:
-                                          sobit_light/hand_finger_tip_r_link:
-                                            {}
+                                        {}
                                     sobit_light/hand_camera_base_link:
                                       sobit_light/hand_camera_bottom_screw_frame:
                                         sobit_light/hand_camera_link:
@@ -648,10 +667,6 @@ Visualization Manager:
               {}
             sobit_light/local_map-lidar-map-grid-base:
               {}
-          sobit_light/shelf_pose_estimation_0:
-            {}
-          sobit_light/shelf_pose_estimation_1:
-            {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -693,6 +708,20 @@ Visualization Manager:
       Max Value: 1
       Median window: 5
       Min Value: 0
+      Name: HeadCamera
+      Normalize Range: true
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /sobit_light/head_camera/color/image_raw/compressed
+      Value: true
+    - Class: rviz_default_plugins/Image
+      Enabled: true
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
       Name: FrontCamera
       Normalize Range: true
       Topic:
@@ -700,7 +729,21 @@ Visualization Manager:
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Best Effort
-        Value: /sobit_light/front_camera/image_raw
+        Value: /sobit_light/front_camera/image_raw/compressed
+      Value: true
+    - Class: rviz_default_plugins/Image
+      Enabled: true
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: HandCamera
+      Normalize Range: true
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /sobit_light/hand_camera/color/image_rect_raw/compressed
       Value: true
     - Class: rviz_default_plugins/Image
       Enabled: true
@@ -714,7 +757,7 @@ Visualization Manager:
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Best Effort
-        Value: /sobit_light/back_camera/image_raw
+        Value: /sobit_light/back_camera/image_raw/compressed
       Value: true
     - Class: rviz_default_plugins/Image
       Enabled: true
@@ -775,15 +818,15 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Class: rviz_default_plugins/Orbit
-      Distance: 8.937809944152832
+      Class: rviz_default_plugins/ThirdPersonFollower
+      Distance: 2
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 2.5
+        X: 0
         Y: 0
         Z: 0
       Focal Shape Fixed Size: true
@@ -792,9 +835,9 @@ Visualization Manager:
       Name: Current View
       Near Clip Distance: 0.009999999776482582
       Pitch: 0.7799999713897705
-      Target Frame: <Fixed Frame>
-      Value: Orbit (rviz)
-      Yaw: 1.5700000524520874
+      Target Frame: sobit_light/base_footprint
+      Value: ThirdPersonFollower (rviz_default_plugins)
+      Yaw: 0.7799999713897705
     Saved: ~
 Window Geometry:
   BackCamera:
@@ -803,10 +846,14 @@ Window Geometry:
     collapsed: false
   FrontCamera:
     collapsed: false
-  Height: 1011
+  HandCamera:
+    collapsed: false
+  HeadCamera:
+    collapsed: false
+  Height: 1016
   Hide Left Dock: false
   Hide Right Dock: false
-  QMainWindow State: 000000ff00000000fd0000000400000000000001f7000003a1fc020000000bfb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c0061007900730100000039000001c5000000c500fffffffb0000000a005600690065007700730100000204000000fd0000009d00fffffffb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000307000000d30000005c00fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000000c00430061006d0065007200610100000521000001930000000000000000fb0000000a0049006d006100670065010000052b000001890000000000000000000000010000015f000003a1fc0200000005fb0000001600460072006f006e007400430061006d0065007200610100000039000001390000002800fffffffb00000014004200610063006b00430061006d00650072006101000001780000013c0000002800fffffffb000000120054006f006600430061006d00650072006101000002ba000001200000002800fffffffb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e1000001970000000300000bd00000005afc0100000002fb0000000800540069006d0065000000000000000bd00000021400fffffffb0000000800540069006d00650100000000000004500000000000000000000003dc000003a100000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000400000000000001ba00000253fc020000000bfb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000120054006f006600430061006d006500720061010000018c000001040000002800fffffffb000000100044006900730070006c006100790073010000029600000149000000c500fffffffb0000000a005600690065007700730000000311000000ce0000009d00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007300000002f0000000ef0000005c00fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000000c00430061006d0065007200610100000521000001930000000000000000000000010000015f000002f7fc0200000002fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000001200530065006c0065006300740069006f006e010000025a000000b20000000000000000000000020000073a0000014dfc0100000006fb00000014004800650061006400430061006d0065007200610100000000000001c80000007e00fffffffb0000000a0049006d00610067006501000001ce000001c60000000000000000fb0000001400480061006e006400430061006d00650072006101000001ce000001c60000007e00fffffffb0000001600460072006f006e007400430061006d006500720061010000039a000001ca0000007e00fffffffb00000014004200610063006b00430061006d006500720061010000056a000001d00000007b00fffffffb0000000a00560069006500770073030000004e00000080000002e1000001970000000300000bd00000005afc0100000002fb0000000800540069006d0065000000000000000bd00000021400fffffffb0000000800540069006d006501000000000000045000000000000000000000057a0000025300000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
@@ -817,6 +864,6 @@ Window Geometry:
     collapsed: false
   Views:
     collapsed: false
-  Width: 1854
-  X: 66
-  Y: 32
+  Width: 1850
+  X: 70
+  Y: 27

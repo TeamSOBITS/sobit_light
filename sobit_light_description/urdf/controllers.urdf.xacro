@@ -14,7 +14,7 @@
         <xacro:unless value="${$(arg enable_gz)}">
           <plugin>dynamixel_hardware/DynamixelHardware</plugin>
           <!-- <param name="usb_port">/dev/ttyUSB-DXL_light</param> -->
-          <param name="usb_port">/dev/ttyUSB0</param>
+          <param name="port_name">/dev/ttyUSB0</param>
           <param name="baud_rate">1000000</param>
           <!-- <param name="use_dummy">true</param> -->
         </xacro:unless>
@@ -24,12 +24,14 @@
       <joint name="arm_shoulder_roll_joint">
         <xacro:unless value="${$(arg enable_gz)}">
           <param name="id">1</param>
+          <param name="control_mode">0</param>
+          <param name="interface">rs</param>
         </xacro:unless>
         <command_interface name="position">
           <param name="min">-3.141592654</param>
           <param name="max">3.141592654</param>
         </command_interface>
-        <command_interface name="velocity"/>
+        <!-- <command_interface name="velocity"/> -->
         <state_interface name="position">
           <param name="initial_value">0.0</param>
         </state_interface>
@@ -39,6 +41,8 @@
       <joint name="arm_shoulder_pitch_sub_joint">
         <xacro:unless value="${$(arg enable_gz)}">
           <param name="id">2</param>
+          <param name="control_mode">0</param>
+          <param name="interface">rs</param>
         </xacro:unless>
         <!-- <param name="mimic">arm_shoulder_pitch_joint</param>
         <param name="multiplier">-1</param> -->
@@ -47,7 +51,7 @@
           <param name="min">-1.570796327</param>
           <param name="max">1.570796327</param>
         </command_interface>
-        <command_interface name="velocity"/>
+        <!-- <command_interface name="velocity"/> -->
         <state_interface name="position">
           <param name="initial_value">1.57</param>
         </state_interface>
@@ -58,12 +62,14 @@
       <joint name="arm_shoulder_pitch_joint">
         <xacro:unless value="${$(arg enable_gz)}">
           <param name="id">3</param>
+          <param name="control_mode">0</param>
+          <param name="interface">rs</param>
         </xacro:unless>
         <command_interface name="position">
           <param name="min">-1.570796327</param>
           <param name="max">1.570796327</param>
         </command_interface>
-        <command_interface name="velocity"/>
+        <!-- <command_interface name="velocity"/> -->
         <state_interface name="position">
           <param name="initial_value">-1.57</param>
         </state_interface>
@@ -73,12 +79,14 @@
       <joint name="arm_elbow_pitch_joint">
         <xacro:unless value="${$(arg enable_gz)}">
           <param name="id">4</param>
+          <param name="control_mode">0</param>
+          <param name="interface">rs</param>
         </xacro:unless>
         <command_interface name="position">
           <param name="min">-1.570796327</param>
           <param name="max">1.570796327</param>
         </command_interface>
-        <command_interface name="velocity"/>
+        <!-- <command_interface name="velocity"/> -->
         <state_interface name="position">
           <param name="initial_value">0.0</param>
         </state_interface>
@@ -88,12 +96,14 @@
       <joint name="arm_forearm_roll_joint">
         <xacro:unless value="${$(arg enable_gz)}">
           <param name="id">5</param>
+          <param name="control_mode">0</param>
+          <param name="interface">rs</param>
         </xacro:unless>
         <command_interface name="position">
           <param name="min">-3.141592654</param>
           <param name="max">3.141592654</param>
         </command_interface>
-        <command_interface name="velocity"/>
+        <!-- <command_interface name="velocity"/> -->
         <state_interface name="position">
           <param name="initial_value">0.0</param>
         </state_interface>
@@ -103,12 +113,14 @@
       <joint name="arm_wrist_pitch_joint">
         <xacro:unless value="${$(arg enable_gz)}">
           <param name="id">6</param>
+          <param name="control_mode">0</param>
+          <param name="interface">rs</param>
         </xacro:unless>
         <command_interface name="position">
           <param name="min">-1.570796327</param>
           <param name="max">1.570796327</param>
         </command_interface>
-        <command_interface name="velocity"/>
+        <!-- <command_interface name="velocity"/> -->
         <state_interface name="position">
           <param name="initial_value">0.0</param>
         </state_interface>
@@ -118,12 +130,14 @@
       <joint name="arm_wrist_roll_joint">
         <xacro:unless value="${$(arg enable_gz)}">
           <param name="id">7</param>
+          <param name="control_mode">0</param>
+          <param name="interface">rs</param>
         </xacro:unless>
         <command_interface name="position">
           <param name="min">-3.141592654</param>
           <param name="max">3.141592654</param>
         </command_interface>
-        <command_interface name="velocity"/>
+        <!-- <command_interface name="velocity"/> -->
         <state_interface name="position">
           <param name="initial_value">0.0</param>
         </state_interface>
@@ -135,11 +149,13 @@
       <joint name="hand_joint">
         <xacro:unless value="${$(arg enable_gz)}">
           <param name="id">8</param>
-          <param name="mode">curr_pos</param>
-          <param name="Goal_Current">100</param>
+          <param name="control_mode">6</param>
+          <param name="Goal_Current">50</param>
+          <param name="interface">rs</param>
+          <param name="gear_ratio">-114.239732858</param>
         </xacro:unless>
         <command_interface name="position"/>
-        <command_interface name="velocity"/>
+        <!-- <command_interface name="velocity"/> -->
         <state_interface name="position">
           <param name="initial_value">0.0</param>
         </state_interface>
@@ -151,7 +167,7 @@
           <param name="mimic">hand_joint</param>
           <param name="multiplier">-1</param>
           <command_interface name="position"/>
-          <command_interface name="velocity"/>
+          <!-- <command_interface name="velocity"/> -->
           <state_interface name="position"/>
           <state_interface name="velocity"/>
           <state_interface name="effort"/>
@@ -162,12 +178,14 @@
       <joint name="head_yaw_joint">
         <xacro:unless value="${$(arg enable_gz)}">
           <param name="id">11</param>
+          <param name="control_mode">0</param>
+          <param name="interface">rs</param>
         </xacro:unless>
         <command_interface name="position">
           <param name="min">-3.141592654</param>
           <param name="max">3.141592654</param>
         </command_interface>
-        <command_interface name="velocity"/>
+        <!-- <command_interface name="velocity"/> -->
         <state_interface name="position">
           <param name="initial_value">0.0</param>
         </state_interface>
@@ -177,12 +195,14 @@
       <joint name="head_pitch_joint">
         <xacro:unless value="${$(arg enable_gz)}">
           <param name="id">12</param>
+          <param name="control_mode">0</param>
+          <param name="interface">rs</param>
         </xacro:unless>
         <command_interface name="position">
           <param name="min">-1.570796327</param>
           <param name="max">1.570796327</param>
         </command_interface>
-        <command_interface name="velocity"/>
+        <!-- <command_interface name="velocity"/> -->
         <state_interface name="position">
           <param name="initial_value">0.0</param>
         </state_interface>
