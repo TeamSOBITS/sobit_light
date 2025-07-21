@@ -474,7 +474,7 @@ This is a summary of information for moving the SOBIT LIGHT moving mechanism.
 
 ## Hardware
 
-SOBIT LIGHT is available as open hardware at [OnShape](https://cad.onshape.com/documents/1c0eb7c7c35643f91262c58d/w/47103fedd1427abad418bed6/e/d36ec26c38875fb78c5b29ac).
+SOBIT LIGHT is available as open hardware at [OnShape](https://cad.onshape.com/documents/1c0eb7c7c35643f91262c58d/w/47103fedd1427abad418bed6/e/7c302d4657958e64c759a35a).
 
 ![SOBIT LIGHT in OnShape](sobit_light/docs/img/sobit_light_onshape.png)
 

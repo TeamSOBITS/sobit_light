@@ -468,7 +468,7 @@ SOBIT LIGHTの移動機構(Kachaka)を動かすための情報まとめです．
 
 
 ## ハードウェア
-SOBIT LIGHTはオープンソースハードウェアとして[OnShape](https://cad.onshape.com/documents/1c0eb7c7c35643f91262c58d/w/47103fedd1427abad418bed6/e/d36ec26c38875fb78c5b29ac)にて公開しております．
+SOBIT LIGHTはオープンソースハードウェアとして[OnShape](https://cad.onshape.com/documents/1c0eb7c7c35643f91262c58d/w/47103fedd1427abad418bed6/e/7c302d4657958e64c759a35a)にて公開しております．
 
 ![SOBIT LIGHT in OnShape](sobit_light/docs/img/sobit_light_onshape.png)
 
