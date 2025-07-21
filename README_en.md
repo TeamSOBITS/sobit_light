@@ -64,7 +64,7 @@
 
 This is a library to operate the [Kachaka](https://kachaka.life/home/)-integrated mobile manipulator (SOBIT LIGHT) developed by SOBITS.
 
-> [!WARNING]
+> [!CAUTION]
 > If you have no previous experience controlling this robot, please have a senior colleague accompany you while you want to use this robot.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -217,7 +217,7 @@ $ ros2 launch sobit_light_bringup gz_minimal.launch.py
 If it works correctly, the following Gazebo screen will be displayed.
 ![SOBIT LIGHT Gazebo Ignition](sobit_light/docs/img/sobit_light_gz_sim.png)
 
-> [!WARNING]
+> [!TIP]
 > Since it is equipped with sensors similar to the actual machine, the processing may become heavy depending on the computer. Please select only the necessary sensors in [gz_minimal.launch.py](sobit_light_bringup/launch/gz_minimal.launch.py).
 
 ```python
@@ -466,6 +466,9 @@ This is a summary of information for moving the SOBIT LIGHT moving mechanism.
 
 </details>
 
+> ![TIP]
+> You can also use the Kachaka-API library to move the mobile base. Here you have the Japanese-only [documentation](https://github.com/pf-robotics/kachaka-api/blob/main/docs/kachaka_api_client.ipynb).
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
@@ -501,7 +504,7 @@ SOBIT LIGHT is available as open hardware at [OnShape](https://cad.onshape.com/d
 ![SOBIT LIGHT Circuit](sobit_light/docs/img/sobit_light_circuit.png)
 
 
-> [!IMPORTANT]
+> [!CAUTION]
 > The default Kachaka charger ONLY allows 100V of current during charging.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -593,6 +596,9 @@ To know more about the mobile base Kachaka, please have a look at their [specifi
 Total Approx. Cost (w/ Optional Items): **$7,510.47**
 
 Total Approx. Cost (w/o Optional Items): **$6,592.54**
+
+> [!IMPORTANT]
+> Prices may vary depending on the retailer. Please check each link for the latest prices.
 
 </details>
 

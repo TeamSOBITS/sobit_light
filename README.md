@@ -64,7 +64,7 @@
 
 Preferred Robotics(c)が開発した[カチャカ](https://kachaka.life/home/)という移動機構を用いたSOBITS自作のモバイルマニピュレータを動かすためのライブラリです．
 
-> [!WARNING]
+> [!CAUTION]
 > 初心者の場合，実機のロボットを扱う際に，先輩方に付き添ってもらいながらロボットを動かしましょう．
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
@@ -149,7 +149,7 @@ Preferred Robotics(c)が開発した[カチャカ](https://kachaka.life/home/)�
 > データ通信のため，ローカル環境以外(Docker等)でROSのワークスペースを使用している場合は，`ROS_DOMAIN_ID`の値を統一させる必要があることを忘れないでください．
 
 4. KachakaのIPアドレスを確認します．
-    1. ひとつの方法は，Kachakaに「カチャカ、IPアドレスを教えて」と話しかけることです．KachakaがIPアドレスを読み上げてくれます．
+    1. ひとつの方法は，Kachakaに「ねぇカチャカ、IPアドレスを教えて」と話しかけることです．KachakaがIPアドレスを読み上げてくれます．
     2. もうひとつの方法は，Kachakaアプリの「`設定`」タブを開き，「`設定・情報`」カテゴリの「`アプリ情報`」をタップし，「`カチャカ`」カテゴリ内の「`IPアドレス`」欄を確認することです．
 
 5. KachakaとのROS Bridgeを簡単に立ち上げられるようにするために，`alias`を設定します．
@@ -214,7 +214,7 @@ $ ros2 launch sobit_light_bringup gz_minimal.launch.py
 正常に動作した場合は，次のようなGazeboの画面が表示されます．
 ![SOBIT LIGHT Gazebo Ignition](sobit_light/docs/img/sobit_light_gz_sim.png)
 
-> [!WARNING]
+> [!TIP]
 > 実機と同じようなセンサも搭載されていますので，パソコンによって処理が重くなる可能性がありますので，必要なセンサだけを[gz_minimal.launch.py](sobit_light_bringup/launch/gz_minimal.launch.py)で選択してください．
 
 ```python
@@ -423,7 +423,7 @@ SOBIT LIGHTの移動機構(Kachaka)を動かすための情報まとめです．
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
 
-#### アクション
+#### 動作方法
 
 1.  `move_wheel_linear` : 並進（前進・後退のみ）に移動させます．(弧度法：meters)
     ```yaml
@@ -458,6 +458,9 @@ SOBIT LIGHTの移動機構(Kachaka)を動かすための情報まとめです．
     geometry_msgs/Point current_point               # Currently displaced distance
     builtin_interfaces/Duration move_time           # Currently elapsed time
     ```
+
+> ![TIP]
+> You can also use the Kachaka-API library to move the mobile base. Here you have the Japanese-only [documentation](https://github.com/pf-robotics/kachaka-api/blob/main/docs/kachaka_api_client.ipynb).
 
 </details>
 
@@ -495,7 +498,7 @@ SOBIT LIGHTはオープンソースハードウェアとして[OnShape](https://
 ![SOBIT LIGHT Circuit](sobit_light/docs/img/sobit_light_circuit.png)
 
 
-> [!IMPORTANT]
+> [!CAUTION]
 > デフォルトのカチャカ充電器は、充電時に100Vの電圧のみ対応しています。
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
