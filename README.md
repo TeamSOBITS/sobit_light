@@ -460,7 +460,7 @@ SOBIT LIGHTの移動機構(Kachaka)を動かすための情報まとめです．
     ```
 
 > ![TIP]
-> You can also use the Kachaka-API library to move the mobile base. Here you have the Japanese-only [documentation](https://github.com/pf-robotics/kachaka-api/blob/main/docs/kachaka_api_client.ipynb).
+> モバイルベースの移動にはKachaka-APIライブラリも利用できます。詳しくは日本語のみの[ドキュメント](https://github.com/pf-robotics/kachaka-api/blob/main/docs/kachaka_api_client.ipynb)をご参照ください。
 
 </details>
 
