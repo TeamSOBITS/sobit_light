@@ -2,9 +2,6 @@
 
 [JA](README.md) | [EN](README_en.md)
 
-> [!WARNING]
-> 本ロボット，及び本リポジトリはサポートされて間もないため，今後も頻繁に大きく改良される可能性があります．
-
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
@@ -46,7 +43,7 @@
       <ul>
         <li><a href="#パーツのダウンロード方法">パーツのダウンロード方法</a></li>
         <li><a href="#電子回路図">電子回路図</a></li>
-        <li><a href="#ロボットの組み立て">ロボットの組み立て</a></li>
+        <!-- <li><a href="#ロボットの組み立て">ロボットの組み立て</a></li> -->
         <li><a href="#ロボットの特徴">ロボットの特徴</a></li>
         <li><a href="#部品リストBOM">部品リスト（BOM）</a></li>
       </ul>
@@ -60,12 +57,12 @@
 
 
 
-<!-- レポジトリの概要 -->
+<!-- 概要 -->
 ## 概要
 
 ![SOBIT LIGHT](sobit_light/docs/img/sobit_light.png)
 
-Preferred Robotics(c)が開発した[カチャカ](https://kachaka.life/home/)を用いたSOBITS自作のモバイルマニピュレータを動かすためのライブラリです．
+Preferred Robotics(c)が開発した[カチャカ](https://kachaka.life/home/)という移動機構を用いたSOBITS自作のモバイルマニピュレータを動かすためのライブラリです．
 
 > [!WARNING]
 > 初心者の場合，実機のロボットを扱う際に，先輩方に付き添ってもらいながらロボットを動かしましょう．
@@ -132,7 +129,7 @@ Preferred Robotics(c)が開発した[カチャカ](https://kachaka.life/home/)�
 1. Kachaka APIのリポジトリをcloneします．
     ```sh
     $ cd ~/
-    $ git clone https://github.com/TeamSOBITS/kachaka-api.git
+    $ git clone https://github.com/TeamSOBITS/kachaka-api
     ```
 
 2. 最新のDockerイメージをビルドします．
@@ -141,9 +138,10 @@ Preferred Robotics(c)が開発した[カチャカ](https://kachaka.life/home/)�
     $ docker buildx build -t kachaka-api --target kachaka-grpc-ros2-bridge -f Dockerfile.ros2 . --build-arg BASE_ARCH=x86_64 --load
     ```
 
-3. `ROS_DOMAIN_ID`を設定します．一例として，`10`とします．
+3. `ROS_DOMAIN_ID`と`RMW_IMPLEMENTATION`を設定します．一例として，IDを`10`とします．
     ```sh
     $ echo 'export ROS_DOMAIN_ID=10' >> ~/.bashrc
+    $ echo 'export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp' >> ~/.bashrc
     $ source ~/.bashrc
     ```
 
@@ -151,18 +149,14 @@ Preferred Robotics(c)が開発した[カチャカ](https://kachaka.life/home/)�
 > データ通信のため，ローカル環境以外(Docker等)でROSのワークスペースを使用している場合は，`ROS_DOMAIN_ID`の値を統一させる必要があることを忘れないでください．
 
 4. KachakaのIPアドレスを確認します．
-    1. One way is to ask Kachaka by saying, "Hey Kachaka, what's your IP address?"    
-        Kachaka will then read out the IP address.
-    2. Another way is to open the `Settings` tab in the Kachaka app, tap on `App Information` in the `Settings & Information` category, and check the `IP Address` field in the `Kachaka` category.
+    1. ひとつの方法は，Kachakaに「カチャカ、IPアドレスを教えて」と話しかけることです．KachakaがIPアドレスを読み上げてくれます．
+    2. もうひとつの方法は，Kachakaアプリの「`設定`」タブを開き，「`設定・情報`」カテゴリの「`アプリ情報`」をタップし，「`カチャカ`」カテゴリ内の「`IPアドレス`」欄を確認することです．
 
 5. KachakaとのROS Bridgeを簡単に立ち上げられるようにするために，`alias`を設定します．
     ```sh
     $ echo 'alias kachaka="bash ~/kachaka-api/tools/ros2_bridge/start_bridge.sh"' >> ~/.bashrc
     $ source ~/.bashrc
     ```
-
-<!-- > [!NOTE]
-> ここで作成したコンテナに関して，もしカチャカのIPアドレスが変わった場合は一度Dockerコンテナを消して1から行ってください． -->
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
@@ -175,7 +169,7 @@ Preferred Robotics(c)が開発した[カチャカ](https://kachaka.life/home/)�
     $ kachaka <カチャカのIPアドレス> sobit_light no
     ```
 > [!NOTE]
-> `sobit_light`を書くことによって，ロボットの`namespace`を設定しています．また，`no`では，Kachaka側のrobot_descriptionの発行を停止します．詳細については，[Dockerを使ったros2_bridgeの起動](https://github.com/TeamSOBITS/kachaka-api/blob/main/docs/ROS2.md#%E3%83%96%E3%83%AA%E3%83%83%E3%82%B8%E3%81%AE%E8%B5%B7%E5%8B%95)を確認してください．
+> `sobit_light`を書くことによって，ロボットの`namespace`を設定しています．また，`no`では，Kachaka側のrobot_descriptionの発行を停止させます．詳細については，[Dockerを使ったros2_bridgeの起動](https://github.com/TeamSOBITS/kachaka-api/blob/main/docs/ROS2.md#%E3%83%96%E3%83%AA%E3%83%83%E3%82%B8%E3%81%AE%E8%B5%B7%E5%8B%95)を確認してください．
 
 > [!WARNING]
 > KachakaのIPが変わる可能性がありますので，ご注意ください．
@@ -185,15 +179,14 @@ Preferred Robotics(c)が開発した[カチャカ](https://kachaka.life/home/)�
    $ ros2 launch sobit_light_bringup real_minimal.launch.py
    ```
 
-3. ロボットが立ち上がらない・Kachakaとの通信ができていない場合は，次の項目を確認してください．
-
-    - 緊急停止ボタンが押下されていないか
-    - バッテリが十分に充電されているか 
-    - USB hubがパソコンと接続されているか
-    - [TODO] Dynamixel Dongleの名前は`/dev/ttyUSB0`なのか
-    - - 確認するために`$ ls /dev`を書いて，`/dev/ttyUSB1`が表示される場合，[controllers.urdf.xacro](sobit_light_description/urdf/controllers.urdf.xacro)の`usb_port`を更新してください．
-    - Kachaka IPが正しいか
-    - `ROS_DOMAIN_ID`がカチャカ側と開発環境側と同じか
+ロボットが立ち上がらない・Kachakaとの通信ができていない場合は，次の項目を確認してください．
+- 緊急停止ボタンが押下されていないか．
+- バッテリが十分に充電されているか ．
+- USB hubがパソコンと接続されているか．
+- [TODO] Dynamixel Dongleの名前は`/dev/ttyUSB0`なのか．
+- - 確認するために`$ ls /dev`を書いて，`/dev/ttyUSB1`が表示される場合，[controllers.urdf.xacro](sobit_light_description/urdf/controllers.urdf.xacro)の`usb_port`を更新してください．
+- Kachaka IPが正しいか．
+- `ROS_DOMAIN_ID`がカチャカ側と開発環境側と同じか．
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
@@ -212,27 +205,27 @@ $ ros2 launch sobit_light_description display.launch.py
 
 ### シミュレータの実行方法
 
-SOBIT LIGHTにはGazebo Fortressのシミュレーション環境が用意されておりますので，実機がなくても，動作確認が可能です．
+SOBIT LIGHTにはGazebo Ignitionのシミュレーション環境が用意されておりますので，実機がなくても，動作確認が可能です．
 
 ```sh
 $ ros2 launch sobit_light_bringup gz_minimal.launch.py
 ```
 
 正常に動作した場合は，次のようなGazeboの画面が表示されます．
-![SOBIT LIGHT Gazebo Fortress](sobit_light/docs/img/sobit_light_gz_sim.png)
+![SOBIT LIGHT Gazebo Ignition](sobit_light/docs/img/sobit_light_gz_sim.png)
 
 > [!WARNING]
 > 実機と同じようなセンサも搭載されていますので，パソコンによって処理が重くなる可能性がありますので，必要なセンサだけを[gz_minimal.launch.py](sobit_light_bringup/launch/gz_minimal.launch.py)で選択してください．
 
 ```python
 'enable_gz_front_cam_color' : 'True',
-'enable_gz_back_cam_color' : 'True',
-'enable_gz_head_cam_color' : 'True',
-'enable_gz_head_cam_depth' : 'True',
-'enable_gz_hand_cam_color' : 'True',
-'enable_gz_hand_cam_depth' : 'True',
-'enable_gz_lidar' : 'True',
-'enable_gz_imu' : 'True',
+'enable_gz_back_cam_color'  : 'True',
+'enable_gz_head_cam_color'  : 'True',
+'enable_gz_head_cam_depth'  : 'True',
+'enable_gz_hand_cam_color'  : 'True',
+'enable_gz_hand_cam_depth'  : 'True',
+'enable_gz_lidar'           : 'True',
+'enable_gz_imu'             : 'True',
 ```
 
 また，複数のSOBIT LIGHTを同じシミュレーション環境でも出現できます．
@@ -242,7 +235,6 @@ $ ros2 launch sobit_light_bringup gz_minimal.launch.py
 さらに，`robot_coords_x`，`robot_coords_y`，および`robot_coords_z`でロボットの出現座標を変更できます．
 
 一例はこちらとなります．
-
 ```python
 ...
 # Launch Robot No. 1
@@ -298,89 +290,81 @@ SOBIT LIGHTのパンチルト機構とマニピュレータを動かすための
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
 
-#### アクション
+#### 動作方法
 
-1.  `move_to_pose` : 決められたポーズに動かします．
+1. `move_to_pose` : 決められたポーズに動かします．
     ```yaml
     # MoveToPose.action
     # Goal
-    string pose_name                                # 事前に定義したポーズ名
-    builtin_interfaces/Duration time_allowance      # 制限時間
+    string pose_name                                # Target pose name
+    builtin_interfaces/Duration time_allowance      # Target time length
     ---
     # Result
-    bool success                                    # 成功/失敗
-    string message                                  # 結果メッセージ
-    builtin_interfaces/Duration total_elapsed_time  # かかった時間
+    bool success                                    # Success / Failure
+    string message                                  # Result message
+    builtin_interfaces/Duration total_elapsed_time  # Finished time length
     ---
     # Feedback
-    string[] current_joint_names                    # 現在の稼働関節名リスト
-    float32[] current_joint_rad                     # 現在の稼働関節角度リスト
-    # float32[] current_joint_vel                   # 現在の稼働関節の速度リスト
-    builtin_interfaces/Duration move_time           # 現在までにかかった時間
+    string[] current_joint_names                    # Currently moving joint name(s)
+    float32[] current_joint_rad                     # Currently moving joint position(s)
+    # float32[] current_joint_vel                   # Currently moving joint velocity(s)
+    builtin_interfaces/Duration move_time           # Elapsed time length
     ```
 
 > [!NOTE]
 > 既存のポーズは[pose_list.yaml](sobit_light_library/config/pose_list.yaml)に確認できます．ポーズの作成方法については[ポーズの設定方法](#ポーズの設定方法)をご参照ください．
 
-2.  `move_joint` : 指定されたジョイント(複数でも可)を任意の角度に動かします．
+2. `move_joint` : 指定されたジョイント(複数でも可)を任意の角度に動かします．
     ```yaml
     # MoveJoint.action
     # Goal
-    string[] target_joint_names                     # 稼働関節名リスト
-    float64[] target_joint_rad                      # 稼働関節角度リスト
-    builtin_interfaces/Duration time_allowance      # 制限時間
+    string[] target_joint_names                     # Target joint name(s)
+    float64[] target_joint_rad                      # Target joint position(s)
+    builtin_interfaces/Duration time_allowance      # Target time length
     ---
     # Result
-    bool success                                    # 成功/失敗
-    string message                                  # 結果メッセージ
-    builtin_interfaces/Duration total_elapsed_time  # かかった時間
+    bool success                                    # Success / Failure
+    string message                                  # Result message
+    builtin_interfaces/Duration total_elapsed_time  # Finished time length
     ---
     # Feedback
-    string[] current_joint_names                    # 現在の稼働関節名リスト
-    float64[] current_joint_rad                     # 現在の稼働関節角度リスト
-    # float32[] current_joint_vel                   # 現在の稼働関節の速度リスト
-    builtin_interfaces/Duration move_time           # 現在までにかかった時間
+    string[] current_joint_names                    # Currently moving joint name(s)
+    float64[] current_joint_rad                     # Currently moving joint position(s)
+    # float32[] current_joint_vel                   # Currently moving joint velocity(s)
+    builtin_interfaces/Duration move_time           # Elapsed time length
     ```
 
 > [!NOTE]
 > ジョイント名については[ジョイント名](#ジョイント名)をご確認ください．
 
-3.  `move_hand_to_coord` : ハンドをxyz座標に動かします（把持モード）．
+3. `move_hand_to_target_coord` : ハンドをxyz座標に届くように各関節の角度を確認します．
     ```yaml
-    # MoveHandToTargetCoord.action
-    # Goal
-    geometry_msgs/TransformStamped target_coord  # 目標座標
-    builtin_interfaces/Duration time_allowance   # 制限時間
+    # MoveHandToTargetCoord.srv
+    # Request
+    geometry_msgs/TransformStamped target_coord     # Target coordinates
+
     ---
     # Result
-    bool success                            # 成功/失敗
-    string message                          # 結果メッセージ
-    geometry_msgs/Point moved_linear        # 把持に関して動いた水平距離
-    float32 moved_yaw                       # 把持に関して動いた回転量
-    ---
-    # Feedback
-    string current_state                    # 現在の動作状態
-    float32 distance_to_target              # 対象物までの距離
+    geometry_msgs/Pose move_pose                    # Moving pose for grasping
+    string[] target_joint_names                     # List of joint names to move
+    float64[] target_joint_rad                      # List of joint angles to move
+    bool success                                    # Enable grasp
+    string message                                  # Result message
     ```
 
-4.  `move_hand_to_tf` : ハンドをtf名に動かします（把持モード）．
+4.  `move_hand_to_target_tf` : ハンドをtf名に届くように各関節の角度を確認します．
     ```yaml
-    # MoveHandToTargetTF.action
-    # Goal
-    string target_frame                             # 把持対象のTFフレーム名
-    geometry_msgs/TransformStamped tf_differential  # target_frameからの差分
-    builtin_interfaces/Duration time_allowance      # 制限時間
+    # MoveHandToTargetTF.srv
+    # Request
+    string target_frame                             # Frame name to be grasped
+    geometry_msgs/TransformStamped tf_differential  # Differential coordinates of Target frame
     ---
     # Result
-    bool success                               # 成功/失敗
-    string message                             # 結果メッセージ
-    geometry_msgs/Point moved_linear           # 把持に関して動いた水平距離
-    float32 moved_yaw                          # 把持に関して動いた回転量
-    ---
-    # Feedback
-    string current_state                       # 現在の動作状態
-    float32 distance_to_target                 # 対象物までの距離
-    bool object_detected                       # 対象物が検出されているか
+    geometry_msgs/Pose move_pose                    # Moving pose for grasping
+    string[] target_joint_names                     # List of joint names to move
+    float64[] target_joint_rad                      # List of joint angles to move
+    bool success                                    # Enable grasp
+    string message                                  # Result message
     ```
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
@@ -422,7 +406,6 @@ initial_pose:
     arm_forearm_roll   : 0.0
     arm_wrist_pitch    : 0.0
     arm_wrist_roll     : 0.0
-    hand               : 0.0
     head_yaw           : 0.0
     head_pitch         : 0.0
 ...
@@ -446,34 +429,34 @@ SOBIT LIGHTの移動機構(Kachaka)を動かすための情報まとめです．
     ```yaml
     # MoveWheelLinear.action
     # Goal
-    geometry_msgs/Point target_point                # 水平移動したい距離（差動二輪機構：x,全方向移動機構：x,y有効）
-    builtin_interfaces/Duration time_allowance      # 制限時間
+    geometry_msgs/Point target_point                # Target Translational Distance
+    builtin_interfaces/Duration time_allowance      # Target time length
     ---
     # Result
-    bool success                                    # 成功/失敗
-    string message                                  # 結果メッセージ
-    builtin_interfaces/Duration total_elapsed_time  # かかった時間
+    bool success                                    # Success / Failure
+    string message                                  # Result message
+    builtin_interfaces/Duration total_elapsed_time  # Finished time length
     ---
     # Feedback
-    geometry_msgs/Point current_point               # 現在までに移動した距離
-    builtin_interfaces/Duration move_time           # 現在までにかかった時間
+    geometry_msgs/Point current_point               # Currently displaced distance
+    builtin_interfaces/Duration move_time           # Currently elapsed time
     ```  
 
 2.  `move_wheel_rotate` : 回転運動を行う．(弧度法：Radian)
     ```yaml
     # MoveWheelRotate.action
     # Goal
-    float32 target_yaw                              # 回転したい角度
-    builtin_interfaces/Duration time_allowance      # 制限時間
+    float32 target_yaw                              # Target Rotational Distance
+    builtin_interfaces/Duration time_allowance      # Target time length
     ---
     # Result
-    bool success                                    # 成功/失敗
-    string message                                  # 結果メッセージ
-    builtin_interfaces/Duration total_elapsed_time  # かかった時間
+    bool success                                    # Success / Failure
+    string message                                  # Result message
+    builtin_interfaces/Duration total_elapsed_time  # Finished time length
     ---
     # Feedback
-    geometry_msgs/Point current_point               # 現在までに移動した距離
-    builtin_interfaces/Duration move_time           # 現在までにかかった時間
+    geometry_msgs/Point current_point               # Currently displaced distance
+    builtin_interfaces/Duration move_time           # Currently elapsed time
     ```
 
 </details>
@@ -509,64 +492,106 @@ SOBIT LIGHTはオープンソースハードウェアとして[OnShape](https://
 
 ### 電子回路図
 
-TBD
+![SOBIT LIGHT Circuit](sobit_light/docs/img/sobit_light_circuit.png)
+
+
+> [!IMPORTANT]
+> デフォルトのカチャカ充電器は、充電時に100Vの電圧のみ対応しています。
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
 
-### ロボットの組み立て
+<!-- ### ロボットの組み立て
 
 TBD
 
-<p align="right">(<a href="#readme-top">上に戻る</a>)</p>
+<p align="right">(<a href="#readme-top">上に戻る</a>)</p> -->
 
 
 ### ロボットの特徴
-
-TBD
-
 | 項目 | 詳細 |
 | --- | --- |
-
-<!-- | 最大直進速度 | 0.7[m/s] |
+| 最大直線速度 | 0.8[m/s] |
 | 最大回転速度 | 0.229[rad/s] |
-| 最大ペイロード | 0.35[kg] |
-| サイズ (長さx幅x高さ) | 450x450x1250[mm] |
-| 重量 | 16[kg] |
-| リモートコントローラ | PS3/PS4 |
-| LiDAR | UST-20LX |
-| RGB-D | Azure Kinect DK (頭部)，RealSense D405 (アーム) |
-| IMU | LSM6DSMUS |
-| スピーカー | モノラルスピーカー |
-| マイク | コンデンサーマイク |
-| アクチュエータ (アーム) | 2 x XM540-W150, 6 x XM430-W320 |
-| アクチュエータ (移動機構) | 4 x XM430-W320, 4 x XM430-W210 |
-| 電源 | 2 x Makita 6.0Ah 18V |
-| PC接続 | USB | -->
+| ベース最大積載量 | 20[kg] |
+| マニピュレータ最大積載量 | 1.0[kg] |
+| サイズ (LxWxH) | 400 x 450 x 1000[mm] |
+| 重量 | 16.0[kg] |
+| リモートコントローラー | PS4 |
+| LiDAR | 不明 |
+| RGB-D | RealSense D415（ヘッド）、RealSense D405（ハンド） |
+| スピーカー | Jabra Speak 710 |
+| マイク | MKE 400 |
+| アクチュエータ（アーム） | XM540-W150 ×4、XM430-W320 ×6 |
+| 電源 | マキタ 6.0Ah 18V |
+| PC接続 | USB + 無線（カチャカ） |
+
+モバイルベース「カチャカ」の詳細については、[公式仕様サイト](https://kachaka.zendesk.com/hc/ja/article_attachments/6966050917775)（日本語のみ）をご覧ください。
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
 
 ### 部品リスト（BOM）
 
-TBD
+> [!NOTE]
+> 日本のサイト・値段(円)に更新していく予定です．
 
-| 部品 | 型番 | 個数 | 購入先 |
-| --- | --- | --- | --- |
-| --- | --- | 1 | [link]() |
-| --- | --- | 1 | [link]() |
-| --- | --- | 1 | [link]() |
-| --- | --- | 1 | [link]() |
-| --- | --- | 1 | [link]() |
-| --- | --- | 1 | [link]() |
-| --- | --- | 1 | [link]() |
-| --- | --- | 1 | [link]() |
-| --- | --- | 1 | [link]() |
-| --- | --- | 1 | [link]() |
-| --- | --- | 1 | [link]() |
-| --- | --- | 1 | [link]() |
-| --- | --- | 1 | [link]() |
+| 部品 | 型番 | 数量 | おおよその単価 | 購入先 |
+| --- | --- | --- | --- | --- |
+| カチャカ | B1A01 | 1 | ¥245,000 | [リンク](https://store.kachaka.life/products/detail/50) |
+| カチャカベース | ksh0003 | 1 | ¥13,500 | [リンク](https://store.kachaka.life/products/detail/57) |
+| マキタバッテリー | BL1860B | 1 | ¥28,300 | [リンク](https://www.makitatools.com/products/details/BL1860B) |
+| マキタアダプター | B0D6R6XSPX | 1 | ¥4,000 | [リンク](https://www.amazon.co.jp/dp/B0D6R6XSPX) |
+| ダイナミクセルアクチュエータ | XM430-W350-R | 6 | ¥49,600 | [リンク](https://www.robotis.us/dynamixel-xm430-w350-r/) |
+| ダイナミクセルアクチュエータ | XM540-W150-R | 4 | ¥73,600 | [リンク](https://www.robotis.us/dynamixel-xm540-w150-r/) |
+| ダイナミクセルフレーム | FR12-S102K セット | 2 | ¥3,200 | [リンク](https://www.robotis.us/fr12-s102k-set) |
+| ダイナミクセルフレーム | FR12-H101K セット | 1 | ¥6,900 | [リンク](https://www.robotis.us/fr12-h101k-set/) |
+| ダイナミクセルフレーム | FR12-H104K セット | 1 | ¥6,500 | [リンク](https://www.robotis.us/fr12-h104k-set/) |
+| ダイナミクセルフレーム | FR13-H101K セット | 1 | ¥11,400 | [リンク](https://www.robotis.us/fr13-h101k-set/) |
+| ダイナミクセル U2D2 | 8809052930103 | 1 | ¥5,500 | [リンク](https://www.robotis.us/u2d2/) |
+| ダイナミクセル パワーハブ | 8809052930530 | 1 | ¥5,500 | [リンク](https://www.robotis.us/u2d2-power-hub-board-set/) |
+| (オプション) USBハブ | B0D1XVNTHJ | 1 | ¥3,700 | [リンク](https://www.amazon.co.jp/dp/B0D1XVNTHJ) |
+| (オプション) スピーカー | Jabra Speak 710 | 1 | ¥36,000 | [リンク](https://www.jabra.com/business/speakerphones/jabra-speak-series/jabra-speak-710/) |
+| (オプション) マイク | MKE 400 | 1 | ¥30,300 | [リンク](https://www.sennheiser.com/en-ae/catalog/products/microphones/mke-400/mke-400-508898) |
+| RealSense | D415 | 1 | ¥42,000 | [リンク](https://www.amazon.co.jp/dp/B07JVGRQZT) |
+| (オプション) RealSense | D405 | 1 | ¥42,800 | [リンク](https://www.amazon.co.jp/dp/B09JBBHVTY) |
+| (オプション) 非常停止ボタン | HW1B-X411R-MAU | 1 | ¥13,600 | [リンク](https://jp.misumi-ec.com/vona2/detail/222000393180/?HissuCode=HW1B-X411R-MAU) |
+| (オプション) M5Stack Basic V2.7 | K001-V27 | 1 | ¥6,200 | [リンク](https://shop.m5stack.com/products/esp32-basic-core-lot-development-kit-v2-7) |
+| (オプション) ESP32 DevKitC-1-N16R8 | B0DWWY5KTZ | 1 | ¥1,500 | [リンク](https://www.amazon.co.jp/dp/B0DWWY5KTZ) |
+| (オプション) ディスプレイ | B01CZL6QIQ | 2 | ¥2,200 | [リンク](https://www.amazon.co.jp/dp/B01CZL6QIQ) |
+| スラストローラーベアリング | AXK1104 | 2 | ¥1,800 | [リンク](https://jp.misumi-ec.com/vona2/detail/221000058345/?HissuCode=AXK1106) |
+| スラストローラーベアリング | AXK1106 | 1 | ¥1,400 | [リンク](https://jp.misumi-ec.com/vona2/detail/221000058345/?HissuCode=AXK1106) |
+| アルミフレーム | HFS5-2020-600 | 1 | ¥1,500 | [リンク](https://jp.misumi-ec.com/vona2/detail/110302683830/?HissuCode=HFS5-2020-600) |
+| アルミフレーム | HFS5-2020-100 | 6 | ¥750 | [リンク](https://jp.misumi-ec.com/vona2/detail/110302683830/?HissuCode=HFS5-2020-100) |
+| アルミフレーム | HFS5-2020-110 | 1 | ¥750 | [リンク](https://jp.misumi-ec.com/vona2/detail/110302683830/?HissuCode=HFS5-2020-110) |
+| ブラケット | HBLFSNK6 | 3 | ¥270 | [リンク](https://jp.misumi-ec.com/vona2/detail/110300442520/?HissuCode=HBLFSNK6) |
+| 六角穴付ボルト | CSH-ST-M2-4 | 16 | ¥190 | [リンク](https://jp.misumi-ec.com/vona2/detail/221000551286/?HissuCode=CSH-ST-M2-4) |
+| 六角穴付ボルト | CSH-ST-M2.5-5 | 54 | ¥60 | [リンク](https://jp.misumi-ec.com/vona2/detail/221000551286/?HissuCode=CSH-ST-M2.5-5) |
+| 六角穴付ボルト | CSH-ST-M2.5-6 | 16 | ¥180 | [リンク](https://jp.misumi-ec.com/vona2/detail/221000551286/?HissuCode=CSH-ST-M2.5-6) |
+| 六角穴付ボルト | CSH-ST-M2.5-8 | 34 | ¥110 | [リンク](https://jp.misumi-ec.com/vona2/detail/221000551286/?HissuCode=CSH-ST-M2.5-8) |
+| 六角穴付ボルト | CSH-ST-M2.5-10 | 10 | ¥180 | [リンク](https://jp.misumi-ec.com/vona2/detail/221000551286/?HissuCode=CSH-ST-M2.5-10) |
+| 六角穴付ボルト | CSH-ST-M2.5-12 | 16 | ¥180 | [リンク](https://jp.misumi-ec.com/vona2/detail/221000551286/?HissuCode=CSH-ST-M2.5-12) |
+| 六角穴付ボルト | CSH-ST-M3-5 | 4 | ¥400 | [リンク](https://jp.misumi-ec.com/vona2/detail/221000551286/?HissuCode=CSH-ST-M3-5) |
+| 六角穴付ボルト | CSH-ST-M4-15 | 16 | ¥180 | [リンク](https://jp.misumi-ec.com/vona2/detail/221000551286/?HissuCode=CSH-ST-M4-15) |
+| 六角穴付ボルト | CSH-ST-M5-8 | 50 | ¥40 | [リンク](https://jp.misumi-ec.com/vona2/detail/221000551286/?HissuCode=CSH-ST-M5-8) |
+| 六角穴付ボルト | CSH-ST-M5-12 | 12 | ¥40 | [リンク](https://jp.misumi-ec.com/vona2/detail/221000551286/?HissuCode=CSH-ST-M5-12) |
+| 六角穴付ボルト | CSH-ST-M5-15 | 8 | ¥350 | [リンク](https://jp.misumi-ec.com/vona2/detail/221000551286/?HissuCode=CSH-ST-M5-15) |
+| 六角穴付ボルト | CSH-ST-M5-20 | 4 | ¥580 | [リンク](https://jp.misumi-ec.com/vona2/detail/221000551286/?HissuCode=CSH-ST-M5-20) |
+| 六角穴付ボルト | CSH-ST-M5-32 | 2 | ¥590 | [リンク](https://jp.misumi-ec.com/vona2/detail/221000551286/?HissuCode=CSH-ST-M5-32) |
+| ナット | LBNR2.5 | 24 | ¥25 | [リンク](https://jp.misumi-ec.com/vona2/detail/110300250540/?HissuCode=LBNR2.5) |
+| ナット | LBNR4 | 16 | ¥80 | [リンク](https://jp.misumi-ec.com/vona2/detail/110300250540/?HissuCode=LBNR4) |
+| ナット | LBNR5 | 26 | ¥80 | [リンク](https://jp.misumi-ec.com/vona2/detail/110300250540/?HissuCode=LBNR5) |
+| 5シリーズ用ナット | HNTT5-5 | 44 | ¥100 | [リンク](https://jp.misumi-ec.com/vona2/detail/110302246150/?HissuCode=HNTT5-5) |
+| 電源アダプタプラグジャック | B0BV8XCTC9 | 2 | ¥950 | [リンク](https://www.amazon.co.jp/dp/B0BV8XCTC9) |
+| eSUN 黒フィラメント | ePLA+HS175B1KG-2SPOOL-US | 1 | ¥5,200 | [リンク](https://www.amazon.co.jp/dp/B0D7Q1JYZM) |
+| (オプション) eSUN 青フィラメント | ePLA+HS175U1KG-US | 1 | ¥2,800 | [リンク](https://www.amazon.co.jp/dp/B0CQT8VKF7) |
 
+おおよその合計金額（オプション含む）: **¥1,175,000**
+
+おおよその合計金額（オプション除く）: **¥1,030,000**
+
+> [!IMPORTANT]
+> 販売店によって価格は変動します．最新の価格は各リンク先でご確認ください．
 
 </details>
 
@@ -586,36 +611,11 @@ TBD
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
 
-<!-- CONTRIBUTING -->
-<!-- ## Contributing
-
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
-Don't forget to give the project a star! Thanks again!
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-<p align="right">(<a href="#readme-top">上に戻る</a>)</p> -->
-
-
-<!-- LICENSE -->
-<!-- ## License
-
-Distributed under the MIT License. See `LICENSE.txt` for more NOTErmation.
-
-<p align="right">(<a href="#readme-top">上に戻る</a>)</p> -->
-
-
 <!-- 参考文献 -->
 ## 参考文献
 
 * [Kachaka API](https://github.com/pf-robotics/kachaka-api)
-* [Dynamixel SDK](https://emanual.robotis.com/docs/en/software/dynamixel/dynamixel_sdk/overview/)
+* [Dynamixel Hardware](https://github.com/dynamixel-community/dynamixel_hardware)
 * [ROS Humble](https://docs.ros.org/en/humble/index.html)
 * [ROS2 Control](https://control.ros.org/humble/index.html)
 * [ROS2 Control Gazebo](https://github.com/ros-controls/gz_ros2_control)

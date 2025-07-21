@@ -28,7 +28,7 @@
     　<a href="#launch-and-usage">Launch and Usage</a>
       <ul>
         <li><a href="#visualization-on-rviz<">Visualization on Rviz</a></li>
-        <li><a href="#visualization-on-rviz<">Run on GZ Sim</a></li>
+        <li><a href="#run-on-gazebo-sim<">Run on Gazebo Sim</a></li>
       </ul>
     </li>
     <li>
@@ -43,7 +43,7 @@
       <ul>
         <li><a href="#how-to-download-3d-parts">How to download 3D Parts</a></li>
         <li><a href="#electronic-circuit-diagram">Electronic circuit Diagram</a></li>
-        <li><a href="#robot-assembly">Robot Assembly</a></li>
+        <!-- <li><a href="#robot-assembly">Robot Assembly</a></li> -->
         <li><a href="#features">Features</a></li>
         <li><a href="#bill-of-material-BOM">Bill of Material (BOM)</a></li>
       </ul>
@@ -129,7 +129,7 @@ First, please set up the following environment before proceeding to the next ins
 1. Clone the Kachaka API
     ```sh
     $ cd
-    $ git clone https://github.com/TeamSOBITS/kachaka-api.git
+    $ git clone https://github.com/TeamSOBITS/kachaka-api
     ```
 
 2. Build the latest Docker Image.
@@ -294,7 +294,7 @@ This is a summary of information for moving the joints (pan-tilt mechanism and m
 
 #### Movement Methods
 
-1.  `move_to_pose` : Move it to a predetermined pose.
+1. `move_to_pose` : Move it to a predetermined pose.
     ```yaml
     # MoveToPose.action
     # Goal
@@ -316,7 +316,7 @@ This is a summary of information for moving the joints (pan-tilt mechanism and m
 > [!NOTE]
 > Existing poses can be found in [pose_list.yaml](sobit_light_library/config/pose_list.yaml). Please refer to [How to set new poses](#how-to-set-new-poses) for how to create a new pose.
 
-2.  `move_joint` : Moves any joint to an arbitrary angle.
+2. `move_joint` : Moves any joint to an arbitrary angle.
     ```yaml
     # MoveJoint.action
     # Goal
@@ -339,7 +339,7 @@ This is a summary of information for moving the joints (pan-tilt mechanism and m
 > [!NOTE]
 > Please check the previously defined joint names in the [Joints Name](#joints-name) section.
  
-3.  `move_hand_to_target_coord` : Checks how to move the hand to the given xyz coordinates .
+3. `move_hand_to_target_coord` : Checks how to move the hand to the given xyz coordinates .
     ```yaml
     # MoveHandToTargetCoord.srv
     # Request
@@ -525,7 +525,7 @@ TBD
 | Size (LxWxH) | 400 x 450 x 1000[mm] |
 | Weight | 16.0[kg] |
 | Remote Controller | PS4 |
-| LiDAR | UNK |
+| LiDAR | unk |
 | RGB-D | RealSense D415 (head), RealSense D405 (hand) |
 | Speaker | Jabra Speak 710 |
 | Microphone | MKE 400 |
