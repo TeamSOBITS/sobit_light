@@ -2,9 +2,9 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>sobit_light_library</name>
-  <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="kvalentincardenas@hotmail.com">sobits</maintainer>
+  <version>2.0.0</version>
+  <description>SOBIT LIGHT library for joint control</description>
+  <maintainer email="kvalentincardenas@hotmail.com">Keith Valentin</maintainer>
   <license>BSD-3-Clause</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
@@ -29,6 +29,5 @@
 
   <export>
     <build_type>ament_cmake</build_type>
-    <!-- <build_type>ament_python</build_type> -->
   </export>
 </package>
