@@ -197,6 +197,57 @@ Preferred Robotics(c)が開発した[カチャカ](https://kachaka.life/home/)�
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
+### テレオペレーション（遠隔操作）の実行・操作方法
+
+1. コントローラーを使用するためのROSパッケージの確認
+
+```sh
+$ dpkg -l | grep ros-humble-joy-linux
+```
+
+2. Bluetoothを使用して,PCとdualshockの接続を行う.
+    - 接続方法
+    1. dualshockのHOMEボタンとSHAREボタンを青のランプが点滅するまで同時長押し
+    2. BluetoothをONにして、"Wireless Controller"を選択
+    3. 点滅が終わり、青のランプが付けば接続完了
+
+3. SOBIT LIGHTの[real_minimal.launch.py](sobit_light_bringup/launch/real_minimal.launch.py)起動後,テレオペのlaunchを起動.
+>[!WARNING] 起動時にinitial_poseになるのでマニピュレータの状態を確認してください.
+```sh
+$ ros2 launch sobit_light_teleop dualshock_teleop.launch.py
+```
+<details>
+<summary>dualchockの各種ボタンと操作方法</summary>
+
+### 操作説明
+
+各操作においてのジョイントの動きは以下の通りです．
+#### マニピュレータ部分(Manipulator Control)
+
+| 操作内容 | x軸ジョイント名 |　y軸ジョイント名
+| :---: | --- | --- |
+| △ + L-stick | head_yaw_joint | head_pitch_joint
+| □ + L-stick | arm_shoulder_roll_joint　|arm_shoulder_pitch_joint
+| ✕ + L-stick | arm_forearm_roll_joint　|arm_elbow_pitch_joint
+| ○ + L-stick | arm_wrist_roll_joint　|head_pitch_joint
+>上記に加えて[R2_button]を押すとjointが加速する
+
+| 操作内容 | 出力動作
+| :---: | --- | 
+| R-stick_button | Handが閉じる |
+|Share_button|初期位置にもどる|
+
+
+#### kachakaベース部分(Base Control)
+
+| 操作内容 | x軸 |　y軸
+| :---: | --- | --- |
+| L2 + L-stick | 旋回 | 直進・後進
+
+>上記に加えて[L2_button]を押すとbaseが加速する
+
+ </details>
+
 ### Rviz2上の可視化
 
 実機を動かす前段階として，Rviz2上でSOBIT LIGHTを可視化し，ロボットの構成を表示することができます．
