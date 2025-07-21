@@ -501,7 +501,7 @@ SOBIT LIGHT is available as open hardware at [OnShape](https://cad.onshape.com/d
 
 ### Electronic Circuit Diagram
 
-![SOBIT LIGHT Circuit](sobit_light/docs/img/sobit_light_circuit.png)
+![SOBIT LIGHT Circuit](sobit_light/docs/img/sobit_light_circuit.svg)
 
 
 > [!CAUTION]

@@ -495,7 +495,7 @@ SOBIT LIGHTはオープンソースハードウェアとして[OnShape](https://
 
 ### 電子回路図
 
-![SOBIT LIGHT Circuit](sobit_light/docs/img/sobit_light_circuit.png)
+![SOBIT LIGHT Circuit](sobit_light/docs/img/sobit_light_circuit.svg)
 
 
 > [!CAUTION]
