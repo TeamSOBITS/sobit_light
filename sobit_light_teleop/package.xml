@@ -2,10 +2,23 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>sobit_light_teleop</name>
-  <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="kvalentincardenas@hotmail.com">sobits</maintainer>
-  <license>Apache-2.0</license>
+  <version>2.0.0</version>
+  <description>SOBIT LIGHT teleoperation systems</description>
+  <maintainer email="kvalentincardenas@hotmail.com">Keith Valentin</maintainer>
+  <maintainer email="team.sobits@gmail.com">Kenta Sato</maintainer>
+  <maintainer email="team.sobits@gmail.com">Lee Junho</maintainer>
+  <license>BSD-3-Clause</license>
+
+  <buildtool_depend>ament_python</buildtool_depend>
+
+  <depend>launch</depend>
+  <depend>launch_ros</depend>
+
+  <depend>rclpy</depend>
+  <depend>trajectory_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>tf2_ros</depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

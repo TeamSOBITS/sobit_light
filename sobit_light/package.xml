@@ -2,9 +2,9 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>sobit_light</name>
-  <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="kvalentincardenas@hotmail.com">sobits</maintainer>
+  <version>2.0.0</version>
+  <description>SOBIT LIGHT metapackage</description>
+  <maintainer email="kvalentincardenas@hotmail.com">Keith Valentin</maintainer>
   <license>BSD-3-Clause</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
@@ -13,7 +13,7 @@
   <depend>sobit_light_description</depend>
   <depend>sobit_light_control</depend>
   <depend>sobit_light_library</depend>
-  <!-- <depend>sobit_light_teleop</depend> -->
+  <depend>sobit_light_teleop</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

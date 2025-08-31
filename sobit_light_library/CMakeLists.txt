@@ -30,8 +30,6 @@ add_library(${PROJECT_NAME} SHARED
   src/sobit_light_wheel_action_server.cpp
   src/sobit_light_joint_move_action_client.cpp
   src/sobit_light_joint_pose_action_client.cpp
-  # src/sobit_light_joint_coord_action_client.cpp
-  # src/sobit_light_joint_tf_action_client.cpp
   src/sobit_light_wheel_linear_action_client.cpp
   src/sobit_light_wheel_rotate_action_client.cpp
 )
@@ -50,13 +48,6 @@ rclcpp_components_register_node(${PROJECT_NAME}
 rclcpp_components_register_node(${PROJECT_NAME}
   PLUGIN "sobit_light::JointPoseActionClient"
   EXECUTABLE joint_pose_action_client)
-# rclcpp_components_register_node(${PROJECT_NAME}
-#   PLUGIN "sobit_light::JointCoordActionClient"
-#   EXECUTABLE joint_coord_action_client)
-# rclcpp_components_register_node(${PROJECT_NAME}
-#   PLUGIN "sobit_light::JointTfActionClient"
-#   EXECUTABLE joint_tf_action_client)
-
 rclcpp_components_register_node(${PROJECT_NAME}
   PLUGIN "sobit_light::WheelLinearActionClient"
   EXECUTABLE wheel_linear_action_client)
