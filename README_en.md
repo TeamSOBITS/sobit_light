@@ -27,6 +27,7 @@
     <li>
     　<a href="#launch-and-usage">Launch and Usage</a>
       <ul>
+        <li><a href="#teleoperation-remote-control">Teleoperation (Remote Control)</a></li>
         <li><a href="#visualization-on-rviz<">Visualization on Rviz</a></li>
         <li><a href="#run-on-gazebo-sim<">Run on Gazebo Sim</a></li>
       </ul>
@@ -192,6 +193,61 @@ If you did not succeed in connecting to Kachaka, check the following points:
 - Verify that the `ROS_DOMAIN_ID` is the same on both the Kachaka and the development environment.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+### Teleoperation (Remote Control)
+
+1. Checking the ROS package for using the controller
+
+```sh
+$ dpkg -l | grep ros-humble-joy-linux
+```
+
+2. Connect the PC and DualShock via Bluetooth.
+    - Connection Method
+    1. Press and hold the DualShock HOME button and SHARE button simultaneously until the blue light starts flashing.
+    2. Turn on Bluetooth and select "Wireless Controller".
+    3. When the flashing stops and the blue light stays on, the connection is complete.
+
+3. After launching SOBIT LIGHT’s[real_minimal.launch.py](sobit_light_bringup/launch/real_minimal.launch.py),start the teleoperation launch.
+>[!WARNING] At startup, the manipulator will move to the initial_pose. Please check the manipulator's state before proceeding.
+
+```sh
+$ ros2 launch sobit_light_teleop dualshock_teleop.launch.py
+```
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<details>
+<summary>DualShock Buttons and Operation Methods</summary>
+
+### Instructions
+
+The joint movements for each operation are as follows.
+#### Manipulator Section (Manipulator Control)
+
+| Operation | X-axis Joint | Y-axis Joint
+| :---: | --- | --- |
+| △ + L-stick | head_yaw_joint | head_pitch_joint
+| □ + L-stick | arm_shoulder_roll_joint　|arm_shoulder_pitch_joint
+| ✕ + L-stick | arm_forearm_roll_joint　|arm_elbow_pitch_joint
+| ○ + L-stick | arm_wrist_roll_joint　|head_pitch_joint
+>In addition, pressing the [R2_button] increases the joint speed.
+
+| Operation | Action
+| :---: | --- | 
+| R-stick_button | Close the hand |
+|Share_button| Return to the initial position |
+
+
+#### Kachaka Base Control
+
+| Operation | X-axis | Y-axis
+| :---: | --- | --- |
+| L2 + L-stick | Rotate | Forward / Backward
+
+>In addition, pressing the [L2_button] increases the base speed.
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+ </details>
+
 
 ### Visualize on Rviz2
 

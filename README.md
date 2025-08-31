@@ -27,6 +27,7 @@
     <li>
     　<a href="#実行操作方法">実行・操作方法</a>
       <ul>
+        <li><a href="#テレオペレーション(遠隔操作)">テレオペレーション(遠隔操作)</a></li>
         <li><a href="#Rviz上の可視化">Rviz上の可視化</a></li>
         <li><a href="#シミュレータの実行方法">シミュレータの実行方法</a></li>
       </ul>
@@ -190,7 +191,7 @@ Preferred Robotics(c)が開発した[カチャカ](https://kachaka.life/home/)�
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
-### テレオペレーション（遠隔操作）の実行・操作方法
+### テレオペレーション(遠隔操作)
 
 1. コントローラーを使用するためのROSパッケージの確認
 
@@ -209,6 +210,7 @@ $ dpkg -l | grep ros-humble-joy-linux
 ```sh
 $ ros2 launch sobit_light_teleop dualshock_teleop.launch.py
 ```
+<p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 <details>
 <summary>dualchockの各種ボタンと操作方法</summary>
 
@@ -238,7 +240,7 @@ $ ros2 launch sobit_light_teleop dualshock_teleop.launch.py
 | L2 + L-stick | 旋回 | 直進・後進
 
 >上記に加えて[L2_button]を押すとbaseが加速する
-
+<p align="right">(<a href="#readme-top">上に戻る</a>)</p>
  </details>
 
 ### Rviz2上の可視化
