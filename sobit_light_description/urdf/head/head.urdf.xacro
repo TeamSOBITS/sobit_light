@@ -106,6 +106,69 @@
     </link>
 
 
+    <joint name="${prefix}_eye_l_joint" type="fixed">
+      <parent link="${prefix}_pitch_link" />
+      <child link="${prefix}_eye_l_link" />
+      <origin xyz="${0.07296942-0.019425} ${0.02987832+0.038/2} 0.078" rpy="0.0 0.0 0.0" />
+    </joint>
+
+    <link name="${prefix}_eye_l_link">
+      <visual>
+        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 ${M_PI/2.0}" />
+        <geometry>
+          <mesh filename="file://$(find sobit_light_description)/meshes/head/head_eye.dae" />
+        </geometry>
+        <!-- <material name="blue" /> -->
+      </visual>
+
+      <collision>
+        <origin xyz="${0.019425/2} 0.0 0.0" rpy="${M_PI/2.0} 0 ${M_PI/2.0}"/>
+        <geometry>
+          <cylinder radius="0.0385" length="0.0193"/>
+        </geometry>
+      </collision>
+
+      <inertial>
+        <origin xyz="${0.019425/2} 0.0 0.0" rpy="${M_PI/2.0} 0 ${M_PI/2.0}"/>
+        <mass value="0.01" />
+        <inertia  ixx="${1/12*0.01*(3*0.0385**2+0.0193**2)}" ixy="0.0" ixz="0.0"
+                  iyy="${1/12*0.01*(3*0.0385**2+0.0193**2)}" iyz="0.0"
+                  izz="${1/12*0.01*(3*0.0385**2+0.0193**2)}" />
+      </inertial>
+    </link>
+
+
+    <joint name="${prefix}_eye_r_joint" type="fixed">
+      <parent link="${prefix}_pitch_link" />
+      <child link="${prefix}_eye_r_link" />
+      <origin xyz="${0.07296942-0.019425} -${0.02987832+0.038/2} 0.078" rpy="0.0 0.0 0.0" />
+    </joint>
+
+    <link name="${prefix}_eye_r_link">
+      <visual>
+        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 ${M_PI/2.0}" />
+        <geometry>
+          <mesh filename="file://$(find sobit_light_description)/meshes/head/head_eye.dae" />
+        </geometry>
+        <!-- <material name="blue" /> -->
+      </visual>
+
+      <collision>
+        <origin xyz="${0.019425/2} 0.0 0.0" rpy="${M_PI/2.0} 0 ${M_PI/2.0}"/>
+        <geometry>
+          <cylinder radius="0.0385" length="0.0193"/>
+        </geometry>
+      </collision>
+
+      <inertial>
+        <origin xyz="${0.019425/2} 0.0 0.0" rpy="${M_PI/2.0} 0 ${M_PI/2.0}"/>
+        <mass value="0.01" />
+        <inertia  ixx="${1/12*0.01*(3*0.0385**2+0.0193**2)}" ixy="0.0" ixz="0.0"
+                  iyy="${1/12*0.01*(3*0.0385**2+0.0193**2)}" iyz="0.0"
+                  izz="${1/12*0.01*(3*0.0385**2+0.0193**2)}" />
+      </inertial>
+    </link>
+
     <xacro:head_transmission prefix="${prefix}" />
 
   </xacro:macro>
