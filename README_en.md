@@ -264,11 +264,21 @@ If it works correctly, Rviz will be displayed as follows.
 
 ### Run on Gazebo Sim
 
-SOBIT LIGHT has a simulation environment with Gazebo Ignition, allowing you to verify operations even without the actual machine.
+SOBIT LIGHT has a simulation environment with Gazebo Fortress, allowing you to verify operations even without the actual machine.
 
 ```sh
 $ ros2 launch sobit_light_bringup gz_minimal.launch.py
 ```
+
+At present, the following virtual environments are available.
+
+| World Name   | Description |
+| ------------ | ----------- |
+| `empty`        | Spawns an environment without furniture or obstacles. |
+| `wrs`          | Spawns the Tidy Up environment used in WRS2020. |
+| `small_room`   | Spawns a small room layout developed by AWS. |
+
+To change the environment, modify the `world_model` parameter in [gz_minimal.launch.py](sobit_light_bringup/launch/gz_minimal.launch.py).
 
 If it works correctly, the following Gazebo screen will be displayed.
 ![SOBIT LIGHT Gazebo Ignition](sobit_light/docs/img/sobit_light_gz_sim.png)

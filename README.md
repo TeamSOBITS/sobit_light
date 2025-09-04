@@ -258,11 +258,22 @@ $ ros2 launch sobit_light_description display.launch.py
 
 ### シミュレータの実行方法
 
-SOBIT LIGHTにはGazebo Ignitionのシミュレーション環境が用意されておりますので，実機がなくても，動作確認が可能です．
+SOBIT LIGHTにはGazebo Fortressのシミュレーション環境が用意されておりますので，実機がなくても，動作確認が可能です．
 
 ```sh
 $ ros2 launch sobit_light_bringup gz_minimal.launch.py
 ```
+
+現時点では，これらの仮想環境が用意されています．
+
+| World Name | 説明 |
+| --- | --- |
+| `empty` | 家具などのない環境を出現． |
+| `wrs` | WRS2020に実施されたTidy Up環境を出現． |
+| `small_room` | AWSが開発された小型部屋のレイアウトを出現．|
+
+環境を変更するために，`world_model`を[gz_minimal.launch.py](sobit_light_bringup/launch/gz_minimal.launch.py)で変更してください．
+
 
 正常に動作した場合は，次のようなGazeboの画面が表示されます．
 ![SOBIT LIGHT Gazebo Ignition](sobit_light/docs/img/sobit_light_gz_sim.png)
