@@ -13,7 +13,7 @@ from launch_ros.actions import Node
 def generate_launch_description():
     robot_name = 'sobit_light'
     robot_id = 0
-    world_model = 'small_house' # empty, wrs, small_house
+    world_model = 'empty' # empty, wrs, small_house
 
     gz_bridge_node = Node(
         package='ros_gz_bridge',
@@ -30,7 +30,7 @@ def generate_launch_description():
         world_file = os.path.join(get_package_share_directory(
             'sobit_light_description'), 
             'worlds',
-            'empty.sdf'
+            'empty_w_physics.sdf'
         )
     elif world_model == 'wrs':
         world_file = os.path.join(get_package_share_directory(
