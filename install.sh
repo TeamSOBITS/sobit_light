@@ -13,6 +13,8 @@ ros_packages=(
     "dynamixel_hardware"
     "realsense_ros"
     "kachaka-api"
+    "aws_small_house_world"
+    "tmc_wrs_gz"
 )
 
 #Clone all packages
