@@ -2,8 +2,8 @@
 
 #include "sobits_interfaces/action/move_joint.hpp"
 #include "sobits_interfaces/action/move_to_pose.hpp"
-#include "sobits_interfaces/srv/move_hand_to_target_coord.hpp"
-#include "sobits_interfaces/srv/move_hand_to_target_tf.hpp"
+#include "sobits_interfaces/srv/get_hand_to_target_coord.hpp"
+#include "sobits_interfaces/srv/get_hand_to_target_tf.hpp"
 // #include "sobits_interfaces/action/move_hand_to_target_coord.hpp"
 // #include "sobits_interfaces/action/move_hand_to_target_tf.hpp"
 
@@ -63,8 +63,8 @@ class JointActionServer : public rclcpp::Node
 public:
   using MoveJoint = sobits_interfaces::action::MoveJoint;
   using MoveToPose = sobits_interfaces::action::MoveToPose;
-  using MoveHandToTargetCoord = sobits_interfaces::srv::MoveHandToTargetCoord;
-  using MoveHandToTargetTF = sobits_interfaces::srv::MoveHandToTargetTF;
+  using GetHandToTargetCoord = sobits_interfaces::srv::GetHandToTargetCoord;
+  using GetHandToTargetTF = sobits_interfaces::srv::GetHandToTargetTF;
   // using MoveHandToTargetCoord = sobits_interfaces::action::MoveHandToTargetCoord;
   // using MoveHandToTargetTF = sobits_interfaces::action::MoveHandToTargetTF;
 
@@ -128,8 +128,8 @@ private:
 
   rclcpp_action::Server<MoveJoint>::SharedPtr action_server_move_joints_;
   rclcpp_action::Server<MoveToPose>::SharedPtr action_server_move_to_pose_;
-  rclcpp::Service<MoveHandToTargetCoord>::SharedPtr service_move_hand_to_coord_;
-  rclcpp::Service<MoveHandToTargetTF>::SharedPtr service_move_hand_to_tf_;
+  rclcpp::Service<GetHandToTargetCoord>::SharedPtr service_get_hand_to_coord_;
+  rclcpp::Service<GetHandToTargetTF>::SharedPtr service_get_hand_to_tf_;
   // rclcpp_action::Server<MoveHandToTargetCoord>::SharedPtr action_server_move_hand_to_coord_;
   // rclcpp_action::Server<MoveHandToTargetTF>::SharedPtr action_server_move_hand_to_tf_;
 
@@ -150,8 +150,8 @@ private:
 
   void exe_move_joints(const std::shared_ptr<GoalHandleMoveJoints> goal_handle);
   void exe_move_to_pose(const std::shared_ptr<GoalHandleMoveToPose> goal_handle);
-  void get_pos_to_coord(const std::shared_ptr<MoveHandToTargetCoord::Request> request, std::shared_ptr<MoveHandToTargetCoord::Response> response);
-  void get_pos_to_tf(const std::shared_ptr<MoveHandToTargetTF::Request> request, std::shared_ptr<MoveHandToTargetTF::Response> response);
+  void get_pos_to_coord(const std::shared_ptr<GetHandToTargetCoord::Request> request, std::shared_ptr<GetHandToTargetCoord::Response> response);
+  void get_pos_to_tf(const std::shared_ptr<GetHandToTargetTF::Request> request, std::shared_ptr<GetHandToTargetTF::Response> response);
   // void exe_move_hand_to_coord(const std::shared_ptr<GoalHandleMoveHandToCoord> goal_handle);
   // void exe_move_hand_to_tf(const std::shared_ptr<GoalHandleMoveHandToTf> goal_handle);
 
