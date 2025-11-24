@@ -26,11 +26,11 @@ JointActionServer::JointActionServer(const rclcpp::NodeOptions & options = rclcp
       std::bind(&JointActionServer::handle_move_to_pose_goal, this, std::placeholders::_1, std::placeholders::_2),
       std::bind(&JointActionServer::handle_move_to_pose_cancel, this, std::placeholders::_1),
       std::bind(&JointActionServer::handle_move_to_pose_accepted, this, std::placeholders::_1));
-  this->service_move_hand_to_coord_ = this->create_service<MoveHandToTargetCoord>(
-      "move_hand_to_coord",
+  this->service_get_hand_to_coord_ = this->create_service<GetHandToTargetCoord>(
+      "get_hand_to_coord",
       std::bind(&JointActionServer::get_pos_to_coord, this, std::placeholders::_1, std::placeholders::_2));
-  this->service_move_hand_to_tf_ = this->create_service<MoveHandToTargetTF>(
-      "move_hand_to_tf",
+  this->service_get_hand_to_tf_ = this->create_service<GetHandToTargetTF>(
+      "get_hand_to_tf",
       std::bind(&JointActionServer::get_pos_to_tf, this, std::placeholders::_1, std::placeholders::_2));
   // this->action_server_move_hand_to_coord_ = rclcpp_action::create_server<MoveHandToTargetCoord>(
   //     this,
@@ -416,8 +416,8 @@ void JointActionServer::exe_move_to_pose(
 }
 
 void JointActionServer::get_pos_to_coord(
-  const std::shared_ptr<MoveHandToTargetCoord::Request> request,
-  std::shared_ptr<MoveHandToTargetCoord::Response>      response)
+  const std::shared_ptr<GetHandToTargetCoord::Request> request,
+  std::shared_ptr<GetHandToTargetCoord::Response> response)
 {
   RCLCPP_INFO(this->get_logger(), "Requesting service");
 
@@ -508,8 +508,8 @@ void JointActionServer::get_pos_to_coord(
 }
 
 void JointActionServer::get_pos_to_tf(
-  const std::shared_ptr<MoveHandToTargetTF::Request> request,
-  std::shared_ptr<MoveHandToTargetTF::Response>      response)
+  const std::shared_ptr<GetHandToTargetTF::Request> request,
+  std::shared_ptr<GetHandToTargetTF::Response> response)
 {
   RCLCPP_INFO(this->get_logger(), "Requesting service");
 
