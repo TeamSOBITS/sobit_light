@@ -13,7 +13,7 @@ from launch_ros.actions import Node
 def generate_launch_description():
     robot_name = 'sobit_light'
     robot_id = 0
-    world_model = 'empty' # empty, wrs, small_house
+    world_model = 'rcjo2025' # empty, wrs, small_house, rcjo2025
 
     gz_bridge_node = Node(
         package='ros_gz_bridge',
@@ -43,6 +43,12 @@ def generate_launch_description():
             'aws_small_house_world'), 
             'worlds',
             'small_house.world'
+        )
+    elif world_model == 'rcjo2025':
+        world_file = os.path.join(get_package_share_directory(
+            'sobits_gazebo_worlds'), 
+            'worlds',
+            'rcjo2025_arena.world.xacro'
         )
 
     rviz_config = PathJoinSubstitution([
@@ -83,8 +89,8 @@ def generate_launch_description():
             ]),
             launch_arguments={
                 'robot_name': robot_name if robot_id == 0 else robot_name + '_' + str(robot_id),
-                'robot_coords_x': '0', # x 
-                'robot_coords_y': '0', # y
+                'robot_coords_x': '-5.5', # x 
+                'robot_coords_y': '1.5', # y
                 'robot_coords_Y': '0', # yaw
                 'enable_gz' : 'True',
                 'enable_gz_front_cam_color' : 'True',
