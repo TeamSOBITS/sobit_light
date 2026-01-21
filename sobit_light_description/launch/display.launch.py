@@ -15,7 +15,7 @@ def generate_launch_description():
 
     use_gui = LaunchConfiguration('use_gui', default='True')
 
-    robot_name = "sobit_light_1"
+    robot_name = "sobit_light"
 
 
     rviz_config = os.path.join(get_package_share_directory(
@@ -29,16 +29,20 @@ def generate_launch_description():
     robot_description_config = xacro.process_file(
         robot_description,
         mappings={
-            'enable_gz' : 'True',
-            'robot_name' : robot_name,
+            'enable_mobile_base' : 'True',
+            'enable_head'        : 'True',
+            'enable_arm'         : 'True',
+            'enable_hand'        : 'True',
+            'enable_gz'                 : 'True',
             'enable_gz_front_cam_color' : 'True',
-            'enable_gz_back_cam_color' : 'True',
-            'enable_gz_head_cam_color' : 'True',
-            'enable_gz_head_cam_depth' : 'True',
-            'enable_gz_hand_cam_color' : 'True',
-            'enable_gz_hand_cam_depth' : 'True',
-            'enable_gz_lidar' : 'True',
-            'enable_gz_imu' : 'True',
+            'enable_gz_back_cam_color'  : 'True',
+            'enable_gz_head_cam_color'  : 'True',
+            'enable_gz_head_cam_depth'  : 'True',
+            'enable_gz_hand_cam_color'  : 'True',
+            'enable_gz_hand_cam_depth'  : 'True',
+            'enable_gz_lidar'           : 'True',
+            'enable_gz_imu'             : 'True',
+            'robot_name' : robot_name,
         }
     )
 
