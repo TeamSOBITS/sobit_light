@@ -4,14 +4,14 @@
   <xacro:macro name="gazebo_sensors" params="robot_name enable_gz_front_cam_color:=True enable_gz_back_cam_color:=True enable_gz_head_cam_color:=True enable_gz_head_cam_depth:=True enable_gz_hand_cam_color:=True enable_gz_hand_cam_depth:=True enable_gz_lidar:=True enable_gz_imu:=True">
 
     <!-- Sensor - Base Front Camera (Color) -->
-    <xacro:if value="${enable_gz_front_cam_color}">
+    <xacro:if value="${$(arg enable_gz_front_cam_color) and $(arg enable_mobile_base)}">
       <gazebo reference="imu_link">
         <sensor name="imu_sensor" type="imu">
           <pose>0 0 0 0 0 0</pose>
 
-          <ignition_frame_id>${robot_name}/imu_link</ignition_frame_id>
+          <gz_frame_id>${robot_name}/imu_link</gz_frame_id>
           <topic>${robot_name}/imu</topic>
-          
+
           <always_on>1</always_on>
           <visualize>true</visualize>
           <update_rate>1</update_rate>
@@ -59,13 +59,12 @@
     </gazebo> -->
 
     <!-- Sensor - Base Front Camera (Color) -->
-    <xacro:if value="${enable_gz_front_cam_color}">
+    <xacro:if value="${$(arg enable_gz_front_cam_color) and $(arg enable_mobile_base)}">
       <gazebo reference="camera_front_link">
         <sensor name="base_front_camera_color" type="camera">
           <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
           
-          <ignition_frame_id>${robot_name}/base_front_camera_color</ignition_frame_id>
-          <!-- <gz_frame_id>${robot_name}/base_front_camera_color</gz_frame_id> -->
+          <gz_frame_id>${robot_name}/base_front_camera_color</gz_frame_id>
           <topic>${robot_name}/base_front_camera/color</topic>
 
           <always_on>1</always_on>
@@ -133,13 +132,12 @@
     </gazebo> -->
 
     <!-- Sensor - Base Back Camera (Color) -->
-    <xacro:if value="${enable_gz_back_cam_color}">
+    <xacro:if value="${$(arg enable_gz_back_cam_color) and $(arg enable_mobile_base)}">
       <gazebo reference="camera_back_link">
         <sensor name="base_back_camera_color" type="camera">
           <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
           
-          <ignition_frame_id>${robot_name}/camera_back_link</ignition_frame_id>
-          <!-- <gz_frame_id>${robot_name}/camera_back_link</gz_frame_id> -->
+          <gz_frame_id>${robot_name}/camera_back_link</gz_frame_id>
           <topic>${robot_name}/base_back_camera/color</topic>
 
           <always_on>1</always_on>
@@ -169,13 +167,12 @@
     </xacro:if>
 
     <!-- Sensor - Head Camera (Color) -->
-    <xacro:if value="${enable_gz_head_cam_color}">
+    <xacro:if value="${$(arg enable_gz_head_cam_color) and $(arg enable_head)}">
       <gazebo reference="head_camera_color_optical_frame">
         <sensor name="head_camera_color" type="camera">
           <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
           
-          <ignition_frame_id>${robot_name}/head_camera_color_optical_frame</ignition_frame_id>
-          <!-- <gz_frame_id>${robot_name}/head_camera_color_optical_frame</gz_frame_id> -->
+          <gz_frame_id>${robot_name}/head_camera_color_optical_frame</gz_frame_id>
           <topic>${robot_name}/head_camera/color</topic>
 
           <always_on>1</always_on>
@@ -205,13 +202,12 @@
     </xacro:if>
 
     <!-- Sensor - Head Camera (Depth) -->
-    <xacro:if value="${enable_gz_head_cam_depth}">
+    <xacro:if value="${$(arg enable_gz_head_cam_depth) and $(arg enable_head)}">
       <gazebo reference="head_camera_depth_optical_frame">
         <sensor name="head_camera_depth" type="depth">
           <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
           
-          <ignition_frame_id>${robot_name}/head_camera_depth_optical_frame</ignition_frame_id>
-          <!-- <gz_frame_id>${robot_name}/head_camera_depth_optical_frame</gz_frame_id> -->
+          <gz_frame_id>${robot_name}/head_camera_depth_optical_frame</gz_frame_id>
           <topic>${robot_name}/head_camera/depth</topic>
 
           <always_on>1</always_on>
@@ -240,13 +236,12 @@
     </xacro:if>
 
     <!-- Sensor - Hand Camera (Color) -->
-    <xacro:if value="${enable_gz_hand_cam_color}">
+    <xacro:if value="${$(arg enable_gz_hand_cam_color) and $(arg enable_hand)}">
       <gazebo reference="hand_camera_color_optical_frame">
         <sensor name="hand_camera_color" type="camera">
           <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
           
-          <ignition_frame_id>${robot_name}/hand_camera_color_optical_frame</ignition_frame_id>
-          <!-- <gz_frame_id>${robot_name}/hand_camera_color_optical_frame</gz_frame_id> -->
+          <gz_frame_id>${robot_name}/hand_camera_color_optical_frame</gz_frame_id>
           <topic>${robot_name}/hand_camera/color</topic>
 
           <always_on>1</always_on>
@@ -276,20 +271,19 @@
     </xacro:if>
 
     <!-- Sensor - Hand Camera (Depth) -->
-    <xacro:if value="${enable_gz_hand_cam_depth}">
+    <xacro:if value="${$(arg enable_gz_hand_cam_depth) and $(arg enable_hand)}">
       <gazebo reference="hand_camera_depth_optical_frame">
         <sensor name="hand_camera_depth" type="depth">
           <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
           
-          <ignition_frame_id>${robot_name}/hand_camera_depth_optical_frame</ignition_frame_id>
-          <!-- <gz_frame_id>${robot_name}/hand_camera_depth_optical_frame</gz_frame_id> -->
+          <gz_frame_id>${robot_name}/hand_camera_depth_optical_frame</gz_frame_id>
           <topic>${robot_name}/hand_camera/depth</topic>
 
           <always_on>1</always_on>
           <visualize>true</visualize>
           <update_rate>1</update_rate>
 
-          <camera name="head_camera_depth">
+          <camera name="hand_camera_depth">
             <horizontal_fov>1.48702</horizontal_fov>
             <image>
               <width>1280</width>
@@ -311,13 +305,12 @@
     </xacro:if>
 
     <!-- Sensor - LiDAR -->
-    <xacro:if value="${enable_gz_lidar}">
-      <gazebo reference="sim_laser_frame">
+    <xacro:if value="${$(arg enable_gz_lidar) and $(arg enable_mobile_base)}">
+      <gazebo reference="laser_frame">
         <sensor name="lidar" type="gpu_lidar">
           <pose>0 0 0 0 0 0</pose>
 
-          <ignition_frame_id>${robot_name}/sim_laser_frame</ignition_frame_id>
-          <!-- <gz_frame_id>${robot_name}/sim_laser_frame</gz_frame_id> -->
+          <gz_frame_id>${robot_name}/laser_frame</gz_frame_id>
           <topic>${robot_name}/lidar/scan</topic>
 
           <always_on>1</always_on>
@@ -348,24 +341,6 @@
         </sensor>
       </gazebo>
     </xacro:if>
-
-    <gazebo reference="base_link">
-      <self_collide>0</self_collide>
-      <collision>
-        <surface>
-          <friction>
-            <ode>
-              <mu>0.0</mu>
-              <mu2>0.0</mu2>
-              <fdir1>0 0 0</fdir1>
-              <slip1>0.0</slip1>
-              <slip2>0.0</slip2>
-            </ode>
-          </friction>
-        </surface>
-      </collision>
-    </gazebo>
-
 
     <!-- Publish Joint States -->
     <gazebo>
