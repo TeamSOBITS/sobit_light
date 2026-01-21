@@ -3,59 +3,65 @@
     update_rate: 100  # Hz
     use_sim_time: True
 
-    velocity_controller:
-      type: velocity_controllers/JointGroupVelocityController
-
-    joint_trajectory_controller:
+    head_position_controller:
       type: joint_trajectory_controller/JointTrajectoryController
 
-    diff_controller:
+    arm_position_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+    hand_position_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+    wheel_controller:
       type: diff_drive_controller/DiffDriveController
+
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
 
-/**/velocity_controller:
+/**/head_position_controller:
   ros__parameters:
     joints:
-      - arm_shoulder_roll_joint
-      - arm_shoulder_pitch_joint
-      - arm_shoulder_pitch_sub_joint
-      - arm_elbow_pitch_joint
-      - arm_forearm_roll_joint
-      - arm_wrist_pitch_joint
-      - arm_wrist_roll_joint
-      - hand_joint
       - head_yaw_joint
       - head_pitch_joint
-
-/**/joint_trajectory_controller:
-  ros__parameters:
-    joints:
-      - arm_shoulder_roll_joint
-      - arm_shoulder_pitch_joint
-      - arm_shoulder_pitch_sub_joint
-      - arm_elbow_pitch_joint
-      - arm_forearm_roll_joint
-      - arm_wrist_pitch_joint
-      - arm_wrist_roll_joint
-      - hand_joint
-      - head_yaw_joint
-      - head_pitch_joint
-
     command_interfaces:
       - position
-
     state_interfaces:
       - position
       - velocity
-
     allow_partial_joints_goal: true
 
+/**/arm_position_controller:
+  ros__parameters:
+    joints:
+      - arm_shoulder_roll_joint
+      - arm_shoulder_pitch_joint
+      - arm_shoulder_pitch_sub_joint
+      - arm_elbow_pitch_joint
+      - arm_forearm_roll_joint
+      - arm_wrist_pitch_joint
+      - arm_wrist_roll_joint
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    allow_partial_joints_goal: true
+
+/**/hand_position_controller:
+  ros__parameters:
+    joints:
+      - hand_joint
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    allow_partial_joints_goal: true
 
 # https://control.ros.org/humble/doc/ros2_controllers/diff_drive_controller/doc/userdoc.html
-/**/diff_controller:
+/**/wheel_controller:
   ros__parameters:
     left_wheel_names : ["base_l_drive_wheel_joint"]
     right_wheel_names: ["base_r_drive_wheel_joint"]
