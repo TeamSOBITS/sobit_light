@@ -316,9 +316,9 @@ void JointActionServer::exe_move_to_pose(
   trajectory_msgs::msg::JointTrajectory arm_joint_trajectory;
   trajectory_msgs::msg::JointTrajectory hand_joint_trajectory;
   trajectory_msgs::msg::JointTrajectory head_joint_trajectory;
-  arm_joint_trajectory  = set_joints(kArmJointNames, target_joint_rad, goal->time_allowance, "arm");
-  hand_joint_trajectory = set_joints(kHandJointNames, target_joint_rad, goal->time_allowance, "hand");
-  head_joint_trajectory = set_joints(kHeadJointNames, target_joint_rad, goal->time_allowance, "head");
+  arm_joint_trajectory  = set_joints(kJointNames, target_joint_rad, goal->time_allowance, "arm");
+  hand_joint_trajectory = set_joints(kJointNames, target_joint_rad, goal->time_allowance, "hand");
+  head_joint_trajectory = set_joints(kJointNames, target_joint_rad, goal->time_allowance, "head");
 
   try {
     if (!arm_joint_trajectory.joint_names.empty())
