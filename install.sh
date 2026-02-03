@@ -102,7 +102,7 @@ sudo apt-get install -y \
 # Set up environment variables
 echo "" >> /home/$USERNAME/.bashrc
 echo "# SOBIT LIGHT environment variables" >> /home/$USERNAME/.bashrc
-echo "export DXL_SL_PORT=`realpath /dev/serial/by-id/usb-FTDI_USB__-__Serial_Converter_TOBECONFIRMED-if00-port0`" >> /home/$USERNAME/.bashrc
+echo "export DXL_SL_PORT=`realpath /dev/serial/by-id/usb-FTDI_USB__-__Serial_Converter_FT8ISSV2-if00-port0`" >> /home/$USERNAME/.bashrc
 echo "" >> /home/$USERNAME/.bashrc
 source /home/$USERNAME/.bashrc
 
