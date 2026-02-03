@@ -18,16 +18,16 @@
       </hardware>
 
       <xacro:if value="${$(arg enable_head)}">
-        <xacro:dxl_head_controllers prefix="head"       enable_gz="${$(arg enable_gz)}"/>
+        <xacro:dxl_head_controllers prefix="head"  enable_gz="${$(arg enable_gz)}"/>
       </xacro:if>
       <xacro:if value="${$(arg enable_arm)}">
-        <xacro:dxl_arm_controllers  prefix="arm"  enable_gz="${$(arg enable_gz)}"/>
+        <xacro:dxl_arm_controllers  prefix="arm"   enable_gz="${$(arg enable_gz)}"/>
       </xacro:if>
       <xacro:if value="${$(arg enable_hand)}">
         <xacro:dxl_hand_controllers prefix="hand"  enable_gz="${$(arg enable_gz)}"/>
       </xacro:if>
       <xacro:if value="${$(arg enable_mobile_base)}">
-        <xacro:wheel_controllers    prefix="wheel"      enable_gz="${$(arg enable_gz)}"/>
+        <xacro:wheel_controllers    prefix="wheel" enable_gz="${$(arg enable_gz)}"/>
       </xacro:if>
     </ros2_control>
 
