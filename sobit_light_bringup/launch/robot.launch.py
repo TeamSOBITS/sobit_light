@@ -142,7 +142,7 @@ def launch_gz(context, *args, **kwargs):
     control_node = Node(
         package="controller_manager",
         executable="ros2_control_node",
-        name="controller_manager",
+        # name="controller_manager",
         namespace=robot_name,
         parameters=[controller_config],
         remappings=[
@@ -158,7 +158,7 @@ def launch_gz(context, *args, **kwargs):
         head_position_controller = Node(
             package='controller_manager',
             executable='spawner',
-            name='head_position_controller',
+            # name='head_position_controller',
             namespace=robot_name,
             arguments=[
                 'head_position_controller',
@@ -171,7 +171,7 @@ def launch_gz(context, *args, **kwargs):
         arm_position_controller = Node(
             package='controller_manager',
             executable='spawner',
-            name='arm_position_controller',
+            # name='arm_position_controller',
             namespace=robot_name,
             arguments=[
                 'arm_position_controller',
@@ -184,7 +184,7 @@ def launch_gz(context, *args, **kwargs):
         hand_position_controller = Node(
             package='controller_manager',
             executable='spawner',
-            name='hand_position_controller',
+            # name='hand_position_controller',
             namespace=robot_name,
             arguments=[
                 'hand_position_controller',
@@ -198,7 +198,7 @@ def launch_gz(context, *args, **kwargs):
         wheel_controller = Node(
             package='controller_manager',
             executable='spawner',
-            name='wheel_controller',
+            # name='wheel_controller',
             namespace=robot_name,
             arguments=[
                 'wheel_controller',
@@ -224,7 +224,7 @@ def launch_gz(context, *args, **kwargs):
     joint_state_broadcaster = Node(
         package='controller_manager',
         executable='spawner',
-        name='joint_state_broadcaster',
+        # name='joint_state_broadcaster',
         namespace=robot_name,
         arguments=[
             'joint_state_broadcaster',
