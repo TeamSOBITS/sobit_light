@@ -19,15 +19,20 @@ def generate_launch_description():
     arg_robot_coords_y = DeclareLaunchArgument('robot_coords_y', default_value='0')
     arg_robot_coords_Y = DeclareLaunchArgument('robot_coords_Y', default_value='0')
 
-    arg_enable_gz = DeclareLaunchArgument('enable_gz', default_value='True')
+    arg_enable_mobile_base = DeclareLaunchArgument('enable_mobile_base', default_value='True')
+    arg_enable_head        = DeclareLaunchArgument('enable_head', default_value='True')
+    arg_enable_arm         = DeclareLaunchArgument('enable_arm', default_value='True')
+    arg_enable_hand        = DeclareLaunchArgument('enable_hand', default_value='True')
+
+    arg_enable_gz                 = DeclareLaunchArgument('enable_gz', default_value='True')
     arg_enable_gz_front_cam_color = DeclareLaunchArgument('enable_gz_front_cam_color', default_value='True')
-    arg_enable_gz_back_cam_color = DeclareLaunchArgument('enable_gz_back_cam_color', default_value='True')
-    arg_enable_gz_head_cam_color = DeclareLaunchArgument('enable_gz_head_cam_color', default_value='True')
-    arg_enable_gz_head_cam_depth = DeclareLaunchArgument('enable_gz_head_cam_depth', default_value='True')
-    arg_enable_gz_hand_cam_color = DeclareLaunchArgument('enable_gz_hand_cam_color', default_value='True')
-    arg_enable_gz_hand_cam_depth = DeclareLaunchArgument('enable_gz_hand_cam_depth', default_value='True')
-    arg_enable_gz_lidar = DeclareLaunchArgument('enable_gz_lidar', default_value='True')
-    arg_enable_gz_imu = DeclareLaunchArgument('enable_gz_imu', default_value='True')
+    arg_enable_gz_back_cam_color  = DeclareLaunchArgument('enable_gz_back_cam_color', default_value='True')
+    arg_enable_gz_head_cam_color  = DeclareLaunchArgument('enable_gz_head_cam_color', default_value='True')
+    arg_enable_gz_head_cam_depth  = DeclareLaunchArgument('enable_gz_head_cam_depth', default_value='True')
+    arg_enable_gz_hand_cam_color  = DeclareLaunchArgument('enable_gz_hand_cam_color', default_value='True')
+    arg_enable_gz_hand_cam_depth  = DeclareLaunchArgument('enable_gz_hand_cam_depth', default_value='True')
+    arg_enable_gz_lidar           = DeclareLaunchArgument('enable_gz_lidar', default_value='True')
+    arg_enable_gz_imu             = DeclareLaunchArgument('enable_gz_imu', default_value='True')
 
     arg_enable_real_head_cam = DeclareLaunchArgument('enable_real_head_cam', default_value='True')
     arg_enable_real_hand_cam = DeclareLaunchArgument('enable_real_hand_cam', default_value='True')
@@ -37,6 +42,10 @@ def generate_launch_description():
         arg_robot_coords_x,
         arg_robot_coords_y,
         arg_robot_coords_Y,
+        arg_enable_mobile_base,
+        arg_enable_head,
+        arg_enable_arm,
+        arg_enable_hand,
         arg_enable_gz,
         arg_enable_gz_front_cam_color,
         arg_enable_gz_back_cam_color,
@@ -59,18 +68,30 @@ def launch_gz(context, *args, **kwargs):
     robot_coords_y = LaunchConfiguration('robot_coords_y').perform(context)
     robot_coords_Y = LaunchConfiguration('robot_coords_Y').perform(context)
 
-    enable_gz = LaunchConfiguration('enable_gz').perform(context)
+    enable_mobile_base = LaunchConfiguration('enable_mobile_base').perform(context)
+    enable_head        = LaunchConfiguration('enable_head').perform(context)
+    enable_arm         = LaunchConfiguration('enable_arm').perform(context)
+    enable_hand        = LaunchConfiguration('enable_hand').perform(context)
+
+    enable_gz                 = LaunchConfiguration('enable_gz').perform(context)
     enable_gz_front_cam_color = LaunchConfiguration('enable_gz_front_cam_color').perform(context)
-    enable_gz_back_cam_color = LaunchConfiguration('enable_gz_back_cam_color').perform(context)
-    enable_gz_head_cam_color = LaunchConfiguration('enable_gz_head_cam_color').perform(context)
-    enable_gz_head_cam_depth = LaunchConfiguration('enable_gz_head_cam_depth').perform(context)
-    enable_gz_hand_cam_color = LaunchConfiguration('enable_gz_hand_cam_color').perform(context)
-    enable_gz_hand_cam_depth = LaunchConfiguration('enable_gz_hand_cam_depth').perform(context)
-    enable_gz_lidar = LaunchConfiguration('enable_gz_lidar').perform(context)
-    enable_gz_imu = LaunchConfiguration('enable_gz_imu').perform(context)
+    enable_gz_back_cam_color  = LaunchConfiguration('enable_gz_back_cam_color').perform(context)
+    enable_gz_head_cam_color  = LaunchConfiguration('enable_gz_head_cam_color').perform(context)
+    enable_gz_head_cam_depth  = LaunchConfiguration('enable_gz_head_cam_depth').perform(context)
+    enable_gz_hand_cam_color  = LaunchConfiguration('enable_gz_hand_cam_color').perform(context)
+    enable_gz_hand_cam_depth  = LaunchConfiguration('enable_gz_hand_cam_depth').perform(context)
+    enable_gz_lidar           = LaunchConfiguration('enable_gz_lidar').perform(context)
+    enable_gz_imu             = LaunchConfiguration('enable_gz_imu').perform(context)
 
     enable_real_head_cam = LaunchConfiguration('enable_real_head_cam').perform(context) # TODO: Implement
     enable_real_hand_cam = LaunchConfiguration('enable_real_hand_cam').perform(context) # TODO: Implement
+
+    # Find Dynamixel Port name from DXL_LOWER_PORT/DXL_UPPER_PORT environment variable
+    dxl_sl_port = ''
+    if enable_gz == 'False':
+        dxl_sl_port = str(os.environ.get('DXL_SL_PORT'))
+        print('Dynamixel SOBIT LIGHT Port : ' + dxl_sl_port)
+
 
     robot_description = os.path.join(get_package_share_directory(
         'sobit_light_description'), 
@@ -80,73 +101,23 @@ def launch_gz(context, *args, **kwargs):
     robot_description_config = xacro.process_file(
         robot_description,
         mappings={
-            'enable_gz'  : enable_gz,
-            'robot_name' : robot_name,
+            'robot_name'                : robot_name,
+            'enable_mobile_base'        : enable_mobile_base,
+            'enable_head'               : enable_head,
+            'enable_arm'                : enable_arm,
+            'enable_hand'               : enable_hand,
+            'enable_gz'                 : enable_gz,
             'enable_gz_front_cam_color' : enable_gz_front_cam_color,
             'enable_gz_back_cam_color'  : enable_gz_back_cam_color,
             'enable_gz_head_cam_color'  : enable_gz_head_cam_color,
             'enable_gz_head_cam_depth'  : enable_gz_head_cam_depth,
             'enable_gz_hand_cam_color'  : enable_gz_hand_cam_color,
             'enable_gz_hand_cam_depth'  : enable_gz_hand_cam_depth,
-            'enable_gz_lidar' : enable_gz_lidar,
-            'enable_gz_imu'   : enable_gz_imu,
+            'enable_gz_lidar'           : enable_gz_lidar,
+            'enable_gz_imu'             : enable_gz_imu,
+            'dxl_sl_port'               : dxl_sl_port,
         })
-    
-    if enable_gz == 'False':
-        controller_config = os.path.join(get_package_share_directory(
-            'sobit_light_control'),
-            'config',
-            'real_controllers.yaml'
-        )
 
-        controller_manager = Node(
-            package="controller_manager",
-            executable="ros2_control_node",
-            namespace=robot_name,
-            parameters=[
-                {"robot_description": robot_description_config.toxml()}, controller_config],
-            output="screen",
-        )
-
-    joint_state_broadcaster = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller',
-            '--set-state', 'active',
-            '--controller-manager', robot_name+'/controller_manager',
-            # '--use-sim-time',
-            'joint_state_broadcaster'
-        ],
-        output='screen'
-    )
-
-    joint_trajectory_controller = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller',
-            '--set-state', 'active',
-            '--controller-manager', robot_name+'/controller_manager',
-            # '--use-sim-time',
-            'joint_trajectory_controller'
-        ],
-        output='screen'
-    )
-
-    velocity_controller = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller',
-            '--set-state', 'configured',
-            '--controller-manager', robot_name+'/controller_manager',
-            # '--use-sim-time',
-            'velocity_controller'
-        ],
-        output='screen'
-    )
-
-    diff_controller = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller',
-            '--set-state', 'active',
-            '--controller-manager', robot_name+'/controller_manager',
-            # '--use-sim-time',
-            'diff_controller'
-        ],
-        output='screen'
-    )
 
     robot_state_publisher_node = Node(
         package="robot_state_publisher",
@@ -160,6 +131,121 @@ def launch_gz(context, *args, **kwargs):
         ],
         output="screen",
     )
+    
+    controller_config_name = 'gz_controllers.yaml' if enable_gz == 'True' else 'real_controllers.yaml'
+    controller_config = os.path.join(get_package_share_directory(
+        'sobit_light_control'),
+        'config',
+        controller_config_name
+    )
+
+    control_node = Node(
+        package="controller_manager",
+        executable="ros2_control_node",
+        # name="controller_manager",
+        namespace=robot_name,
+        parameters=[controller_config],
+        remappings=[
+            ("controller_manager/robot_description", "robot_description"),
+        ],
+        output="both",
+    )
+
+    controllers = []
+    nodes = []
+
+    if enable_head == 'True':
+        head_position_controller = Node(
+            package='controller_manager',
+            executable='spawner',
+            # name='head_position_controller',
+            namespace=robot_name,
+            arguments=[
+                'head_position_controller',
+                '-c', 'controller_manager', '--activate'
+                ],
+        )
+        controllers.append(head_position_controller)
+
+    if enable_arm == 'True':
+        arm_position_controller = Node(
+            package='controller_manager',
+            executable='spawner',
+            # name='arm_position_controller',
+            namespace=robot_name,
+            arguments=[
+                'arm_position_controller',
+                '-c', 'controller_manager', '--activate'
+                ],
+        )
+        controllers.append(arm_position_controller)
+
+    if enable_hand == 'True':
+        hand_position_controller = Node(
+            package='controller_manager',
+            executable='spawner',
+            # name='hand_position_controller',
+            namespace=robot_name,
+            arguments=[
+                'hand_position_controller',
+                '-c', 'controller_manager', '--activate'
+                ],
+        )
+        controllers.append(hand_position_controller)
+        
+
+    if enable_mobile_base == 'True' and enable_gz == 'True':
+        wheel_controller = Node(
+            package='controller_manager',
+            executable='spawner',
+            # name='wheel_controller',
+            namespace=robot_name,
+            arguments=[
+                'wheel_controller',
+                '-c', 'controller_manager', '--activate'
+                ],
+        )
+        controllers.append(wheel_controller)
+
+    gz_spawn_entity_node = Node(
+        package='ros_gz_sim',
+        executable='create',
+        namespace=robot_name,
+        arguments=[
+            '-topic', '/' + robot_name + '/robot_description',
+            '-name', robot_name,
+            '-x', robot_coords_x,
+            '-y', robot_coords_y,
+            '-Y', robot_coords_Y,
+        ],
+        output='screen',
+    )
+
+    joint_state_broadcaster = Node(
+        package='controller_manager',
+        executable='spawner',
+        # name='joint_state_broadcaster',
+        namespace=robot_name,
+        arguments=[
+            'joint_state_broadcaster',
+            '-c', 'controller_manager',
+            ],
+    )
+
+    delayed_joint_state_broadcaster = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=gz_spawn_entity_node,
+            on_exit=joint_state_broadcaster,
+        )
+    )
+
+    delayed_controllers = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=joint_state_broadcaster,
+            on_exit=controllers,
+        )
+    )
+
 
     action_server_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
@@ -175,155 +261,45 @@ def launch_gz(context, *args, **kwargs):
         }.items(),
     )
 
+    gz_bridge_node = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        namespace=robot_name,
+        arguments=[
+                    "/" + robot_name + "/joint_states" + "@sensor_msgs/msg/JointState" + "[gz.msgs.Model",
+                    # "/model/" + robot_name + "/pose" + "@geometry_msgs/msg/Pose" + "[gz.msgs.Pose",
+                    "/" + robot_name + "/base_front_camera/camera_info" + "@sensor_msgs/msg/CameraInfo" + "[gz.msgs.CameraInfo",
+                    "/" + robot_name + "/base_front_camera/color" + "@sensor_msgs/msg/Image" + "[gz.msgs.Image",
+                    "/" + robot_name + "/base_front_camera/depth" + "@sensor_msgs/msg/Image" + "[gz.msgs.Image",
+                    "/" + robot_name + "/base_back_camera/camera_info" + "@sensor_msgs/msg/CameraInfo" + "[gz.msgs.CameraInfo",
+                    "/" + robot_name + "/base_back_camera/color" + "@sensor_msgs/msg/Image" + "[gz.msgs.Image",
+                    "/" + robot_name + "/base_back_camera/depth" + "@sensor_msgs/msg/Image" + "[gz.msgs.Image",
+                    "/" + robot_name + "/head_camera/camera_info" + "@sensor_msgs/msg/CameraInfo" + "[gz.msgs.CameraInfo",
+                    "/" + robot_name + "/head_camera/color" + "@sensor_msgs/msg/Image" + "[gz.msgs.Image",
+                    "/" + robot_name + "/head_camera/depth" + "@sensor_msgs/msg/Image" + "[gz.msgs.Image",
+                    "/" + robot_name + "/head_camera/depth/points" + "@sensor_msgs/msg/PointCloud2" + "[gz.msgs.PointCloudPacked",
+                    "/" + robot_name + "/hand_camera/camera_info" + "@sensor_msgs/msg/CameraInfo" + "[gz.msgs.CameraInfo",
+                    "/" + robot_name + "/hand_camera/color" + "@sensor_msgs/msg/Image" + "[gz.msgs.Image",
+                    "/" + robot_name + "/hand_camera/depth" + "@sensor_msgs/msg/Image" + "[gz.msgs.Image",
+                    "/" + robot_name + "/hand_camera/depth/points" + "@sensor_msgs/msg/PointCloud2" + "[gz.msgs.PointCloudPacked",
+                    "/" + robot_name + "/lidar/scan" + "@sensor_msgs/msg/LaserScan" + "[gz.msgs.LaserScan",
+                    "/" + robot_name + "/lidar/scan/points" + "@sensor_msgs/msg/PointCloud2" + "[gz.msgs.PointCloudPacked",
+                    "/" + robot_name + "/imu" + "@sensor_msgs/msg/Imu" + "[gz.msgs.IMU",
+                ],
+        output='screen'
+    )
+
     if enable_gz == 'True':
-        gz_spawn_entity_node = Node(
-            package='ros_gz_sim',
-            executable='create',
-            namespace=robot_name,
-            arguments=[
-                '-topic', '/' + robot_name + '/robot_description',
-                '-name', robot_name,
-                '-x', robot_coords_x,
-                '-y', robot_coords_y,
-                '-Y', robot_coords_Y,
-            ],
-            output='screen',
-        )
-
-        gz_bridge_node = Node(
-            package='ros_gz_bridge',
-            executable='parameter_bridge',
-            namespace=robot_name,
-            arguments=[
-                        "/" + robot_name + "/joint_states" + "@sensor_msgs/msg/JointState" + "[ignition.msgs.Model",
-                        # "/model/" + robot_name + "/pose" + "@geometry_msgs/msg/Pose" + "[ignition.msgs.Pose",
-                        "/" + robot_name + "/base_front_camera/camera_info" + "@sensor_msgs/msg/CameraInfo" + "[ignition.msgs.CameraInfo",
-                        "/" + robot_name + "/base_front_camera/color" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
-                        "/" + robot_name + "/base_front_camera/depth" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
-                        "/" + robot_name + "/base_back_camera/camera_info" + "@sensor_msgs/msg/CameraInfo" + "[ignition.msgs.CameraInfo",
-                        "/" + robot_name + "/base_back_camera/color" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
-                        "/" + robot_name + "/base_back_camera/depth" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
-                        "/" + robot_name + "/head_camera/camera_info" + "@sensor_msgs/msg/CameraInfo" + "[ignition.msgs.CameraInfo",
-                        "/" + robot_name + "/head_camera/color" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
-                        "/" + robot_name + "/head_camera/depth" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
-                        "/" + robot_name + "/head_camera/depth/points" + "@sensor_msgs/msg/PointCloud2" + "[ignition.msgs.PointCloudPacked",
-                        "/" + robot_name + "/hand_camera/camera_info" + "@sensor_msgs/msg/CameraInfo" + "[ignition.msgs.CameraInfo",
-                        "/" + robot_name + "/hand_camera/color" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
-                        "/" + robot_name + "/hand_camera/depth" + "@sensor_msgs/msg/Image" + "[ignition.msgs.Image",
-                        "/" + robot_name + "/hand_camera/depth/points" + "@sensor_msgs/msg/PointCloud2" + "[ignition.msgs.PointCloudPacked",
-                        "/" + robot_name + "/lidar/scan" + "@sensor_msgs/msg/LaserScan" + "[ignition.msgs.LaserScan",
-                        "/" + robot_name + "/lidar/scan/points" + "@sensor_msgs/msg/PointCloud2" + "[ignition.msgs.PointCloudPacked",
-                        "/" + robot_name + "/imu" + "@sensor_msgs/msg/Imu" + "[ignition.msgs.IMU",
-                    ],
-            output='screen'
-        )
-
-        gz_tf_head_cam_node = Node(
-            package='tf2_ros',
-            executable='static_transform_publisher',
-            arguments=['--frame-id', robot_name + '/head_camera_depth_optical_frame',
-                    '--child-frame-id', robot_name + '/head_pitch_link/head_camera_depth',
-                    '--pitch', '-1.57',
-                    '--roll', '1.57'],
-            output='screen',
-        )
-
-        gz_tf_hand_cam_node = Node(
-            package='tf2_ros',
-            executable='static_transform_publisher',
-            arguments=['--frame-id', robot_name + '/hand_camera_depth_optical_frame',
-                    '--child-frame-id', robot_name + '/arm_wrist_roll_link/hand_camera_depth',
-                    '--pitch', '-1.57',
-                    '--roll', '1.57'],
-            output='screen',
-        )
-
-    if enable_gz == 'False':
-        hand_camera_launch = IncludeLaunchDescription(
-            PythonLaunchDescriptionSource([
-                PathJoinSubstitution([
-                    FindPackageShare('sobit_light_bringup'),
-                    'launch',
-                    'include',
-                    'rs_d405_hand_cam.launch.py'
-                ])
-            ]),
-            condition=LaunchConfigurationEquals('enable_real_hand_cam', 'True')
-        )
-
-        head_camera_launch = IncludeLaunchDescription(
-            PythonLaunchDescriptionSource([
-                PathJoinSubstitution([
-                    FindPackageShare('sobit_light_bringup'),
-                    'launch',
-                    'include',
-                    'rs_d415_head_cam.launch.py'
-                ])
-            ]),
-            condition=LaunchConfigurationEquals('enable_real_head_cam', 'True')
-        )
-    
-        return [
-            controller_manager,
-            joint_state_broadcaster,
-            joint_trajectory_controller,
-            velocity_controller,
-            robot_state_publisher_node,
-            RegisterEventHandler(
-                event_handler=OnProcessExit(
-                    target_action=joint_state_broadcaster,
-                    on_exit=[hand_camera_launch],
-                )
-            ),
-            RegisterEventHandler(
-                event_handler=OnProcessExit(
-                    target_action=joint_state_broadcaster,
-                    on_exit=[head_camera_launch],
-                )
-            ),
-            RegisterEventHandler(
-                event_handler=OnProcessExit(
-                    target_action=joint_state_broadcaster,
-                    on_exit=[action_server_launch],
-                )
-            ),
-        ]
-    
+        nodes.append(gz_bridge_node)
+        nodes.append(gz_spawn_entity_node)
+        nodes.append(delayed_joint_state_broadcaster)
+        nodes.append(delayed_controllers)
     else:
-        return [
-            gz_spawn_entity_node,
-            gz_bridge_node,
-            gz_tf_head_cam_node,
-            gz_tf_hand_cam_node,
-            RegisterEventHandler(
-                event_handler=OnProcessExit(
-                    target_action=gz_spawn_entity_node,
-                    on_exit=[joint_state_broadcaster],
-                )
-            ),
-            RegisterEventHandler(
-                event_handler=OnProcessExit(
-                    target_action=joint_state_broadcaster,
-                    on_exit=[joint_trajectory_controller],
-                )
-            ),
-            RegisterEventHandler(
-                event_handler=OnProcessExit(
-                    target_action=joint_state_broadcaster,
-                    on_exit=[velocity_controller],
-                )
-            ),
-            RegisterEventHandler(
-                event_handler=OnProcessExit(
-                    target_action=joint_state_broadcaster,
-                    on_exit=[diff_controller],
-                )
-            ),
-            RegisterEventHandler(
-                event_handler=OnProcessExit(
-                    target_action=joint_state_broadcaster,
-                    on_exit=[action_server_launch],
-                )
-            ),
-            robot_state_publisher_node,
-        ]
+        nodes.append(joint_state_broadcaster)
+        nodes.append(control_node)
+        nodes.extend(controllers)
+
+    nodes.append(robot_state_publisher_node)
+    nodes.append(action_server_launch)
+
+    return nodes

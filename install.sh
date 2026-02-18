@@ -99,17 +99,12 @@ sudo apt-get install -y \
     ros-${ROS_DISTRO}-ign-ros2-control \
     ros-${ROS_DISTRO}-ign-ros2-control-demos
 
-
-# # Setting up Dynamixel USB configuration (SOBIT LIGHT: Head and Arm Robot Mechanism)
-echo "SUBSYSTEM==\"tty\", ATTRS{idVendor}==\"0403\", ATTRS{idProduct}==\"6014\", ATTRS{serial}==\"FT8ISSV2\", SYMLINK+=\"ttyUSB-DXL_light\", MODE=\"0666\", GROUP:=\"dialout\"," | sudo tee /etc/udev/rules.d/dxl_light.rules
-sudo usermod -aG dialout $USER
-
-# # Setting up PS4 Joystick USB configuration
-# echo "KERNEL==\"uinput\", MODE=\"0666\"
-#       KERNEL==\"hidraw*\", SUBSYSTEM==\"hidraw\", ATTRS{idVendor}==\"054c\", ATTRS{idProduct}==\"05c4\", MODE=\"0666\"
-#       KERNEL==\"hidraw*\", SUBSYSTEM==\"hidraw\", KERNELS==\"0005:054C:05C4.*\", MODE=\"0666\"
-#       KERNEL==\"hidraw*\", SUBSYSTEM==\"hidraw\", ATTRS{idVendor}==\"054c\", ATTRS{idProduct}==\"09cc\", MODE=\"0666\"
-#       KERNEL==\"hidraw*\", SUBSYSTEM==\"hidraw\", KERNELS==\"0005:054C:09CC.*\", MODE=\"0666\"" | sudo tee /etc/udev/rules.d/50-ds4drv.rules
+# Set up environment variables
+echo "" >> /home/$USERNAME/.bashrc
+echo "# SOBIT LIGHT environment variables" >> /home/$USERNAME/.bashrc
+echo "export DXL_SL_PORT=`realpath /dev/serial/by-id/usb-FTDI_USB__-__Serial_Converter_FT8ISSV2-if00-port0`" >> /home/$USERNAME/.bashrc
+echo "" >> /home/$USERNAME/.bashrc
+source /home/$USERNAME/.bashrc
 
 # # Reload udev rules
 sudo udevadm control --reload-rules
