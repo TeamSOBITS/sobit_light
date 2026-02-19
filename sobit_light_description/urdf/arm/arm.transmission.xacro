@@ -5,7 +5,6 @@
 
     <position_joint_transmission joint="${prefix}_shoulder_roll_joint" reduction="1" />
     <position_joint_transmission joint="${prefix}_shoulder_pitch_joint" reduction="1" />
-    <position_joint_transmission joint="${prefix}_shoulder_pitch_sub_joint" reduction="1" />
     <position_joint_transmission joint="${prefix}_elbow_pitch_joint" reduction="1" />
     <position_joint_transmission joint="${prefix}_forearm_roll_joint" reduction="1" />
     <position_joint_transmission joint="${prefix}_wrist_pitch_joint" reduction="1" />
