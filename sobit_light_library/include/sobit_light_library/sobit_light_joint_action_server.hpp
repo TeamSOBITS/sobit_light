@@ -45,7 +45,6 @@ enum JointIds
 {
   kArmShoulderRollJoint = 0,
   kArmShoulderPitchJoint,
-  // kArmShoulderPitchSubJoint,
   kArmElbowPitchJoint,
   kArmForearmRollJoint,
   kArmWristPitchJoint,
@@ -91,7 +90,6 @@ private:
   const std::vector<std::string> kArmJointNames = {
     "arm_shoulder_roll_joint",
     "arm_shoulder_pitch_joint",
-    // "arm_shoulder_pitch_sub_joint",
     "arm_elbow_pitch_joint",
     "arm_forearm_roll_joint",
     "arm_wrist_pitch_joint",
@@ -107,7 +105,6 @@ private:
   const std::vector<std::string> kJointNames = {
     "arm_shoulder_roll_joint",
     "arm_shoulder_pitch_joint",
-    // "arm_shoulder_pitch_sub_joint",
     "arm_elbow_pitch_joint",
     "arm_forearm_roll_joint",
     "arm_wrist_pitch_joint",

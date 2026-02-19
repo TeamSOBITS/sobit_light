@@ -429,7 +429,6 @@ void JointActionServer::get_pos_to_coord(
   std::vector<double> target_joint_rad = {
     0.0,  // arm_shoulder_roll_joint_rad
     0.0,  // arm_shoulder_pitch_joint_rad
-    // 0.0,  // arm_shoulder_pitch_sub_joint_rad
     0.0,  // arm_elbow_pitch_joint_rad
     0.0,  // arm_forearm_roll_joint_rad
     0.0,  // arm_wrist_pitch_joint_rad
@@ -553,7 +552,6 @@ void JointActionServer::get_pos_to_tf(
   std::vector<double> target_joint_rad = {
     0.0,  // arm_shoulder_roll_joint_rad
     0.0,  // arm_shoulder_pitch_joint_rad
-    // 0.0,  // arm_shoulder_pitch_sub_joint_rad
     0.0,  // arm_elbow_pitch_joint_rad
     0.0,  // arm_forearm_roll_joint_rad
     0.0,  // arm_wrist_pitch_joint_rad
@@ -615,8 +613,8 @@ void JointActionServer::joint_state_callback(
   // RCLCPP_INFO(this->get_logger(), "Received joint state");
 
   for (size_t i = 0; i < msg->name.size(); i++) {
-    // Skip sub joints
-    if (msg->name[i] == "arm_shoulder_pitch_sub_joint") {
+    // Skip if the joint name is not in the joint names list
+    if (std::find(kJointNames.begin(), kJointNames.end(), msg->name[i]) == kJointNames.end()) {
       continue;
     }
     this->curt_joint_state_[msg->name[i]] = msg->position[i];
@@ -653,13 +651,6 @@ trajectory_msgs::msg::JointTrajectory JointActionServer::set_joints(
     }
     joint_trajectory.joint_names.push_back(target_joint_names[i]);
     point.positions.push_back(target_joint_rad[i]);
-
-    // Subjoint to turn opposite direction
-    if (target_joint_names[i] == "arm_shoulder_pitch_joint") {
-      joint_trajectory.joint_names.push_back("arm_shoulder_pitch_sub_joint");
-      point.positions.push_back(-target_joint_rad[i]);
-      continue;
-    } 
   }
 
   joint_trajectory.points.push_back(point);
