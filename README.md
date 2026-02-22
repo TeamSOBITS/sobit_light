@@ -167,10 +167,11 @@ Preferred Robotics(c)が開発した[カチャカ](https://kachaka.life/home/)�
 
 1. [ローカル環境] KachakaとのROS BridgeのDockerコンテナを立ち上げます．
     ```
-    $ kachaka <カチャカのIPアドレス> sobit_light no
+    $ kachaka <カチャカのIPアドレス> sobit_light no yes
     ```
 > [!NOTE]
-> `sobit_light`を書くことによって，ロボットの`namespace`を設定しています．また，`no`では，Kachaka側のrobot_descriptionの発行を停止させます．詳細については，[Dockerを使ったros2_bridgeの起動](https://github.com/TeamSOBITS/kachaka-api/blob/main/docs/ROS2.md#%E3%83%96%E3%83%AA%E3%83%83%E3%82%B8%E3%81%AE%E8%B5%B7%E5%8B%95)を確認してください．
+> `sobit_light`を書くことによって，ロボットの`namespace`を設定しています．また，`no`では，Kachaka側のrobot_descriptionの発行を停止させます．詳細については，[Dockerを使ったros2_bridgeの起動](https://github.com/TeamSOBITS/kachaka-api/blob/main/docs/ROS2.md#%E3%83%96%E3%83%AA%E3%83%83%E3%82%B8%E3%81%AE%E8%B5%B7%E5%8B%95)を確認してください．\
+> もしNavigationをKachakaAPIに頼らずに自分のPC上で行う場合，つまりSOBITS Navigation StackでSOBIT LIGHTを動かす場合は，最後の`yes`を`no`に変えてください．ここを切り替えることで，Kachaka側のMapを廃止して，PC上のマップと競合しないTF構造となる．こちらの詳細については，[カチャカでemcl2を動かす方法](https://zenn.dev/ame_b/articles/da4636a0a8048f)を参考にしてください．
 
 > [!WARNING]
 > KachakaのIPが変わる可能性がありますので，ご注意ください．

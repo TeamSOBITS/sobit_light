@@ -169,11 +169,12 @@ First, please set up the following environment before proceeding to the next ins
 
 1. Bring up the ROS Bridge to connect Kachaka in your **local environment**.
     ```
-    $ kachaka <Kachaka IP> sobit_light no
+    $ kachaka <Kachaka IP> sobit_light no yes
     ```
 
 > [!NOTE]
-> By writing `sobit_light`, you are setting the `namespace` of the robot. Additionally, `no` stops Kachaka from publishing its own robot_description. For more details, please refer to [Starting ros2_bridge using Docker](https://github.com/TeamSOBITS/kachaka-api/blob/main/docs/ROS2.md#%E3%83%96%E3%83%AA%E3%83%83%E3%82%B8%E3%81%AE%E8%B5%B7%E5%8B%95).
+> By writing `sobit_light`, you are setting the `namespace` of the robot. Additionally, `no` stops Kachaka from publishing its own robot_description. For more details, please refer to [Starting ros2_bridge using Docker](https://github.com/TeamSOBITS/kachaka-api/blob/main/docs/ROS2.md#%E3%83%96%E3%83%AA%E3%83%83%E3%82%B8%E3%81%AE%E8%B5%B7%E5%8B%95).\
+> If you perform navigation on your own PC without relying on the Kachaka API—that is, when navigating SOBIT LIGHT using the SOBITS Navigation Stack—change the final `yes` to `no`. Switching this setting eliminates the Kachaka-side map, creating a TF structure that does not conflict with the PC's map. For details on this approach, refer to [How to Run emcl2 on Kachaka](https://zenn.dev/ame_b/articles/da4636a0a8048f).
 
 > [!WARNING]
 > Please note that the Kachaka IP might change eventually.
