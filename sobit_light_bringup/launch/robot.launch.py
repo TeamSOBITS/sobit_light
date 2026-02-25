@@ -125,7 +125,7 @@ def launch_gz(context, *args, **kwargs):
         name="robot_state_publisher",
         namespace=robot_name,
         parameters=[
-            {"frame_prefix": robot_name + '/'},
+            # {"frame_prefix": robot_name + '/'},
             {"robot_description": robot_description_config.toxml()},
             {"use_sim_time": True if enable_gz == 'True' else False},
         ],

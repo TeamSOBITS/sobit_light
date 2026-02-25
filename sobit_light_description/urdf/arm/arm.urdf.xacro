@@ -74,7 +74,7 @@
     <joint name="${prefix}_shoulder_roll_joint" type="revolute">
       <parent link="${prefix}_base_link"/>
       <child link="${prefix}_shoulder_roll_link"/>
-      <origin xyz="0.0 0.0 0.0465" rpy="0 ${M_PI/2} 0"/>
+      <origin xyz="0.02495 0.0 0.0465" rpy="0 ${M_PI/2} 0"/>
       <axis xyz="0 0 1"/>
       <limit velocity="4.8" effort="25" lower="${-M_PI}" upper="${M_PI}" />
     </joint>
