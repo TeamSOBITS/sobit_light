@@ -39,7 +39,7 @@ for ((i = 0; i < ${#ros_packages[@]}; i++)) {
 cd ${DIR}
 
 # Download required dependencies
-python3 -m pip install \
+python3 -m pip install --break-system-packages \
     transforms3d
 
 # Download ROS packages
@@ -59,8 +59,6 @@ sudo apt-get install -y \
     ros-$ROS_DISTRO-joint-state-publisher-gui \
     ros-$ROS_DISTRO-joint-state-broadcaster \
     ros-$ROS_DISTRO-joint-limits \
-    ros-$ROS_DISTRO-robot-controllers \
-    ros-$ROS_DISTRO-robot-controllers-interface \
     ros-$ROS_DISTRO-robot-state-publisher \
     ros-$ROS_DISTRO-hardware-interface \
     ros-$ROS_DISTRO-transmission-interface \
@@ -96,8 +94,8 @@ sudo apt-get install -y \
 # Install Gazebo Fortress with binaries
 sudo apt-get install -y \
     ros-${ROS_DISTRO}-ros-gz \
-    ros-${ROS_DISTRO}-ign-ros2-control \
-    ros-${ROS_DISTRO}-ign-ros2-control-demos
+    ros-${ROS_DISTRO}-gz-ros2-control \
+    ros-${ROS_DISTRO}-gz-ros2-control-demos
 
 # Set up environment variables
 echo "" >> /home/$USERNAME/.bashrc
