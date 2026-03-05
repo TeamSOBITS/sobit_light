@@ -14,51 +14,43 @@
 <details>
   <summary>目次</summary>
   <ol>
+    <li><a href="#概要">概要</a></li>
     <li>
-      <a href="#概要">概要</a>
-    </li>
-    <li>
-      <a href="#環境構築">環境構築</a>
+      <a href="#セットアップ">セットアップ</a>
       <ul>
         <li><a href="#環境条件">環境条件</a></li>
         <li><a href="#インストール方法">インストール方法</a></li>
       </ul>
     </li>
     <li>
-    　<a href="#実行操作方法">実行・操作方法</a>
+      <a href="#実行操作方法">実行・操作方法</a>
       <ul>
-        <li><a href="#テレオペレーション(遠隔操作)">テレオペレーション(遠隔操作)</a></li>
-        <li><a href="#Rviz上の可視化">Rviz上の可視化</a></li>
+        <li><a href="#テレオペレーション遠隔操作">テレオペレーション(遠隔操作)</a></li>
+        <li><a href="#rviz2上の可視化">Rviz2上の可視化</a></li>
         <li><a href="#シミュレータの実行方法">シミュレータの実行方法</a></li>
       </ul>
     </li>
     <li>
-    　<a href="#ソフトウェア">ソフトウェア</a>
+      <a href="#ソフトウェア">ソフトウェア</a>
       <ul>
         <li><a href="#ジョイントコントローラ">ジョイントコントローラ</a></li>
-        <li><a href="#ホイルコントローラ">ホイルコントローラ</a></li>
+        <li><a href="#ホイールコントローラ">ホイールコントローラ</a></li>
       </ul>
     </li>
     <li>
-    　<a href="#ハードウェア">ハードウェア</a>
+      <a href="#ハードウェア">ハードウェア</a>
       <ul>
         <li><a href="#パーツのダウンロード方法">パーツのダウンロード方法</a></li>
         <li><a href="#電子回路図">電子回路図</a></li>
-        <!-- <li><a href="#ロボットの組み立て">ロボットの組み立て</a></li> -->
         <li><a href="#ロボットの特徴">ロボットの特徴</a></li>
-        <li><a href="#部品リストBOM">部品リスト（BOM）</a></li>
+        <li><a href="#部品リストbom">部品リスト（BOM）</a></li>
       </ul>
     </li>
     <li><a href="#マイルストーン">マイルストーン</a></li>
-    <!-- <li><a href="#contributing">Contributing</a></li> -->
-    <!-- <li><a href="#license">License</a></li> -->
     <li><a href="#参考文献">参考文献</a></li>
   </ol>
 </details>
 
-
-
-<!-- 概要 -->
 ## 概要
 
 ![SOBIT LIGHT](sobit_light/docs/img/sobit_light.png)
@@ -70,199 +62,161 @@ Preferred Robotics(c)が開発した[カチャカ](https://kachaka.life/home/)�
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
-
-<!-- セットアップ -->
 ## セットアップ
 
-ここで，本レポジトリのセットアップ方法について説明します．
+本レポジトリのセットアップ方法について説明します．
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
-
 
 ### 環境条件
 
-まず，以下の環境を整えてから，次のインストール段階に進んでください．
+以下の環境を整えてから，インストール段階に進んでください．（jazzy-devel ブランチ想定）
 
 | System  | Version |
 | --- | --- |
-| Ubuntu | 22.04 (Jammy Jellyfish) |
-| ROS    | Humble Hawksbill |
-| Python | 3.10 |
+| Ubuntu | 24.04 (Noble Numbat) |
+| ROS    | Jazzy Jalisco |
+| Python | 3.12 |
 | Docker | latest |
 
 > [!NOTE]
-> `Ubuntu`や`ROS`のインストール方法に関しては，[SOBITS Manual](https://github.com/TeamSOBITS/sobits_manual#%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6)に参照してください．
+> `Ubuntu`や`ROS`のインストール方法に関しては，[SOBITS Manual](https://github.com/TeamSOBITS/sobits_manual#%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6)を参照してください．
+
+> [!IMPORTANT]
+> Ubuntu 24.04 では Python の PEP 668 により、環境によっては `pip install` が `externally-managed-environment` で失敗します。
+> 本リポジトリのセットアップでは **apt によるインストールを優先**してください（`install.sh` で apt を使用します）。
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
-
 
 ### インストール方法
 
 **SOBIT LIGHTを使用するローカル環境，またはコンテナ内でのセットアップ内容**
-1. ROSの`src`フォルダに移動します．
+
+1. ROS のワークスペース `src` フォルダに移動します．
     ```sh
-    $ cd ~/colcon_ws/src/
+    cd ~/colcon_ws/src/
     ```
 
-2. 本レポジトリをcloneします．
+2. 本レポジトリを clone します．（jazzy-devel ブランチ）
     ```sh
-    $ git clone https://github.com/TeamSOBITS/sobit_light
+    git clone -b jazzy-devel https://github.com/TeamSOBITS/sobit_light
     ```
 
 3. レポジトリの中へ移動します．
     ```sh
-    $ cd sobit_light/
+    cd sobit_light/
     ```
 
 4. 依存パッケージをインストールします．
     ```sh
-    $ bash install.sh
+    bash install.sh
     ```
 
-5. パッケージをコンパイルします．
+5. ビルドします．
     ```sh
-    $ cd ~/colcon_ws/
-    $ colcon build --symlink-install
-    $ source ~/colcon_ws/install/setup.sh
+    cd ~/colcon_ws/
+    source /opt/ros/jazzy/setup.bash
+    colcon build --symlink-install
+    source ~/colcon_ws/install/setup.bash
     ```
 
-**ローカル環境でのセットアップ内容**
-1. Kachaka APIのリポジトリをcloneします．
+> [!NOTE]
+> Docker コンテナ内では udev/systemd が無い構成の場合があります。その場合 `udevadm` に関するメッセージが出ることがありますが、
+> 実機USBデバイスをコンテナ内で扱わない用途（例: ビルドのみ、シミュレーション）では問題にならないことがあります。
+
+**ローカル環境でのセットアップ内容（Kachaka ROS Bridge）**
+1. Kachaka API のリポジトリを clone します．
     ```sh
-    $ cd ~/
-    $ git clone https://github.com/TeamSOBITS/kachaka-api
+    cd ~/
+    git clone https://github.com/TeamSOBITS/kachaka-api
     ```
 
-2. 最新のDockerイメージをビルドします．
+2. 最新の Docker イメージをビルドします．
     ```sh
-    $ cd kachaka-api/
-    $ docker buildx build -t kachaka-api --target kachaka-grpc-ros2-bridge -f Dockerfile.ros2 . --build-arg BASE_ARCH=x86_64 --load
+    cd kachaka-api/
+    docker buildx build -t kachaka-api --target kachaka-grpc-ros2-bridge -f Dockerfile.ros2 . --build-arg BASE_ARCH=x86_64 --load
     ```
 
-3. `ROS_DOMAIN_ID`と`RMW_IMPLEMENTATION`を設定します．一例として，IDを`10`とします．
+3. `ROS_DOMAIN_ID` と `RMW_IMPLEMENTATION` を設定します（例: ID を `10`）．
     ```sh
-    $ echo 'export ROS_DOMAIN_ID=10' >> ~/.bashrc
-    $ echo 'export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp' >> ~/.bashrc
-    $ source ~/.bashrc
+    echo 'export ROS_DOMAIN_ID=10' >> ~/.bashrc
+    echo 'export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp' >> ~/.bashrc
+    source ~/.bashrc
     ```
 
 > [!IMPORTANT]
-> データ通信のため，ローカル環境以外(Docker等)でROSのワークスペースを使用している場合は，`ROS_DOMAIN_ID`の値を統一させる必要があることを忘れないでください．
+> データ通信のため，ローカル環境以外(Docker等)でROSのワークスペースを使用している場合は，`ROS_DOMAIN_ID`の値を統一させる必要があります．
 
-4. KachakaのIPアドレスを確認します．
-    1. ひとつの方法は，Kachakaに「ねぇカチャカ、IPアドレスを教えて」と話しかけることです．KachakaがIPアドレスを読み上げてくれます．
-    2. もうひとつの方法は，Kachakaアプリの「`設定`」タブを開き，「`設定・情報`」カテゴリの「`アプリ情報`」をタップし，「`カチャカ`」カテゴリ内の「`IPアドレス`」欄を確認することです．
+4. Kachaka の IP アドレスを確認します．
+    1. Kachakaに「ねぇカチャカ、IPアドレスを教えて」と話しかける（読み上げ）
+    2. Kachakaアプリの「設定」→「設定・情報」→「アプリ情報」→「カチャカ」→「IPアドレス」
 
-5. KachakaとのROS Bridgeを簡単に立ち上げられるようにするために，`alias`を設定します．
+5. Kachaka との ROS Bridge を簡単に立ち上げられるように `alias` を設定します．
     ```sh
-    $ echo 'alias kachaka="bash ~/kachaka-api/tools/ros2_bridge/start_bridge.sh"' >> ~/.bashrc
-    $ source ~/.bashrc
+    echo 'alias kachaka="bash ~/kachaka-api/tools/ros2_bridge/start_bridge.sh"' >> ~/.bashrc
+    source ~/.bashrc
     ```
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
-
-<!-- 実行・操作方法 -->
 ## 実行・操作方法
 
 1. [ローカル環境] KachakaとのROS BridgeのDockerコンテナを立ち上げます．
-    ```
-    $ kachaka <カチャカのIPアドレス> sobit_light no yes
+    ```sh
+    kachaka <カチャカのIPアドレス> sobit_light no yes
     ```
 > [!NOTE]
-> `sobit_light`を書くことによって，ロボットの`namespace`を設定しています．また，`no`では，Kachaka側のrobot_descriptionの発行を停止させます．詳細については，[Dockerを使ったros2_bridgeの起動](https://github.com/TeamSOBITS/kachaka-api/blob/main/docs/ROS2.md#%E3%83%96%E3%83%AA%E3%83%83%E3%82%B8%E3%81%AE%E8%B5%B7%E5%8B%95)を確認してください．\
-> もしNavigationをKachakaAPIに頼らずに自分のPC上で行う場合，つまりSOBITS Navigation StackでSOBIT LIGHTを動かす場合は，最後の`yes`を`no`に変えてください．ここを切り替えることで，Kachaka側のMapを廃止して，PC上のマップと競合しないTF構造となる．こちらの詳細については，[カチャカでemcl2を動かす方法](https://zenn.dev/ame_b/articles/da4636a0a8048f)を参考にしてください．
+> `sobit_light`を書くことによって，ロボットの`namespace`を設定しています．また，`no`では，Kachaka側のrobot_descriptionの発行を停止させます．詳細は kachaka-api 側のドキュメントも確認してください．
 
 > [!WARNING]
-> KachakaのIPが変わる可能性がありますので，ご注意ください．
+> Kachaka の IP は変わる可能性がありますのでご注意ください．
 
-2. SOBIT LIGHTをインストールしている環境内で[real_minimal.launch](sobit_light_bringup/launch/real_minimal.launch.py)というlaunchファイルを実行します．
+2. SOBIT LIGHT をインストールしている環境内で `real_minimal.launch.py` を実行します．
    ```sh
-   $ ros2 launch sobit_light_bringup real_minimal.launch.py
+   ros2 launch sobit_light_bringup real_minimal.launch.py
    ```
 
-ロボットが立ち上がらない・Kachakaとの通信ができていない場合は，次の項目を確認してください．
-- 緊急停止ボタンが押下されていないか．
-- バッテリが十分に充電されているか ．
-- USB hubがパソコンと接続されているか．
-- [TODO] Dynamixel Dongleの名前は`/dev/ttyUSB0`なのか．
-- - 確認するために`$ ls /dev`を書いて，`/dev/ttyUSB1`が表示される場合，[controllers.urdf.xacro](sobit_light_description/urdf/controllers.urdf.xacro)の`usb_port`を更新してください．
-- Kachaka IPが正しいか．
-- `ROS_DOMAIN_ID`がカチャカ側と開発環境側と同じか．
+ロボットが立ち上がらない・Kachakaとの通信ができていない場合は，次を確認してください．
+- 緊急停止ボタンが押下されていないか
+- バッテリが十分に充電されているか
+- USB hub がパソコンと接続されているか
+- USB デバイス名が想定通りか（例: `/dev/ttyUSB*`）
+- Kachaka IP が正しいか
+- `ROS_DOMAIN_ID` が一致しているか
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
 ### テレオペレーション(遠隔操作)
 
-1. コントローラーを使用するためのROSパッケージの確認
-
+1. コントローラーを使用するための ROS パッケージの確認
 ```sh
-$ dpkg -l | grep ros-humble-joy-linux
+dpkg -l | grep ros-jazzy-joy-linux
 ```
 
-2. Bluetoothを使用して,PCとdualshockの接続を行う.
-    - 接続方法
-    1. dualshockのHOMEボタンとSHAREボタンを青のランプが点滅するまで同時長押し
-    2. BluetoothをONにして、"Wireless Controller"を選択
-    3. 点滅が終わり、青のランプが付けば接続完了
+2. Bluetooth を使用して PC と dualshock の接続を行う
+- HOME + SHARE を青点滅まで長押し → Bluetooth で "Wireless Controller" を選択
 
-3. SOBIT LIGHTの[real_minimal.launch.py](sobit_light_bringup/launch/real_minimal.launch.py)起動後,テレオペのlaunchを起動.
->[!WARNING] 起動時にinitial_poseになるのでマニピュレータの状態を確認してください.
+3. `real_minimal.launch.py` 起動後、テレオペ launch を起動
 ```sh
-$ ros2 launch sobit_light_teleop dualshock_teleop.launch.py
+ros2 launch sobit_light_teleop dualshock_teleop.launch.py
 ```
+
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
-<details>
-<summary>dualchockの各種ボタンと操作方法</summary>
-
-### 操作説明
-
-各操作においてのジョイントの動きは以下の通りです．
-#### マニピュレータ部分(Manipulator Control)
-
-| 操作内容 | x軸ジョイント名 |　y軸ジョイント名
-| :---: | --- | --- |
-| △ + L-stick | head_yaw_joint | head_pitch_joint
-| □ + L-stick | arm_shoulder_roll_joint　|arm_shoulder_pitch_joint
-| ✕ + L-stick | arm_forearm_roll_joint　|arm_elbow_pitch_joint
-| ○ + L-stick | arm_wrist_roll_joint　|head_pitch_joint
->上記に加えて[R2_button]を押すとjointが加速する
-
-| 操作内容 | 出力動作
-| :---: | --- | 
-| R-stick_button | Handが閉じる |
-|Share_button|初期位置にもどる|
-
-
-#### kachakaベース部分(Base Control)
-
-| 操作内容 | x軸 |　y軸
-| :---: | --- | --- |
-| L2 + L-stick | 旋回 | 直進・後進
-
->上記に加えて[L2_button]を押すとbaseが加速する
-<p align="right">(<a href="#readme-top">上に戻る</a>)</p>
- </details>
 
 ### Rviz2上の可視化
 
-実機を動かす前段階として，Rviz2上でSOBIT LIGHTを可視化し，ロボットの構成を表示することができます．
-
 ```sh
-$ ros2 launch sobit_light_description display.launch.py
+ros2 launch sobit_light_description display.launch.py
 ```
 
-正常に動作した場合は，次のようなRviz画面が表示されます．
 ![SOBIT LIGHT Display with Rviz](sobit_light/docs/img/sobit_light_rviz.png)
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
 ### シミュレータの実行方法
 
-SOBIT LIGHTにはGazebo Fortressのシミュレーション環境が用意されておりますので，実機がなくても，動作確認が可能です．
-
 ```sh
-$ ros2 launch sobit_light_bringup gz_minimal.launch.py
+ros2 launch sobit_light_bringup gz_minimal.launch.py
 ```
 
 現時点では，これらの仮想環境が用意されています．
