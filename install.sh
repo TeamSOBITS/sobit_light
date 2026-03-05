@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -u  # 未定義変数で落とす（-eは使わず、失敗しても継続したい箇所があるため）
+set -o pipefail
 echo "╔══╣ Setup: SOBIT LIGHT (STARTING) ╠══╗"
 
 
@@ -54,7 +56,6 @@ sudo apt-get install -y \
     ros-$ROS_DISTRO-velocity-controllers \
     ros-$ROS_DISTRO-effort-controllers \
     ros-$ROS_DISTRO-joint-trajectory-controller \
-    ros-$ROS_DISTRO-joint-group-impedance-controller \
     ros-$ROS_DISTRO-joint-state-publisher \
     ros-$ROS_DISTRO-joint-state-publisher-gui \
     ros-$ROS_DISTRO-joint-state-broadcaster \
@@ -105,10 +106,10 @@ echo "" >> /home/$USERNAME/.bashrc
 source /home/$USERNAME/.bashrc
 
 # # Reload udev rules
-sudo udevadm control --reload-rules
+sudo udevadm control --reload-rules ||true
 
 # # Trigger the new rules
-sudo udevadm trigger
+sudo udevadm trigger ||true
 
 # Go back to previous directory
 cd ${DIR}
