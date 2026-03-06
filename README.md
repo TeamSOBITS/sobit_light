@@ -231,7 +231,7 @@ ros2 launch sobit_light_bringup gz_minimal.launch.py
 
 
 正常に動作した場合は，次のようなGazeboの画面が表示されます．
-![SOBIT LIGHT Gazebo Ignition](sobit_light/docs/img/sobit_light_gz_sim.png)
+![SOBIT LIGHT Gazebo Harmonic](sobit_light/docs/img/sobit_light_gz_sim.png)
 
 > [!TIP]
 > 実機と同じようなセンサも搭載されていますので，パソコンによって処理が重くなる可能性がありますので，必要なセンサだけを[gz_minimal.launch.py](sobit_light_bringup/launch/gz_minimal.launch.py)で選択してください．
