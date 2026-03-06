@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -u  # 未定義変数で落とす（-eは使わず、失敗しても継続したい箇所があるため）
+set -u  
 set -o pipefail
 echo "╔══╣ Setup: SOBIT LIGHT (STARTING) ╠══╗"
 
