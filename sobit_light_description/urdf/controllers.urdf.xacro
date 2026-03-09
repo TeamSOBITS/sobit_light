@@ -116,9 +116,9 @@
       </state_interface>
       <state_interface name="velocity"/>
       <!-- <state_interface name="effort"/> -->
-      <xacro:unless value="${$(arg enable_gz)}">
+      <!-- <xacro:unless value="${$(arg enable_gz)}">
         <command_interface name="position"/>
-      </xacro:unless>
+      </xacro:unless> -->
       <param name="mimic">${prefix}_shoulder_pitch_joint</param>
       <param name="multiplier">-1</param>
     </joint>
