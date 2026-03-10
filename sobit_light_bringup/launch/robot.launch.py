@@ -246,6 +246,35 @@ def launch_gz(context, *args, **kwargs):
         )
     )
 
+    vel_remap_node = Node(
+        package="twist_stamper",
+        executable="twist_stamper",
+        namespace=robot_name,
+        name="vel_remap",
+        arguments=["-r", f"cmd_vel_in:=/{robot_name}/manual_control/cmd_vel", "-r", f"cmd_vel_out:=/{robot_name}/wheel_controller/cmd_vel", "-p", f"frame_id:={robot_name}/base_footprint"]
+    )
+
+    delayed_vel_remap_node = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=joint_state_broadcaster,
+            on_exit=[vel_remap_node],
+        )
+    )
+
+    odom_remap_node = Node(
+        package="topic_tools",
+        executable="relay",
+        name="odom_remap",
+        arguments=[f"/{robot_name}/wheel_controller/odom", f"/{robot_name}/odometry/odometry"]
+    )
+
+    delayed_odom_remap_node = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=joint_state_broadcaster,
+            on_exit=[odom_remap_node],
+        )
+    )
+
 
     action_server_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
@@ -293,6 +322,8 @@ def launch_gz(context, *args, **kwargs):
         nodes.append(gz_bridge_node)
         nodes.append(gz_spawn_entity_node)
         nodes.append(delayed_joint_state_broadcaster)
+        nodes.append(delayed_vel_remap_node)
+        nodes.append(delayed_odom_remap_node)
         nodes.append(delayed_controllers)
     else:
         nodes.append(joint_state_broadcaster)
