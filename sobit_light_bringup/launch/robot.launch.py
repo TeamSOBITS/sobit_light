@@ -264,6 +264,7 @@ def launch_gz(context, *args, **kwargs):
     odom_remap_node = Node(
         package="topic_tools",
         executable="relay",
+        namespace=robot_name,
         name="odom_remap",
         arguments=[f"/{robot_name}/wheel_controller/odom", f"/{robot_name}/odometry/odometry"]
     )
