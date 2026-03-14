@@ -15,8 +15,8 @@
       <visual>
         <origin xyz="0 0 0" rpy="${M_PI / 2.0} 0 0" />
         <geometry>
-          <!-- <cylinder length="0.025" radius="0.045" /> -->
-          <sphere radius="0.045" />
+          <cylinder length="0.025" radius="0.045" />
+          <!-- <sphere radius="0.045" /> -->
         </geometry>
         <material name="tire" />
       </visual>
@@ -24,8 +24,8 @@
       <collision>
         <origin xyz="0 0 0" rpy="${M_PI / 2.0} 0 0" />
         <geometry>
-          <!-- <cylinder length="0.025" radius="0.045" /> -->
-          <sphere radius="0.045" />
+          <cylinder length="0.025" radius="0.045" />
+          <!-- <sphere radius="0.045" /> -->
         </geometry>
         <material name="tire" />
       </collision>
@@ -53,8 +53,8 @@
       <visual>
         <origin xyz="0 0 0" rpy="${M_PI / 2.0} 0 0" />
         <geometry>
-          <!-- <cylinder length="0.025" radius="0.045" /> -->
-          <sphere radius="0.045" />
+          <cylinder length="0.025" radius="0.045" />
+          <!-- <sphere radius="0.045" /> -->
         </geometry>
         <material name="tire" />
       </visual>
@@ -62,8 +62,8 @@
       <collision>
         <origin xyz="0 0 0" rpy="${M_PI / 2.0} 0 0" />
         <geometry>
-          <!-- <cylinder length="0.025" radius="0.045" /> -->
-          <sphere radius="0.045" />
+          <cylinder length="0.025" radius="0.045" />
+          <!-- <sphere radius="0.045" /> -->
         </geometry>
         <material name="tire" />
       </collision>
