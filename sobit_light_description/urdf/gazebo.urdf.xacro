@@ -182,8 +182,8 @@
           <camera name="head_camera_color">
             <horizontal_fov>1.21126</horizontal_fov>
             <image>
-              <width>640</width>
-              <height>480</height>
+              <width>1280</width>
+              <height>720</height>
               <format>RGB_INT8</format>
             </image>
             <clip>
@@ -215,7 +215,7 @@
           <update_rate>1</update_rate>
 
           <camera name="head_camera_depth">
-            <horizontal_fov>1.48702</horizontal_fov>
+            <horizontal_fov>1.21126</horizontal_fov>
             <image>
               <width>1280</width>
               <height>720</height>
@@ -284,10 +284,10 @@
           <update_rate>1</update_rate>
 
           <camera name="hand_camera_depth">
-            <horizontal_fov>1.48702</horizontal_fov>
+            <horizontal_fov>1.21126</horizontal_fov>
             <image>
-              <width>1280</width>
-              <height>720</height>
+              <width>640</width>
+              <height>480</height>
             </image>
             <clip>
               <near>0.1</near>
