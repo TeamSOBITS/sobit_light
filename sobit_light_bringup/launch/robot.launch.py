@@ -117,7 +117,20 @@ def launch_gz(context, *args, **kwargs):
             'enable_gz_imu'             : enable_gz_imu,
             'dxl_sl_port'               : dxl_sl_port,
         })
+    
+    head_cam_config = os.path.join(get_package_share_directory(
+        'sobit_light_bringup'),
+        'launch',
+        'include',
+        'head_cam_param.yaml'
+    )
 
+    hand_cam_config = os.path.join(get_package_share_directory(
+        'sobit_light_bringup'),
+        'launch',
+        'include',
+        'hand_cam_param.yaml'
+    )
 
     robot_state_publisher_node = Node(
         package="robot_state_publisher",
@@ -291,6 +304,43 @@ def launch_gz(context, *args, **kwargs):
         }.items(),
     )
 
+    if enable_gz == 'False':
+        if enable_real_head_cam == 'True':
+            rs_head_launch = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([
+                    PathJoinSubstitution([
+                        FindPackageShare('realsense2_camera'),
+                        'launch',
+                        'rs_launch.py'
+                    ])
+                ]),
+                launch_arguments={
+                    'camera_name': 'head_camera',
+                    'camera_namespace': robot_name,
+                    'config_file': head_cam_config,
+                    'log_level': 'error',
+                }.items(),
+            )
+            nodes.append(rs_head_launch)
+
+        if enable_real_hand_cam == 'True':
+            rs_hand_launch = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([
+                    PathJoinSubstitution([
+                        FindPackageShare('realsense2_camera'),
+                        'launch',
+                        'rs_launch.py'
+                    ])
+                ]),
+                launch_arguments={
+                    'camera_name': 'hand_camera',
+                    'camera_namespace': robot_name,
+                    'config_file': hand_cam_config,
+                    'log_level': 'error',
+                }.items(),
+            )
+            nodes.append(rs_hand_launch)
+
     gz_bridge_node = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
@@ -333,5 +383,6 @@ def launch_gz(context, *args, **kwargs):
 
     nodes.append(robot_state_publisher_node)
     nodes.append(action_server_launch)
+
 
     return nodes
