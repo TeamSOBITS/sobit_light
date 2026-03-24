@@ -1,14 +1,16 @@
-planning_plugins: ompl_interface/OMPLPlanner
+planning_plugins:
+  - ompl_interface/OMPLPlanner
 
-rrequest_adapters:
-  - default_planner_request_adapters/ResolveConstraintFrames
-  - default_planner_request_adapters/FixWorkspaceBounds
-  - default_planner_request_adapters/FixStartStateBounds
-  - default_planner_request_adapters/FixStartStateCollision
+request_adapters:
+  - default_planning_request_adapters/ResolveConstraintFrames
+  - default_planning_request_adapters/ValidateWorkspaceBounds
+  - default_planning_request_adapters/CheckStartStateBounds
+  - default_planning_request_adapters/CheckStartStateCollision
 
-
-# MoveIt2では response_adapters は基本不要
-response_adapters: ""
+response_adapters:
+  - default_planning_response_adapters/AddTimeOptimalParameterization
+  - default_planning_response_adapters/ValidateSolution
+  - default_planning_response_adapters/DisplayMotionPath
 
 planner_configs:
   SBLkConfigDefault:
@@ -157,6 +159,10 @@ arm:
     - RRTstarkConfigDefault
     - PRMstarkConfigDefault
 
-gripper:
+hand:
+  planner_configs:
+    - RRTConnectkConfigDefault
+
+head:
   planner_configs:
     - RRTConnectkConfigDefault
