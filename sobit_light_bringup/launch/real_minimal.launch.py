@@ -39,8 +39,8 @@ def generate_launch_description():
                 'enable_head'          : 'True',
                 'enable_arm'           : 'True',
                 'enable_hand'          : 'True',
-                'enable_real_head_cam' : 'True', # TODO: toggle head camera
-                'enable_real_hand_cam' : 'False', # TODO: toggle hand camera
+                'enable_real_head_cam' : 'True',
+                'enable_real_hand_cam' : 'True',
                 'enable_gz' : 'False',
             }.items()
         ),

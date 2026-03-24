@@ -28,8 +28,8 @@
     　<a href="#launch-and-usage">Launch and Usage</a>
       <ul>
         <li><a href="#teleoperation-remote-control">Teleoperation (Remote Control)</a></li>
-        <li><a href="#visualization-on-rviz<">Visualization on Rviz</a></li>
-        <li><a href="#run-on-gazebo-sim<">Run on Gazebo Sim</a></li>
+        <li><a href="#visualization-on-rviz2">Visualization on RViz2</a></li>
+        <li><a href="#run-on-gazebo-sim">Run on Gazebo Sim</a></li>
       </ul>
     </li>
     <li>
@@ -46,7 +46,7 @@
         <li><a href="#electronic-circuit-diagram">Electronic circuit Diagram</a></li>
         <!-- <li><a href="#robot-assembly">Robot Assembly</a></li> -->
         <li><a href="#features">Features</a></li>
-        <li><a href="#bill-of-material-BOM">Bill of Material (BOM)</a></li>
+        <li><a href="#bill-of-materials-bom">Bill of Materials (BOM)</a></li>
       </ul>
     </li>
     <li><a href="#milestone">Milestone</a></li>
@@ -74,7 +74,7 @@ This is a library to operate the [Kachaka](https://kachaka.life/home/)-integrate
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This section describes how to set up this repository.
+This section describes how to set up this repository (**jazzy-devel branch**).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -85,13 +85,17 @@ First, please set up the following environment before proceeding to the next ins
 
 | System  | Version |
 | --- | --- |
-| Ubuntu | 22.04 (Jammy Jellyfish) |
-| ROS    | Humble Hawksbill |
-| Python | 3.10 |
+| Ubuntu | 24.04 (Noble Numbat) |
+| ROS    | Jazzy Jalisco |
+| Python | 3.12 |
 | Docker | latest |
 
 > [!NOTE]
 > If you need to install `Ubuntu` or `ROS`, please check our [SOBITS Manual](https://github.com/TeamSOBITS/sobits_manual#%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6).
+
+> [!IMPORTANT]
+> On Ubuntu 24.04, `pip install` may fail with `externally-managed-environment` (PEP 668), depending on your environment.
+> For this repository, we recommend installing dependencies via `apt` whenever possible, and using `install.sh` for setup.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -101,64 +105,65 @@ First, please set up the following environment before proceeding to the next ins
 **Development environment (local or Docker) where you will use SOBIT LIGHT:**
 1. Go to the `src` folder of ROS.
     ```sh
-    $ cd ~/colcon_ws/src/
+    cd ~/colcon_ws/src/
     ```
 
-2. Clone this repository.
+2. Clone this repository (**jazzy-devel branch**).
     ```sh
-    $ git clone https://github.com/TeamSOBITS/sobit_light
+    git clone -b jazzy-devel https://github.com/TeamSOBITS/sobit_light
     ```
 
 3. Navigate into the repository.
     ```sh
-    $ cd sobit_light/
+    cd sobit_light/
     ```
 
 4. Install the dependent packages.
     ```sh
-    $ bash install.sh
+    bash install.sh
     ```
 
 5. Compile the package.
     ```sh
-    $ cd ~/colcon_ws/
-    $ colcon build --symlink-install
-    $ source ~/colcon_ws/install/setup.sh
+    cd ~/colcon_ws/
+    source /opt/ros/jazzy/setup.bash
+    colcon build --symlink-install
+    source ~/colcon_ws/install/setup.bash
     ```
 
 **Local Enviroment Setup:**
 1. Clone the Kachaka API
     ```sh
-    $ cd
-    $ git clone https://github.com/TeamSOBITS/kachaka-api
+    cd ~/
+    git clone https://github.com/TeamSOBITS/kachaka-api
     ```
 
 2. Build the latest Docker Image.
     ```sh
-    $ cd kachaka-api/
-    $ docker buildx build -t kachaka-api --target kachaka-grpc-ros2-bridge -f Dockerfile.ros2 . --build-arg BASE_ARCH=x86_64 --load
+    cd kachaka-api/
+    docker buildx build -t kachaka-api --target kachaka-grpc-ros2-bridge -f Dockerfile.ros2 . --build-arg BASE_ARCH=x86_64 --load
     ```
 
 3. Let's configure `ROS_DOMAIN_ID` and `RMW_IMPLEMENTATION`. In this case, we will set it to `10` as an example．
     ```sh
-    $ echo 'export ROS_DOMAIN_ID=10' >> ~/.bashrc
-    $ echo 'export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp' >> ~/.bashrc
-    $ source ~/.bashrc
+    echo 'export ROS_DOMAIN_ID=10' >> ~/.bashrc
+    echo 'export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp' >> ~/.bashrc
+    source ~/.bashrc
     ```
 
 > [!IMPORTANT]
 > `ROS_DOMAIN_ID` must match with Local Environment and Development Environment to allow data communication within the Kachaka and the computer.
 
 4. Check the Kachaka IP address.
-    1. Ask the Kachaka directly, “ねぇカチャカ，IPアドレスを教えて (nee kachaka, IP address wo oshiete)”.\\
+    1. Ask the Kachaka directly, “ねぇカチャカ，IPアドレスを教えて (nee kachaka, IP address wo oshiete)”.\
     Then, IP address is read out from Kachaka,
-    2. or check it out from the Kachaka App.\\
+    2. or check it out from the Kachaka App.\
     Open the `Settings` tab in the Kachaka app, tap on `App Information` in the `Settings & Information` category, and check the `IP Address` field in the `Kachaka` category.
 
 5. Set up an alias to facilitate the connection with Kachaka and ROS Bridge.
     ```sh
-    $ echo 'alias kachaka="bash ~/kachaka-api/tools/ros2_bridge/start_bridge.sh"' >> ~/.bashrc
-    $ source ~/.bashrc
+    echo 'alias kachaka="bash ~/kachaka-api/tools/ros2_bridge/start_bridge.sh"' >> ~/.bashrc
+    source ~/.bashrc
     ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -168,19 +173,20 @@ First, please set up the following environment before proceeding to the next ins
 ## Launch and Usage
 
 1. Bring up the ROS Bridge to connect Kachaka in your **local environment**.
-    ```
-    $ kachaka <Kachaka IP> sobit_light no
+    ```sh
+    kachaka <Kachaka IP> sobit_light no yes
     ```
 
 > [!NOTE]
-> By writing `sobit_light`, you are setting the `namespace` of the robot. Additionally, `no` stops Kachaka from publishing its own robot_description. For more details, please refer to [Starting ros2_bridge using Docker](https://github.com/TeamSOBITS/kachaka-api/blob/main/docs/ROS2.md#%E3%83%96%E3%83%AA%E3%83%83%E3%82%B8%E3%81%AE%E8%B5%B7%E5%8B%95).
+> By writing `sobit_light`, you are setting the `namespace` of the robot. Additionally, `no` stops Kachaka from publishing its own robot_description. For more details, please refer to [Starting ros2_bridge using Docker](https://github.com/TeamSOBITS/kachaka-api/blob/main/docs/ROS2.md#%E3%83%96%E3%83%AA%E3%83%83%E3%82%B8%E3%81%AE%E8%B5%B7%E5%8B%95).\
+> If you perform navigation on your own PC without relying on the Kachaka API—that is, when navigating SOBIT LIGHT using the SOBITS Navigation Stack—change the final `yes` to `no`. Switching this setting eliminates the Kachaka-side map, creating a TF structure that does not conflict with the PC's map. For details on this approach, refer to [How to Run emcl2 on Kachaka](https://zenn.dev/ame_b/articles/da4636a0a8048f).
 
 > [!WARNING]
 > Please note that the Kachaka IP might change eventually.
 
 2. Execute the launch file [minimal.launch](sobit_light_bringup/launch/minimal.launch.py) in your **development environment**.
     ```sh
-    $ ros2 launch sobit_light_bringup real_minimal.launch.py
+    ros2 launch sobit_light_bringup real_minimal.launch.py
     ```
 
 If you did not succeed in connecting to Kachaka, check the following points:
@@ -188,7 +194,7 @@ If you did not succeed in connecting to Kachaka, check the following points:
 - Verify the battery is sufficiently charged.
 - Confirm the USB hub is connected to the computer.
 - Check if the Dynamixel Dongle is named `/dev/ttyUSB0`.
-  - To verify, run `$ ls /dev` and if `/dev/ttyUSB1` is displayed, update the `usb_port` in [controllers.urdf.xacro](sobit_light_description/urdf/controllers.urdf.xacro).
+  - To verify, run `ls /dev` and if `/dev/ttyUSB1` is displayed, update the `usb_port` in [controllers.urdf.xacro](sobit_light_description/urdf/controllers.urdf.xacro).
 - Ensure the Kachaka IP is correct.
 - Verify that the `ROS_DOMAIN_ID` is the same on both the Kachaka and the development environment.
 
@@ -200,7 +206,7 @@ If you did not succeed in connecting to Kachaka, check the following points:
 1. Checking the ROS package for using the controller
 
 ```sh
-$ dpkg -l | grep ros-humble-joy-linux
+dpkg -l | grep ros-jazzy-joy-linux
 ```
 
 2. Connect the PC and DualShock via Bluetooth.
@@ -209,11 +215,11 @@ $ dpkg -l | grep ros-humble-joy-linux
     2. Turn on Bluetooth and select "Wireless Controller".
     3. When the flashing stops and the blue light stays on, the connection is complete.
 
-3. After launching SOBIT LIGHT’s[real_minimal.launch.py](sobit_light_bringup/launch/real_minimal.launch.py),start the teleoperation launch.
+3. After launching SOBIT LIGHT’s [real_minimal.launch.py](sobit_light_bringup/launch/real_minimal.launch.py), start the teleoperation launch.
 >[!WARNING] At startup, the manipulator will move to the initial_pose. Please check the manipulator's state before proceeding.
 
 ```sh
-$ ros2 launch sobit_light_teleop dualshock_teleop.launch.py
+ros2 launch sobit_light_teleop dualshock_teleop.launch.py
 ```
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 <details>
@@ -224,15 +230,15 @@ $ ros2 launch sobit_light_teleop dualshock_teleop.launch.py
 The joint movements for each operation are as follows.
 #### Manipulator Section (Manipulator Control)
 
-| Operation | X-axis Joint | Y-axis Joint
+| Operation | X-axis Joint | Y-axis Joint |
 | :---: | --- | --- |
-| △ + L-stick | head_yaw_joint | head_pitch_joint
-| □ + L-stick | arm_shoulder_roll_joint　|arm_shoulder_pitch_joint
-| ✕ + L-stick | arm_forearm_roll_joint　|arm_elbow_pitch_joint
-| ○ + L-stick | arm_wrist_roll_joint　|head_pitch_joint
+| △ + L-stick | head_yaw_joint | head_pitch_joint |
+| □ + L-stick | arm_shoulder_roll_joint | arm_shoulder_pitch_joint |
+| ✕ + L-stick | arm_forearm_roll_joint | arm_elbow_pitch_joint |
+| ○ + L-stick | arm_wrist_roll_joint | head_pitch_joint |
 >In addition, pressing the [R2_button] increases the joint speed.
 
-| Operation | Action
+| Operation | Action |
 | :---: | --- | 
 | R-stick_button | Close the hand |
 |Share_button| Return to the initial position |
@@ -240,25 +246,25 @@ The joint movements for each operation are as follows.
 
 #### Kachaka Base Control
 
-| Operation | X-axis | Y-axis
+| Operation | X-axis | Y-axis |
 | :---: | --- | --- |
-| L2 + L-stick | Rotate | Forward / Backward
+| L2 + L-stick | Rotate | Forward / Backward |
 
 >In addition, pressing the [L2_button] increases the base speed.
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
  </details>
 
 
-### Visualize on Rviz2
+### Visualization on RViz2
 
-As a preliminary step to running the actual machine, SOBIT LIGHT can be visualized on Rviz to display the robot's configuration.
+As a preliminary step to running the actual machine, SOBIT LIGHT can be visualized on RViz to display the robot's configuration.
 
 ```sh
-$ ros2 launch sobit_light_description display.launch.py
+ros2 launch sobit_light_description display.launch.py
 ```
 
-If it works correctly, Rviz will be displayed as follows.
-![SOBIT LIGHT Display with Rviz](sobit_light/docs/img/sobit_light_rviz.png)
+If it works correctly, RViz will be displayed as follows.
+![SOBIT LIGHT Display with RViz](sobit_light/docs/img/sobit_light_rviz.png)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -267,7 +273,7 @@ If it works correctly, Rviz will be displayed as follows.
 SOBIT LIGHT has a simulation environment with Gazebo Fortress, allowing you to verify operations even without the actual machine.
 
 ```sh
-$ ros2 launch sobit_light_bringup gz_minimal.launch.py
+ros2 launch sobit_light_bringup gz_minimal.launch.py
 ```
 
 At present, the following virtual environments are available.
@@ -606,6 +612,7 @@ To know more about the mobile base Kachaka, please have a look at their [specifi
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+<a name="bill-of-materials-bom"></a>
 
 ### Bill of Materials (BOM)
 
@@ -670,7 +677,6 @@ Total Approx. Cost (w/o Optional Items): **$6,592.54**
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
 <!-- MILESTONE -->
 ## Milestone
 
@@ -689,9 +695,9 @@ See the [open issues][issues-url] for a full list of proposed features (and know
 
 * [Kachaka API](https://github.com/pf-robotics/kachaka-api)
 * [Dynamixel Hardware](https://github.com/dynamixel-community/dynamixel_hardware)
-* [ROS Humble](https://docs.ros.org/en/humble/index.html)
-* [ROS2 Control](https://control.ros.org/humble/index.html)
-* [ROS2 Control Gazebo](https://github.com/ros-controls/gz_ros2_control)
+* [ROS Jazzy](https://docs.ros.org/en/jazzy/index.html)
+* [ros2_control](https://control.ros.org/)
+* [gz_ros2_control](https://github.com/ros-controls/gz_ros2_control)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

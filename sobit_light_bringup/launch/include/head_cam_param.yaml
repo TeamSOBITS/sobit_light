@@ -1,0 +1,92 @@
+# Realsense Camera Configuration (Flat Structure)
+camera_name: "head_camera"
+camera_namespace: "sobit_light"
+serial_no: "953122061777"
+usb_port_id: ""
+device_type: ""
+config_file: ""
+json_file_path: ""
+initial_reset: false
+accelerate_gpu_with_glsl: false
+rosbag_filename: ""
+rosbag_loop: false
+log_level: "error"
+output: "screen"
+
+# RGB Camera
+enable_color: true
+rgb_camera.color_profile: "0,0,0"
+rgb_camera.color_format: "RGB8"
+rgb_camera.enable_auto_exposure: true
+
+# Depth Module
+enable_depth: true
+enable_infra: false
+enable_infra1: false
+enable_infra2: false
+depth_module.depth_profile: "0,0,0"
+depth_module.depth_format: "Z16"
+depth_module.infra_profile: "0,0,0"
+depth_module.infra_format: "RGB8"
+depth_module.infra1_format: "Y8"
+depth_module.infra2_format: "Y8"
+depth_module.color_profile: "0,0,0"
+depth_module.color_format: "RGB8"
+depth_module.exposure: 8500
+depth_module.gain: 16
+depth_module.hdr_enabled: false
+depth_module.enable_auto_exposure: true
+depth_module.exposure.1: 7500
+depth_module.gain.1: 16
+depth_module.exposure.2: 1
+depth_module.gain.2: 16
+depth_module.inter_cam_sync_mode: 0
+
+# IMU / Motion
+enable_gyro: false
+enable_accel: false
+enable_motion: false
+gyro_fps: 0
+accel_fps: 0
+motion_fps: 0
+unite_imu_method: 0
+angular_velocity_cov: 0.01
+linear_accel_cov: 0.01
+
+# Filters & Processing
+enable_sync: true
+enable_rgbd: true
+clip_distance: -2.0
+pointcloud.enable: true
+pointcloud.stream_filter: 2
+pointcloud.stream_index_filter: 0
+pointcloud.ordered_pc: true
+pointcloud.allow_no_texture_points: false
+align_depth.enable: true
+colorizer.enable: false
+decimation_filter.enable: false
+decimation_filter.filter_magnitude: 2
+rotation_filter.enable: false
+rotation_filter.rotation: 0.0
+spatial_filter.enable: false
+temporal_filter.enable: false
+disparity_filter.enable: false
+hole_filling_filter.enable: false
+hdr_merge.enable: false
+
+# Advanced / Specialized
+enable_safety: false
+safety_camera.safety_mode: 0
+enable_labeled_point_cloud: false
+depth_mapping_camera.labeled_point_cloud_profile: "0,0,0"
+enable_occupancy: false
+depth_mapping_camera.occupancy_profile: "0,0,0"
+
+# Diagnostics & TF
+diagnostics_period: 0.0
+publish_tf: true
+tf_publish_rate: 0.0
+base_frame_id: "link"
+tf_prefix: "sobit_light/"
+wait_for_device_timeout: -1.0
+reconnect_timeout: 6.0

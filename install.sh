@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -u  
+set -o pipefail
 echo "╔══╣ Setup: SOBIT LIGHT (STARTING) ╠══╗"
 
 
@@ -39,7 +41,7 @@ for ((i = 0; i < ${#ros_packages[@]}; i++)) {
 cd ${DIR}
 
 # Download required dependencies
-python3 -m pip install \
+python3 -m pip install --break-system-packages \
     transforms3d
 
 # Download ROS packages
@@ -50,17 +52,16 @@ sudo apt-get install -y \
     ros-$ROS_DISTRO-control-toolbox \
     ros-$ROS_DISTRO-controller-interface \
     ros-$ROS_DISTRO-controller-manager \
+    ros-$ROS_DISTRO-controller-manager-msgs \
+    ros-$ROS_DISTRO-topic-tools \
     ros-$ROS_DISTRO-position-controllers \
     ros-$ROS_DISTRO-velocity-controllers \
     ros-$ROS_DISTRO-effort-controllers \
     ros-$ROS_DISTRO-joint-trajectory-controller \
-    ros-$ROS_DISTRO-joint-group-impedance-controller \
     ros-$ROS_DISTRO-joint-state-publisher \
     ros-$ROS_DISTRO-joint-state-publisher-gui \
     ros-$ROS_DISTRO-joint-state-broadcaster \
     ros-$ROS_DISTRO-joint-limits \
-    ros-$ROS_DISTRO-robot-controllers \
-    ros-$ROS_DISTRO-robot-controllers-interface \
     ros-$ROS_DISTRO-robot-state-publisher \
     ros-$ROS_DISTRO-hardware-interface \
     ros-$ROS_DISTRO-transmission-interface \
@@ -76,6 +77,7 @@ sudo apt-get install -y \
     ros-$ROS_DISTRO-tf2-ros \
     ros-$ROS_DISTRO-tf2 \
     ros-$ROS_DISTRO-tf-transformations \
+    ros-$ROS_DISTRO-twist-stamper \
     ros-$ROS_DISTRO-joy-linux \
     ros-$ROS_DISTRO-launch \
     ros-$ROS_DISTRO-launch-ros
@@ -96,8 +98,10 @@ sudo apt-get install -y \
 # Install Gazebo Fortress with binaries
 sudo apt-get install -y \
     ros-${ROS_DISTRO}-ros-gz \
-    ros-${ROS_DISTRO}-ign-ros2-control \
-    ros-${ROS_DISTRO}-ign-ros2-control-demos
+    ros-${ROS_DISTRO}-gz-ros2-control \
+    ros-${ROS_DISTRO}-gz-ros2-control-demos \
+    ros-${ROS_DISTRO}-topic-tools \
+    ros-${ROS_DISTRO}-twist-stamper
 
 # Set up environment variables
 echo "" >> /home/$USERNAME/.bashrc
@@ -107,10 +111,10 @@ echo "" >> /home/$USERNAME/.bashrc
 source /home/$USERNAME/.bashrc
 
 # # Reload udev rules
-sudo udevadm control --reload-rules
+sudo udevadm control --reload-rules ||true
 
 # # Trigger the new rules
-sudo udevadm trigger
+sudo udevadm trigger ||true
 
 # Go back to previous directory
 cd ${DIR}

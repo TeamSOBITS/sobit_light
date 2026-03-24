@@ -6,10 +6,13 @@ WheelActionServer::WheelActionServer(const rclcpp::NodeOptions & options = rclcp
 : Node("wheel_action_server", options)
 {
   // Configure the QoS profile
-  rclcpp::QoS qos_profile(1); // depth = 1
-  qos_profile.reliability(RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT);
-  qos_profile.history(RMW_QOS_POLICY_HISTORY_KEEP_LAST);
-  qos_profile.durability(RMW_QOS_POLICY_DURABILITY_VOLATILE);
+  rclcpp::QoS qos_profile_best(1), qos_profile_reliable(1); // depth = 1
+  qos_profile_best.reliability(RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT); // Turtlebot2 is 'BEST_EFFORT'
+  qos_profile_best.history(RMW_QOS_POLICY_HISTORY_KEEP_LAST);
+  qos_profile_best.durability(RMW_QOS_POLICY_DURABILITY_VOLATILE);
+  qos_profile_reliable.reliability(RMW_QOS_POLICY_RELIABILITY_RELIABLE); // Turtlebot2 is 'RELIABLE'
+  qos_profile_reliable.history(RMW_QOS_POLICY_HISTORY_KEEP_LAST);
+  qos_profile_reliable.durability(RMW_QOS_POLICY_DURABILITY_VOLATILE);
 
 
   this->action_server_move_wheel_linear_ = rclcpp_action::create_server<MoveWheelLinear>(
@@ -27,11 +30,9 @@ WheelActionServer::WheelActionServer(const rclcpp::NodeOptions & options = rclcp
 
 
   this->pub_cmd_vel_ = this->create_publisher<geometry_msgs::msg::Twist>(
-      "diff_controller/cmd_vel_unstamped", qos_profile);
-      // "manual_control/cmd_vel", qos_profile);
+      "manual_control/cmd_vel", qos_profile_reliable);
   this->sub_odom_ = this->create_subscription<nav_msgs::msg::Odometry>(
-      "diff_controller/odom", qos_profile, std::bind(&WheelActionServer::odom_callback, this, std::placeholders::_1));
-      // "odometry/odometry", qos_profile, std::bind(&WheelActionServer::odom_callback, this, std::placeholders::_1));
+      "odometry/odometry", qos_profile_best, std::bind(&WheelActionServer::odom_callback, this, std::placeholders::_1));
 
 
   RCLCPP_INFO(this->get_logger(), "WheelActionServer has been initialized.");
@@ -135,7 +136,7 @@ void WheelActionServer::exe_move_wheel_linear(
   double kp, ki, kd;
   kp = 0.1;
   ki = 0.4;
-  kd = 0.8;
+  kd = 0.3;
 
   double vel_diff = kp * goal_dist;
 

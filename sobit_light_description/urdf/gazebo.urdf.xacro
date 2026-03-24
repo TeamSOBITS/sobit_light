@@ -182,8 +182,8 @@
           <camera name="head_camera_color">
             <horizontal_fov>1.21126</horizontal_fov>
             <image>
-              <width>640</width>
-              <height>480</height>
+              <width>1280</width>
+              <height>720</height>
               <format>RGB_INT8</format>
             </image>
             <clip>
@@ -203,11 +203,11 @@
 
     <!-- Sensor - Head Camera (Depth) -->
     <xacro:if value="${$(arg enable_gz_head_cam_depth) and $(arg enable_head)}">
-      <gazebo reference="head_camera_depth_optical_frame">
+      <gazebo reference="head_camera_depth_frame">
         <sensor name="head_camera_depth" type="depth">
-          <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
+          <pose>0 0 ${0.0175/2} 0 0 0 </pose>
           
-          <gz_frame_id>${robot_name}/head_camera_depth_optical_frame</gz_frame_id>
+          <gz_frame_id>${robot_name}/head_camera_depth_frame</gz_frame_id>
           <topic>${robot_name}/head_camera/depth</topic>
 
           <always_on>1</always_on>
@@ -215,7 +215,7 @@
           <update_rate>1</update_rate>
 
           <camera name="head_camera_depth">
-            <horizontal_fov>1.48702</horizontal_fov>
+            <horizontal_fov>1.21126</horizontal_fov>
             <image>
               <width>1280</width>
               <height>720</height>
@@ -272,11 +272,11 @@
 
     <!-- Sensor - Hand Camera (Depth) -->
     <xacro:if value="${$(arg enable_gz_hand_cam_depth) and $(arg enable_hand)}">
-      <gazebo reference="hand_camera_depth_optical_frame">
+      <gazebo reference="hand_camera_depth_frame">
         <sensor name="hand_camera_depth" type="depth">
-          <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
+          <pose>0 0 ${0.0175/2} 0 0 0 </pose>
           
-          <gz_frame_id>${robot_name}/hand_camera_depth_optical_frame</gz_frame_id>
+          <gz_frame_id>${robot_name}/hand_camera_depth_frame</gz_frame_id>
           <topic>${robot_name}/hand_camera/depth</topic>
 
           <always_on>1</always_on>
@@ -284,10 +284,10 @@
           <update_rate>1</update_rate>
 
           <camera name="hand_camera_depth">
-            <horizontal_fov>1.48702</horizontal_fov>
+            <horizontal_fov>1.21126</horizontal_fov>
             <image>
-              <width>1280</width>
-              <height>720</height>
+              <width>640</width>
+              <height>480</height>
             </image>
             <clip>
               <near>0.1</near>
