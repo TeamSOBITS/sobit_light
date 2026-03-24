@@ -3,6 +3,64 @@
 <robot name="sobit_light_gazebo" xmlns:xacro="http://ros.org/wiki/xacro">
   <xacro:macro name="gazebo_sensors" params="robot_name enable_gz_front_cam_color:=True enable_gz_back_cam_color:=True enable_gz_head_cam_color:=True enable_gz_head_cam_depth:=True enable_gz_hand_cam_color:=True enable_gz_hand_cam_depth:=True enable_gz_lidar:=True enable_gz_imu:=True">
 
+    <!-- Friction and Contact Parameters for Mobile Base -->
+    <xacro:if value="${$(arg enable_gz_front_cam_color) and $(arg enable_mobile_base)}">
+      <gazebo reference="base_link">
+        <mu1>0.0</mu1>
+        <mu2>0.0</mu2>
+        <kp>1000000.0</kp>
+        <kd>1.0</kd>
+      </gazebo>
+
+      <gazebo reference="base_l_drive_wheel_link">
+        <surface>
+          <friction>
+            <ode>
+              <mu>1</mu>
+              <mu2>1</mu2>
+              <slip1>0.035</slip1>
+              <slip2>0</slip2>
+              <fdir1>0 0 1</fdir1>
+            </ode>
+          </friction>
+          <contact>
+            <ode>
+              <soft_cfm>0</soft_cfm>
+              <soft_erp>0.2</soft_erp>
+              <kp>1e+5</kp>
+              <kd>1</kd>
+              <max_vel>0.01</max_vel>
+              <min_depth>0.001</min_depth>
+            </ode>
+          </contact>
+        </surface>
+      </gazebo>
+
+      <gazebo reference="base_r_drive_wheel_link">
+        <surface>
+          <friction>
+            <ode>
+              <mu>1</mu>
+              <mu2>1</mu2>
+              <slip1>0.035</slip1>
+              <slip2>0</slip2>
+              <fdir1>0 0 1</fdir1>
+            </ode>
+          </friction>
+          <contact>
+            <ode>
+              <soft_cfm>0</soft_cfm>
+              <soft_erp>0.2</soft_erp>
+              <kp>1e+5</kp>
+              <kd>1</kd>
+              <max_vel>0.01</max_vel>
+              <min_depth>0.001</min_depth>
+            </ode>
+          </contact>
+        </surface>
+      </gazebo>
+    </xacro:if>
+
     <!-- Sensor - Base Front Camera (Color) -->
     <xacro:if value="${$(arg enable_gz_front_cam_color) and $(arg enable_mobile_base)}">
       <gazebo reference="imu_link">
