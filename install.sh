@@ -52,6 +52,8 @@ sudo apt-get install -y \
     ros-$ROS_DISTRO-control-toolbox \
     ros-$ROS_DISTRO-controller-interface \
     ros-$ROS_DISTRO-controller-manager \
+    ros-$ROS_DISTRO-controller-manager-msgs \
+    ros-$ROS_DISTRO-topic-tools \
     ros-$ROS_DISTRO-position-controllers \
     ros-$ROS_DISTRO-velocity-controllers \
     ros-$ROS_DISTRO-effort-controllers \
@@ -75,6 +77,7 @@ sudo apt-get install -y \
     ros-$ROS_DISTRO-tf2-ros \
     ros-$ROS_DISTRO-tf2 \
     ros-$ROS_DISTRO-tf-transformations \
+    ros-$ROS_DISTRO-twist-stamper \
     ros-$ROS_DISTRO-joy-linux \
     ros-$ROS_DISTRO-launch \
     ros-$ROS_DISTRO-launch-ros
