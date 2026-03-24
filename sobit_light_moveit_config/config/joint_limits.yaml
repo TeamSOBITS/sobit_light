@@ -23,11 +23,11 @@ joint_limits:
     max_velocity: 4.8
     has_acceleration_limits: true
     max_acceleration: 1.0
-  arm_shoulder_pitch_sub_joint:
-    has_velocity_limits: true
-    max_velocity: 4.8
-    has_acceleration_limits: true
-    max_acceleration: 1.0
+  # arm_shoulder_pitch_sub_joint:
+  #   has_velocity_limits: true
+  #   max_velocity: 4.8
+  #   has_acceleration_limits: true
+  #   max_acceleration: 1.0
   arm_shoulder_roll_joint:
     has_velocity_limits: true
     max_velocity: 4.8
@@ -41,5 +41,20 @@ joint_limits:
   arm_wrist_roll_joint:
     has_velocity_limits: true
     max_velocity: 4.8
+    has_acceleration_limits: true
+    max_acceleration: 1.0
+  hand_joint:
+    has_velocity_limits: true
+    max_velocity: 4.8
+    has_acceleration_limits: true
+    max_acceleration: 1.0
+  head_yaw_joint:
+    has_velocity_limits: true
+    max_velocity: 1.57
+    has_acceleration_limits: true
+    max_acceleration: 1.0
+  head_pitch_joint:
+    has_velocity_limits: true
+    max_velocity: 1.57
     has_acceleration_limits: true
     max_acceleration: 1.0
