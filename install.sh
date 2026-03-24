@@ -37,6 +37,20 @@ for ((i = 0; i < ${#ros_packages[@]}; i++)) {
     fi
 }
 
+# Clone patched MoveIt2 (sparse checkout: only patched packages)
+if [ ! -d "moveit2_patch" ]; then
+    echo "Cloning: moveit2_patch (sparse checkout)"
+    git clone --sparse --branch fix/robot-interaction-frame-prefix \
+        https://github.com/TeamSOBITS/moveit2.git moveit2_patch
+    cd moveit2_patch
+    git sparse-checkout set \
+        moveit_ros/robot_interaction \
+        moveit_ros/visualization
+    cd ..
+else
+    echo "moveit2_patch already exists, skipping clone."
+fi
+
 # Go back to previous directory
 cd ${DIR}
 
