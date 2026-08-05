@@ -1,0 +1,10 @@
+# Default initial positions for sobit_light's ros2_control fake system
+
+initial_positions:
+  arm_shoulder_roll_joint: 0.0
+  arm_shoulder_pitch_joint: -1.5707
+  arm_elbow_pitch_joint: 0.0
+  arm_forearm_roll_joint: 0.0
+  arm_wrist_pitch_joint: 0.0
+  arm_wrist_roll_joint: 0.0
+  hand_joint: 0.0

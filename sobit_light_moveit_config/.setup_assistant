@@ -1,0 +1,25 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: sobit_light_description
+    relative_path: robots/sobit_light_robot.urdf.xacro
+  srdf:
+    relative_path: config/sobit_light.srdf
+  package_settings:
+    author_name: kenta sato
+    author_email: kenta.sato5044@gmail.com
+    generated_timestamp: 1772015714
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity
+  modified_urdf:
+    xacros:
+      - control_xacro
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity

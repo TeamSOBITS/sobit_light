@@ -1,0 +1,40 @@
+# MoveIt uses this configuration for controller management
+trajectory_execution:
+  # allowed_execution_duration_scaling: 12.8
+  # allowed_goal_duration_margin: 12.0
+  allowed_start_tolerance: 0.0
+
+moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControllerManager
+
+moveit_simple_controller_manager:
+  controller_names:
+    - arm_position_controller
+    - hand_position_controller
+    - head_position_controller
+
+  arm_position_controller:
+    type: FollowJointTrajectory
+    joints:
+      - arm_shoulder_roll_joint
+      - arm_shoulder_pitch_joint
+      - arm_elbow_pitch_joint
+      - arm_forearm_roll_joint
+      - arm_wrist_pitch_joint
+      - arm_wrist_roll_joint
+    action_ns: follow_joint_trajectory
+    default: true
+
+  hand_position_controller:
+    type: FollowJointTrajectory
+    joints:
+      - hand_joint
+    action_ns: follow_joint_trajectory
+    default: true
+
+  head_position_controller:
+    type: FollowJointTrajectory
+    joints:
+      - head_yaw_joint
+      - head_pitch_joint
+    action_ns: follow_joint_trajectory
+    default: true
