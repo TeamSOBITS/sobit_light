@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!-- SOBIT Light (Gazebo) -->
 <robot name="sobit_light_gazebo" xmlns:xacro="http://ros.org/wiki/xacro">
-  <xacro:macro name="gazebo_sensors" params="robot_name enable_gz_front_cam_color:=True enable_gz_back_cam_color:=True enable_gz_head_cam_color:=True enable_gz_head_cam_depth:=True enable_gz_hand_cam_color:=True enable_gz_hand_cam_depth:=True enable_gz_lidar:=True enable_gz_imu:=True">
+  <xacro:macro name="gazebo_sensors" params="robot_name enable_tf_prefix:=True enable_gz_front_cam_color:=True enable_gz_back_cam_color:=True enable_gz_head_cam_color:=True enable_gz_head_cam_depth:=True enable_gz_hand_cam_color:=True enable_gz_hand_cam_depth:=True enable_gz_lidar:=True enable_gz_imu:=True">
+    <!-- Sensor frame ids must match the TF tree: prefixed only when
+         robot_state_publisher runs with frame_prefix (enable_tf_prefix). -->
+    <xacro:property name="tf_prefix" value="${robot_name + '/' if str(enable_tf_prefix).lower() == 'true' else ''}"/>
 
     <!-- Friction and Contact Parameters for Mobile Base -->
     <xacro:if value="${$(arg enable_gz_front_cam_color) and $(arg enable_mobile_base)}">
@@ -67,7 +70,7 @@
         <sensor name="imu_sensor" type="imu">
           <pose>0 0 0 0 0 0</pose>
 
-          <gz_frame_id>${robot_name}/imu_link</gz_frame_id>
+          <gz_frame_id>${tf_prefix}imu_link</gz_frame_id>
           <topic>${robot_name}/imu</topic>
 
           <always_on>1</always_on>
@@ -83,7 +86,7 @@
       <sensor name="base_front_camera_color" type="wideanglecamera">
         <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
 
-        <gz_frame_id>${robot_name}/camera_front_link</gz_frame_id>
+        <gz_frame_id>${tf_prefix}camera_front_link</gz_frame_id>
         <topic>${robot_name}/base_front_camera/color</topic>
 
         <always_on>1</always_on>
@@ -122,7 +125,7 @@
         <sensor name="base_front_camera_color" type="camera">
           <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
           
-          <gz_frame_id>${robot_name}/base_front_camera_color</gz_frame_id>
+          <gz_frame_id>${tf_prefix}base_front_camera_color</gz_frame_id>
           <topic>${robot_name}/base_front_camera/color</topic>
 
           <always_on>1</always_on>
@@ -156,7 +159,7 @@
       <sensor name="base_back_camera_color" type="wideanglecamera">
         <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
         
-        <gz_frame_id>${robot_name}/camera_back_link</gz_frame_id>
+        <gz_frame_id>${tf_prefix}camera_back_link</gz_frame_id>
         <topic>${robot_name}/base_back_camera/color</topic>
 
         <always_on>1</always_on>
@@ -195,7 +198,7 @@
         <sensor name="base_back_camera_color" type="camera">
           <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
           
-          <gz_frame_id>${robot_name}/camera_back_link</gz_frame_id>
+          <gz_frame_id>${tf_prefix}camera_back_link</gz_frame_id>
           <topic>${robot_name}/base_back_camera/color</topic>
 
           <always_on>1</always_on>
@@ -230,7 +233,7 @@
         <sensor name="head_camera_color" type="camera">
           <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
           
-          <gz_frame_id>${robot_name}/head_camera_color_optical_frame</gz_frame_id>
+          <gz_frame_id>${tf_prefix}head_camera_color_optical_frame</gz_frame_id>
           <topic>${robot_name}/head_camera/color</topic>
 
           <always_on>1</always_on>
@@ -265,7 +268,7 @@
         <sensor name="head_camera_depth" type="depth">
           <pose>0 0 ${0.0175/2} 0 0 0 </pose>
           
-          <gz_frame_id>${robot_name}/head_camera_depth_frame</gz_frame_id>
+          <gz_frame_id>${tf_prefix}head_camera_depth_frame</gz_frame_id>
           <topic>${robot_name}/head_camera/depth</topic>
 
           <always_on>1</always_on>
@@ -299,7 +302,7 @@
         <sensor name="hand_camera_color" type="camera">
           <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
           
-          <gz_frame_id>${robot_name}/hand_camera_color_optical_frame</gz_frame_id>
+          <gz_frame_id>${tf_prefix}hand_camera_color_optical_frame</gz_frame_id>
           <topic>${robot_name}/hand_camera/color</topic>
 
           <always_on>1</always_on>
@@ -334,7 +337,7 @@
         <sensor name="hand_camera_depth" type="depth">
           <pose>0 0 ${0.0175/2} 0 0 0 </pose>
           
-          <gz_frame_id>${robot_name}/hand_camera_depth_frame</gz_frame_id>
+          <gz_frame_id>${tf_prefix}hand_camera_depth_frame</gz_frame_id>
           <topic>${robot_name}/hand_camera/depth</topic>
 
           <always_on>1</always_on>
@@ -368,7 +371,7 @@
         <sensor name="lidar" type="gpu_lidar">
           <pose>0 0 0 0 0 0</pose>
 
-          <gz_frame_id>${robot_name}/laser_frame</gz_frame_id>
+          <gz_frame_id>${tf_prefix}laser_frame</gz_frame_id>
           <topic>${robot_name}/lidar/scan</topic>
 
           <always_on>1</always_on>
