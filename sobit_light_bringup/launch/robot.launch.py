@@ -374,6 +374,7 @@ def launch_gz(context, *args, **kwargs):
                 launch_arguments={
                     'camera_name': 'head_camera',
                     'camera_namespace': robot_name,
+                    'tf_prefix': tf_prefix,
                     'config_file': head_cam_config,
                     'log_level': 'error',
                 }.items(),
@@ -392,6 +393,7 @@ def launch_gz(context, *args, **kwargs):
                 launch_arguments={
                     'camera_name': 'hand_camera',
                     'camera_namespace': robot_name,
+                    'tf_prefix': tf_prefix,
                     'config_file': hand_cam_config,
                     'log_level': 'error',
                 }.items(),

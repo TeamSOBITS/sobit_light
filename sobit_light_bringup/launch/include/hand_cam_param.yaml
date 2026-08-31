@@ -1,6 +1,5 @@
 # Realsense Camera Configuration (Flat Structure)
 camera_name: "hand_camera"
-camera_namespace: "sobit_light"
 serial_no: "127122270582"
 usb_port_id: ""
 device_type: ""
@@ -87,6 +86,5 @@ diagnostics_period: 0.0
 publish_tf: true
 tf_publish_rate: 0.0
 base_frame_id: "link"
-tf_prefix: "sobit_light/"
 wait_for_device_timeout: -1.0
 reconnect_timeout: 6.0
