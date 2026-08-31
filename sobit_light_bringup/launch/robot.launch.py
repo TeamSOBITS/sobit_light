@@ -1,4 +1,5 @@
 import os
+import tempfile
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
@@ -37,6 +38,12 @@ def generate_launch_description():
     arg_enable_real_head_cam = DeclareLaunchArgument('enable_real_head_cam', default_value='True')
     arg_enable_real_hand_cam = DeclareLaunchArgument('enable_real_hand_cam', default_value='True')
 
+    arg_enable_tf_prefix = DeclareLaunchArgument('enable_tf_prefix', default_value='True')
+
+    arg_enable_moveit   = DeclareLaunchArgument('enable_moveit', default_value='True')
+    arg_enable_teleop   = DeclareLaunchArgument('enable_teleop', default_value='True')
+    arg_use_moveit_rviz = DeclareLaunchArgument('use_moveit_rviz', default_value='True')
+
     return LaunchDescription([
         arg_robot_name,
         arg_robot_coords_x,
@@ -57,8 +64,16 @@ def generate_launch_description():
         arg_enable_gz_imu,
         arg_enable_real_head_cam,
         arg_enable_real_hand_cam,
+        arg_enable_tf_prefix,
+        arg_enable_moveit,
+        arg_enable_teleop,
+        arg_use_moveit_rviz,
         OpaqueFunction(function = launch_gz),
     ])
+
+
+def _bool_str(val):
+    return 'True' if val.lower() in ('true', '1', 'yes') else 'False'
 
 
 def launch_gz(context, *args, **kwargs):
@@ -68,23 +83,30 @@ def launch_gz(context, *args, **kwargs):
     robot_coords_y = LaunchConfiguration('robot_coords_y').perform(context)
     robot_coords_Y = LaunchConfiguration('robot_coords_Y').perform(context)
 
-    enable_mobile_base = LaunchConfiguration('enable_mobile_base').perform(context)
-    enable_head        = LaunchConfiguration('enable_head').perform(context)
-    enable_arm         = LaunchConfiguration('enable_arm').perform(context)
-    enable_hand        = LaunchConfiguration('enable_hand').perform(context)
+    enable_mobile_base = _bool_str(LaunchConfiguration('enable_mobile_base').perform(context))
+    enable_head        = _bool_str(LaunchConfiguration('enable_head').perform(context))
+    enable_arm         = _bool_str(LaunchConfiguration('enable_arm').perform(context))
+    enable_hand        = _bool_str(LaunchConfiguration('enable_hand').perform(context))
 
-    enable_gz                 = LaunchConfiguration('enable_gz').perform(context)
-    enable_gz_front_cam_color = LaunchConfiguration('enable_gz_front_cam_color').perform(context)
-    enable_gz_back_cam_color  = LaunchConfiguration('enable_gz_back_cam_color').perform(context)
-    enable_gz_head_cam_color  = LaunchConfiguration('enable_gz_head_cam_color').perform(context)
-    enable_gz_head_cam_depth  = LaunchConfiguration('enable_gz_head_cam_depth').perform(context)
-    enable_gz_hand_cam_color  = LaunchConfiguration('enable_gz_hand_cam_color').perform(context)
-    enable_gz_hand_cam_depth  = LaunchConfiguration('enable_gz_hand_cam_depth').perform(context)
-    enable_gz_lidar           = LaunchConfiguration('enable_gz_lidar').perform(context)
-    enable_gz_imu             = LaunchConfiguration('enable_gz_imu').perform(context)
+    enable_gz                 = _bool_str(LaunchConfiguration('enable_gz').perform(context))
+    enable_gz_front_cam_color = _bool_str(LaunchConfiguration('enable_gz_front_cam_color').perform(context))
+    enable_gz_back_cam_color  = _bool_str(LaunchConfiguration('enable_gz_back_cam_color').perform(context))
+    enable_gz_head_cam_color  = _bool_str(LaunchConfiguration('enable_gz_head_cam_color').perform(context))
+    enable_gz_head_cam_depth  = _bool_str(LaunchConfiguration('enable_gz_head_cam_depth').perform(context))
+    enable_gz_hand_cam_color  = _bool_str(LaunchConfiguration('enable_gz_hand_cam_color').perform(context))
+    enable_gz_hand_cam_depth  = _bool_str(LaunchConfiguration('enable_gz_hand_cam_depth').perform(context))
+    enable_gz_lidar           = _bool_str(LaunchConfiguration('enable_gz_lidar').perform(context))
+    enable_gz_imu             = _bool_str(LaunchConfiguration('enable_gz_imu').perform(context))
 
-    enable_real_head_cam = LaunchConfiguration('enable_real_head_cam').perform(context) # TODO: Implement
-    enable_real_hand_cam = LaunchConfiguration('enable_real_hand_cam').perform(context) # TODO: Implement
+    enable_real_head_cam = _bool_str(LaunchConfiguration('enable_real_head_cam').perform(context)) # TODO: Implement
+    enable_real_hand_cam = _bool_str(LaunchConfiguration('enable_real_hand_cam').perform(context)) # TODO: Implement
+
+    enable_tf_prefix = _bool_str(LaunchConfiguration('enable_tf_prefix').perform(context)) == 'True'
+    tf_prefix = robot_name + '/' if enable_tf_prefix else ''
+
+    enable_moveit   = _bool_str(LaunchConfiguration('enable_moveit').perform(context))
+    enable_teleop   = _bool_str(LaunchConfiguration('enable_teleop').perform(context))
+    use_moveit_rviz = _bool_str(LaunchConfiguration('use_moveit_rviz').perform(context))
 
     # Find Dynamixel Port name from DXL_LOWER_PORT/DXL_UPPER_PORT environment variable
     dxl_sl_port = ''
@@ -115,6 +137,7 @@ def launch_gz(context, *args, **kwargs):
             'enable_gz_hand_cam_depth'  : enable_gz_hand_cam_depth,
             'enable_gz_lidar'           : enable_gz_lidar,
             'enable_gz_imu'             : enable_gz_imu,
+            'enable_tf_prefix'          : 'True' if enable_tf_prefix else 'False',
             'dxl_sl_port'               : dxl_sl_port,
         })
     
@@ -132,16 +155,19 @@ def launch_gz(context, *args, **kwargs):
         'hand_cam_param.yaml'
     )
 
+    robot_state_publisher_params = [
+        {"robot_description": robot_description_config.toxml()},
+        {"use_sim_time": True if enable_gz == 'True' else False},
+    ]
+    if enable_tf_prefix:
+        robot_state_publisher_params.append({"frame_prefix": robot_name + '/'})
+
     robot_state_publisher_node = Node(
         package="robot_state_publisher",
         executable="robot_state_publisher",
         name="robot_state_publisher",
         namespace=robot_name,
-        parameters=[
-            {"frame_prefix": robot_name + '/'},
-            {"robot_description": robot_description_config.toxml()},
-            {"use_sim_time": True if enable_gz == 'True' else False},
-        ],
+        parameters=robot_state_publisher_params,
         output="screen",
     )
     
@@ -208,15 +234,24 @@ def launch_gz(context, *args, **kwargs):
         
 
     if enable_mobile_base == 'True' and enable_gz == 'True':
+        wheel_controller_args = [
+            'wheel_controller',
+            '-c', 'controller_manager', '--activate'
+        ]
+        # diff_drive_controller namespace-prefixes its odom TF frames by default,
+        # which only matches the TF tree when the prefix is enabled.
+        if not enable_tf_prefix:
+            override = tempfile.NamedTemporaryFile(
+                'w', prefix='wheel_controller_no_tf_prefix_', suffix='.yaml', delete=False)
+            override.write('/**:\n  ros__parameters:\n    tf_frame_prefix_enable: false\n')
+            override.close()
+            wheel_controller_args += ['--param-file', override.name]
         wheel_controller = Node(
             package='controller_manager',
             executable='spawner',
             # name='wheel_controller',
             namespace=robot_name,
-            arguments=[
-                'wheel_controller',
-                '-c', 'controller_manager', '--activate'
-                ],
+            arguments=wheel_controller_args,
         )
         controllers.append(wheel_controller)
 
@@ -264,7 +299,7 @@ def launch_gz(context, *args, **kwargs):
         executable="twist_stamper",
         namespace=robot_name,
         name="vel_remap",
-        arguments=["-r", f"cmd_vel_in:=/{robot_name}/manual_control/cmd_vel", "-r", f"cmd_vel_out:=/{robot_name}/wheel_controller/cmd_vel", "-p", f"frame_id:={robot_name}/base_footprint"]
+        arguments=["-r", f"cmd_vel_in:=/{robot_name}/manual_control/cmd_vel", "-r", f"cmd_vel_out:=/{robot_name}/wheel_controller/cmd_vel", "-p", f"frame_id:={tf_prefix}base_footprint"]
     )
 
     delayed_vel_remap_node = RegisterEventHandler(
@@ -301,6 +336,28 @@ def launch_gz(context, *args, **kwargs):
         launch_arguments={
             'robot_name': robot_name,
             'enable_gz': enable_gz,
+        }.items(),
+    )
+
+    moveit_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            PathJoinSubstitution([
+                FindPackageShare('sobit_light_moveit_config'),
+                'launch',
+                'move_group.launch.py'
+            ])
+        ]),
+        launch_arguments={
+            'robot_name'         : robot_name,
+            'use_sim_time'       : 'true' if enable_gz == 'True' else 'false',
+            'use_rviz'           : 'true' if use_moveit_rviz == 'True' else 'false',
+            'enable_teleop'      : enable_teleop,
+            # Module switches -> SRDF xacro args.
+            'enable_mobile_base' : enable_mobile_base,
+            'enable_arm'         : enable_arm,
+            'enable_hand'        : enable_hand,
+            'enable_head'        : enable_head,
+            'enable_tf_prefix'   : 'true' if enable_tf_prefix else 'false',
         }.items(),
     )
 
@@ -383,6 +440,9 @@ def launch_gz(context, *args, **kwargs):
 
     nodes.append(robot_state_publisher_node)
     nodes.append(action_server_launch)
+
+    if enable_moveit == 'True':
+        nodes.append(moveit_launch)
 
 
     return nodes
