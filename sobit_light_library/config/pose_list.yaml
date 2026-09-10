@@ -12,6 +12,7 @@
       - shelf_put_first_pose
       - shelf_put_second_pose
       - shelf_put_third_pose
+      - floor_ready_pose
 
     shutdown_pose:
       arm_shoulder_roll  : 0.0
@@ -122,3 +123,15 @@
       arm_wrist_roll     : 0.0
       head_yaw           : 0.0
       head_pitch         : 0.523
+
+    # Below the servo singular layer (z ~ 0.14 m): EE ~0.41 m ahead, 8 cm up,
+    # hand straight down. Start pose for floor picking with MoveIt Servo.
+    floor_ready_pose:
+      arm_shoulder_roll  : 0.0
+      arm_shoulder_pitch : -0.5
+      arm_elbow_pitch    : -0.2
+      arm_forearm_roll   : 0.0
+      arm_wrist_pitch    : 0.7
+      arm_wrist_roll     : 0.0
+      head_yaw           : 0.0
+      head_pitch         : 0.6
