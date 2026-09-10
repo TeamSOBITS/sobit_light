@@ -217,7 +217,7 @@
         <param name="control_mode">6</param>
         <param name="Goal_Current">50</param>
         <param name="interface">rs</param>
-        <param name="gear_ratio">-59.504383354</param>
+        <param name="gear_ratio">-${HAND_GEAR_RATIO}</param>
         <param name="Return_Delay_Time">0</param>
       </xacro:unless>
       <command_interface name="position"/>

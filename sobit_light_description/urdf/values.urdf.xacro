@@ -4,4 +4,19 @@
 
   <xacro:property name="M_PI" value="3.14159265359" />
 
+  <!-- Dynamixel datasheet values @ 12V: stall torque [N·m], no-load speed [rad/s] -->
+  <xacro:property name="XM540_W270_TORQUE"   value="10.6" />
+  <xacro:property name="XM540_W270_VELOCITY" value="3.14" /> <!-- 30 rpm -->
+  <xacro:property name="XM540_W150_TORQUE"   value="7.1" />
+  <xacro:property name="XM540_W150_VELOCITY" value="5.24" /> <!-- 50 rpm -->
+  <xacro:property name="XM430_W350_TORQUE"   value="4.1" />
+  <xacro:property name="XM430_W350_VELOCITY" value="4.82" /> <!-- 46 rpm -->
+
+  <!-- Hand: XM430-W350 drives the prismatic finger through this ratio [rad/m].
+       Same value as gear_ratio in controllers.urdf.xacro (sign handled there). -->
+  <xacro:property name="HAND_GEAR_RATIO" value="59.504383354" />
+
+  <!-- Scale applied to datasheet torque for URDF effort limits (same convention as sobit_home) -->
+  <xacro:property name="effort_ratio" value="100.0" />
+
 </robot>
