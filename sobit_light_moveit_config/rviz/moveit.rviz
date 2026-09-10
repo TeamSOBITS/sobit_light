@@ -5,15 +5,10 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
-        - /Status1
         - /MotionPlanning1
-        - /MotionPlanning1/Scene Geometry1
-        - /MotionPlanning1/Scene Robot1
-        - /MotionPlanning1/Planning Request1
-        - /MotionPlanning1/Planning Metrics1
         - /MotionPlanning1/Planned Path1
-      Splitter Ratio: 0.5
-    Tree Height: 446
+      Splitter Ratio: 0.5036057829856873
+    Tree Height: 439
   - Class: rviz_common/Selection
     Name: Selection
   - Class: rviz_common/Tool Properties
@@ -54,6 +49,216 @@ Visualization Manager:
       Plane Cell Count: 10
       Reference Frame: <Fixed Frame>
       Value: true
+    - Class: rviz_default_plugins/TF
+      Enabled: true
+      Filter (blacklist): ""
+      Filter (whitelist): ""
+      Frame Timeout: 15
+      Frames:
+        All Enabled: false
+        arm_base_link:
+          Value: false
+        arm_elbow_pitch_link:
+          Value: false
+        arm_forearm_roll_link:
+          Value: false
+        arm_platform_link:
+          Value: false
+        arm_shoulder_pitch_link:
+          Value: false
+        arm_shoulder_pitch_sub_link:
+          Value: false
+        arm_shoulder_roll_link:
+          Value: false
+        arm_wrist_pitch_link:
+          Value: false
+        arm_wrist_roll_link:
+          Value: false
+        back_base_link:
+          Value: false
+        base_footprint:
+          Value: true
+        base_l_drive_wheel_link:
+          Value: false
+        base_link:
+          Value: false
+        base_r_drive_wheel_link:
+          Value: false
+        camera_back_link:
+          Value: true
+        camera_front_link:
+          Value: true
+        docking_link:
+          Value: false
+        hand_camera_base_link:
+          Value: false
+        hand_camera_bottom_screw_frame:
+          Value: false
+        hand_camera_color_frame:
+          Value: false
+        hand_camera_color_optical_frame:
+          Value: true
+        hand_camera_depth_frame:
+          Value: false
+        hand_camera_depth_optical_frame:
+          Value: false
+        hand_camera_infra1_frame:
+          Value: false
+        hand_camera_infra1_optical_frame:
+          Value: false
+        hand_camera_infra2_frame:
+          Value: false
+        hand_camera_infra2_optical_frame:
+          Value: false
+        hand_camera_link:
+          Value: false
+        hand_end_effector_link:
+          Value: true
+        hand_finger_tip_l_link:
+          Value: false
+        hand_finger_tip_r_link:
+          Value: false
+        hand_link:
+          Value: false
+        hand_sub_link:
+          Value: false
+        head_base_link:
+          Value: false
+        head_camera_base_link:
+          Value: false
+        head_camera_bottom_screw_frame:
+          Value: false
+        head_camera_color_frame:
+          Value: false
+        head_camera_color_optical_frame:
+          Value: true
+        head_camera_depth_frame:
+          Value: false
+        head_camera_depth_optical_frame:
+          Value: false
+        head_camera_infra1_frame:
+          Value: false
+        head_camera_infra1_optical_frame:
+          Value: false
+        head_camera_infra2_frame:
+          Value: false
+        head_camera_infra2_optical_frame:
+          Value: false
+        head_camera_link:
+          Value: false
+        head_eye_l_link:
+          Value: false
+        head_eye_r_link:
+          Value: false
+        head_pitch_link:
+          Value: false
+        head_yaw_link:
+          Value: false
+        imu_link:
+          Value: false
+        laser_frame:
+          Value: false
+        mic_link:
+          Value: false
+        odom:
+          Value: true
+        plate_bottom_link:
+          Value: false
+        plate_middle_link:
+          Value: false
+        speaker_base_link:
+          Value: false
+        tof_link:
+          Value: false
+      Marker Scale: 0.5
+      Name: TF
+      Show Arrows: false
+      Show Axes: true
+      Show Names: false
+      Tree:
+        odom:
+          base_footprint:
+            base_link:
+              base_l_drive_wheel_link:
+                {}
+              base_r_drive_wheel_link:
+                {}
+              camera_back_link:
+                {}
+              camera_front_link:
+                {}
+              docking_link:
+                {}
+              imu_link:
+                {}
+              laser_frame:
+                {}
+              plate_bottom_link:
+                back_base_link:
+                  head_base_link:
+                    head_yaw_link:
+                      head_pitch_link:
+                        head_camera_base_link:
+                          head_camera_bottom_screw_frame:
+                            head_camera_link:
+                              head_camera_color_frame:
+                                head_camera_color_optical_frame:
+                                  {}
+                              head_camera_depth_frame:
+                                head_camera_depth_optical_frame:
+                                  {}
+                              head_camera_infra1_frame:
+                                head_camera_infra1_optical_frame:
+                                  {}
+                              head_camera_infra2_frame:
+                                head_camera_infra2_optical_frame:
+                                  {}
+                        head_eye_l_link:
+                          {}
+                        head_eye_r_link:
+                          {}
+                        mic_link:
+                          {}
+                  speaker_base_link:
+                    {}
+                plate_middle_link:
+                  arm_platform_link:
+                    arm_base_link:
+                      arm_shoulder_roll_link:
+                        arm_shoulder_pitch_link:
+                          arm_elbow_pitch_link:
+                            arm_forearm_roll_link:
+                              arm_wrist_pitch_link:
+                                arm_wrist_roll_link:
+                                  hand_camera_base_link:
+                                    hand_camera_bottom_screw_frame:
+                                      hand_camera_link:
+                                        hand_camera_color_frame:
+                                          hand_camera_color_optical_frame:
+                                            {}
+                                        hand_camera_depth_frame:
+                                          hand_camera_depth_optical_frame:
+                                            {}
+                                        hand_camera_infra1_frame:
+                                          hand_camera_infra1_optical_frame:
+                                            {}
+                                        hand_camera_infra2_frame:
+                                          hand_camera_infra2_optical_frame:
+                                            {}
+                                  hand_end_effector_link:
+                                    {}
+                                  hand_link:
+                                    hand_finger_tip_l_link:
+                                      {}
+                                  hand_sub_link:
+                                    hand_finger_tip_r_link:
+                                      {}
+                        arm_shoulder_pitch_sub_link:
+                          {}
+              tof_link:
+                {}
+      Update Interval: 0
+      Value: true
     - Acceleration_Scaling_Factor: 0.1
       Class: moveit_rviz_plugin/MotionPlanning
       Enabled: true
@@ -70,11 +275,11 @@ Visualization Manager:
         Center:
           X: 0
           Y: 0
-          Z: 0
+          Z: 1.5
         Size:
-          X: 2
-          Y: 2
-          Z: 2
+          X: 10
+          Y: 10
+          Z: 3
       Name: MotionPlanning
       Planned Path:
         Color Enabled: false
@@ -344,10 +549,10 @@ Visualization Manager:
         Robot Color: 150; 50; 150
         Show Robot Collision: false
         Show Robot Visual: true
-        Show Trail: false
+        Show Trail: true
         State Display Time: 0.5s
-        Trail Step Size: 1
-        Trajectory Topic: display_planned_path
+        Trail Step Size: 100
+        Trajectory Topic: /sobit_light/display_planned_path
         Use Sim Time: true
       Planning Metrics:
         Payload: 1
@@ -358,20 +563,20 @@ Visualization Manager:
         TextHeight: 0.07999999821186066
       Planning Request:
         Colliding Link Color: 255; 0; 0
-        Goal State Alpha: 1
+        Goal State Alpha: 0.5
         Goal State Color: 250; 128; 0
-        Interactive Marker Size: 0.15000000596046448
+        Interactive Marker Size: 0.25
         Joint Violation Color: 255; 0; 255
         Planning Group: arm
         Query Goal State: true
         Query Start State: false
         Show Workspace: false
-        Start State Alpha: 1
+        Start State Alpha: 0.5
         Start State Color: 0; 255; 0
-      Planning Scene Topic: monitored_planning_scene
+      Planning Scene Topic: /sobit_light/monitored_planning_scene
       Robot Description: robot_description
       Scene Geometry:
-        Scene Alpha: 0.8999999761581421
+        Scene Alpha: 1
         Scene Color: 50; 230; 50
         Scene Display Time: 0.009999999776482582
         Show Scene Geometry: true
@@ -641,13 +846,13 @@ Visualization Manager:
             Show Trail: false
         Robot Alpha: 1
         Show Robot Collision: false
-        Show Robot Visual: false
+        Show Robot Visual: true
       Value: true
       Velocity_Scaling_Factor: 0.1
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: sobit_light/odom
+    Fixed Frame: base_footprint
     Frame Rate: 30
   Name: root
   Tools:
@@ -667,14 +872,14 @@ Visualization Manager:
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /initialpose
+        Value: /sobit_light/initialpose
     - Class: rviz_default_plugins/SetGoal
       Topic:
         Depth: 5
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /goal_pose
+        Value: /sobit_light/goal_pose
     - Class: rviz_default_plugins/PublishPoint
       Single click: true
       Topic:
@@ -682,7 +887,7 @@ Visualization Manager:
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /clicked_point
+        Value: /sobit_light/clicked_point
   Transformation:
     Current:
       Class: rviz_default_plugins/TF
@@ -690,7 +895,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 2.5
+      Distance: 3
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -706,29 +911,29 @@ Visualization Manager:
       Name: Current View
       Near Clip Distance: 0.0010000000474974513
       Pitch: 0.5
-      Target Frame: sobit_light/base_footprint
+      Target Frame: base_footprint
       Value: Orbit (rviz)
-      Yaw: 0.7800000309944153
+      Yaw: 0.5
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 1371
+  Height: 1083
   Hide Left Dock: false
   Hide Right Dock: true
   MotionPlanning:
     collapsed: false
   MotionPlanning - Trajectory Slider:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd00000004000000000000032a000004a2fc020000000cfb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003d000001fb000000c900fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000004100fffffffb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e0067010000023e000002a10000017d00fffffffb000000280020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000000000000000fb0000003c005400720061006a006500630074006f007200790020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff00000000000000000000000100000288000004a2fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000003d000004a2000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000009be00000059fc0100000002fb0000000800540069006d00650100000000000009be0000022700fffffffb0000000800540069006d006501000000000000045000000000000000000000068e000004a200000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd00000004000000000000034200000382fc020000000bfb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003d000001f4000000c900fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000004100fffffffb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e00670100000237000001880000017d00fffffffb000000280020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000000000000000fb0000003c005400720061006a006500630074006f007200790020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff000000000000000000000001000002880000038afc0200000004fb0000000a005600690065007700730000000039000002d8000000a400fffffffb0000001e0054006f006f006c002000500072006f00700065007200740069006500730000000317000000ac0000005c00fffffffb0000001e0054006f006f006c002000500072006f0070006500720074006900650073000000031a000000a90000000000000000fb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000007be00000059fc0100000002fb0000000800540069006d00650100000000000007be0000022700fffffffb0000000800540069006d00650100000000000004500000000000000000000004760000038200000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
     collapsed: false
   Tool Properties:
-    collapsed: false
+    collapsed: true
   Views:
     collapsed: true
-  Width: 2494
+  Width: 1982
   X: 66
   Y: 32
