@@ -16,6 +16,20 @@
        Same value as gear_ratio in controllers.urdf.xacro (sign handled there). -->
   <xacro:property name="HAND_GEAR_RATIO" value="59.504383354" />
 
+  <!-- Dynamixel position register -> rad (4096 ticks/rev, 2048 = 0 rad). Joint
+       ranges below are the Min/Max Position Limit registers measured on the
+       real robot (2026-09-10): ID2/3 450-3000, ID4 700-2850, ID6 1000-3400,
+       ID12 1200-3150. Rolls (ID1/5/7), head yaw (ID11) and hand (ID8) are full range. -->
+  <xacro:property name="DXL_TICK" value="${2*M_PI/4096}" />
+  <xacro:property name="SHOULDER_PITCH_MIN" value="${(450-2048)*DXL_TICK}" />
+  <xacro:property name="SHOULDER_PITCH_MAX" value="${(3000-2048)*DXL_TICK}" />
+  <xacro:property name="ELBOW_PITCH_MIN"    value="${(700-2048)*DXL_TICK}" />
+  <xacro:property name="ELBOW_PITCH_MAX"    value="${(2850-2048)*DXL_TICK}" />
+  <xacro:property name="WRIST_PITCH_MIN"    value="${(1000-2048)*DXL_TICK}" />
+  <xacro:property name="WRIST_PITCH_MAX"    value="${(3400-2048)*DXL_TICK}" />
+  <xacro:property name="HEAD_PITCH_MIN"     value="${(1200-2048)*DXL_TICK}" />
+  <xacro:property name="HEAD_PITCH_MAX"     value="${(3150-2048)*DXL_TICK}" />
+
   <!-- Scale applied to datasheet torque for URDF effort limits (same convention as sobit_home) -->
   <xacro:property name="effort_ratio" value="100.0" />
 

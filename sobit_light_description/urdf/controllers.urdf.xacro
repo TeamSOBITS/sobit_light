@@ -74,8 +74,8 @@
         <param name="Return_Delay_Time">0</param>
       </xacro:unless>
       <command_interface name="position">
-        <param name="min">-${M_PI/2}</param>
-        <param name="max">${M_PI/2}</param>
+        <param name="min">${HEAD_PITCH_MIN}</param>
+        <param name="max">${HEAD_PITCH_MAX}</param>
       </command_interface>
       <state_interface name="position">
         <param name="initial_value">0.0</param>
@@ -130,8 +130,8 @@
         <param name="Return_Delay_Time">0</param>
       </xacro:unless>
       <command_interface name="position">
-        <param name="min">-${M_PI/2}</param>
-        <param name="max">${M_PI/2}</param>
+        <param name="min">${SHOULDER_PITCH_MIN}</param>
+        <param name="max">${SHOULDER_PITCH_MAX}</param>
       </command_interface>
       <state_interface name="position">
         <param name="initial_value">-${M_PI/2}</param>
@@ -147,8 +147,8 @@
         <param name="Return_Delay_Time">0</param>
       </xacro:unless>
       <command_interface name="position">
-        <param name="min">-${M_PI/2}</param>
-        <param name="max">${M_PI/2}</param>
+        <param name="min">${ELBOW_PITCH_MIN}</param>
+        <param name="max">${ELBOW_PITCH_MAX}</param>
       </command_interface>
       <state_interface name="position">
         <param name="initial_value">0.0</param>
@@ -181,8 +181,8 @@
         <param name="Return_Delay_Time">0</param>
       </xacro:unless>
       <command_interface name="position">
-        <param name="min">-${M_PI/2}</param>
-        <param name="max">${M_PI/2}</param>
+        <param name="min">${WRIST_PITCH_MIN}</param>
+        <param name="max">${WRIST_PITCH_MAX}</param>
       </command_interface>
       <state_interface name="position">
         <param name="initial_value">0.0</param>
