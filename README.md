@@ -198,7 +198,7 @@ dpkg -l | grep ros-jazzy-joy-linux
 
 3. `real_minimal.launch.py` 起動後、テレオペ launch を起動
 ```sh
-ros2 launch sobit_light_teleop dualshock_teleop.launch.py
+ros2 launch sobits_teleop sobits_teleop.launch.py robot_name:=sobit_light device:=ps4
 ```
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
