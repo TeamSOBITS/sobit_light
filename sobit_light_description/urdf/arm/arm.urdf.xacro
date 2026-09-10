@@ -76,7 +76,7 @@
       <child link="${prefix}_shoulder_roll_link"/>
       <origin xyz="${(44/2+2.5)/1000} 0.0 0.0465" rpy="0 ${M_PI/2} 0"/>
       <axis xyz="0 0 1"/>
-      <limit velocity="4.8" effort="25" lower="${-M_PI}" upper="${M_PI}" />
+      <limit velocity="${XM430_W350_VELOCITY}" effort="${XM430_W350_TORQUE * effort_ratio}" lower="${-M_PI}" upper="${M_PI}" />
     </joint>
 
     <!--  Act 1 - Shoulder Roll -->
@@ -111,7 +111,7 @@
       <child link="${prefix}_shoulder_pitch_link"/>
       <origin xyz="0.0 0.0 0.05095" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
-      <limit velocity="4.8" effort="25" lower="${-M_PI/2}" upper="${M_PI/2}" />
+      <limit velocity="${XM540_W150_VELOCITY}" effort="${2 * XM540_W150_TORQUE * effort_ratio}" lower="${SHOULDER_PITCH_MIN}" upper="${SHOULDER_PITCH_MAX}" />
     </joint>
 
     <!--  Act 2 - Shoulder Pitch (right) -->
@@ -131,33 +131,15 @@
         </geometry>
       </collision>
 
+      <!-- Mass covers both shoulder pitch brackets: Dynamixel ID2 is a
+           drive-mode slave of ID3, so the second bracket is rigid with this
+           link and is not modelled as its own link (same origin and inertia). -->
       <inertial>
         <origin xyz="${0.03575-0.0585/2} 0.0 ${-0.016+(0.14475+0.016)/2}" rpy="0 0 0"/>
-        <mass value="0.261" />
-        <inertia  ixx="${1/12*0.261*(0.0585**2+(0.14475+0.016)**2)}" ixy="0.0" ixz="0.0"
-                  iyy="${1/12*0.261*(0.0440**2+(0.14475+0.016)**2)}" iyz="0.0"
-                  izz="${1/12*0.261*(0.0585**2+0.0440**2)}" />
-      </inertial>
-    </link>
-
-    <!--  Act 3 - Shoulder Pitch (left) -->
-    <joint name="${prefix}_shoulder_pitch_sub_joint" type="revolute">
-      <parent link="${prefix}_shoulder_roll_link"/>
-      <child link="${prefix}_shoulder_pitch_sub_link"/>
-      <origin xyz="0.0 0.0 0.05095" rpy="0 0 0"/>
-      <axis xyz="0 -1 0"/>
-      <limit velocity="4.8" effort="25" lower="${-M_PI}" upper="${M_PI}" />
-      <mimic joint="${prefix}_shoulder_pitch_joint" multiplier="-1" offset="0"/>
-    </joint>
-
-    <!--  Act 3 - Shoulder Pitch (left) -->
-    <link name="${prefix}_shoulder_pitch_sub_link">
-      <inertial>
-        <origin xyz="${0.03575-0.0585/2} 0.0 ${-0.016+(0.14475+0.016)/2}" rpy="0 0 0"/>
-        <mass value="0.261" />
-        <inertia  ixx="${1/12*0.261*(0.0585**2+(0.14475+0.016)**2)}" ixy="0.0" ixz="0.0"
-                  iyy="${1/12*0.261*(0.0440**2+(0.14475+0.016)**2)}" iyz="0.0"
-                  izz="${1/12*0.261*(0.0585**2+0.0440**2)}" />
+        <mass value="${2*0.261}" />
+        <inertia  ixx="${2*1/12*0.261*(0.0585**2+(0.14475+0.016)**2)}" ixy="0.0" ixz="0.0"
+                  iyy="${2*1/12*0.261*(0.0440**2+(0.14475+0.016)**2)}" iyz="0.0"
+                  izz="${2*1/12*0.261*(0.0585**2+0.0440**2)}" />
       </inertial>
     </link>
 
@@ -167,7 +149,7 @@
       <child link="${prefix}_elbow_pitch_link"/>
       <origin xyz="0.022 -0.0 0.128" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
-      <limit velocity="4.8" effort="25" lower="${-M_PI/2}" upper="${M_PI/2}" />
+      <limit velocity="${XM540_W270_VELOCITY}" effort="${XM540_W270_TORQUE * effort_ratio}" lower="${ELBOW_PITCH_MIN}" upper="${ELBOW_PITCH_MAX}" />
     </joint>
 
     <!--  Act 4 - Elbow Pitch -->
@@ -202,7 +184,7 @@
       <child link="${prefix}_forearm_roll_link"/>
       <origin xyz="0.0835 0.0 0.0" rpy="0 0 0"/>
       <axis xyz="1 0 0"/>
-      <limit velocity="4.8" effort="25" lower="${-M_PI}" upper="${M_PI}" />
+      <limit velocity="${XM540_W150_VELOCITY}" effort="${XM540_W150_TORQUE * effort_ratio}" lower="${-M_PI}" upper="${M_PI}" />
     </joint>
 
     <!--  Act 5 - Forearm Roll -->
@@ -237,7 +219,7 @@
       <child link="${prefix}_wrist_pitch_link"/>
       <origin xyz="0.0405 0.0 0.0" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
-      <limit velocity="4.8" effort="25" lower="${-M_PI/2}" upper="${M_PI/2}" />
+      <limit velocity="${XM430_W350_VELOCITY}" effort="${XM430_W350_TORQUE * effort_ratio}" lower="${WRIST_PITCH_MIN}" upper="${WRIST_PITCH_MAX}" />
     </joint>
 
     <!--  Act 6 - Wrist Pitch -->
@@ -272,7 +254,7 @@
       <child link="${prefix}_wrist_roll_link"/>
       <origin xyz="0.064 0 0.0" rpy="0 0 0"/>
       <axis xyz="1 0 0"/>
-      <limit velocity="4.8" effort="25" lower="${-M_PI}" upper="${M_PI}" />
+      <limit velocity="${XM430_W350_VELOCITY}" effort="${XM430_W350_TORQUE * effort_ratio}" lower="${-M_PI}" upper="${M_PI}" />
     </joint>
 
     <!--  Act 7 - Wrist Roll -->

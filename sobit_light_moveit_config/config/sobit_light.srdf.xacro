@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--This does not replace URDF, and is not an extension of URDF.
+    This is a format for representing semantic information about the robot structure.
+    A URDF file must exist for this robot as well, where the joints and the links that are referenced are defined
+
+    Replaces sobit_light.srdf: teleop is enable_teleop:=true (default, no base
+    virtual joint); false declares the planar odom joint for base-aware planning.
+-->
+<robot name="sobit_light" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!--=========================== ARGUMENTS ===========================-->
+    <!-- Teleop drives the base directly: no base virtual joint. -->
+    <!-- enable_* args match robot.launch.py and drop groups for absent hardware. -->
+    <xacro:arg name="enable_teleop"      default="true"/>
+    <xacro:arg name="enable_mobile_base" default="true"/>
+    <xacro:arg name="enable_arm"         default="true"/>
+    <xacro:arg name="enable_hand"        default="true"/>
+    <xacro:arg name="enable_head"        default="true"/>
+
+    <!--=========================== PROPERTIES ==========================-->
+    <!-- args arrive as strings; lowercase so True/true/TRUE all match. -->
+    <xacro:property name="TELEOP" value="${'$(arg enable_teleop)'.lower() == 'true'}"/>
+    <xacro:property name="MB"     value="${'$(arg enable_mobile_base)'.lower() == 'true'}"/>
+    <xacro:property name="ARM"    value="${'$(arg enable_arm)'.lower() == 'true'}"/>
+    <!-- The hand mounts on the wrist stub, which exists even without the arm. -->
+    <xacro:property name="HAND"   value="${'$(arg enable_hand)'.lower() == 'true'}"/>
+    <xacro:property name="HEAD"   value="${'$(arg enable_head)'.lower() == 'true'}"/>
+    <!-- Base gets a virtual joint only when enabled and not teleop. -->
+    <xacro:property name="BASE"   value="${MB and not TELEOP}"/>
+
+    <!--GROUPS: Representation of a set of joints and links. This can be useful for specifying DOF to plan for, defining arms, end effectors, etc-->
+    <!--LINKS: When a link is specified, the parent joint of that link (if it exists) is automatically included-->
+    <!--JOINTS: When a joint is specified, the child link of that joint (which will always exist) is automatically included-->
+    <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
+    <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
+    <xacro:if value="${ARM}">
+        <group name="arm">
+            <link name="hand_end_effector_link"/>
+            <joint name="arm_shoulder_roll_joint"/>
+            <chain base_link="arm_shoulder_roll_link" tip_link="arm_wrist_roll_link"/>
+        </group>
+    </xacro:if>
+    <!-- Gripper: one active prismatic DOF. hand_sub_joint mimics hand_joint
+         and the finger tip joints are fixed, so only hand_joint is listed. -->
+    <xacro:if value="${HAND}">
+        <group name="hand">
+            <link name="hand_end_effector_link"/>
+            <joint name="hand_joint"/>
+        </group>
+    </xacro:if>
+    <xacro:if value="${HEAD}">
+        <group name="head">
+            <link name="head_pitch_link"/>
+            <joint name="head_yaw_joint"/>
+            <chain base_link="head_yaw_link" tip_link="head_pitch_link"/>
+        </group>
+    </xacro:if>
+    <xacro:if value="${HEAD and ARM}">
+        <group name="head_arm">
+            <group name="head"/>
+            <group name="arm"/>
+        </group>
+    </xacro:if>
+    <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
+    <xacro:if value="${HEAD}">
+        <group_state name="initial_pose" group="head">
+            <joint name="head_yaw_joint" value="0"/>
+            <joint name="head_pitch_joint" value="0"/>
+        </group_state>
+    </xacro:if>
+    <xacro:if value="${ARM}">
+        <group_state name="initial_pose" group="arm">
+            <joint name="arm_elbow_pitch_joint" value="0.0"/>
+            <joint name="arm_forearm_roll_joint" value="0.0"/>
+            <joint name="arm_shoulder_pitch_joint" value="-1.5707"/>
+            <joint name="arm_shoulder_roll_joint" value="0.0"/>
+            <joint name="arm_wrist_pitch_joint" value="0.0"/>
+            <joint name="arm_wrist_roll_joint" value="0.0"/>
+        </group_state>
+    </xacro:if>
+    <xacro:if value="${HAND}">
+        <group_state name="initial_pose" group="hand">
+            <joint name="hand_joint" value="0.0"/>
+        </group_state>
+    </xacro:if>
+    <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
+    <xacro:if value="${HAND}">
+        <end_effector name="arm_ee" parent_link="hand_end_effector_link" group="hand" parent_group="arm"/>
+    </xacro:if>
+    <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
+    <xacro:if value="${BASE}">
+        <virtual_joint name="virtual_base_joint" type="planar" parent_frame="odom" child_link="base_footprint"/>
+    </xacro:if>
+    <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
+    <!--Generated by compute_collisions.py with 10000 random samples using updated URDF (shoulder roll x-offset fix) -->
+    <!-- always active (base / plate / wrist-stub links) -->
+    <disable_collisions link1="base_link" link2="plate_middle_link" reason="Never"/>
+    <xacro:if value="${MB}">
+        <disable_collisions link1="base_l_drive_wheel_link" link2="base_link" reason="Adjacent"/>
+        <disable_collisions link1="base_l_drive_wheel_link" link2="base_r_drive_wheel_link" reason="Never"/>
+        <disable_collisions link1="base_l_drive_wheel_link" link2="docking_link" reason="Never"/>
+        <disable_collisions link1="base_l_drive_wheel_link" link2="plate_middle_link" reason="Never"/>
+        <disable_collisions link1="base_link" link2="base_r_drive_wheel_link" reason="Adjacent"/>
+        <disable_collisions link1="base_link" link2="docking_link" reason="Adjacent"/>
+        <disable_collisions link1="base_r_drive_wheel_link" link2="docking_link" reason="Never"/>
+        <disable_collisions link1="base_r_drive_wheel_link" link2="plate_middle_link" reason="Never"/>
+        <disable_collisions link1="docking_link" link2="plate_middle_link" reason="Never"/>
+    </xacro:if>
+    <xacro:if value="${ARM}">
+        <disable_collisions link1="arm_base_link" link2="arm_platform_link" reason="Adjacent"/>
+        <disable_collisions link1="arm_base_link" link2="arm_shoulder_pitch_link" reason="Never"/>
+        <disable_collisions link1="arm_base_link" link2="arm_shoulder_roll_link" reason="Adjacent"/>
+        <disable_collisions link1="arm_base_link" link2="base_link" reason="Never"/>
+        <disable_collisions link1="arm_base_link" link2="plate_middle_link" reason="Never"/>
+        <disable_collisions link1="arm_elbow_pitch_link" link2="arm_forearm_roll_link" reason="Adjacent"/>
+        <disable_collisions link1="arm_elbow_pitch_link" link2="arm_shoulder_pitch_link" reason="Adjacent"/>
+        <disable_collisions link1="arm_elbow_pitch_link" link2="arm_shoulder_roll_link" reason="Never"/>
+        <disable_collisions link1="arm_elbow_pitch_link" link2="arm_wrist_pitch_link" reason="Never"/>
+        <disable_collisions link1="arm_elbow_pitch_link" link2="arm_wrist_roll_link" reason="Never"/>
+        <disable_collisions link1="arm_forearm_roll_link" link2="arm_wrist_pitch_link" reason="Adjacent"/>
+        <disable_collisions link1="arm_forearm_roll_link" link2="arm_wrist_roll_link" reason="Never"/>
+        <disable_collisions link1="arm_platform_link" link2="arm_shoulder_pitch_link" reason="Never"/>
+        <disable_collisions link1="arm_platform_link" link2="arm_shoulder_roll_link" reason="Never"/>
+        <disable_collisions link1="arm_platform_link" link2="base_link" reason="Never"/>
+        <disable_collisions link1="arm_platform_link" link2="plate_middle_link" reason="Adjacent"/>
+        <disable_collisions link1="arm_shoulder_pitch_link" link2="arm_shoulder_roll_link" reason="Adjacent"/>
+        <disable_collisions link1="arm_shoulder_pitch_link" link2="base_link" reason="Never"/>
+        <disable_collisions link1="arm_shoulder_pitch_link" link2="plate_middle_link" reason="Never"/>
+        <disable_collisions link1="arm_shoulder_roll_link" link2="base_link" reason="Never"/>
+        <disable_collisions link1="arm_shoulder_roll_link" link2="plate_middle_link" reason="Never"/>
+        <disable_collisions link1="arm_wrist_pitch_link" link2="arm_wrist_roll_link" reason="Adjacent"/>
+    </xacro:if>
+    <xacro:if value="${HAND}">
+        <disable_collisions link1="arm_wrist_roll_link" link2="hand_camera_base_link" reason="Adjacent"/>
+        <disable_collisions link1="arm_wrist_roll_link" link2="hand_camera_link" reason="Never"/>
+        <disable_collisions link1="arm_wrist_roll_link" link2="hand_finger_tip_l_link" reason="Never"/>
+        <disable_collisions link1="arm_wrist_roll_link" link2="hand_finger_tip_r_link" reason="Never"/>
+        <disable_collisions link1="arm_wrist_roll_link" link2="hand_link" reason="Adjacent"/>
+        <disable_collisions link1="arm_wrist_roll_link" link2="hand_sub_link" reason="Adjacent"/>
+        <disable_collisions link1="hand_camera_base_link" link2="hand_camera_link" reason="Default"/>
+        <disable_collisions link1="hand_camera_base_link" link2="hand_finger_tip_l_link" reason="Never"/>
+        <disable_collisions link1="hand_camera_base_link" link2="hand_finger_tip_r_link" reason="Never"/>
+        <disable_collisions link1="hand_camera_base_link" link2="hand_link" reason="Never"/>
+        <disable_collisions link1="hand_camera_base_link" link2="hand_sub_link" reason="Never"/>
+        <disable_collisions link1="hand_camera_link" link2="hand_finger_tip_l_link" reason="Never"/>
+        <disable_collisions link1="hand_camera_link" link2="hand_finger_tip_r_link" reason="Never"/>
+        <disable_collisions link1="hand_camera_link" link2="hand_link" reason="Never"/>
+        <disable_collisions link1="hand_camera_link" link2="hand_sub_link" reason="Never"/>
+        <disable_collisions link1="hand_finger_tip_l_link" link2="hand_finger_tip_r_link" reason="Never"/>
+        <disable_collisions link1="hand_finger_tip_l_link" link2="hand_link" reason="Adjacent"/>
+        <disable_collisions link1="hand_finger_tip_l_link" link2="hand_sub_link" reason="Never"/>
+        <disable_collisions link1="hand_finger_tip_r_link" link2="hand_link" reason="Never"/>
+        <disable_collisions link1="hand_finger_tip_r_link" link2="hand_sub_link" reason="Adjacent"/>
+        <disable_collisions link1="hand_link" link2="hand_sub_link" reason="Never"/>
+    </xacro:if>
+    <xacro:if value="${HEAD}">
+        <disable_collisions link1="arm_wrist_roll_link" link2="head_base_link" reason="Never"/>
+        <disable_collisions link1="arm_wrist_roll_link" link2="head_camera_link" reason="Never"/>
+        <disable_collisions link1="arm_wrist_roll_link" link2="head_eye_l_link" reason="Never"/>
+        <disable_collisions link1="arm_wrist_roll_link" link2="head_eye_r_link" reason="Never"/>
+        <disable_collisions link1="arm_wrist_roll_link" link2="head_pitch_link" reason="Never"/>
+        <disable_collisions link1="arm_wrist_roll_link" link2="head_yaw_link" reason="Never"/>
+        <disable_collisions link1="arm_wrist_roll_link" link2="mic_link" reason="Never"/>
+        <disable_collisions link1="back_base_link" link2="base_link" reason="Never"/>
+        <disable_collisions link1="back_base_link" link2="head_base_link" reason="Adjacent"/>
+        <disable_collisions link1="back_base_link" link2="head_camera_link" reason="Never"/>
+        <disable_collisions link1="back_base_link" link2="head_eye_l_link" reason="Never"/>
+        <disable_collisions link1="back_base_link" link2="head_eye_r_link" reason="Never"/>
+        <disable_collisions link1="back_base_link" link2="head_pitch_link" reason="Never"/>
+        <disable_collisions link1="back_base_link" link2="head_yaw_link" reason="Never"/>
+        <disable_collisions link1="back_base_link" link2="mic_link" reason="Never"/>
+        <disable_collisions link1="back_base_link" link2="plate_middle_link" reason="Default"/>
+        <disable_collisions link1="back_base_link" link2="speaker_base_link" reason="Adjacent"/>
+        <disable_collisions link1="base_link" link2="head_base_link" reason="Never"/>
+        <disable_collisions link1="base_link" link2="head_camera_link" reason="Never"/>
+        <disable_collisions link1="base_link" link2="head_eye_l_link" reason="Never"/>
+        <disable_collisions link1="base_link" link2="head_eye_r_link" reason="Never"/>
+        <disable_collisions link1="base_link" link2="head_pitch_link" reason="Never"/>
+        <disable_collisions link1="base_link" link2="head_yaw_link" reason="Never"/>
+        <disable_collisions link1="base_link" link2="mic_link" reason="Never"/>
+        <disable_collisions link1="base_link" link2="speaker_base_link" reason="Never"/>
+        <disable_collisions link1="head_base_link" link2="head_camera_link" reason="Never"/>
+        <disable_collisions link1="head_base_link" link2="head_yaw_link" reason="Adjacent"/>
+        <disable_collisions link1="head_base_link" link2="mic_link" reason="Never"/>
+        <disable_collisions link1="head_base_link" link2="plate_middle_link" reason="Never"/>
+        <disable_collisions link1="head_base_link" link2="speaker_base_link" reason="Never"/>
+        <disable_collisions link1="head_camera_link" link2="head_eye_l_link" reason="Never"/>
+        <disable_collisions link1="head_camera_link" link2="head_eye_r_link" reason="Never"/>
+        <disable_collisions link1="head_camera_link" link2="head_pitch_link" reason="Default"/>
+        <disable_collisions link1="head_camera_link" link2="head_yaw_link" reason="Never"/>
+        <disable_collisions link1="head_camera_link" link2="mic_link" reason="Never"/>
+        <disable_collisions link1="head_camera_link" link2="plate_middle_link" reason="Never"/>
+        <disable_collisions link1="head_camera_link" link2="speaker_base_link" reason="Never"/>
+        <disable_collisions link1="head_eye_l_link" link2="head_eye_r_link" reason="Never"/>
+        <disable_collisions link1="head_eye_l_link" link2="head_pitch_link" reason="Adjacent"/>
+        <disable_collisions link1="head_eye_l_link" link2="head_yaw_link" reason="Never"/>
+        <disable_collisions link1="head_eye_l_link" link2="mic_link" reason="Never"/>
+        <disable_collisions link1="head_eye_l_link" link2="plate_middle_link" reason="Never"/>
+        <disable_collisions link1="head_eye_l_link" link2="speaker_base_link" reason="Never"/>
+        <disable_collisions link1="head_eye_r_link" link2="head_pitch_link" reason="Adjacent"/>
+        <disable_collisions link1="head_eye_r_link" link2="head_yaw_link" reason="Never"/>
+        <disable_collisions link1="head_eye_r_link" link2="mic_link" reason="Never"/>
+        <disable_collisions link1="head_eye_r_link" link2="plate_middle_link" reason="Never"/>
+        <disable_collisions link1="head_eye_r_link" link2="speaker_base_link" reason="Never"/>
+        <disable_collisions link1="head_pitch_link" link2="head_yaw_link" reason="Adjacent"/>
+        <disable_collisions link1="head_pitch_link" link2="mic_link" reason="Adjacent"/>
+        <disable_collisions link1="head_pitch_link" link2="plate_middle_link" reason="Never"/>
+        <disable_collisions link1="head_pitch_link" link2="speaker_base_link" reason="Never"/>
+        <disable_collisions link1="head_yaw_link" link2="mic_link" reason="Never"/>
+        <disable_collisions link1="head_yaw_link" link2="plate_middle_link" reason="Never"/>
+        <disable_collisions link1="head_yaw_link" link2="speaker_base_link" reason="Never"/>
+        <disable_collisions link1="mic_link" link2="plate_middle_link" reason="Never"/>
+        <disable_collisions link1="mic_link" link2="speaker_base_link" reason="Never"/>
+        <disable_collisions link1="plate_middle_link" link2="speaker_base_link" reason="Never"/>
+    </xacro:if>
+    <xacro:if value="${MB and ARM}">
+        <disable_collisions link1="arm_base_link" link2="base_l_drive_wheel_link" reason="Never"/>
+        <disable_collisions link1="arm_base_link" link2="base_r_drive_wheel_link" reason="Never"/>
+        <disable_collisions link1="arm_base_link" link2="docking_link" reason="Never"/>
+        <disable_collisions link1="arm_elbow_pitch_link" link2="base_l_drive_wheel_link" reason="Never"/>
+        <disable_collisions link1="arm_elbow_pitch_link" link2="base_r_drive_wheel_link" reason="Never"/>
+        <disable_collisions link1="arm_elbow_pitch_link" link2="docking_link" reason="Never"/>
+        <disable_collisions link1="arm_forearm_roll_link" link2="base_l_drive_wheel_link" reason="Never"/>
+        <disable_collisions link1="arm_forearm_roll_link" link2="base_r_drive_wheel_link" reason="Never"/>
+        <disable_collisions link1="arm_forearm_roll_link" link2="docking_link" reason="Never"/>
+        <disable_collisions link1="arm_platform_link" link2="base_l_drive_wheel_link" reason="Never"/>
+        <disable_collisions link1="arm_platform_link" link2="base_r_drive_wheel_link" reason="Never"/>
+        <disable_collisions link1="arm_platform_link" link2="docking_link" reason="Never"/>
+        <disable_collisions link1="arm_shoulder_pitch_link" link2="base_l_drive_wheel_link" reason="Never"/>
+        <disable_collisions link1="arm_shoulder_pitch_link" link2="base_r_drive_wheel_link" reason="Never"/>
+        <disable_collisions link1="arm_shoulder_pitch_link" link2="docking_link" reason="Never"/>
+        <disable_collisions link1="arm_shoulder_roll_link" link2="base_l_drive_wheel_link" reason="Never"/>
+        <disable_collisions link1="arm_shoulder_roll_link" link2="base_r_drive_wheel_link" reason="Never"/>
+        <disable_collisions link1="arm_shoulder_roll_link" link2="docking_link" reason="Never"/>
+        <disable_collisions link1="arm_wrist_pitch_link" link2="base_l_drive_wheel_link" reason="Never"/>
+        <disable_collisions link1="arm_wrist_pitch_link" link2="base_r_drive_wheel_link" reason="Never"/>
+    </xacro:if>
+    <xacro:if value="${MB and HEAD}">
+        <disable_collisions link1="back_base_link" link2="base_l_drive_wheel_link" reason="Never"/>
+        <disable_collisions link1="back_base_link" link2="base_r_drive_wheel_link" reason="Never"/>
+        <disable_collisions link1="back_base_link" link2="docking_link" reason="Never"/>
+        <disable_collisions link1="base_l_drive_wheel_link" link2="head_base_link" reason="Never"/>
+        <disable_collisions link1="base_l_drive_wheel_link" link2="head_camera_link" reason="Never"/>
+        <disable_collisions link1="base_l_drive_wheel_link" link2="head_eye_l_link" reason="Never"/>
+        <disable_collisions link1="base_l_drive_wheel_link" link2="head_eye_r_link" reason="Never"/>
+        <disable_collisions link1="base_l_drive_wheel_link" link2="head_pitch_link" reason="Never"/>
+        <disable_collisions link1="base_l_drive_wheel_link" link2="head_yaw_link" reason="Never"/>
+        <disable_collisions link1="base_l_drive_wheel_link" link2="mic_link" reason="Never"/>
+        <disable_collisions link1="base_l_drive_wheel_link" link2="speaker_base_link" reason="Never"/>
+        <disable_collisions link1="base_r_drive_wheel_link" link2="head_base_link" reason="Never"/>
+        <disable_collisions link1="base_r_drive_wheel_link" link2="head_camera_link" reason="Never"/>
+        <disable_collisions link1="base_r_drive_wheel_link" link2="head_eye_l_link" reason="Never"/>
+        <disable_collisions link1="base_r_drive_wheel_link" link2="head_eye_r_link" reason="Never"/>
+        <disable_collisions link1="base_r_drive_wheel_link" link2="head_pitch_link" reason="Never"/>
+        <disable_collisions link1="base_r_drive_wheel_link" link2="head_yaw_link" reason="Never"/>
+        <disable_collisions link1="base_r_drive_wheel_link" link2="mic_link" reason="Never"/>
+        <disable_collisions link1="base_r_drive_wheel_link" link2="speaker_base_link" reason="Never"/>
+        <disable_collisions link1="docking_link" link2="head_base_link" reason="Never"/>
+        <disable_collisions link1="docking_link" link2="head_camera_link" reason="Never"/>
+        <disable_collisions link1="docking_link" link2="head_eye_l_link" reason="Never"/>
+        <disable_collisions link1="docking_link" link2="head_eye_r_link" reason="Never"/>
+        <disable_collisions link1="docking_link" link2="head_pitch_link" reason="Never"/>
+        <disable_collisions link1="docking_link" link2="head_yaw_link" reason="Never"/>
+        <disable_collisions link1="docking_link" link2="mic_link" reason="Never"/>
+        <disable_collisions link1="docking_link" link2="speaker_base_link" reason="Never"/>
+    </xacro:if>
+    <xacro:if value="${ARM and HAND}">
+        <disable_collisions link1="arm_elbow_pitch_link" link2="hand_camera_base_link" reason="Never"/>
+        <disable_collisions link1="arm_elbow_pitch_link" link2="hand_camera_link" reason="Never"/>
+        <disable_collisions link1="arm_elbow_pitch_link" link2="hand_finger_tip_l_link" reason="Never"/>
+        <disable_collisions link1="arm_elbow_pitch_link" link2="hand_finger_tip_r_link" reason="Never"/>
+        <disable_collisions link1="arm_elbow_pitch_link" link2="hand_link" reason="Never"/>
+        <disable_collisions link1="arm_elbow_pitch_link" link2="hand_sub_link" reason="Never"/>
+        <disable_collisions link1="arm_forearm_roll_link" link2="hand_camera_base_link" reason="Never"/>
+        <disable_collisions link1="arm_forearm_roll_link" link2="hand_camera_link" reason="Never"/>
+        <disable_collisions link1="arm_forearm_roll_link" link2="hand_finger_tip_l_link" reason="Never"/>
+        <disable_collisions link1="arm_forearm_roll_link" link2="hand_finger_tip_r_link" reason="Never"/>
+        <disable_collisions link1="arm_forearm_roll_link" link2="hand_link" reason="Never"/>
+        <disable_collisions link1="arm_forearm_roll_link" link2="hand_sub_link" reason="Never"/>
+        <disable_collisions link1="arm_shoulder_pitch_link" link2="hand_finger_tip_l_link" reason="Never"/>
+        <disable_collisions link1="arm_shoulder_pitch_link" link2="hand_finger_tip_r_link" reason="Never"/>
+        <disable_collisions link1="arm_shoulder_pitch_link" link2="hand_link" reason="Never"/>
+        <disable_collisions link1="arm_shoulder_pitch_link" link2="hand_sub_link" reason="Never"/>
+        <disable_collisions link1="arm_shoulder_roll_link" link2="hand_finger_tip_l_link" reason="Never"/>
+        <disable_collisions link1="arm_shoulder_roll_link" link2="hand_finger_tip_r_link" reason="Never"/>
+        <disable_collisions link1="arm_wrist_pitch_link" link2="hand_camera_base_link" reason="Never"/>
+        <disable_collisions link1="arm_wrist_pitch_link" link2="hand_camera_link" reason="Never"/>
+        <disable_collisions link1="arm_wrist_pitch_link" link2="hand_finger_tip_l_link" reason="Never"/>
+        <disable_collisions link1="arm_wrist_pitch_link" link2="hand_finger_tip_r_link" reason="Never"/>
+        <disable_collisions link1="arm_wrist_pitch_link" link2="hand_link" reason="Never"/>
+        <disable_collisions link1="arm_wrist_pitch_link" link2="hand_sub_link" reason="Never"/>
+    </xacro:if>
+    <xacro:if value="${ARM and HEAD}">
+        <disable_collisions link1="arm_base_link" link2="back_base_link" reason="Never"/>
+        <disable_collisions link1="arm_base_link" link2="head_base_link" reason="Never"/>
+        <disable_collisions link1="arm_base_link" link2="head_camera_link" reason="Never"/>
+        <disable_collisions link1="arm_base_link" link2="head_eye_l_link" reason="Never"/>
+        <disable_collisions link1="arm_base_link" link2="head_eye_r_link" reason="Never"/>
+        <disable_collisions link1="arm_base_link" link2="head_pitch_link" reason="Never"/>
+        <disable_collisions link1="arm_base_link" link2="head_yaw_link" reason="Never"/>
+        <disable_collisions link1="arm_base_link" link2="mic_link" reason="Never"/>
+        <disable_collisions link1="arm_base_link" link2="speaker_base_link" reason="Never"/>
+        <disable_collisions link1="arm_elbow_pitch_link" link2="back_base_link" reason="Never"/>
+        <disable_collisions link1="arm_elbow_pitch_link" link2="head_base_link" reason="Never"/>
+        <disable_collisions link1="arm_elbow_pitch_link" link2="head_camera_link" reason="Never"/>
+        <disable_collisions link1="arm_elbow_pitch_link" link2="head_eye_l_link" reason="Never"/>
+        <disable_collisions link1="arm_elbow_pitch_link" link2="head_eye_r_link" reason="Never"/>
+        <disable_collisions link1="arm_elbow_pitch_link" link2="head_pitch_link" reason="Never"/>
+        <disable_collisions link1="arm_elbow_pitch_link" link2="head_yaw_link" reason="Never"/>
+        <disable_collisions link1="arm_elbow_pitch_link" link2="mic_link" reason="Never"/>
+        <disable_collisions link1="arm_elbow_pitch_link" link2="speaker_base_link" reason="Never"/>
+        <disable_collisions link1="arm_forearm_roll_link" link2="back_base_link" reason="Never"/>
+        <disable_collisions link1="arm_forearm_roll_link" link2="head_base_link" reason="Never"/>
+        <disable_collisions link1="arm_forearm_roll_link" link2="head_camera_link" reason="Never"/>
+        <disable_collisions link1="arm_forearm_roll_link" link2="head_eye_l_link" reason="Never"/>
+        <disable_collisions link1="arm_forearm_roll_link" link2="head_eye_r_link" reason="Never"/>
+        <disable_collisions link1="arm_forearm_roll_link" link2="head_pitch_link" reason="Never"/>
+        <disable_collisions link1="arm_forearm_roll_link" link2="head_yaw_link" reason="Never"/>
+        <disable_collisions link1="arm_forearm_roll_link" link2="mic_link" reason="Never"/>
+        <disable_collisions link1="arm_forearm_roll_link" link2="speaker_base_link" reason="Never"/>
+        <disable_collisions link1="arm_platform_link" link2="back_base_link" reason="Never"/>
+        <disable_collisions link1="arm_platform_link" link2="head_base_link" reason="Never"/>
+        <disable_collisions link1="arm_platform_link" link2="head_camera_link" reason="Never"/>
+        <disable_collisions link1="arm_platform_link" link2="head_eye_l_link" reason="Never"/>
+        <disable_collisions link1="arm_platform_link" link2="head_eye_r_link" reason="Never"/>
+        <disable_collisions link1="arm_platform_link" link2="head_pitch_link" reason="Never"/>
+        <disable_collisions link1="arm_platform_link" link2="head_yaw_link" reason="Never"/>
+        <disable_collisions link1="arm_platform_link" link2="mic_link" reason="Never"/>
+        <disable_collisions link1="arm_platform_link" link2="speaker_base_link" reason="Never"/>
+        <disable_collisions link1="arm_shoulder_pitch_link" link2="back_base_link" reason="Never"/>
+        <disable_collisions link1="arm_shoulder_pitch_link" link2="head_base_link" reason="Never"/>
+        <disable_collisions link1="arm_shoulder_pitch_link" link2="head_camera_link" reason="Never"/>
+        <disable_collisions link1="arm_shoulder_pitch_link" link2="head_eye_l_link" reason="Never"/>
+        <disable_collisions link1="arm_shoulder_pitch_link" link2="head_eye_r_link" reason="Never"/>
+        <disable_collisions link1="arm_shoulder_pitch_link" link2="head_pitch_link" reason="Never"/>
+        <disable_collisions link1="arm_shoulder_pitch_link" link2="head_yaw_link" reason="Never"/>
+        <disable_collisions link1="arm_shoulder_pitch_link" link2="mic_link" reason="Never"/>
+        <disable_collisions link1="arm_shoulder_pitch_link" link2="speaker_base_link" reason="Never"/>
+        <disable_collisions link1="arm_shoulder_roll_link" link2="back_base_link" reason="Never"/>
+        <disable_collisions link1="arm_shoulder_roll_link" link2="head_base_link" reason="Never"/>
+        <disable_collisions link1="arm_shoulder_roll_link" link2="head_camera_link" reason="Never"/>
+        <disable_collisions link1="arm_shoulder_roll_link" link2="head_eye_l_link" reason="Never"/>
+        <disable_collisions link1="arm_shoulder_roll_link" link2="head_eye_r_link" reason="Never"/>
+        <disable_collisions link1="arm_shoulder_roll_link" link2="head_pitch_link" reason="Never"/>
+        <disable_collisions link1="arm_shoulder_roll_link" link2="head_yaw_link" reason="Never"/>
+        <disable_collisions link1="arm_shoulder_roll_link" link2="mic_link" reason="Never"/>
+        <disable_collisions link1="arm_shoulder_roll_link" link2="speaker_base_link" reason="Never"/>
+        <disable_collisions link1="arm_wrist_pitch_link" link2="back_base_link" reason="Never"/>
+        <disable_collisions link1="arm_wrist_pitch_link" link2="head_base_link" reason="Never"/>
+        <disable_collisions link1="arm_wrist_pitch_link" link2="head_camera_link" reason="Never"/>
+        <disable_collisions link1="arm_wrist_pitch_link" link2="head_eye_l_link" reason="Never"/>
+        <disable_collisions link1="arm_wrist_pitch_link" link2="head_eye_r_link" reason="Never"/>
+        <disable_collisions link1="arm_wrist_pitch_link" link2="head_pitch_link" reason="Never"/>
+        <disable_collisions link1="arm_wrist_pitch_link" link2="head_yaw_link" reason="Never"/>
+        <disable_collisions link1="arm_wrist_pitch_link" link2="mic_link" reason="Never"/>
+        <disable_collisions link1="arm_wrist_pitch_link" link2="speaker_base_link" reason="Never"/>
+    </xacro:if>
+    <xacro:if value="${HAND and HEAD}">
+        <disable_collisions link1="hand_camera_base_link" link2="head_base_link" reason="Never"/>
+        <disable_collisions link1="hand_camera_base_link" link2="head_camera_link" reason="Never"/>
+        <disable_collisions link1="hand_camera_base_link" link2="head_eye_l_link" reason="Never"/>
+        <disable_collisions link1="hand_camera_base_link" link2="head_eye_r_link" reason="Never"/>
+        <disable_collisions link1="hand_camera_base_link" link2="head_pitch_link" reason="Never"/>
+        <disable_collisions link1="hand_camera_base_link" link2="head_yaw_link" reason="Never"/>
+        <disable_collisions link1="hand_camera_base_link" link2="mic_link" reason="Never"/>
+        <disable_collisions link1="hand_camera_link" link2="head_base_link" reason="Never"/>
+        <disable_collisions link1="hand_camera_link" link2="head_camera_link" reason="Never"/>
+        <disable_collisions link1="hand_camera_link" link2="head_eye_l_link" reason="Never"/>
+        <disable_collisions link1="hand_camera_link" link2="head_eye_r_link" reason="Never"/>
+        <disable_collisions link1="hand_camera_link" link2="head_pitch_link" reason="Never"/>
+        <disable_collisions link1="hand_camera_link" link2="head_yaw_link" reason="Never"/>
+        <disable_collisions link1="hand_camera_link" link2="mic_link" reason="Never"/>
+        <disable_collisions link1="hand_finger_tip_l_link" link2="head_base_link" reason="Never"/>
+        <disable_collisions link1="hand_finger_tip_l_link" link2="head_camera_link" reason="Never"/>
+        <disable_collisions link1="hand_finger_tip_l_link" link2="head_eye_l_link" reason="Never"/>
+        <disable_collisions link1="hand_finger_tip_l_link" link2="head_eye_r_link" reason="Never"/>
+        <disable_collisions link1="hand_finger_tip_l_link" link2="head_pitch_link" reason="Never"/>
+        <disable_collisions link1="hand_finger_tip_l_link" link2="head_yaw_link" reason="Never"/>
+        <disable_collisions link1="hand_finger_tip_l_link" link2="mic_link" reason="Never"/>
+        <disable_collisions link1="hand_finger_tip_r_link" link2="head_base_link" reason="Never"/>
+        <disable_collisions link1="hand_finger_tip_r_link" link2="head_camera_link" reason="Never"/>
+        <disable_collisions link1="hand_finger_tip_r_link" link2="head_eye_l_link" reason="Never"/>
+        <disable_collisions link1="hand_finger_tip_r_link" link2="head_eye_r_link" reason="Never"/>
+        <disable_collisions link1="hand_finger_tip_r_link" link2="head_pitch_link" reason="Never"/>
+        <disable_collisions link1="hand_finger_tip_r_link" link2="head_yaw_link" reason="Never"/>
+        <disable_collisions link1="hand_finger_tip_r_link" link2="mic_link" reason="Never"/>
+        <disable_collisions link1="hand_link" link2="head_base_link" reason="Never"/>
+        <disable_collisions link1="hand_link" link2="head_camera_link" reason="Never"/>
+        <disable_collisions link1="hand_link" link2="head_eye_l_link" reason="Never"/>
+        <disable_collisions link1="hand_link" link2="head_eye_r_link" reason="Never"/>
+        <disable_collisions link1="hand_link" link2="head_pitch_link" reason="Never"/>
+        <disable_collisions link1="hand_link" link2="head_yaw_link" reason="Never"/>
+        <disable_collisions link1="hand_link" link2="mic_link" reason="Never"/>
+        <disable_collisions link1="hand_sub_link" link2="head_base_link" reason="Never"/>
+        <disable_collisions link1="hand_sub_link" link2="head_camera_link" reason="Never"/>
+        <disable_collisions link1="hand_sub_link" link2="head_eye_l_link" reason="Never"/>
+        <disable_collisions link1="hand_sub_link" link2="head_eye_r_link" reason="Never"/>
+        <disable_collisions link1="hand_sub_link" link2="head_pitch_link" reason="Never"/>
+        <disable_collisions link1="hand_sub_link" link2="head_yaw_link" reason="Never"/>
+        <disable_collisions link1="hand_sub_link" link2="mic_link" reason="Never"/>
+    </xacro:if>
+</robot>

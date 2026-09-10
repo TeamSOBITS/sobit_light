@@ -219,7 +219,7 @@ dpkg -l | grep ros-jazzy-joy-linux
 >[!WARNING] At startup, the manipulator will move to the initial_pose. Please check the manipulator's state before proceeding.
 
 ```sh
-ros2 launch sobit_light_teleop dualshock_teleop.launch.py
+ros2 launch sobits_teleop sobits_teleop.launch.py robot_name:=sobit_light device:=ps4
 ```
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 <details>
