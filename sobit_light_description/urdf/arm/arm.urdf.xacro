@@ -131,34 +131,15 @@
         </geometry>
       </collision>
 
+      <!-- Mass covers both shoulder pitch brackets: Dynamixel ID2 is a
+           drive-mode slave of ID3, so the second bracket is rigid with this
+           link and is not modelled as its own link (same origin and inertia). -->
       <inertial>
         <origin xyz="${0.03575-0.0585/2} 0.0 ${-0.016+(0.14475+0.016)/2}" rpy="0 0 0"/>
-        <mass value="0.261" />
-        <inertia  ixx="${1/12*0.261*(0.0585**2+(0.14475+0.016)**2)}" ixy="0.0" ixz="0.0"
-                  iyy="${1/12*0.261*(0.0440**2+(0.14475+0.016)**2)}" iyz="0.0"
-                  izz="${1/12*0.261*(0.0585**2+0.0440**2)}" />
-      </inertial>
-    </link>
-
-    <!--  Act 3 - Shoulder Pitch (left): Dynamixel ID2 runs as a drive-mode
-          slave of ID3, so the second bracket is rigid with the shoulder pitch
-          link. It shares the pitch joint's origin and, with its former axis
-          (0 -1 0) and mimic multiplier -1, always had the same orientation, so
-          a fixed joint at the identity is kinematically identical. -->
-    <joint name="${prefix}_shoulder_pitch_sub_joint" type="fixed">
-      <parent link="${prefix}_shoulder_pitch_link"/>
-      <child link="${prefix}_shoulder_pitch_sub_link"/>
-      <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
-    </joint>
-
-    <!--  Act 3 - Shoulder Pitch (left) -->
-    <link name="${prefix}_shoulder_pitch_sub_link">
-      <inertial>
-        <origin xyz="${0.03575-0.0585/2} 0.0 ${-0.016+(0.14475+0.016)/2}" rpy="0 0 0"/>
-        <mass value="0.261" />
-        <inertia  ixx="${1/12*0.261*(0.0585**2+(0.14475+0.016)**2)}" ixy="0.0" ixz="0.0"
-                  iyy="${1/12*0.261*(0.0440**2+(0.14475+0.016)**2)}" iyz="0.0"
-                  izz="${1/12*0.261*(0.0585**2+0.0440**2)}" />
+        <mass value="${2*0.261}" />
+        <inertia  ixx="${2*1/12*0.261*(0.0585**2+(0.14475+0.016)**2)}" ixy="0.0" ixz="0.0"
+                  iyy="${2*1/12*0.261*(0.0440**2+(0.14475+0.016)**2)}" iyz="0.0"
+                  izz="${2*1/12*0.261*(0.0585**2+0.0440**2)}" />
       </inertial>
     </link>
 

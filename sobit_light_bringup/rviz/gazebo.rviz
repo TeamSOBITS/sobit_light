@@ -91,10 +91,6 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        arm_shoulder_pitch_sub_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
         arm_shoulder_roll_link:
           Alpha: 1
           Show Axes: false
@@ -345,8 +341,6 @@ Visualization Manager:
           Value: false
         arm_shoulder_pitch_link:
           Value: false
-        arm_shoulder_pitch_sub_link:
-          Value: false
         arm_shoulder_roll_link:
           Value: false
         arm_wrist_pitch_link:
@@ -532,8 +526,6 @@ Visualization Manager:
                                   hand_sub_link:
                                     hand_finger_tip_r_link:
                                       {}
-                        arm_shoulder_pitch_sub_link:
-                          {}
               tof_link:
                 {}
       Update Interval: 0
