@@ -45,7 +45,7 @@
       <child link="${prefix_hand}_sub_link"/>
       <origin xyz="0.059 -0.05498805 0.0" rpy="0 0 0"/>
       <axis xyz="0 -1 0"/>
-      <limit velocity="${XM430_W350_VELOCITY / HAND_GEAR_RATIO}" effort="${XM430_W350_TORQUE * HAND_GEAR_RATIO * effort_ratio}" lower="-1.57" upper="1.57"/>
+      <limit velocity="${XM430_W350_VELOCITY / HAND_GEAR_RATIO}" effort="${XM430_W350_TORQUE * HAND_GEAR_RATIO * effort_ratio}" lower="-0.01791787" upper="0.02901195" />
       <mimic joint="${prefix_hand}_joint" multiplier="1"/>
     </joint>
 
