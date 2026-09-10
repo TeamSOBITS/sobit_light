@@ -23,7 +23,6 @@ class HandJointTeleop(Node):
             'arm_wrist_pitch_joint',
             'arm_wrist_roll_joint',
             'hand_joint',
-            'arm_shoulder_pitch_sub_joint',
             'arm_shoulder_pitch_joint',
             'head_yaw_joint',
             'head_pitch_joint'
@@ -39,7 +38,6 @@ class HandJointTeleop(Node):
         self.arm_wrist_pitch_joint = ['arm_wrist_pitch_joint']
         self.arm_wrist_roll_joint = ['arm_wrist_roll_joint']
         self.target_joints = ['hand_joint']
-        self.arm_shoulder_pitch_sub_joint = ['arm_shoulder_pitch_sub_joint']
         self.arm_shoulder_pitch_joint = ['arm_shoulder_pitch_joint']
         self.head_yaw_joint = ['head_yaw_joint']
         self.head_pitch_joint = ['head_pitch_joint']
@@ -209,25 +207,14 @@ class HandJointTeleop(Node):
         new_pos = current_pos + radians
         self.latest_joint_state[joint_name] = new_pos
 
-        if joint_name == "arm_shoulder_pitch_joint":
-            sub_joint = "arm_shoulder_pitch_sub_joint"
-            # sab_current_pos = self.latest_joint_state[sub_joint]
-            new_sub_pos = -new_pos
-            self.latest_joint_state[sub_joint] = new_sub_pos
 
         # JointTrajectoryメッセージ作成（操作ジョイントのみ）
         traj_msg = JointTrajectory()
-        if joint_name == "arm_shoulder_pitch_joint":
-            traj_msg.joint_names = [joint_name,sub_joint]
-        else:
-            traj_msg.joint_names = [joint_name]
+        traj_msg.joint_names = [joint_name]
 
         point = JointTrajectoryPoint()
 
-        if joint_name == "arm_shoulder_pitch_joint":
-            point.positions = [new_pos,new_sub_pos]
-        else:
-            point.positions = [new_pos]
+        point.positions = [new_pos]
 
         point.time_from_start.sec = 0
         point.time_from_start.nanosec = 100_000_000  # 0.1秒
@@ -238,7 +225,6 @@ class HandJointTeleop(Node):
 
         if joint_name == "arm_shoulder_pitch_joint":
             self.get_logger().info(f"{joint_name} を {new_pos:.6f} rad に更新して送信しました")
-            self.get_logger().info(f"{sub_joint} を {new_sub_pos:.6f} rad に更新して送信しました")
         else:
             self.get_logger().info(f"{joint_name} を {new_pos:.6f} rad に更新して送信しました")
 

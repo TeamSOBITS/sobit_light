@@ -21,7 +21,6 @@ class HandJointTeleop(Node):
             'arm_wrist_pitch_joint',
             'arm_wrist_roll_joint',
             'hand_joint',
-            'arm_shoulder_pitch_sub_joint',
             'arm_shoulder_pitch_joint',
             'head_yaw_joint',
             'head_pitch_joint'
@@ -37,7 +36,6 @@ class HandJointTeleop(Node):
         self.arm_wrist_pitch_joint = ['arm_wrist_pitch_joint']
         self.arm_wrist_roll_joint = ['arm_wrist_roll_joint']
         self.target_joints = ['hand_joint']
-        self.arm_shoulder_pitch_sub_joint = ['arm_shoulder_pitch_sub_joint']
         self.arm_shoulder_pitch_joint = ['arm_shoulder_pitch_joint']
         self.head_yaw_joint = ['head_yaw_joint']
         self.head_pitch_joint = ['head_pitch_joint']
@@ -74,8 +72,6 @@ class HandJointTeleop(Node):
             'b': ('arm_wrist_roll_joint', -10.0),
             'h': ('hand_joint', 10.0),
             'n': ('hand_joint', -10.0),
-            # 'j': ('arm_shoulder_pitch_sub_joint', 10.0),
-            # 'm': ('arm_shoulder_pitch_sub_joint', -10.0),
             'k': ('arm_shoulder_pitch_joint', 10.0),
             ',': ('arm_shoulder_pitch_joint', -10.0),
             'l': ('head_yaw_joint', 10.0),
@@ -111,7 +107,6 @@ class HandJointTeleop(Node):
             self.get_logger().info("arm_wrist_pitch_joint f: 増加, v: 減少")
             self.get_logger().info("arm_wrist_roll_joint g: 増加, b: 減少")
             self.get_logger().info("hand_joint h: 増加, n: 減少")
-            #self.get_logger().info("arm_shoulder_pitch_sub_joint j: 増加, m: 減少") #注意
             self.get_logger().info("arm_shoulder_pitch_joint k: 増加, ,: 減少")
             self.get_logger().info("head_yaw_joint l: 増加, .: 減少")
             self.get_logger().info("head_pitch_joint ;: 増加, /: 減少")
@@ -134,25 +129,14 @@ class HandJointTeleop(Node):
         new_pos = current_pos + radians
         self.latest_joint_state[joint_name] = new_pos
 
-        if joint_name == "arm_shoulder_pitch_joint":
-            sub_joint = "arm_shoulder_pitch_sub_joint"
-            # sab_current_pos = self.latest_joint_state[sub_joint]
-            new_sub_pos = -new_pos
-            self.latest_joint_state[sub_joint] = new_sub_pos
 
         # JointTrajectoryメッセージ作成（操作ジョイントのみ）
         traj_msg = JointTrajectory()
-        if joint_name == "arm_shoulder_pitch_joint":
-            traj_msg.joint_names = [joint_name,sub_joint]
-        else:
-            traj_msg.joint_names = [joint_name]
+        traj_msg.joint_names = [joint_name]
 
         point = JointTrajectoryPoint()
 
-        if joint_name == "arm_shoulder_pitch_joint":
-            point.positions = [new_pos,new_sub_pos]
-        else:
-            point.positions = [new_pos]
+        point.positions = [new_pos]
 
         point.time_from_start.sec = 0
         point.time_from_start.nanosec = 500_000_000  # 0.5秒
@@ -165,7 +149,6 @@ class HandJointTeleop(Node):
         time.sleep(0.3)
         if joint_name == "arm_shoulder_pitch_joint":
             self.get_logger().info(f"{joint_name} を {new_pos:.6f} rad に更新して送信しました")
-            self.get_logger().info(f"{sub_joint} を {new_sub_pos:.6f} rad に更新して送信しました")
         else:
             self.get_logger().info(f"{joint_name} を {new_pos:.6f} rad に更新して送信しました")
 

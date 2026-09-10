@@ -140,14 +140,15 @@
       </inertial>
     </link>
 
-    <!--  Act 3 - Shoulder Pitch (left) -->
-    <joint name="${prefix}_shoulder_pitch_sub_joint" type="revolute">
-      <parent link="${prefix}_shoulder_roll_link"/>
+    <!--  Act 3 - Shoulder Pitch (left): Dynamixel ID2 runs as a drive-mode
+          slave of ID3, so the second bracket is rigid with the shoulder pitch
+          link. It shares the pitch joint's origin and, with its former axis
+          (0 -1 0) and mimic multiplier -1, always had the same orientation, so
+          a fixed joint at the identity is kinematically identical. -->
+    <joint name="${prefix}_shoulder_pitch_sub_joint" type="fixed">
+      <parent link="${prefix}_shoulder_pitch_link"/>
       <child link="${prefix}_shoulder_pitch_sub_link"/>
-      <origin xyz="0.0 0.0 0.05095" rpy="0 0 0"/>
-      <axis xyz="0 -1 0"/>
-      <limit velocity="${XM540_W150_VELOCITY}" effort="${XM540_W150_TORQUE * effort_ratio}" lower="${-SHOULDER_PITCH_MAX}" upper="${-SHOULDER_PITCH_MIN}" />
-      <mimic joint="${prefix}_shoulder_pitch_joint" multiplier="-1" offset="0"/>
+      <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
     </joint>
 
     <!--  Act 3 - Shoulder Pitch (left) -->

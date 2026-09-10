@@ -55,7 +55,6 @@ class DualShock_Teleop(Node):
 
         self.JOINTS = {
             'Shoulder_Roll': 'arm_shoulder_roll_joint', 
-            'Shoulder_Pitch_sub': 'arm_shoulder_pitch_sub_joint', 
             'Shoulder_Pitch_main': 'arm_shoulder_pitch_joint', 
             'Elbow_Pitch': 'arm_elbow_pitch_joint',
             'Forearm_Roll': 'arm_forearm_roll_joint',
@@ -67,7 +66,6 @@ class DualShock_Teleop(Node):
         }
         self.JOINT_LIMITS = {
             'arm_shoulder_roll_joint': (-3.14,3.14 ),
-            'arm_shoulder_pitch_sub_joint': (-0.74, 2.11),
             'arm_shoulder_pitch_joint': (-2.11, 0.74),
             'arm_elbow_pitch_joint': (-1.57, 1.57),
             'arm_forearm_roll_joint': (-3.14, 3.14),
@@ -228,27 +226,13 @@ class DualShock_Teleop(Node):
             min_limit, max_limit = self.JOINT_LIMITS[joint_name]
             new_pos = max(min(new_pos, max_limit), min_limit)
 
-        if joint_name == self.JOINTS["Shoulder_Pitch_main"]:
-            sub_joint = self.JOINTS["Shoulder_Pitch_sub"]
-            new_sub_pos = -new_pos
-            if sub_joint in self.JOINT_LIMITS:
-                min_limit, max_limit = self.JOINT_LIMITS[sub_joint]
-                if not (min_limit <= new_sub_pos <= max_limit):
-                    new_sub_pos = max(min(new_sub_pos, max_limit), min_limit)
-                    new_pos = -new_sub_pos
 
         traj_msg = JointTrajectory()
 
-        if joint_name == self.JOINTS["Shoulder_Pitch_main"]:
-            traj_msg.joint_names = [joint_name,sub_joint]
-        else:
-            traj_msg.joint_names = [joint_name]
+        traj_msg.joint_names = [joint_name]
         
         point = JointTrajectoryPoint()
-        if joint_name == self.JOINTS["Shoulder_Pitch_main"]:
-            point.positions = [new_pos,new_sub_pos]
-        else:
-            point.positions = [new_pos]
+        point.positions = [new_pos]
 
         traj_msg.points.append(point)
         
@@ -256,7 +240,6 @@ class DualShock_Teleop(Node):
 
         if joint_name == self.JOINTS["Shoulder_Pitch_main"]:
             self.get_logger().info(f"{joint_name} を {new_pos:.6f} rad に更新して送信しました")
-            self.get_logger().info(f"{sub_joint} を {new_sub_pos:.6f} rad に更新して送信しました")
         else:
             self.get_logger().info(f"{joint_name} を {new_pos:.6f} rad に更新して送信しました")
     
@@ -264,7 +247,6 @@ class DualShock_Teleop(Node):
         initial_pose = {
             self.JOINTS['Shoulder_Roll']: 0.0,
             self.JOINTS['Shoulder_Pitch_main']: -1.5708,
-            self.JOINTS['Shoulder_Pitch_sub']: 1.5708,
             self.JOINTS['Elbow_Pitch']: 0.0,
             self.JOINTS['Forearm_Roll']: 0.0,
             self.JOINTS['Wrist_Pitch']: 0.0,
