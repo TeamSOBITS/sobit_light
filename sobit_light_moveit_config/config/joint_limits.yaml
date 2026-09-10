@@ -5,56 +5,66 @@
 default_velocity_scaling_factor: 0.1
 default_acceleration_scaling_factor: 0.1
 
+# Velocity limits mirror the <limit velocity="..."> values in
+# sobit_light_description (urdf/arm, urdf/head, urdf/hand) and are derived from
+# each Dynamixel's no-load speed @ 12V. URDF has no acceleration field, so
+# max_acceleration is set equal to max_velocity (same convention as sobit_home).
+# Without these, robot_description_planning.joint_limits.<joint>.max_velocity
+# resolves to NaN, which crashes time-parameterization (TOTG).
+
 # Specific joint properties can be changed with the keys [max_position, min_position, max_velocity, max_acceleration]
 # Joint limits can be turned off with [has_velocity_limits, has_acceleration_limits]
 joint_limits:
+  # XM540-W270 — 30 RPM @ 12V = 3.14 rad/s
   arm_elbow_pitch_joint:
     has_velocity_limits: true
-    max_velocity: 4.8
+    max_velocity: 3.14
     has_acceleration_limits: true
-    max_acceleration: 1.0
-  arm_forearm_roll_joint:
-    has_velocity_limits: true
-    max_velocity: 4.8
-    has_acceleration_limits: true
-    max_acceleration: 1.0
+    max_acceleration: 3.14
+
+  # XM540-W150 — 50 RPM @ 12V = 5.24 rad/s
   arm_shoulder_pitch_joint:
     has_velocity_limits: true
-    max_velocity: 4.8
+    max_velocity: 5.24
     has_acceleration_limits: true
-    max_acceleration: 1.0
-  # arm_shoulder_pitch_sub_joint:
-  #   has_velocity_limits: true
-  #   max_velocity: 4.8
-  #   has_acceleration_limits: true
-  #   max_acceleration: 1.0
+    max_acceleration: 5.24
+  arm_forearm_roll_joint:
+    has_velocity_limits: true
+    max_velocity: 5.24
+    has_acceleration_limits: true
+    max_acceleration: 5.24
+
+  # XM430-W350 — 46 RPM @ 12V = 4.82 rad/s
   arm_shoulder_roll_joint:
     has_velocity_limits: true
-    max_velocity: 4.8
+    max_velocity: 4.82
     has_acceleration_limits: true
-    max_acceleration: 1.0
+    max_acceleration: 4.82
   arm_wrist_pitch_joint:
     has_velocity_limits: true
-    max_velocity: 4.8
+    max_velocity: 4.82
     has_acceleration_limits: true
-    max_acceleration: 1.0
+    max_acceleration: 4.82
   arm_wrist_roll_joint:
     has_velocity_limits: true
-    max_velocity: 4.8
+    max_velocity: 4.82
     has_acceleration_limits: true
-    max_acceleration: 1.0
-  hand_joint:
-    has_velocity_limits: true
-    max_velocity: 4.8
-    has_acceleration_limits: true
-    max_acceleration: 1.0
+    max_acceleration: 4.82
   head_yaw_joint:
     has_velocity_limits: true
-    max_velocity: 1.57
+    max_velocity: 4.82
     has_acceleration_limits: true
-    max_acceleration: 1.0
+    max_acceleration: 4.82
   head_pitch_joint:
     has_velocity_limits: true
-    max_velocity: 1.57
+    max_velocity: 4.82
     has_acceleration_limits: true
-    max_acceleration: 1.0
+    max_acceleration: 4.82
+
+  # XM430-W350 driving a prismatic finger through gear_ratio 59.504
+  # (controllers.urdf.xacro): 4.82 rad/s / 59.504 = 0.081 m/s
+  hand_joint:
+    has_velocity_limits: true
+    max_velocity: 0.081
+    has_acceleration_limits: true
+    max_acceleration: 0.081
