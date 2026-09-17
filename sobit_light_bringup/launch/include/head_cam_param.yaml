@@ -23,7 +23,7 @@ enable_depth: true
 enable_infra: false
 enable_infra1: false
 enable_infra2: false
-depth_module.depth_profile: "0,0,0"
+depth_module.depth_profile: "640,480,15"   # 1280x720x30 default makes an 18 MB ordered cloud per frame; nothing arrives
 depth_module.depth_format: "Z16"
 depth_module.infra_profile: "0,0,0"
 depth_module.infra_format: "RGB8"
@@ -59,7 +59,7 @@ clip_distance: -2.0
 pointcloud.enable: true
 pointcloud.stream_filter: 2
 pointcloud.stream_index_filter: 0
-pointcloud.ordered_pc: true
+pointcloud.ordered_pc: false   # unordered: ~170k points, 6 MB, ~13 Hz on the bench (2026-09-10)
 pointcloud.allow_no_texture_points: false
 align_depth.enable: true
 colorizer.enable: false

@@ -99,6 +99,7 @@ def launch_setup(context, *args, **kwargs):
             f"/world/{gz_world_name}/remove@ros_gz_interfaces/srv/DeleteEntity",
             f"/world/{gz_world_name}/set_pose@ros_gz_interfaces/srv/SetEntityPose",
         ],
+        parameters=[{'use_sim_time': True}],
         output='screen',
     )
 
@@ -110,6 +111,7 @@ def launch_setup(context, *args, **kwargs):
         executable='rviz2',
         output='screen',
         arguments=['-d', rviz_config],
+        parameters=[{'use_sim_time': True}],
         condition=IfCondition(LaunchConfiguration('use_rviz')),
     )
 

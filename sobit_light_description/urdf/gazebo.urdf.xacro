@@ -7,7 +7,7 @@
     <xacro:property name="tf_prefix" value="${robot_name + '/' if str(enable_tf_prefix).lower() == 'true' else ''}"/>
 
     <!-- Friction and Contact Parameters for Mobile Base -->
-    <xacro:if value="${$(arg enable_gz_front_cam_color) and $(arg enable_mobile_base)}">
+    <xacro:if value="${$(arg enable_mobile_base)}">
       <gazebo reference="base_link">
         <mu1>0.0</mu1>
         <mu2>0.0</mu2>
@@ -16,51 +16,23 @@
       </gazebo>
 
       <gazebo reference="base_l_drive_wheel_link">
-        <surface>
-          <friction>
-            <ode>
-              <mu>1</mu>
-              <mu2>1</mu2>
-              <slip1>0.035</slip1>
-              <slip2>0</slip2>
-              <fdir1>0 0 1</fdir1>
-            </ode>
-          </friction>
-          <contact>
-            <ode>
-              <soft_cfm>0</soft_cfm>
-              <soft_erp>0.2</soft_erp>
-              <kp>1e+5</kp>
-              <kd>1</kd>
-              <max_vel>0.01</max_vel>
-              <min_depth>0.001</min_depth>
-            </ode>
-          </contact>
-        </surface>
+        <mu1>1</mu1>
+        <mu2>1</mu2>
+        <fdir1>0 0 1</fdir1>
+        <kp>1e+5</kp>
+        <kd>1</kd>
+        <maxVel>0.01</maxVel>
+        <minDepth>0.001</minDepth>
       </gazebo>
 
       <gazebo reference="base_r_drive_wheel_link">
-        <surface>
-          <friction>
-            <ode>
-              <mu>1</mu>
-              <mu2>1</mu2>
-              <slip1>0.035</slip1>
-              <slip2>0</slip2>
-              <fdir1>0 0 1</fdir1>
-            </ode>
-          </friction>
-          <contact>
-            <ode>
-              <soft_cfm>0</soft_cfm>
-              <soft_erp>0.2</soft_erp>
-              <kp>1e+5</kp>
-              <kd>1</kd>
-              <max_vel>0.01</max_vel>
-              <min_depth>0.001</min_depth>
-            </ode>
-          </contact>
-        </surface>
+        <mu1>1</mu1>
+        <mu2>1</mu2>
+        <fdir1>0 0 1</fdir1>
+        <kp>1e+5</kp>
+        <kd>1</kd>
+        <maxVel>0.01</maxVel>
+        <minDepth>0.001</minDepth>
       </gazebo>
     </xacro:if>
 

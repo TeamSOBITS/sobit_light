@@ -150,6 +150,13 @@ def _launch_setup(context, *args, **kwargs):
         name="rviz2_moveit",
         arguments=["-d", rviz_config_file],
         output="screen",
+        # These three resolve at the node root, unlike the plugin's other
+        # topics which pick up Move Group Namespace from the RViz config.
+        remappings=[
+            ("planning_scene",          f"/{robot_name_str}/planning_scene"),
+            ("planning_scene_world",    f"/{robot_name_str}/planning_scene_world"),
+            ("recognized_object_array", f"/{robot_name_str}/recognized_object_array"),
+        ],
         parameters=[
             moveit_config.robot_description,
             moveit_config.robot_description_semantic,

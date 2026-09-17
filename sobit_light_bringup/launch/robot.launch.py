@@ -299,7 +299,14 @@ def launch_gz(context, *args, **kwargs):
         executable="twist_stamper",
         namespace=robot_name,
         name="vel_remap",
-        arguments=["-r", f"cmd_vel_in:=/{robot_name}/manual_control/cmd_vel", "-r", f"cmd_vel_out:=/{robot_name}/wheel_controller/cmd_vel", "-p", f"frame_id:={tf_prefix}base_footprint"]
+        remappings=[
+            ("cmd_vel_in",  f"/{robot_name}/manual_control/cmd_vel"),
+            ("cmd_vel_out", f"/{robot_name}/wheel_controller/cmd_vel"),
+        ],
+        parameters=[{
+            'frame_id': f'{tf_prefix}base_footprint',
+            'use_sim_time': True if enable_gz == 'True' else False,
+        }],
     )
 
     delayed_vel_remap_node = RegisterEventHandler(
@@ -425,6 +432,7 @@ def launch_gz(context, *args, **kwargs):
                     "/" + robot_name + "/lidar/scan/points" + "@sensor_msgs/msg/PointCloud2" + "[gz.msgs.PointCloudPacked",
                     "/" + robot_name + "/imu" + "@sensor_msgs/msg/Imu" + "[gz.msgs.IMU",
                 ],
+        parameters=[{'use_sim_time': True if enable_gz == 'True' else False}],
         output='screen'
     )
 
