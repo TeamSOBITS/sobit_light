@@ -16,6 +16,7 @@ ros_packages=(
     "realsense_ros"
     "kachaka-api"
     "sobits_gazebo_worlds"
+    "sobits_viz"
 )
 
 #Clone all packages

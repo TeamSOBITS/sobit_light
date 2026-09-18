@@ -211,6 +211,9 @@ ros2 launch sobit_light_description display.launch.py
 
 ![SOBIT LIGHT Display with Rviz](sobit_light/docs/img/sobit_light_rviz.png)
 
+Rerunでの可視化ブリッジは https://github.com/TeamSOBITS/sobits_viz にあります．
+`ros2 launch sobits_viz_rerun rerun.launch.py robot_name:=sobit_light use_sim_time:=true` で起動できます．
+
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
 ### シミュレータの実行方法
@@ -235,6 +238,9 @@ ros2 launch sobit_light_bringup gz_minimal.launch.py
 
 > [!TIP]
 > 実機と同じようなセンサも搭載されていますので，パソコンによって処理が重くなる可能性がありますので，必要なセンサだけを[gz_minimal.launch.py](sobit_light_bringup/launch/gz_minimal.launch.py)で選択してください．
+
+> [!TIP]
+> `camera_rate:=30` を指定するとシミュレーションカメラの更新レートを上げられます（デフォルトは10Hz）．
 
 ```python
 'enable_gz_front_cam_color' : 'True',

@@ -34,6 +34,8 @@ def generate_launch_description():
     arg_enable_gz_hand_cam_depth  = DeclareLaunchArgument('enable_gz_hand_cam_depth', default_value='True')
     arg_enable_gz_lidar           = DeclareLaunchArgument('enable_gz_lidar', default_value='True')
     arg_enable_gz_imu             = DeclareLaunchArgument('enable_gz_imu', default_value='True')
+    arg_camera_rate               = DeclareLaunchArgument('camera_rate', default_value='10',
+                                                           description='Update rate of the simulated cameras, Hz')
 
     arg_enable_real_head_cam = DeclareLaunchArgument('enable_real_head_cam', default_value='True')
     arg_enable_real_hand_cam = DeclareLaunchArgument('enable_real_hand_cam', default_value='True')
@@ -62,6 +64,7 @@ def generate_launch_description():
         arg_enable_gz_hand_cam_depth,
         arg_enable_gz_lidar,
         arg_enable_gz_imu,
+        arg_camera_rate,
         arg_enable_real_head_cam,
         arg_enable_real_hand_cam,
         arg_enable_tf_prefix,
@@ -97,6 +100,7 @@ def launch_gz(context, *args, **kwargs):
     enable_gz_hand_cam_depth  = _bool_str(LaunchConfiguration('enable_gz_hand_cam_depth').perform(context))
     enable_gz_lidar           = _bool_str(LaunchConfiguration('enable_gz_lidar').perform(context))
     enable_gz_imu             = _bool_str(LaunchConfiguration('enable_gz_imu').perform(context))
+    camera_rate               = LaunchConfiguration('camera_rate').perform(context)
 
     enable_real_head_cam = _bool_str(LaunchConfiguration('enable_real_head_cam').perform(context)) # TODO: Implement
     enable_real_hand_cam = _bool_str(LaunchConfiguration('enable_real_hand_cam').perform(context)) # TODO: Implement
@@ -137,6 +141,7 @@ def launch_gz(context, *args, **kwargs):
             'enable_gz_hand_cam_depth'  : enable_gz_hand_cam_depth,
             'enable_gz_lidar'           : enable_gz_lidar,
             'enable_gz_imu'             : enable_gz_imu,
+            'camera_rate'               : camera_rate,
             'enable_tf_prefix'          : 'True' if enable_tf_prefix else 'False',
             'dxl_sl_port'               : dxl_sl_port,
         })
@@ -416,23 +421,37 @@ def launch_gz(context, *args, **kwargs):
                     # "/model/" + robot_name + "/pose" + "@geometry_msgs/msg/Pose" + "[gz.msgs.Pose",
                     "/" + robot_name + "/base_front_camera/camera_info" + "@sensor_msgs/msg/CameraInfo" + "[gz.msgs.CameraInfo",
                     "/" + robot_name + "/base_front_camera/color" + "@sensor_msgs/msg/Image" + "[gz.msgs.Image",
-                    "/" + robot_name + "/base_front_camera/depth" + "@sensor_msgs/msg/Image" + "[gz.msgs.Image",
                     "/" + robot_name + "/base_back_camera/camera_info" + "@sensor_msgs/msg/CameraInfo" + "[gz.msgs.CameraInfo",
                     "/" + robot_name + "/base_back_camera/color" + "@sensor_msgs/msg/Image" + "[gz.msgs.Image",
-                    "/" + robot_name + "/base_back_camera/depth" + "@sensor_msgs/msg/Image" + "[gz.msgs.Image",
                     "/" + robot_name + "/head_camera/camera_info" + "@sensor_msgs/msg/CameraInfo" + "[gz.msgs.CameraInfo",
                     "/" + robot_name + "/head_camera/color" + "@sensor_msgs/msg/Image" + "[gz.msgs.Image",
-                    "/" + robot_name + "/head_camera/depth" + "@sensor_msgs/msg/Image" + "[gz.msgs.Image",
-                    "/" + robot_name + "/head_camera/depth/points" + "@sensor_msgs/msg/PointCloud2" + "[gz.msgs.PointCloudPacked",
                     "/" + robot_name + "/hand_camera/camera_info" + "@sensor_msgs/msg/CameraInfo" + "[gz.msgs.CameraInfo",
                     "/" + robot_name + "/hand_camera/color" + "@sensor_msgs/msg/Image" + "[gz.msgs.Image",
-                    "/" + robot_name + "/hand_camera/depth" + "@sensor_msgs/msg/Image" + "[gz.msgs.Image",
-                    "/" + robot_name + "/hand_camera/depth/points" + "@sensor_msgs/msg/PointCloud2" + "[gz.msgs.PointCloudPacked",
                     "/" + robot_name + "/lidar/scan" + "@sensor_msgs/msg/LaserScan" + "[gz.msgs.LaserScan",
                     "/" + robot_name + "/lidar/scan/points" + "@sensor_msgs/msg/PointCloud2" + "[gz.msgs.PointCloudPacked",
                     "/" + robot_name + "/imu" + "@sensor_msgs/msg/Imu" + "[gz.msgs.IMU",
                 ],
-        parameters=[{'use_sim_time': True if enable_gz == 'True' else False}],
+        remappings=[
+                    ("/" + robot_name + "/head_camera/camera_info", "/" + robot_name + "/head_camera/color/camera_info"),
+                    ("/" + robot_name + "/head_camera/color", "/" + robot_name + "/head_camera/color/image_raw"),
+                    ("/" + robot_name + "/hand_camera/camera_info", "/" + robot_name + "/hand_camera/color/camera_info"),
+                    ("/" + robot_name + "/hand_camera/color", "/" + robot_name + "/hand_camera/color/image_raw"),
+                    ("/" + robot_name + "/base_front_camera/camera_info", "/" + robot_name + "/front_camera/camera_info"),
+                    ("/" + robot_name + "/base_front_camera/color", "/" + robot_name + "/front_camera/image_raw"),
+                    ("/" + robot_name + "/base_back_camera/camera_info", "/" + robot_name + "/back_camera/camera_info"),
+                    ("/" + robot_name + "/base_back_camera/color", "/" + robot_name + "/back_camera/image_raw"),
+                ],
+        parameters=[{
+            'use_sim_time': True if enable_gz == 'True' else False,
+            f'qos_overrides./{robot_name}/head_camera/color/image_raw.publisher.reliability': 'best_effort',
+            f'qos_overrides./{robot_name}/head_camera/color/image_raw.publisher.depth': 1,
+            f'qos_overrides./{robot_name}/hand_camera/color/image_raw.publisher.reliability': 'best_effort',
+            f'qos_overrides./{robot_name}/hand_camera/color/image_raw.publisher.depth': 1,
+            f'qos_overrides./{robot_name}/front_camera/image_raw.publisher.reliability': 'best_effort',
+            f'qos_overrides./{robot_name}/front_camera/image_raw.publisher.depth': 1,
+            f'qos_overrides./{robot_name}/back_camera/image_raw.publisher.reliability': 'best_effort',
+            f'qos_overrides./{robot_name}/back_camera/image_raw.publisher.depth': 1,
+        }],
         output='screen'
     )
 
@@ -443,6 +462,101 @@ def launch_gz(context, *args, **kwargs):
         nodes.append(delayed_vel_remap_node)
         nodes.append(delayed_odom_remap_node)
         nodes.append(delayed_controllers)
+
+        # Depth gets its own bridge, stamped with the optical frame, and a ROS-side
+        # point cloud, so the topics match the real RealSense driver's layout.
+        for cam, enabled in [('head_camera', enable_gz_head_cam_depth), ('hand_camera', enable_gz_hand_cam_depth)]:
+            if enabled == 'True':
+                nodes.append(Node(
+                    package='ros_gz_bridge',
+                    executable='parameter_bridge',
+                    name=f'parameter_bridge_{cam}_depth',
+                    namespace=robot_name,
+                    arguments=[
+                        f"/{robot_name}/{cam}/depth" + "@sensor_msgs/msg/Image" + "[gz.msgs.Image",
+                        f"/{robot_name}/{cam}/camera_info" + "@sensor_msgs/msg/CameraInfo" + "[gz.msgs.CameraInfo",
+                    ],
+                    remappings=[
+                        (f"/{robot_name}/{cam}/depth", f"/{robot_name}/{cam}/depth/image_rect_raw"),
+                        (f"/{robot_name}/{cam}/camera_info", f"/{robot_name}/{cam}/depth/camera_info"),
+                    ],
+                    parameters=[{
+                        'use_sim_time': True,
+                        'override_frame_id': f'{tf_prefix}{cam}_depth_optical_frame',
+                        f'qos_overrides./{robot_name}/{cam}/depth/image_rect_raw.publisher.reliability': 'best_effort',
+                        f'qos_overrides./{robot_name}/{cam}/depth/image_rect_raw.publisher.depth': 1,
+                        f'qos_overrides./{robot_name}/{cam}/depth/camera_info.publisher.reliability': 'best_effort',
+                        f'qos_overrides./{robot_name}/{cam}/depth/camera_info.publisher.depth': 1,
+                    }],
+                    output='screen'
+                ))
+
+                nodes.append(Node(
+                    package='depth_image_proc',
+                    executable='point_cloud_xyz_node',
+                    name=f'{cam}_point_cloud_xyz',
+                    namespace=robot_name,
+                    parameters=[{
+                        'use_sim_time': True,
+                        f'qos_overrides./{robot_name}/{cam}/depth/image_rect_raw.subscription.reliability': 'best_effort',
+                        f'qos_overrides./{robot_name}/{cam}/depth/camera_info.subscription.reliability': 'best_effort',
+                        f'qos_overrides./{robot_name}/{cam}/depth/points.publisher.reliability': 'best_effort',
+                        f'qos_overrides./{robot_name}/{cam}/depth/points.publisher.depth': 1,
+                    }],
+                    remappings=[
+                        ('image_rect',  f'/{robot_name}/{cam}/depth/image_rect_raw'),
+                        ('camera_info', f'/{robot_name}/{cam}/depth/camera_info'),
+                        ('points',      f'/{robot_name}/{cam}/depth/points'),
+                    ],
+                    output='screen'
+                ))
+
+                nodes.append(Node(
+                    package='image_transport',
+                    executable='republish',
+                    name=f'{cam}_depth_compressed_republisher',
+                    namespace=robot_name,
+                    arguments=['raw', 'compressedDepth'],
+                    remappings=[
+                        ('in',                  f'/{robot_name}/{cam}/depth/image_rect_raw'),
+                        ('out/compressedDepth', f'/{robot_name}/{cam}/depth/image_rect_raw/compressedDepth'),
+                    ],
+                    parameters=[{
+                        'use_sim_time': True,
+                        f'qos_overrides./{robot_name}/{cam}/depth/image_rect_raw.subscription.reliability': 'best_effort',
+                        f'qos_overrides./{robot_name}/{cam}/depth/image_rect_raw/compressedDepth.publisher.reliability': 'best_effort',
+                        f'qos_overrides./{robot_name}/{cam}/depth/image_rect_raw/compressedDepth.publisher.depth': 1,
+                    }],
+                    output='log'
+                ))
+
+        # Republish raw color images as compressed for each camera in Gazebo
+        # Base cameras have no /color/ segment in their topic, unlike head/hand.
+        for cam, enabled, in_topic in [
+            ('head_camera', enable_gz_head_cam_color, f'/{robot_name}/head_camera/color/image_raw'),
+            ('hand_camera', enable_gz_hand_cam_color, f'/{robot_name}/hand_camera/color/image_raw'),
+            ('front_camera', enable_gz_front_cam_color, f'/{robot_name}/front_camera/image_raw'),
+            ('back_camera', enable_gz_back_cam_color, f'/{robot_name}/back_camera/image_raw'),
+        ]:
+            if enabled == 'True':
+                out_topic = f'{in_topic}/compressed'
+                nodes.append(Node(
+                    package='image_transport',
+                    executable='republish',
+                    name=f'{cam}_compressed_republisher',
+                    namespace=robot_name,
+                    arguments=['raw', 'compressed'],
+                    remappings=[
+                        ('in',             in_topic),
+                        ('out/compressed', out_topic),
+                    ],
+                    parameters=[{
+                        'use_sim_time': True,
+                        f'qos_overrides.{in_topic}.subscription.reliability': 'best_effort',
+                        f'qos_overrides.{out_topic}.publisher.reliability': 'best_effort',
+                    }],
+                    output='log',
+                ))
     else:
         nodes.append(joint_state_broadcaster)
         nodes.append(control_node)

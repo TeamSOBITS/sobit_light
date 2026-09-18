@@ -46,6 +46,7 @@
   <xacro:arg name="enable_gz_hand_cam_depth"  default="True" />
   <xacro:arg name="enable_gz_lidar"           default="True" />
   <xacro:arg name="enable_gz_imu"             default="True" />
+  <xacro:arg name="camera_rate"               default="10" />
   <xacro:arg name="robot_name"                default="sobit_light" />
   <!-- Must match the frame_prefix given to robot_state_publisher. -->
   <xacro:arg name="enable_tf_prefix"          default="True" />
@@ -129,6 +130,7 @@
       enable_gz_hand_cam_depth="$(arg enable_gz_hand_cam_depth)"
       enable_gz_lidar="$(arg enable_gz_lidar)"
       enable_gz_imu="$(arg enable_gz_imu)"
+      camera_rate="$(arg camera_rate)"
     />
   </xacro:if>
 

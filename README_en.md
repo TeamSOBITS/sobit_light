@@ -266,6 +266,9 @@ ros2 launch sobit_light_description display.launch.py
 If it works correctly, RViz will be displayed as follows.
 ![SOBIT LIGHT Display with RViz](sobit_light/docs/img/sobit_light_rviz.png)
 
+The Rerun visualization bridge lives at https://github.com/TeamSOBITS/sobits_viz.
+Launch it with `ros2 launch sobits_viz_rerun rerun.launch.py robot_name:=sobit_light use_sim_time:=true`.
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Run on Gazebo Sim
@@ -291,6 +294,9 @@ If it works correctly, the following Gazebo screen will be displayed.
 
 > [!TIP]
 > Since it is equipped with sensors similar to the actual machine, the processing may become heavy depending on the computer. Please select only the necessary sensors in [gz_minimal.launch.py](sobit_light_bringup/launch/gz_minimal.launch.py).
+
+> [!TIP]
+> Pass `camera_rate:=30` to raise the simulated camera update rate (default 10Hz).
 
 ```python
 'enable_gz_front_cam_color' : 'True',
