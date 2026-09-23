@@ -34,8 +34,6 @@ def generate_launch_description():
     arg_enable_gz_hand_cam_depth  = DeclareLaunchArgument('enable_gz_hand_cam_depth', default_value='True')
     arg_enable_gz_lidar           = DeclareLaunchArgument('enable_gz_lidar', default_value='True')
     arg_enable_gz_imu             = DeclareLaunchArgument('enable_gz_imu', default_value='True')
-    arg_camera_rate               = DeclareLaunchArgument('camera_rate', default_value='10',
-                                                           description='Update rate of the simulated cameras, Hz')
 
     arg_enable_real_head_cam = DeclareLaunchArgument('enable_real_head_cam', default_value='True')
     arg_enable_real_hand_cam = DeclareLaunchArgument('enable_real_hand_cam', default_value='True')
@@ -64,7 +62,6 @@ def generate_launch_description():
         arg_enable_gz_hand_cam_depth,
         arg_enable_gz_lidar,
         arg_enable_gz_imu,
-        arg_camera_rate,
         arg_enable_real_head_cam,
         arg_enable_real_hand_cam,
         arg_enable_tf_prefix,
@@ -100,7 +97,6 @@ def launch_gz(context, *args, **kwargs):
     enable_gz_hand_cam_depth  = _bool_str(LaunchConfiguration('enable_gz_hand_cam_depth').perform(context))
     enable_gz_lidar           = _bool_str(LaunchConfiguration('enable_gz_lidar').perform(context))
     enable_gz_imu             = _bool_str(LaunchConfiguration('enable_gz_imu').perform(context))
-    camera_rate               = LaunchConfiguration('camera_rate').perform(context)
 
     enable_real_head_cam = _bool_str(LaunchConfiguration('enable_real_head_cam').perform(context)) # TODO: Implement
     enable_real_hand_cam = _bool_str(LaunchConfiguration('enable_real_hand_cam').perform(context)) # TODO: Implement
@@ -141,7 +137,6 @@ def launch_gz(context, *args, **kwargs):
             'enable_gz_hand_cam_depth'  : enable_gz_hand_cam_depth,
             'enable_gz_lidar'           : enable_gz_lidar,
             'enable_gz_imu'             : enable_gz_imu,
-            'camera_rate'               : camera_rate,
             'enable_tf_prefix'          : 'True' if enable_tf_prefix else 'False',
             'dxl_sl_port'               : dxl_sl_port,
         })

@@ -239,9 +239,6 @@ ros2 launch sobit_light_bringup gz_minimal.launch.py
 > [!TIP]
 > 実機と同じようなセンサも搭載されていますので，パソコンによって処理が重くなる可能性がありますので，必要なセンサだけを[gz_minimal.launch.py](sobit_light_bringup/launch/gz_minimal.launch.py)で選択してください．
 
-> [!TIP]
-> `camera_rate:=30` を指定するとシミュレーションカメラの更新レートを上げられます（デフォルトは10Hz）．
-
 ```python
 'enable_gz_front_cam_color' : 'True',
 'enable_gz_back_cam_color'  : 'True',

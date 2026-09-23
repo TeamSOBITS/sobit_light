@@ -295,9 +295,6 @@ If it works correctly, the following Gazebo screen will be displayed.
 > [!TIP]
 > Since it is equipped with sensors similar to the actual machine, the processing may become heavy depending on the computer. Please select only the necessary sensors in [gz_minimal.launch.py](sobit_light_bringup/launch/gz_minimal.launch.py).
 
-> [!TIP]
-> Pass `camera_rate:=30` to raise the simulated camera update rate (default 10Hz).
-
 ```python
 'enable_gz_front_cam_color' : 'True',
 'enable_gz_back_cam_color'  : 'True',
