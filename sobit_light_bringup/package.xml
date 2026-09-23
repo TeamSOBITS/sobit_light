@@ -34,6 +34,10 @@
 
   <depend>sobit_light_description</depend>
   <depend>sobit_light_control</depend>
+  <!-- Viewers enable_viz picks from; each is optional at runtime. -->
+  <exec_depend>sobits_viz_rviz</exec_depend>
+  <exec_depend>sobits_viz_foxglove</exec_depend>
+  <exec_depend>sobits_viz_rerun</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
