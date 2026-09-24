@@ -21,11 +21,9 @@ def generate_launch_description():
         DeclareLaunchArgument('robot_coords_x',             default_value='-5.5'),
         DeclareLaunchArgument('robot_coords_y',             default_value='1.5'),
         DeclareLaunchArgument('robot_coords_Y',             default_value='0.0'),
-        DeclareLaunchArgument('use_rviz',                   default_value='false',
-                              description='Deprecated; use enable_viz:=rviz'),
         DeclareLaunchArgument('enable_viz',                 default_value='',
                               description='Viewer to start: rerun, rviz, foxglove, or empty for none'),
-        DeclareLaunchArgument('use_moveit_rviz',            default_value='true'),
+        DeclareLaunchArgument('enable_moveit_rviz',            default_value='false'),
         DeclareLaunchArgument('enable_mobile_base',         default_value='true'),
         DeclareLaunchArgument('enable_head',                default_value='true'),
         DeclareLaunchArgument('enable_arm',                 default_value='true'),
@@ -68,8 +66,6 @@ def _gz_world_name(path):
 def _viewer(context, robot_name):
     """Return the launch action for the chosen viewer, or nothing."""
     choice = LaunchConfiguration('enable_viz').perform(context).strip().lower()
-    if not choice and _bool(LaunchConfiguration('use_rviz'), context) in ('true', 'True'):
-        choice = 'rviz'
     if not choice:
         return []
     package = f'sobits_viz_{choice}'
@@ -162,7 +158,7 @@ def launch_setup(context, *args, **kwargs):
             'enable_moveit'             : _bool(LaunchConfiguration('enable_moveit'), context),
             'enable_teleop'             : _bool(LaunchConfiguration('enable_teleop'), context),
             'enable_tf_prefix'          : _bool(LaunchConfiguration('enable_tf_prefix'), context),
-            'use_moveit_rviz'           : _bool(LaunchConfiguration('use_moveit_rviz'), context),
+            'enable_moveit_rviz'           : _bool(LaunchConfiguration('enable_moveit_rviz'), context),
         }.items(),
     )
 

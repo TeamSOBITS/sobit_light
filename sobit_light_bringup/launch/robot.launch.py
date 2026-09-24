@@ -42,7 +42,7 @@ def generate_launch_description():
 
     arg_enable_moveit   = DeclareLaunchArgument('enable_moveit', default_value='True')
     arg_enable_teleop   = DeclareLaunchArgument('enable_teleop', default_value='True')
-    arg_use_moveit_rviz = DeclareLaunchArgument('use_moveit_rviz', default_value='True')
+    arg_enable_moveit_rviz = DeclareLaunchArgument('enable_moveit_rviz', default_value='false')
 
     return LaunchDescription([
         arg_robot_name,
@@ -67,7 +67,7 @@ def generate_launch_description():
         arg_enable_tf_prefix,
         arg_enable_moveit,
         arg_enable_teleop,
-        arg_use_moveit_rviz,
+        arg_enable_moveit_rviz,
         OpaqueFunction(function = launch_gz),
     ])
 
@@ -106,7 +106,7 @@ def launch_gz(context, *args, **kwargs):
 
     enable_moveit   = _bool_str(LaunchConfiguration('enable_moveit').perform(context))
     enable_teleop   = _bool_str(LaunchConfiguration('enable_teleop').perform(context))
-    use_moveit_rviz = _bool_str(LaunchConfiguration('use_moveit_rviz').perform(context))
+    enable_moveit_rviz = _bool_str(LaunchConfiguration('enable_moveit_rviz').perform(context))
 
     # Find Dynamixel Port name from DXL_LOWER_PORT/DXL_UPPER_PORT environment variable
     dxl_sl_port = ''
@@ -357,7 +357,7 @@ def launch_gz(context, *args, **kwargs):
         launch_arguments={
             'robot_name'         : robot_name,
             'use_sim_time'       : 'true' if enable_gz == 'True' else 'false',
-            'use_rviz'           : 'true' if use_moveit_rviz == 'True' else 'false',
+            'use_rviz'           : 'true' if enable_moveit_rviz == 'True' else 'false',
             'enable_teleop'      : enable_teleop,
             # Module switches -> SRDF xacro args.
             'enable_mobile_base' : enable_mobile_base,
