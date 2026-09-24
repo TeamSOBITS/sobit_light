@@ -44,7 +44,12 @@ def _viewer(context, robot_name):
     return [IncludeLaunchDescription(
         PythonLaunchDescriptionSource(PathJoinSubstitution(
             [FindPackageShare(f'sobits_viz_{choice}'), 'launch', f'{choice}.launch.py'])),
-        launch_arguments={'robot_name': robot_name, 'use_sim_time': 'false'}.items(),
+        launch_arguments={
+            'robot_name': robot_name,
+            'use_sim_time': 'false',
+            'enable_tf_prefix': _bool(
+                LaunchConfiguration('enable_tf_prefix'), context),
+        }.items(),
     )]
 
 
