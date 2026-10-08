@@ -54,7 +54,9 @@ mobile_base:
       controller: wheel_controller
       interface: diff_drive
       kind: velocity
-      joints: [base_l_drive_wheel_joint, base_r_drive_wheel_joint]  # [left, right]
+      joints: [base_l_drive_wheel_joint, base_r_drive_wheel_joint]
+      left_joints: [base_l_drive_wheel_joint]
+      right_joints: [base_r_drive_wheel_joint]
       wheel_radius: 0.045
       wheel_separation: 0.200
 

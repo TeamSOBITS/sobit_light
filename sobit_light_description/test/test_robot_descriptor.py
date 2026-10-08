@@ -173,8 +173,8 @@ def test_gz_controllers_match_descriptor(desc):
         assert c.interface == 'diff_drive', c.name
         assert manager[c.controller]['type'] == 'diff_drive_controller/DiffDriveController', c.name
         params = ctrl[f'/**/{c.controller}']['ros__parameters']
-        assert params['left_wheel_names'] == [c.joints[0]], c.name
-        assert params['right_wheel_names'] == [c.joints[1]], c.name
+        assert params['left_wheel_names'] == c.left_joints, c.name
+        assert params['right_wheel_names'] == c.right_joints, c.name
         assert params['wheel_radius'] == pytest.approx(c.wheel_radius), c.name
         assert params['wheel_separation'] == pytest.approx(c.wheel_separation), c.name
     wheel = ctrl['/**/wheel_controller']['ros__parameters']
