@@ -18,6 +18,11 @@
   <depend>joint_state_publisher</depend>
   <depend>joint_state_publisher_gui</depend>
 
+  <!-- Xacro includes and ros2_control / gz plugins referenced from the URDF. -->
+  <exec_depend>realsense2_description</exec_depend>
+  <exec_depend>kachaka_description</exec_depend>
+  <exec_depend>gz_ros2_control</exec_depend>
+  <exec_depend>dynamixel_hardware</exec_depend>
   <test_depend>ament_cmake_pytest</test_depend>
   <test_depend>python3-yaml</test_depend>
   <test_depend>sobit_light_control</test_depend>
