@@ -12,6 +12,7 @@ cd ..
 # Download required packages for SOBIT LIGHT
 ros_packages=(
     "sobits_interfaces"
+    "sobits_robot_descriptor"
     "dynamixel_hardware"
     "realsense_ros"
     "kachaka-api"
