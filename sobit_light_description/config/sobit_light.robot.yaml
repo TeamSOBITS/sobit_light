@@ -1,0 +1,156 @@
+schema_version: 2
+robot_id: sobit_light
+version: "1.0.0"
+namespace: sobit_light
+description_package: sobit_light_description
+
+urdf:
+  xacro: robots/sobit_light_robot.urdf.xacro
+  args:
+    enable_mobile_base: "True"
+    enable_head: "True"
+    enable_arm: "True"
+    enable_hand: "True"
+
+base_frame: base_footprint
+odom_frame: odom
+joint_states_topic: joint_states
+
+# Joint order is the VLA dataset feature order; do not reorder.
+groups:
+  - name: head
+    controller: head_position_controller
+    joints:
+      - head_yaw_joint
+      - head_pitch_joint
+
+  - name: manipulator
+    controller: arm_position_controller
+    joints:
+      - arm_shoulder_roll_joint
+      - arm_shoulder_pitch_joint
+      - arm_elbow_pitch_joint
+      - arm_forearm_roll_joint
+      - arm_wrist_pitch_joint
+      - arm_wrist_roll_joint
+
+  - name: end_effector
+    controller: hand_position_controller
+    uncommanded_joints: [hand_sub_joint]
+    joints:
+      - hand_joint
+
+# Kachaka base: driven by its own driver. real_controllers.yaml has no wheel
+# controller (gz_controllers.yaml adds wheel_controller for the sim only).
+mobile_base:
+  command_topic: manual_control/cmd_vel
+  odom_topic: odometry/odometry
+  has_vel_x: true
+  has_vel_y: false
+  has_vel_z: false
+  has_vel_theta: true
+  controllers: []
+
+sensors:
+  cameras:
+    - name: head_camera
+      frame: head_camera_link
+      model: realsense_d435
+      requires: {enable_head: "True"}
+      color:
+        frame: head_camera_color_optical_frame
+        raw_topic: head_camera/color/image_raw
+        compressed_topic: head_camera/color/image_raw/compressed
+        info_topic: head_camera/color/camera_info
+        width: 1280
+        height: 720
+        fps: 10
+      depth:
+        frame: head_camera_depth_optical_frame
+        raw_topic: head_camera/depth/image_rect_raw
+        compressed_topic: head_camera/depth/image_rect_raw/compressedDepth
+        info_topic: head_camera/depth/camera_info
+        points_topic: head_camera/depth/points
+        encoding: 16UC1
+        width: 1280
+        height: 720
+        fps: 10
+        range_m: [0.1, 10.0]
+
+    - name: hand_camera
+      frame: hand_camera_link
+      model: realsense_d405
+      requires: {enable_hand: "True"}
+      color:
+        frame: hand_camera_color_optical_frame
+        raw_topic: hand_camera/color/image_raw
+        compressed_topic: hand_camera/color/image_raw/compressed
+        info_topic: hand_camera/color/camera_info
+        width: 640
+        height: 480
+        fps: 10
+      depth:
+        frame: hand_camera_depth_optical_frame
+        raw_topic: hand_camera/depth/image_rect_raw
+        compressed_topic: hand_camera/depth/image_rect_raw/compressedDepth
+        info_topic: hand_camera/depth/camera_info
+        points_topic: hand_camera/depth/points
+        encoding: 16UC1
+        width: 640
+        height: 480
+        fps: 10
+        range_m: [0.1, 10.0]
+
+    # The Kachaka base cameras have no optical frame in the URDF, so their
+    # camera_info names the camera link itself.
+    - name: camera_front
+      frame: camera_front_link
+      requires: {enable_mobile_base: "True"}
+      color:
+        frame: camera_front_link
+        raw_topic: front_camera/image_raw
+        compressed_topic: front_camera/image_raw/compressed
+        info_topic: front_camera/camera_info
+        width: 640
+        height: 480
+        fps: 10
+
+    - name: camera_rear
+      frame: camera_back_link
+      requires: {enable_mobile_base: "True"}
+      color:
+        frame: camera_back_link
+        raw_topic: back_camera/image_raw
+        compressed_topic: back_camera/image_raw/compressed
+        info_topic: back_camera/camera_info
+        width: 640
+        height: 480
+        fps: 10
+
+  lidars:
+    - name: lidar
+      frame: laser_frame
+      scan_topic: lidar/scan
+      points_topic: lidar/scan/points
+      requires: {enable_mobile_base: "True"}
+
+  imus:
+    - name: imu
+      frame: imu_link
+      topic: imu
+      requires: {enable_mobile_base: "True"}
+
+ee:
+  - name: hand
+    ee_link: hand_end_effector_link
+    reference_frame: base_footprint
+    control:
+      group: manipulator
+      command_frame: arm_target_link
+      enable_topic: arm/moveit_track_enabled
+
+# Kachaka joints that no group commands: the wheels and the docking latch.
+excluded_joints:
+  - base_l_drive_wheel_joint
+  - base_r_drive_wheel_joint
+  - docking_joint
