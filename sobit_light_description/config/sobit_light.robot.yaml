@@ -40,8 +40,8 @@ groups:
     joints:
       - hand_joint
 
-# Kachaka base: driven by its own driver. real_controllers.yaml has no wheel
-# controller (gz_controllers.yaml adds wheel_controller for the sim only).
+# Kachaka base: the real robot is driven by the Kachaka driver, so only
+# gz_controllers.yaml has the wheel_controller (diff_drive_controller).
 mobile_base:
   command_topic: manual_control/cmd_vel
   odom_topic: odometry/odometry
@@ -49,7 +49,14 @@ mobile_base:
   has_vel_y: false
   has_vel_z: false
   has_vel_theta: true
-  controllers: []
+  controllers:
+    - name: wheel_drive
+      controller: wheel_controller
+      interface: diff_drive
+      kind: velocity
+      joints: [base_l_drive_wheel_joint, base_r_drive_wheel_joint]  # [left, right]
+      wheel_radius: 0.045
+      wheel_separation: 0.200
 
 sensors:
   cameras:
@@ -149,8 +156,6 @@ ee:
       command_frame: arm_target_link
       enable_topic: arm/moveit_track_enabled
 
-# Kachaka joints that no group commands: the wheels and the docking latch.
+# Kachaka joint that nothing commands: the docking latch.
 excluded_joints:
-  - base_l_drive_wheel_joint
-  - base_r_drive_wheel_joint
   - docking_joint

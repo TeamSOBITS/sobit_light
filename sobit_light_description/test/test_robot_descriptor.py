@@ -153,7 +153,8 @@ def test_real_controllers_match_descriptor(desc):
     spawned = {k for k, v in manager.items() if isinstance(v, dict)}
     expected = {g.controller for g in desc.groups} | {'joint_state_broadcaster'}
     assert spawned == expected, f'controllers not described: {sorted(spawned ^ expected)}'
-    assert desc.mobile_base.controllers == []
+    # The real base is driven by the Kachaka driver, so it has no wheel controller here.
+    assert 'wheel_controller' not in manager
 
 
 def test_gz_controllers_match_descriptor(desc):
@@ -163,14 +164,20 @@ def test_gz_controllers_match_descriptor(desc):
         key = f'/**/{g.controller}'
         assert set(ctrl[key]['ros__parameters']['joints']) == set(g.joints), g.name
         assert manager[g.controller]['type'] == CTRL_TYPES[(g.interface, g.kind)], g.name
-    # The only sim-only controller is the diff drive on the Kachaka wheels.
     spawned = {k for k, v in manager.items() if isinstance(v, dict)}
-    expected = ({g.controller for g in desc.groups} |
-                {'joint_state_broadcaster', 'wheel_controller'})
-    assert spawned == expected
+    expected = ({g.controller for g in desc.groups} | {'joint_state_broadcaster'} |
+                {c.controller for c in desc.mobile_base.controllers})
+    assert spawned == expected, f'controllers not described: {sorted(spawned ^ expected)}'
+    assert desc.mobile_base.controllers, 'no base controller described'
+    for c in desc.mobile_base.controllers:
+        assert c.interface == 'diff_drive', c.name
+        assert manager[c.controller]['type'] == 'diff_drive_controller/DiffDriveController', c.name
+        params = ctrl[f'/**/{c.controller}']['ros__parameters']
+        assert params['left_wheel_names'] == [c.joints[0]], c.name
+        assert params['right_wheel_names'] == [c.joints[1]], c.name
+        assert params['wheel_radius'] == pytest.approx(c.wheel_radius), c.name
+        assert params['wheel_separation'] == pytest.approx(c.wheel_separation), c.name
     wheel = ctrl['/**/wheel_controller']['ros__parameters']
-    wheels = set(wheel['left_wheel_names']) | set(wheel['right_wheel_names'])
-    assert wheels <= set(desc.all_excluded_joints)
     assert wheel['odom_frame_id'] == desc.odom_frame
     assert wheel['base_frame_id'] == desc.base_frame
 
