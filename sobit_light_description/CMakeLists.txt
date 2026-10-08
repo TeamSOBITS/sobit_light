@@ -22,6 +22,7 @@ install(DIRECTORY
   rviz
   urdf
   robots
+  config
   worlds DESTINATION share/${PROJECT_NAME}
 )
 
