@@ -107,7 +107,7 @@ Preferred Robotics(c)が開発した[カチャカ](https://kachaka.life/home/)�
     cd sobit_light/
     ```
 
-4. 依存パッケージをインストールします．
+4. 依存パッケージをインストールします（SOBITS のリポジトリをクローンし，`package.xml` に記載された ROS 依存パッケージを `rosdep` でインストールします）．
     ```sh
     bash install.sh
     ```
