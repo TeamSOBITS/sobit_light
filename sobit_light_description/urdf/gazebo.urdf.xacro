@@ -97,12 +97,12 @@
         <sensor name="base_front_camera_color" type="camera">
           <pose>0 0 ${0.0175/2} ${M_PI/2} -${M_PI/2} 0 </pose>
           
-          <gz_frame_id>${tf_prefix}base_front_camera_color</gz_frame_id>
+          <gz_frame_id>${tf_prefix}camera_front_link</gz_frame_id>
           <topic>${robot_name}/base_front_camera/color</topic>
 
           <always_on>1</always_on>
           <visualize>true</visualize>
-          <update_rate>1</update_rate>
+          <update_rate>10</update_rate>
 
           <camera name="base_front_camera">
             <horizontal_fov>1.21126</horizontal_fov>
@@ -175,7 +175,7 @@
 
           <always_on>1</always_on>
           <visualize>true</visualize>
-          <update_rate>1</update_rate>
+          <update_rate>10</update_rate>
 
           <camera name="base_back_camera">
             <horizontal_fov>1.21126</horizontal_fov>
@@ -210,7 +210,7 @@
 
           <always_on>1</always_on>
           <visualize>true</visualize>
-          <update_rate>1</update_rate>
+          <update_rate>10</update_rate>
 
           <camera name="head_camera_color">
             <horizontal_fov>1.21126</horizontal_fov>
@@ -245,7 +245,7 @@
 
           <always_on>1</always_on>
           <visualize>true</visualize>
-          <update_rate>1</update_rate>
+          <update_rate>10</update_rate>
 
           <camera name="head_camera_depth">
             <horizontal_fov>1.21126</horizontal_fov>
@@ -279,7 +279,7 @@
 
           <always_on>1</always_on>
           <visualize>true</visualize>
-          <update_rate>1</update_rate>
+          <update_rate>10</update_rate>
 
           <camera name="hand_camera_color">
             <horizontal_fov>1.21126</horizontal_fov>
@@ -314,7 +314,7 @@
 
           <always_on>1</always_on>
           <visualize>true</visualize>
-          <update_rate>1</update_rate>
+          <update_rate>10</update_rate>
 
           <camera name="hand_camera_depth">
             <horizontal_fov>1.21126</horizontal_fov>

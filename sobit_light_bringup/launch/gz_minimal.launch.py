@@ -21,8 +21,9 @@ def generate_launch_description():
         DeclareLaunchArgument('robot_coords_x',             default_value='-5.5'),
         DeclareLaunchArgument('robot_coords_y',             default_value='1.5'),
         DeclareLaunchArgument('robot_coords_Y',             default_value='0.0'),
-        DeclareLaunchArgument('use_rviz',                   default_value='true'),
-        DeclareLaunchArgument('use_moveit_rviz',            default_value='true'),
+        DeclareLaunchArgument('enable_viz',                 default_value='',
+                              description='Viewer to start: rerun, rviz, foxglove, or empty for none'),
+        DeclareLaunchArgument('enable_moveit_rviz',            default_value='false'),
         DeclareLaunchArgument('enable_mobile_base',         default_value='true'),
         DeclareLaunchArgument('enable_head',                default_value='true'),
         DeclareLaunchArgument('enable_arm',                 default_value='true'),
@@ -59,6 +60,29 @@ def _gz_world_name(path):
     except OSError:
         return 'default'
     return m.group(1) if m else 'default'
+
+
+
+def _viewer(context, robot_name):
+    """Return the launch action for the chosen viewer, or nothing."""
+    choice = LaunchConfiguration('enable_viz').perform(context).strip().lower()
+    if not choice:
+        return []
+    package = f'sobits_viz_{choice}'
+    launch_file = {'rerun': 'rerun', 'rviz': 'rviz', 'foxglove': 'foxglove'}.get(choice)
+    if launch_file is None:
+        raise RuntimeError(
+            f"enable_viz must be rerun, rviz, foxglove or empty, not '{choice}'")
+    return [IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(PathJoinSubstitution(
+            [FindPackageShare(package), 'launch', f'{launch_file}.launch.py'])),
+        launch_arguments={
+            'robot_name': robot_name,
+            'use_sim_time': 'true',
+            'enable_tf_prefix': _bool(
+                LaunchConfiguration('enable_tf_prefix'), context),
+        }.items(),
+    )]
 
 
 def launch_setup(context, *args, **kwargs):
@@ -103,17 +127,6 @@ def launch_setup(context, *args, **kwargs):
         output='screen',
     )
 
-    rviz_config = PathJoinSubstitution([
-        FindPackageShare('sobit_light_bringup'), 'rviz', 'gazebo.rviz'
-    ])
-    rviz_node = Node(
-        package='rviz2',
-        executable='rviz2',
-        output='screen',
-        arguments=['-d', rviz_config],
-        parameters=[{'use_sim_time': True}],
-        condition=IfCondition(LaunchConfiguration('use_rviz')),
-    )
 
     effective_robot_name = robot_name if robot_id == 0 else f'{robot_name}_{robot_id}'
 
@@ -150,8 +163,8 @@ def launch_setup(context, *args, **kwargs):
             'enable_moveit'             : _bool(LaunchConfiguration('enable_moveit'), context),
             'enable_teleop'             : _bool(LaunchConfiguration('enable_teleop'), context),
             'enable_tf_prefix'          : _bool(LaunchConfiguration('enable_tf_prefix'), context),
-            'use_moveit_rviz'           : _bool(LaunchConfiguration('use_moveit_rviz'), context),
+            'enable_moveit_rviz'           : _bool(LaunchConfiguration('enable_moveit_rviz'), context),
         }.items(),
     )
 
-    return [gz_sim, gz_bridge_node, robot, rviz_node]
+    return [gz_sim, gz_bridge_node, robot] + _viewer(context, 'sobit_light')

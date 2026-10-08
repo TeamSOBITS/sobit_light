@@ -266,6 +266,9 @@ ros2 launch sobit_light_description display.launch.py
 If it works correctly, RViz will be displayed as follows.
 ![SOBIT LIGHT Display with RViz](sobit_light/docs/img/sobit_light_rviz.png)
 
+The Rerun visualization bridge lives at https://github.com/TeamSOBITS/sobits_viz.
+Launch it with `ros2 launch sobits_viz_rerun rerun.launch.py robot_name:=sobit_light use_sim_time:=true`.
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Run on Gazebo Sim

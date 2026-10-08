@@ -211,6 +211,9 @@ ros2 launch sobit_light_description display.launch.py
 
 ![SOBIT LIGHT Display with Rviz](sobit_light/docs/img/sobit_light_rviz.png)
 
+Rerunでの可視化ブリッジは https://github.com/TeamSOBITS/sobits_viz にあります．
+`ros2 launch sobits_viz_rerun rerun.launch.py robot_name:=sobit_light use_sim_time:=true` で起動できます．
+
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
 ### シミュレータの実行方法

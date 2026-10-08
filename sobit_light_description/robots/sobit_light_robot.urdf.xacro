@@ -50,6 +50,9 @@
   <!-- Must match the frame_prefix given to robot_state_publisher. -->
   <xacro:arg name="enable_tf_prefix"          default="True" />
 
+  <!-- ${...} evaluates a Python literal, where only True/False parse. -->
+  <xacro:property name="gz_on" value="${'$(arg enable_gz)'.lower() in ('true', '1')}" />
+
   <!-- Activate Components -->
   <xacro:arg name="enable_mobile_base"  default="True" />
   <xacro:arg name="enable_head"         default="True" />
@@ -114,11 +117,11 @@
 
 
   <!-- Add Dynamixel: plugins -->
-  <xacro:controllers name="joints_control" enable_gz="$(arg enable_gz)" robot_name="$(arg robot_name)" />
+  <xacro:controllers name="joints_control" enable_gz="${gz_on}" robot_name="$(arg robot_name)" />
 
 
   <!-- Add Gazebo: plugins -->
-  <xacro:if value="${$(arg enable_gz)}">
+  <xacro:if value="${gz_on}">
     <xacro:gazebo_sensors robot_name="$(arg robot_name)"
       enable_tf_prefix="$(arg enable_tf_prefix)"
       enable_gz_front_cam_color="$(arg enable_gz_front_cam_color)"

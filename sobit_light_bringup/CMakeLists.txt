@@ -31,7 +31,6 @@ find_package(sobit_light_control REQUIRED)
 
 install(DIRECTORY
   launch
-  rviz
   DESTINATION share/${PROJECT_NAME}
 )
 
