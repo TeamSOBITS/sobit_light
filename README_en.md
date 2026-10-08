@@ -118,7 +118,7 @@ First, please set up the following environment before proceeding to the next ins
     cd sobit_light/
     ```
 
-4. Install the dependent packages.
+4. Install the dependent packages (clones the SOBITS repositories, then installs all ROS dependencies declared in the `package.xml` files via `rosdep`).
     ```sh
     bash install.sh
     ```
