@@ -9,8 +9,8 @@ from launch.substitutions import LaunchConfiguration
 
 SIMULATORS = ('gz', 'isaac', 'mujoco')
 
-# Union of the <sim>_minimal arguments, forwarded only to the launchers that declare them. Empty values are
-# not forwarded, so world_model falls back to each launcher's own default (gz: empty, isaac/mujoco: rcjo2025_arena)
+# Union of the <sim>_minimal arguments, forwarded only to the launchers that declare them. An empty value is
+# replaced by that launcher's own default (world_model: gz empty, isaac / mujoco rcjo2025_arena)
 ARGUMENTS = [
     ('robot_name',                'sobit_light', 'Robot model (and namespace when robot_id is 0)'),
     ('robot_id',                  '0',           'Non-zero appends _<id> to the namespace (multi-robot)'),
@@ -56,21 +56,21 @@ def generate_launch_description():
     ])
 
 
-def _declared(path):
-    """Argument names the launch file declares, read from its own generate_launch_description()."""
+def _declared(path, context):
+    """{name: default} of the arguments the launch file declares, read from its generate_launch_description()."""
     spec = importlib.util.spec_from_file_location(os.path.basename(path).split('.')[0], path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    return {arg.name for arg in module.generate_launch_description().get_launch_arguments()}
+    return {arg.name: ''.join(sub.perform(context) for sub in arg.default_value or [])
+            for arg in module.generate_launch_description().get_launch_arguments()}
 
 
 def launch_setup(context, *args, **kwargs):
     simulator = LaunchConfiguration('simulator').perform(context).strip().lower()
     path = os.path.join(get_package_share_directory('sobit_light_bringup'),
                         'launch', 'include', f'{simulator}_minimal.launch.py')
-    declared = _declared(path)
-    forwarded = [(name, LaunchConfiguration(name).perform(context)) for name, _, _ in ARGUMENTS if name in declared]
-    return [IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(path),
-        launch_arguments=[(name, value) for name, value in forwarded if value],
-    )]
+    declared = _declared(path, context)
+    # The parent context already holds every facade value, so an empty one must be forwarded as the backend default
+    forwarded = [(name, LaunchConfiguration(name).perform(context) or declared[name])
+                 for name, _, _ in ARGUMENTS if name in declared]
+    return [IncludeLaunchDescription(PythonLaunchDescriptionSource(path), launch_arguments=forwarded)]
