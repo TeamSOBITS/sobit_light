@@ -39,12 +39,16 @@
   <exec_depend>sobits_viz_foxglove</exec_depend>
   <exec_depend>sobits_viz_rerun</exec_depend>
 
-  <!-- Launch-time only: nodes, includes and worlds started by robot.launch.py / gz_minimal.launch.py. -->
+  <!-- Launch-time only: nodes, includes and worlds started by robot.launch.py / <sim>_minimal.launch.py. -->
   <exec_depend>sobit_light_library</exec_depend>
   <exec_depend>sobit_light_moveit_config</exec_depend>
   <exec_depend>twist_stamper</exec_depend>
   <exec_depend>topic_tools</exec_depend>
   <exec_depend>gz_ros2_control</exec_depend>
+  <exec_depend>mujoco_ros2_control</exec_depend>
+  <exec_depend>mujoco_ros2_control_plugins</exec_depend>
+  <exec_depend>mujoco_3d_lidar</exec_depend>
+  <exec_depend>python3-yaml</exec_depend>
   <exec_depend>dynamixel_hardware</exec_depend>
   <exec_depend>realsense2_camera</exec_depend>
   <exec_depend>sobits_gazebo_worlds</exec_depend>

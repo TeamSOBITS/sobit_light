@@ -1,0 +1,37 @@
+# mujoco_ros2_control 0.1.2 plugins read their sensor settings here (mujoco_plugins.<label>.<sensor>.*),
+# not from the URDF <sensor> blocks. robot.launch.py prefixes the topics with /<robot_name>/.
+/**:
+  ros__parameters:
+    mujoco_plugins:
+      cameras:
+        type: "mujoco_ros2_control_plugins/CameraPlugin"
+        # Rate of sobit_light.robot.yaml; resolutions come from the MJCF cameras
+        camera_publish_rate: 10.0
+        head_camera:
+          frame_name: head_camera_color_optical_frame
+          info_topic: head_camera/color/camera_info
+          image_topic: head_camera/color/image_raw
+          depth_topic: head_camera/depth/image_rect_raw
+        hand_camera:
+          frame_name: hand_camera_color_optical_frame
+          info_topic: hand_camera/color/camera_info
+          image_topic: hand_camera/color/image_raw
+          depth_topic: hand_camera/depth/image_rect_raw
+        # Colour-only Kachaka cameras: the plugin always renders depth, nothing reads it
+        camera_front:
+          frame_name: camera_front_link
+          info_topic: front_camera/camera_info
+          image_topic: front_camera/image_raw
+          depth_topic: front_camera/depth_unused
+        camera_rear:
+          frame_name: camera_back_link
+          info_topic: back_camera/camera_info
+          image_topic: back_camera/image_raw
+          depth_topic: back_camera/depth_unused
+      # MJCF mujoco.plugin.lidar sensor (ros-jazzy-mujoco-3d-lidar): rays, angles and rate live in the MJCF
+      # export; this only names the frame and topic. Misses are -1 in the LaserScan (upstream behaviour).
+      lidars:
+        type: "mujoco_ros2_control_plugins/Mujoco3dLidarPlugin"
+        lidar:
+          frame_name: laser_frame
+          topic: lidar/scan

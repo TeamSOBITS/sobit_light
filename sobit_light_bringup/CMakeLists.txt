@@ -30,6 +30,7 @@ find_package(sobit_light_control REQUIRED)
 
 
 install(DIRECTORY
+  config
   launch
   DESTINATION share/${PROJECT_NAME}
 )
