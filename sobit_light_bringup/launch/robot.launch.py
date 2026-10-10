@@ -198,15 +198,13 @@ def launch_gz(context, *args, **kwargs):
     
     head_cam_config = os.path.join(get_package_share_directory(
         'sobit_light_bringup'),
-        'launch',
-        'include',
+        'config',
         'head_cam_param.yaml'
     )
 
     hand_cam_config = os.path.join(get_package_share_directory(
         'sobit_light_bringup'),
-        'launch',
-        'include',
+        'config',
         'hand_cam_param.yaml'
     )
 

@@ -222,7 +222,7 @@ Rerunでの可視化ブリッジは https://github.com/TeamSOBITS/sobits_viz に
 ### 共通の入口：sim_minimal
 
 [sim_minimal.launch.py](sobit_light_bringup/launch/sim_minimal.launch.py)を使うと，以下の3つのシミュレータを1つのコマンドで起動できます．
-`simulator:=gz|isaac|mujoco`（デフォルトは`gz`）で`<sim>_minimal.launch.py`を選択します．その他の引数は各launchファイルの引数の和集合であり，それぞれのlaunchファイルには宣言されている引数だけが渡されます（`--show-args`で一覧を確認できます）．
+`simulator:=gz|isaac|mujoco`（デフォルトは`gz`）でバックエンドの`launch/include/<sim>_minimal.launch.py`を選択します．その他の引数は各launchファイルの引数の和集合であり，それぞれのlaunchファイルには宣言されている引数だけが渡されます（`--show-args`で一覧を確認できます）．
 空の値は渡されないため，`world_model`のデフォルトはGazeboでは`empty`，IsaacとMuJoCoでは`rcjo2025_arena`となります．
 
 ```sh
@@ -234,7 +234,7 @@ ros2 launch sobit_light_bringup sim_minimal.launch.py simulator:=mujoco world_mo
 ### シミュレータの実行方法
 
 ```sh
-ros2 launch sobit_light_bringup gz_minimal.launch.py
+ros2 launch sobit_light_bringup sim_minimal.launch.py
 ```
 
 現時点では，これらの仮想環境が用意されています．
@@ -245,14 +245,14 @@ ros2 launch sobit_light_bringup gz_minimal.launch.py
 | `wrs` | WRS2020に実施されたTidy Up環境を出現． |
 | `small_room` | AWSが開発された小型部屋のレイアウトを出現．|
 
-環境を変更するために，`world_model`を[gz_minimal.launch.py](sobit_light_bringup/launch/gz_minimal.launch.py)で変更してください．
+環境を変更するために，`world_model`を[gz_minimal.launch.py](sobit_light_bringup/launch/include/gz_minimal.launch.py)で変更してください．
 
 
 正常に動作した場合は，次のようなGazeboの画面が表示されます．
 ![SOBIT LIGHT Gazebo Harmonic](sobit_light/docs/img/sobit_light_gz_sim.png)
 
 > [!TIP]
-> 実機と同じようなセンサも搭載されていますので，パソコンによって処理が重くなる可能性がありますので，必要なセンサだけを[gz_minimal.launch.py](sobit_light_bringup/launch/gz_minimal.launch.py)で選択してください．
+> 実機と同じようなセンサも搭載されていますので，パソコンによって処理が重くなる可能性がありますので，必要なセンサだけを[gz_minimal.launch.py](sobit_light_bringup/launch/include/gz_minimal.launch.py)で選択してください．
 
 ```python
 'enable_gz_front_cam_color' : 'True',
@@ -266,7 +266,7 @@ ros2 launch sobit_light_bringup gz_minimal.launch.py
 ```
 
 また，複数のSOBIT LIGHTを同じシミュレーション環境でも出現できます．
-そのために，[gz_minimal.launch.py](sobit_light_bringup/launch/gz_minimal.launch.py)でロボットの数に合わせて`gz_robot.launch.py`が実行されるようにその設定を加えてください．
+そのために，[gz_minimal.launch.py](sobit_light_bringup/launch/include/gz_minimal.launch.py)でロボットの数に合わせて`gz_robot.launch.py`が実行されるようにその設定を加えてください．
 
 `robot_name`はロボット間で異なる値を持つ必要があります．
 さらに，`robot_coords_x`，`robot_coords_y`，および`robot_coords_z`でロボットの出現座標を変更できます．
@@ -324,12 +324,12 @@ Gazeboの代わりにIsaac Sim 6.1も利用できます．Isaac Simはホスト�
     ```
 2. コンテナ内でロボットを起動します．ワールドの読み込み，ロボットの出現，ROSスタックの起動まで自動で行われます．
     ```sh
-    ros2 launch sobit_light_bringup isaac_minimal.launch.py world_model:=rcjo2025_arena
+    ros2 launch sobit_light_bringup sim_minimal.launch.py simulator:=isaac world_model:=rcjo2025_arena
     ```
 
 launchをCtrl-Cで終了しても，Isaacは起動（再生）したままです．再度launchするとワールドを読み込み直してロボットを出現させます．GUIで開いたワールドをそのまま使う場合は`spawn_only:=true`を指定してください．
 
-[isaac_minimal.launch.py](sobit_light_bringup/launch/isaac_minimal.launch.py)はgz_minimalのモジュール・センサの引数（`enable_gz_imu`を除く）に加えて，以下の引数を持ちます．
+[isaac_minimal.launch.py](sobit_light_bringup/launch/include/isaac_minimal.launch.py)はgz_minimalのモジュール・センサの引数（`enable_gz_imu`を除く）に加えて，以下の引数を持ちます．
 センサの引数を`false`にすると，Isaac内でもそのセンサが無効になります（出現前にそのグラフを無効化します）．モジュールの引数はROS側のコントローラを起動しないだけです．
 
 | 引数 | デフォルト | 説明 |
@@ -352,15 +352,15 @@ MuJoCoは[mujoco_ros2_control](https://github.com/ros-controls/mujoco_ros2_contr
 1つのプロセスがMuJoCo，Simulateウィンドウ，`controller_manager`を担い，`/clock`も配信します．
 
 ```sh
-ros2 launch sobit_light_bringup mujoco_minimal.launch.py
+ros2 launch sobit_light_bringup sim_minimal.launch.py simulator:=mujoco
 
 # Simulateウィンドウなし
-ros2 launch sobit_light_bringup mujoco_minimal.launch.py headless:=true
+ros2 launch sobit_light_bringup sim_minimal.launch.py simulator:=mujoco headless:=true
 ```
 
 起動時に，sobits_gazebo_worldsの`scripts/mujoco_scene.py`がワールドのMJCF（`<asset_root>/mjcf/<world>[_closed]/`）とロボットのMJCF（`<asset_root>/mjcf/robots/sobit_light/`）を出現位置で結合し，ワールドと同じディレクトリに`scene_sobit_light.xml`を生成します．これを`robot.launch.py simulator:=mujoco mujoco_model:=<scene>`が読み込みます．
 
-[mujoco_minimal.launch.py](sobit_light_bringup/launch/mujoco_minimal.launch.py)はgz_minimalの引数（出現位置，`enable_gz_imu`を除くモジュール・センサの引数，`enable_viz`）に加えて，`world_model`（デフォルトは`rcjo2025_arena`，またはMJCFの絶対パス），`world_closed`，`asset_root`（Isaacと同じ），`headless`を持ちます．
+[mujoco_minimal.launch.py](sobit_light_bringup/launch/include/mujoco_minimal.launch.py)はgz_minimalの引数（出現位置，`enable_gz_imu`を除くモジュール・センサの引数，`enable_viz`）に加えて，`world_model`（デフォルトは`rcjo2025_arena`，またはMJCFの絶対パス），`world_closed`，`asset_root`（Isaacと同じ），`headless`を持ちます．
 
 URDFの`ros2_control`ブロックは`MujocoSystemInterface`に切り替わり（`enable_mujoco:=true`），各ジョイントは同名のMJCFアクチュエータを駆動します．台車はGazeboと同様に`wheel_controller`で動かします．
 カメラとLiDARのプラグインはトピック，フレーム，周期を[mujoco_plugins.yaml](sobit_light_bringup/config/mujoco_plugins.yaml)から読み込みます．無効にしたカメラは要求時のみ描画され（`policy: polled`），`enable_gz_lidar:=false`でLiDARプラグインは読み込まれません．

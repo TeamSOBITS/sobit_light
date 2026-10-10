@@ -67,7 +67,7 @@ def _declared(path):
 def launch_setup(context, *args, **kwargs):
     simulator = LaunchConfiguration('simulator').perform(context).strip().lower()
     path = os.path.join(get_package_share_directory('sobit_light_bringup'),
-                        'launch', f'{simulator}_minimal.launch.py')
+                        'launch', 'include', f'{simulator}_minimal.launch.py')
     declared = _declared(path)
     forwarded = [(name, LaunchConfiguration(name).perform(context)) for name, _, _ in ARGUMENTS if name in declared]
     return [IncludeLaunchDescription(

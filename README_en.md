@@ -276,7 +276,7 @@ Launch it with `ros2 launch sobits_viz_rerun rerun.launch.py robot_name:=sobit_l
 
 ### One entry point: sim_minimal
 
-[sim_minimal.launch.py](sobit_light_bringup/launch/sim_minimal.launch.py) starts any of the three simulators below with one command. `simulator:=gz|isaac|mujoco` (default `gz`) picks `<sim>_minimal.launch.py`; the other arguments are the union of theirs, and each launcher only receives the ones it declares (`--show-args` lists them all). An empty value is not forwarded, so `world_model` defaults to `empty` for Gazebo and to `rcjo2025_arena` for Isaac and MuJoCo.
+[sim_minimal.launch.py](sobit_light_bringup/launch/sim_minimal.launch.py) starts any of the three simulators below with one command. `simulator:=gz|isaac|mujoco` (default `gz`) picks the backend `launch/include/<sim>_minimal.launch.py`; the other arguments are the union of theirs, and each launcher only receives the ones it declares (`--show-args` lists them all). An empty value is not forwarded, so `world_model` defaults to `empty` for Gazebo and to `rcjo2025_arena` for Isaac and MuJoCo.
 
 ```sh
 ros2 launch sobit_light_bringup sim_minimal.launch.py simulator:=mujoco world_model:=rcjo2025_arena headless:=true
@@ -289,7 +289,7 @@ ros2 launch sobit_light_bringup sim_minimal.launch.py simulator:=mujoco world_mo
 SOBIT LIGHT has a simulation environment with Gazebo Fortress, allowing you to verify operations even without the actual machine.
 
 ```sh
-ros2 launch sobit_light_bringup gz_minimal.launch.py
+ros2 launch sobit_light_bringup sim_minimal.launch.py
 ```
 
 At present, the following virtual environments are available.
@@ -300,13 +300,13 @@ At present, the following virtual environments are available.
 | `wrs`          | Spawns the Tidy Up environment used in WRS2020. |
 | `small_room`   | Spawns a small room layout developed by AWS. |
 
-To change the environment, modify the `world_model` parameter in [gz_minimal.launch.py](sobit_light_bringup/launch/gz_minimal.launch.py).
+To change the environment, modify the `world_model` parameter in [gz_minimal.launch.py](sobit_light_bringup/launch/include/gz_minimal.launch.py).
 
 If it works correctly, the following Gazebo screen will be displayed.
 ![SOBIT LIGHT Gazebo Ignition](sobit_light/docs/img/sobit_light_gz_sim.png)
 
 > [!TIP]
-> Since it is equipped with sensors similar to the actual machine, the processing may become heavy depending on the computer. Please select only the necessary sensors in [gz_minimal.launch.py](sobit_light_bringup/launch/gz_minimal.launch.py).
+> Since it is equipped with sensors similar to the actual machine, the processing may become heavy depending on the computer. Please select only the necessary sensors in [gz_minimal.launch.py](sobit_light_bringup/launch/include/gz_minimal.launch.py).
 
 ```python
 'enable_gz_front_cam_color' : 'True',
@@ -319,7 +319,7 @@ If it works correctly, the following Gazebo screen will be displayed.
 'enable_gz_imu'             : 'True',
 ```
 
-Additionally, multiple SOBIT LIGHTs can be spawned in the same simulation environment. To do so, configure [gz_minimal.launch.py](sobit_light_bringup/launch/gz_minimal.launch.py) to execute `gz_robot.launch.py` according to the number of robots.
+Additionally, multiple SOBIT LIGHTs can be spawned in the same simulation environment. To do so, configure [gz_minimal.launch.py](sobit_light_bringup/launch/include/gz_minimal.launch.py) to execute `gz_robot.launch.py` according to the number of robots.
 
 Please, make sure that each `robot_name` have different values among robots.
 Moreover, you can change the spawining coordinates of the robot in `robot_coords_x`, `robot_coords_y` and `robot_coords_z`.
@@ -377,12 +377,12 @@ The host setup (Isaac install, assets, the `~/colcon_ws` link) is described in t
     ```
 2. In the container, launch the robot. The launch loads the world, spawns the robot and starts the ROS stack:
     ```sh
-    ros2 launch sobit_light_bringup isaac_minimal.launch.py world_model:=rcjo2025_arena
+    ros2 launch sobit_light_bringup sim_minimal.launch.py simulator:=isaac world_model:=rcjo2025_arena
     ```
 
 Ctrl-C on the launch leaves Isaac running (and playing). Launching again reloads the world and respawns the robot; `spawn_only:=true` skips the reload for a world opened by hand in the GUI.
 
-[isaac_minimal.launch.py](sobit_light_bringup/launch/isaac_minimal.launch.py) takes the module/sensor flags of gz_minimal (except `enable_gz_imu`) plus the following. A sensor flag set to `false` also switches that sensor off inside Isaac (its graph is deactivated before the spawn); a module flag only drops the ROS-side controller.
+[isaac_minimal.launch.py](sobit_light_bringup/launch/include/isaac_minimal.launch.py) takes the module/sensor flags of gz_minimal (except `enable_gz_imu`) plus the following. A sensor flag set to `false` also switches that sensor off inside Isaac (its graph is deactivated before the spawn); a module flag only drops the ROS-side controller.
 
 | Argument | Default | Description |
 | --- | --- | --- |
@@ -403,15 +403,15 @@ MuJoCo runs inside the container through [mujoco_ros2_control](https://github.co
 One process hosts MuJoCo, its Simulate window and the `controller_manager`, and publishes `/clock`.
 
 ```sh
-ros2 launch sobit_light_bringup mujoco_minimal.launch.py
+ros2 launch sobit_light_bringup sim_minimal.launch.py simulator:=mujoco
 
 # Without the Simulate window
-ros2 launch sobit_light_bringup mujoco_minimal.launch.py headless:=true
+ros2 launch sobit_light_bringup sim_minimal.launch.py simulator:=mujoco headless:=true
 ```
 
 At launch, `scripts/mujoco_scene.py` of sobits_gazebo_worlds merges the world MJCF (`<asset_root>/mjcf/<world>[_closed]/`) and the robot MJCF (`<asset_root>/mjcf/robots/sobit_light/`) at the spawn pose into `scene_sobit_light.xml` next to the world, which `robot.launch.py simulator:=mujoco mujoco_model:=<scene>` loads.
 
-[mujoco_minimal.launch.py](sobit_light_bringup/launch/mujoco_minimal.launch.py) takes the arguments of gz_minimal (spawn pose, module/sensor flags except `enable_gz_imu`, `enable_viz`), plus `world_model` (default `rcjo2025_arena`, or an absolute MJCF path), `world_closed`, `asset_root` (as for Isaac) and `headless`.
+[mujoco_minimal.launch.py](sobit_light_bringup/launch/include/mujoco_minimal.launch.py) takes the arguments of gz_minimal (spawn pose, module/sensor flags except `enable_gz_imu`, `enable_viz`), plus `world_model` (default `rcjo2025_arena`, or an absolute MJCF path), `world_closed`, `asset_root` (as for Isaac) and `headless`.
 
 The URDF switches the `ros2_control` block to `MujocoSystemInterface` (`enable_mujoco:=true`); its joints drive the MJCF actuators of the same name and `wheel_controller` drives the base as in Gazebo. The camera and lidar plugins take their topics, frames and rate from [mujoco_plugins.yaml](sobit_light_bringup/config/mujoco_plugins.yaml); a disabled camera is only rendered on request (`policy: polled`), `enable_gz_lidar:=false` drops the lidar plugin.
 
