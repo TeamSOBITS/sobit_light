@@ -329,8 +329,14 @@ def launch_gz(context, *args, **kwargs):
         # which only matches the TF tree when the prefix is enabled.
         # Isaac's copy in the USD pins it false, so there it is always set explicitly.
         if not enable_tf_prefix or simulator == 'isaac':
+            # Isaac's controller_manager runs on the host: the file must sit on the workspace mount, which the
+            # host reaches under the same path through its ~/colcon_ws symlink (see the Isaac README section)
+            override_dir = None
+            if simulator == 'isaac':
+                pkg_xml = os.path.join(get_package_share_directory('sobits_gazebo_worlds'), 'package.xml')
+                override_dir = os.path.join(os.path.dirname(os.path.realpath(pkg_xml)), 'export')
             override = tempfile.NamedTemporaryFile(
-                'w', prefix='wheel_controller_tf_prefix_', suffix='.yaml', delete=False)
+                'w', prefix='wheel_controller_tf_prefix_', suffix='.yaml', delete=False, dir=override_dir)
             override.write('/**:\n  ros__parameters:\n    tf_frame_prefix_enable: '
                            f'{str(enable_tf_prefix).lower()}\n')
             override.close()
