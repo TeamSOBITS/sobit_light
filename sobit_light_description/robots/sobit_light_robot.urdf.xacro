@@ -38,6 +38,10 @@
 
   <!-- Add variables -->
   <xacro:arg name="enable_gz"                 default="False" />
+  <!-- MuJoCo (mujoco_ros2_control) supersedes enable_gz; mujoco_model = absolute scene.xml -->
+  <xacro:arg name="enable_mujoco"             default="False" />
+  <xacro:arg name="mujoco_model"              default="" />
+  <xacro:arg name="mujoco_headless"           default="false" />
   <xacro:arg name="enable_gz_front_cam_color" default="True" />
   <xacro:arg name="enable_gz_back_cam_color"  default="True" />
   <xacro:arg name="enable_gz_head_cam_color"  default="True" />
@@ -51,7 +55,10 @@
   <xacro:arg name="enable_tf_prefix"          default="True" />
 
   <!-- ${...} evaluates a Python literal, where only True/False parse. -->
-  <xacro:property name="gz_on" value="${'$(arg enable_gz)'.lower() in ('true', '1')}" />
+  <xacro:property name="mujoco_on" value="${'$(arg enable_mujoco)'.lower() in ('true', '1')}" />
+  <xacro:property name="gz_on" value="${'$(arg enable_gz)'.lower() in ('true', '1') and not mujoco_on}" />
+  <!-- Any simulator: no real hardware params, sim-only joints (wheels, hand mimic) -->
+  <xacro:property name="sim_on" value="${gz_on or mujoco_on}" />
 
   <!-- Activate Components -->
   <xacro:arg name="enable_mobile_base"  default="True" />

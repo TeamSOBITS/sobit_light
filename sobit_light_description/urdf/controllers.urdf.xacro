@@ -9,7 +9,14 @@
         <xacro:if value="${gz_on}">
           <plugin>gz_ros2_control/GazeboSimSystem</plugin>
         </xacro:if>
-        <xacro:unless value="${gz_on}">
+        <!-- Joints map to the MJCF actuators of the same name; sensors live in mujoco_plugins.yaml -->
+        <xacro:if value="${mujoco_on}">
+          <plugin>mujoco_ros2_control/MujocoSystemInterface</plugin>
+          <param name="mujoco_model">$(arg mujoco_model)</param>
+          <param name="headless">$(arg mujoco_headless)</param>
+          <param name="initial_keyframe">home</param>
+        </xacro:if>
+        <xacro:unless value="${sim_on}">
           <xacro:property name="dxl_sl_port" value="$(arg dxl_sl_port)"/>
           <plugin>dynamixel_hardware/DynamixelHardware</plugin>
             <param name="port_name">${dxl_sl_port}</param>
@@ -50,7 +57,7 @@
   <xacro:macro name="dxl_head_controllers"  params="prefix enable_gz:=False">
     <!-- Position Drive - Head -->
     <joint name="${prefix}_yaw_joint">
-      <xacro:unless value="${gz_on}">
+      <xacro:unless value="${sim_on}">
         <param name="id">11</param>
         <param name="control_mode">0</param>
         <param name="interface">rs</param>
@@ -67,7 +74,7 @@
       <!-- <state_interface name="effort"/> -->
     </joint>
     <joint name="${prefix}_pitch_joint">
-      <xacro:unless value="${gz_on}">
+      <xacro:unless value="${sim_on}">
         <param name="id">12</param>
         <param name="control_mode">0</param>
         <param name="interface">rs</param>
@@ -88,7 +95,7 @@
   <xacro:macro name="dxl_arm_controllers"  params="prefix enable_gz:=False">
     <!-- Position Drive - Arm -->
     <joint name="${prefix}_shoulder_roll_joint">
-      <xacro:unless value="${gz_on}">
+      <xacro:unless value="${sim_on}">
         <param name="id">1</param>
         <param name="control_mode">0</param>
         <param name="interface">rs</param>
@@ -105,7 +112,7 @@
       <!-- <state_interface name="effort"/> -->
     </joint>
     <joint name="${prefix}_shoulder_pitch_joint">
-      <xacro:unless value="${gz_on}">
+      <xacro:unless value="${sim_on}">
         <param name="id">3</param>
         <param name="control_mode">0</param>
         <param name="interface">rs</param>
@@ -122,7 +129,7 @@
       <!-- <state_interface name="effort"/> -->
     </joint>
     <joint name="${prefix}_elbow_pitch_joint">
-      <xacro:unless value="${gz_on}">
+      <xacro:unless value="${sim_on}">
         <param name="id">4</param>
         <param name="control_mode">0</param>
         <param name="interface">rs</param>
@@ -139,7 +146,7 @@
       <!-- <state_interface name="effort"/> -->
     </joint>
     <joint name="${prefix}_forearm_roll_joint">
-      <xacro:unless value="${gz_on}">
+      <xacro:unless value="${sim_on}">
         <param name="id">5</param>
         <param name="control_mode">0</param>
         <param name="interface">rs</param>
@@ -156,7 +163,7 @@
       <!-- <state_interface name="effort"/> -->
     </joint>
     <joint name="${prefix}_wrist_pitch_joint">
-      <xacro:unless value="${gz_on}">
+      <xacro:unless value="${sim_on}">
         <param name="id">6</param>
         <param name="control_mode">0</param>
         <param name="interface">rs</param>
@@ -173,7 +180,7 @@
       <!-- <state_interface name="effort"/> -->
     </joint>
     <joint name="${prefix}_wrist_roll_joint">
-      <xacro:unless value="${gz_on}">
+      <xacro:unless value="${sim_on}">
         <param name="id">7</param>
         <param name="control_mode">0</param>
         <param name="interface">rs</param>
@@ -194,7 +201,7 @@
   <xacro:macro name="dxl_hand_controllers"  params="prefix enable_gz:=False">
     <!-- Position Drive - Hand -->
     <joint name="${prefix}_joint">
-      <xacro:unless value="${gz_on}">
+      <xacro:unless value="${sim_on}">
         <param name="id">8</param>
         <param name="control_mode">6</param>
         <param name="Goal_Current">50</param>
@@ -209,7 +216,7 @@
       <state_interface name="velocity"/>
       <!-- <state_interface name="effort"/> -->
     </joint>
-    <xacro:if value="${gz_on}">
+    <xacro:if value="${sim_on}">
       <joint name="${prefix}_sub_joint">
         <param name="mimic">${prefix}_joint</param>
         <param name="multiplier">-1</param>
@@ -222,7 +229,7 @@
   </xacro:macro>
 
   <xacro:macro name="wheel_controllers"  params="prefix enable_gz:=False">
-    <xacro:if value="${gz_on}">
+    <xacro:if value="${sim_on}">
         <joint name="base_l_drive_wheel_joint">
           <command_interface name="velocity">
             <param name="min">-1.0</param>
@@ -236,6 +243,13 @@
             <param name="min">-1.0</param>
             <param name="max">1.0</param>
           </command_interface>
+          <state_interface name="position"/>
+          <state_interface name="velocity"/>
+        </joint>
+    </xacro:if>
+    <!-- gz bridges every joint state; MuJoCo reports only these, and MoveIt needs the docking latch too -->
+    <xacro:if value="${mujoco_on}">
+        <joint name="docking_joint">
           <state_interface name="position"/>
           <state_interface name="velocity"/>
         </joint>
