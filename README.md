@@ -370,7 +370,7 @@ URDFの`ros2_control`ブロックは`MujocoSystemInterface`に切り替わり（
 - IMUはありません（`imu`トピックは配信されません）．
 - `<cam>/depth/image_rect_raw`は`32FC1`（メートル）で，フレームは`<cam>_color_optical_frame`です（1つのMuJoCoカメラがカラーとデプスを描画するため）．`<cam>/depth/camera_info`はカラーのものを中継し，`depth/points`はGazeboと同様に`depth_image_proc`で生成します．
 - LiDARはGazeboのLiDARの形状から出力した`mujoco.plugin.lidar`センサです（640本，±2.487 rad，0.1〜10 m，10 Hz）．検出なしは`-1`となります．
-- 実機のハンドカメラは848×480・5 Hzですが，シミュレータでは640×480・10 Hzで描画します．
+- ハンドカメラは実機のD405と同じ848×480で描画します．GazeboとIsaacは5 Hz，MuJoCoのCameraPluginは全カメラ共通の1つのレート（10 Hz）です．
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 

@@ -420,7 +420,7 @@ The URDF switches the `ros2_control` block to `MujocoSystemInterface` (`enable_m
 - No IMU: MuJoCo publishes no `imu` topic.
 - `<cam>/depth/image_rect_raw` is `32FC1` metres and framed in `<cam>_color_optical_frame` (one MuJoCo camera renders colour and depth); `<cam>/depth/camera_info` is relayed from the colour one, and `depth/points` comes from `depth_image_proc` as in Gazebo.
 - The lidar is a `mujoco.plugin.lidar` sensor exported from the Gazebo lidar geometry (640 rays, ±2.487 rad, 0.1-10 m, 10 Hz); misses are `-1`.
-- The real hand camera runs at 848×480 @ 5 Hz, while the simulators render 640×480 @ 10 Hz.
+- The hand camera renders 848×480 like the real D405; Gazebo and Isaac publish it at 5 Hz, MuJoCo's CameraPlugin has one rate for all cameras (10 Hz).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
