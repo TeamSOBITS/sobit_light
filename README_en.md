@@ -29,7 +29,10 @@
       <ul>
         <li><a href="#teleoperation-remote-control">Teleoperation (Remote Control)</a></li>
         <li><a href="#visualization-on-rviz2">Visualization on RViz2</a></li>
+        <li><a href="#one-entry-point-sim_minimal">One entry point: sim_minimal</a></li>
         <li><a href="#run-on-gazebo-sim">Run on Gazebo Sim</a></li>
+        <li><a href="#run-on-isaac-sim">Run on Isaac Sim</a></li>
+        <li><a href="#run-on-mujoco">Run on MuJoCo</a></li>
       </ul>
     </li>
     <li>
@@ -271,6 +274,16 @@ Launch it with `ros2 launch sobits_viz_rerun rerun.launch.py robot_name:=sobit_l
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+### One entry point: sim_minimal
+
+[sim_minimal.launch.py](sobit_light_bringup/launch/sim_minimal.launch.py) starts any of the three simulators below with one command. `simulator:=gz|isaac|mujoco` (default `gz`) picks `<sim>_minimal.launch.py`; the other arguments are the union of theirs, and each launcher only receives the ones it declares (`--show-args` lists them all). An empty value is not forwarded, so `world_model` defaults to `empty` for Gazebo and to `rcjo2025_arena` for Isaac and MuJoCo.
+
+```sh
+ros2 launch sobit_light_bringup sim_minimal.launch.py simulator:=mujoco world_model:=rcjo2025_arena headless:=true
+```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 ### Run on Gazebo Sim
 
 SOBIT LIGHT has a simulation environment with Gazebo Fortress, allowing you to verify operations even without the actual machine.
@@ -350,6 +363,64 @@ IncludeLaunchDescription(
 ),
 ...
 ```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### Run on Isaac Sim
+
+Isaac Sim 6.1 can be used instead of Gazebo. It runs on the host and is started by hand; the container drives it through services.
+The host setup (Isaac install, assets, the `~/colcon_ws` link) is described in the [sobits_gazebo_worlds README](../sobits_gazebo_worlds/README.md#isaac-sim).
+
+1. On the host, start the runner and leave it running:
+    ```sh
+    ~/docker_containers/jazzy_sobit_home_2_moveit_ws/src/sobits_gazebo_worlds/scripts/isaac_sim.sh
+    ```
+2. In the container, launch the robot. The launch loads the world, spawns the robot and starts the ROS stack:
+    ```sh
+    ros2 launch sobit_light_bringup isaac_minimal.launch.py world_model:=rcjo2025_arena
+    ```
+
+Ctrl-C on the launch leaves Isaac running (and playing). Launching again reloads the world and respawns the robot; `spawn_only:=true` skips the reload for a world opened by hand in the GUI.
+
+[isaac_minimal.launch.py](sobit_light_bringup/launch/isaac_minimal.launch.py) takes the module/sensor flags of gz_minimal (except `enable_gz_imu`) plus the following. A sensor flag set to `false` also switches that sensor off inside Isaac (its graph is deactivated before the spawn); a module flag only drops the ROS-side controller.
+
+| Argument | Default | Description |
+| --- | --- | --- |
+| `world_model` | `rcjo2025_arena` | World to load (`<asset_root>/usd/<name>.usda`), or an absolute path to a USD file. |
+| `world_closed` | `false` | Load the `_closed` variant (walls, ceiling and room lights). |
+| `asset_root` | (empty) | Asset directory. Empty uses `SOBITS_SIM_ASSET_ROOT`, else the `export/` directory of sobits_gazebo_worlds. |
+| `robot_usd` | (empty) | Robot USD. Empty uses `<asset_root>/usd/robots/sobit_light/sobit_light.usd`. |
+| `spawn_only` | `false` | Do not load the world; use the one already open in the Isaac GUI. |
+| `wait_timeout` | `120` | Seconds to wait for the runner's services. |
+
+`robot.launch.py` takes a `simulator` argument (`none`, `gz`, `isaac` or `mujoco`; empty derives it from `enable_gz`). With `isaac` the spawners wait up to 120 s for the `controller_manager` inside the robot USD; Isaac publishes the cameras (colour `compressed` is H.264), depth points, the lidar and `/clock` itself, so only the `compressedDepth` republishers, the cmd_vel/odometry relays, the action servers and MoveIt run on the ROS side.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### Run on MuJoCo
+
+MuJoCo runs inside the container through [mujoco_ros2_control](https://github.com/ros-controls/mujoco_ros2_control) (`ros-jazzy-mujoco-ros2-control`, installed by rosdep); the host needs nothing.
+One process hosts MuJoCo, its Simulate window and the `controller_manager`, and publishes `/clock`.
+
+```sh
+ros2 launch sobit_light_bringup mujoco_minimal.launch.py
+
+# Without the Simulate window
+ros2 launch sobit_light_bringup mujoco_minimal.launch.py headless:=true
+```
+
+At launch, `scripts/mujoco_scene.py` of sobits_gazebo_worlds merges the world MJCF (`<asset_root>/mjcf/<world>[_closed]/`) and the robot MJCF (`<asset_root>/mjcf/robots/sobit_light/`) at the spawn pose into `scene_sobit_light.xml` next to the world, which `robot.launch.py simulator:=mujoco mujoco_model:=<scene>` loads.
+
+[mujoco_minimal.launch.py](sobit_light_bringup/launch/mujoco_minimal.launch.py) takes the arguments of gz_minimal (spawn pose, module/sensor flags except `enable_gz_imu`, `enable_viz`), plus `world_model` (default `rcjo2025_arena`, or an absolute MJCF path), `world_closed`, `asset_root` (as for Isaac) and `headless`.
+
+The URDF switches the `ros2_control` block to `MujocoSystemInterface` (`enable_mujoco:=true`); its joints drive the MJCF actuators of the same name and `wheel_controller` drives the base as in Gazebo. The camera and lidar plugins take their topics, frames and rate from [mujoco_plugins.yaml](sobit_light_bringup/config/mujoco_plugins.yaml); a disabled camera is only rendered on request (`policy: polled`), `enable_gz_lidar:=false` drops the lidar plugin.
+
+**Known differences**:
+
+- No IMU: MuJoCo publishes no `imu` topic.
+- `<cam>/depth/image_rect_raw` is `32FC1` metres and framed in `<cam>_color_optical_frame` (one MuJoCo camera renders colour and depth); `<cam>/depth/camera_info` is relayed from the colour one, and `depth/points` comes from `depth_image_proc` as in Gazebo.
+- The lidar is a `mujoco.plugin.lidar` sensor exported from the Gazebo lidar geometry (640 rays, ±2.487 rad, 0.1-10 m, 10 Hz); misses are `-1`.
+- The real hand camera runs at 848×480 @ 5 Hz, while the simulators render 640×480 @ 10 Hz.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

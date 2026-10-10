@@ -27,7 +27,10 @@
       <ul>
         <li><a href="#テレオペレーション遠隔操作">テレオペレーション(遠隔操作)</a></li>
         <li><a href="#rviz2上の可視化">Rviz2上の可視化</a></li>
+        <li><a href="#共通の入口sim_minimal">共通の入口：sim_minimal</a></li>
         <li><a href="#シミュレータの実行方法">シミュレータの実行方法</a></li>
+        <li><a href="#isaac-simでの実行方法">Isaac Simでの実行方法</a></li>
+        <li><a href="#mujocoでの実行方法">MuJoCoでの実行方法</a></li>
       </ul>
     </li>
     <li>
@@ -216,6 +219,18 @@ Rerunでの可視化ブリッジは https://github.com/TeamSOBITS/sobits_viz に
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
+### 共通の入口：sim_minimal
+
+[sim_minimal.launch.py](sobit_light_bringup/launch/sim_minimal.launch.py)を使うと，以下の3つのシミュレータを1つのコマンドで起動できます．
+`simulator:=gz|isaac|mujoco`（デフォルトは`gz`）で`<sim>_minimal.launch.py`を選択します．その他の引数は各launchファイルの引数の和集合であり，それぞれのlaunchファイルには宣言されている引数だけが渡されます（`--show-args`で一覧を確認できます）．
+空の値は渡されないため，`world_model`のデフォルトはGazeboでは`empty`，IsaacとMuJoCoでは`rcjo2025_arena`となります．
+
+```sh
+ros2 launch sobit_light_bringup sim_minimal.launch.py simulator:=mujoco world_model:=rcjo2025_arena headless:=true
+```
+
+<p align="right">(<a href="#readme-top">上に戻る</a>)</p>
+
 ### シミュレータの実行方法
 
 ```sh
@@ -295,6 +310,67 @@ IncludeLaunchDescription(
 ),
 ...
 ```
+
+<p align="right">(<a href="#readme-top">上に戻る</a>)</p>
+
+### Isaac Simでの実行方法
+
+Gazeboの代わりにIsaac Sim 6.1も利用できます．Isaac Simはホスト側で手動で起動し，コンテナからサービス経由で操作します．
+ホスト側の準備（Isaacのインストール，アセット，`~/colcon_ws`のリンク）は[sobits_gazebo_worldsのREADME](../sobits_gazebo_worlds/README.md#isaac-sim)を参照してください．
+
+1. ホスト側でランナーを起動し，そのままにしておきます．
+    ```sh
+    ~/docker_containers/jazzy_sobit_home_2_moveit_ws/src/sobits_gazebo_worlds/scripts/isaac_sim.sh
+    ```
+2. コンテナ内でロボットを起動します．ワールドの読み込み，ロボットの出現，ROSスタックの起動まで自動で行われます．
+    ```sh
+    ros2 launch sobit_light_bringup isaac_minimal.launch.py world_model:=rcjo2025_arena
+    ```
+
+launchをCtrl-Cで終了しても，Isaacは起動（再生）したままです．再度launchするとワールドを読み込み直してロボットを出現させます．GUIで開いたワールドをそのまま使う場合は`spawn_only:=true`を指定してください．
+
+[isaac_minimal.launch.py](sobit_light_bringup/launch/isaac_minimal.launch.py)はgz_minimalのモジュール・センサの引数（`enable_gz_imu`を除く）に加えて，以下の引数を持ちます．
+センサの引数を`false`にすると，Isaac内でもそのセンサが無効になります（出現前にそのグラフを無効化します）．モジュールの引数はROS側のコントローラを起動しないだけです．
+
+| 引数 | デフォルト | 説明 |
+| --- | --- | --- |
+| `world_model` | `rcjo2025_arena` | 読み込むワールド（`<asset_root>/usd/<name>.usda`），またはUSDファイルの絶対パス． |
+| `world_closed` | `false` | `_closed`版（壁，天井，部屋の照明付き）を読み込む． |
+| `asset_root` | （空） | アセットのディレクトリ．空の場合は`SOBITS_SIM_ASSET_ROOT`，それもなければsobits_gazebo_worldsの`export/`を使用． |
+| `robot_usd` | （空） | ロボットのUSD．空の場合は`<asset_root>/usd/robots/sobit_light/sobit_light.usd`を使用． |
+| `spawn_only` | `false` | ワールドを読み込まず，Isaac GUIで開いているワールドを使用． |
+| `wait_timeout` | `120` | ランナーのサービスを待つ秒数． |
+
+`robot.launch.py`は`simulator`引数（`none`，`gz`，`isaac`，`mujoco`．空の場合は`enable_gz`から決定）を持ちます．
+`isaac`の場合，spawnerはロボットUSD内の`controller_manager`を最大120秒待ちます．カメラ（カラーの`compressed`はH.264），デプスの点群，LiDAR，`/clock`はIsaacが配信するため，ROS側では`compressedDepth`の再配信，cmd_vel・オドメトリの中継，アクションサーバ，MoveItだけが起動します．
+
+<p align="right">(<a href="#readme-top">上に戻る</a>)</p>
+
+### MuJoCoでの実行方法
+
+MuJoCoは[mujoco_ros2_control](https://github.com/ros-controls/mujoco_ros2_control)（`ros-jazzy-mujoco-ros2-control`，rosdepでインストール）によりコンテナ内で動作するため，ホスト側の準備は不要です．
+1つのプロセスがMuJoCo，Simulateウィンドウ，`controller_manager`を担い，`/clock`も配信します．
+
+```sh
+ros2 launch sobit_light_bringup mujoco_minimal.launch.py
+
+# Simulateウィンドウなし
+ros2 launch sobit_light_bringup mujoco_minimal.launch.py headless:=true
+```
+
+起動時に，sobits_gazebo_worldsの`scripts/mujoco_scene.py`がワールドのMJCF（`<asset_root>/mjcf/<world>[_closed]/`）とロボットのMJCF（`<asset_root>/mjcf/robots/sobit_light/`）を出現位置で結合し，ワールドと同じディレクトリに`scene_sobit_light.xml`を生成します．これを`robot.launch.py simulator:=mujoco mujoco_model:=<scene>`が読み込みます．
+
+[mujoco_minimal.launch.py](sobit_light_bringup/launch/mujoco_minimal.launch.py)はgz_minimalの引数（出現位置，`enable_gz_imu`を除くモジュール・センサの引数，`enable_viz`）に加えて，`world_model`（デフォルトは`rcjo2025_arena`，またはMJCFの絶対パス），`world_closed`，`asset_root`（Isaacと同じ），`headless`を持ちます．
+
+URDFの`ros2_control`ブロックは`MujocoSystemInterface`に切り替わり（`enable_mujoco:=true`），各ジョイントは同名のMJCFアクチュエータを駆動します．台車はGazeboと同様に`wheel_controller`で動かします．
+カメラとLiDARのプラグインはトピック，フレーム，周期を[mujoco_plugins.yaml](sobit_light_bringup/config/mujoco_plugins.yaml)から読み込みます．無効にしたカメラは要求時のみ描画され（`policy: polled`），`enable_gz_lidar:=false`でLiDARプラグインは読み込まれません．
+
+**既知の違い**：
+
+- IMUはありません（`imu`トピックは配信されません）．
+- `<cam>/depth/image_rect_raw`は`32FC1`（メートル）で，フレームは`<cam>_color_optical_frame`です（1つのMuJoCoカメラがカラーとデプスを描画するため）．`<cam>/depth/camera_info`はカラーのものを中継し，`depth/points`はGazeboと同様に`depth_image_proc`で生成します．
+- LiDARはGazeboのLiDARの形状から出力した`mujoco.plugin.lidar`センサです（640本，±2.487 rad，0.1〜10 m，10 Hz）．検出なしは`-1`となります．
+- 実機のハンドカメラは848×480・5 Hzですが，シミュレータでは640×480・10 Hzで描画します．
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
