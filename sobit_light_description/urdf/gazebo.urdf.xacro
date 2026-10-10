@@ -279,12 +279,12 @@
 
           <always_on>1</always_on>
           <visualize>true</visualize>
-          <update_rate>10</update_rate>
+          <update_rate>5</update_rate>
 
           <camera name="hand_camera_color">
-            <horizontal_fov>1.21126</horizontal_fov>
+            <horizontal_fov>1.51844</horizontal_fov>
             <image>
-              <width>640</width>
+              <width>848</width>
               <height>480</height>
               <format>RGB_INT8</format>
             </image>
@@ -314,12 +314,12 @@
 
           <always_on>1</always_on>
           <visualize>true</visualize>
-          <update_rate>10</update_rate>
+          <update_rate>5</update_rate>
 
           <camera name="hand_camera_depth">
-            <horizontal_fov>1.21126</horizontal_fov>
+            <horizontal_fov>1.51844</horizontal_fov>
             <image>
-              <width>640</width>
+              <width>848</width>
               <height>480</height>
             </image>
             <clip>

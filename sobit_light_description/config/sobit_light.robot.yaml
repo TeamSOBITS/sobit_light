@@ -95,9 +95,9 @@ sensors:
         raw_topic: hand_camera/color/image_raw
         compressed_topic: hand_camera/color/image_raw/compressed
         info_topic: hand_camera/color/camera_info
-        width: 640
+        width: 848
         height: 480
-        fps: 10
+        fps: 5
       depth:
         frame: hand_camera_depth_optical_frame
         raw_topic: hand_camera/depth/image_rect_raw
@@ -105,9 +105,9 @@ sensors:
         info_topic: hand_camera/depth/camera_info
         points_topic: hand_camera/depth/points
         encoding: 16UC1
-        width: 640
+        width: 848
         height: 480
-        fps: 10
+        fps: 5
         range_m: [0.1, 10.0]
 
     # The Kachaka base cameras have no optical frame in the URDF, so their
