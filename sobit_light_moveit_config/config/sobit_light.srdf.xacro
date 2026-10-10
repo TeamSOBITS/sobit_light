@@ -105,6 +105,17 @@
         <disable_collisions link1="base_r_drive_wheel_link" link2="docking_link" reason="Never"/>
         <disable_collisions link1="base_r_drive_wheel_link" link2="plate_middle_link" reason="Never"/>
         <disable_collisions link1="docking_link" link2="plate_middle_link" reason="Never"/>
+        <disable_collisions link1="base_l_caster_link" link2="base_link" reason="Adjacent"/>
+        <disable_collisions link1="base_link" link2="base_r_caster_link" reason="Adjacent"/>
+        <disable_collisions link1="base_l_caster_link" link2="base_r_caster_link" reason="Never"/>
+        <disable_collisions link1="base_l_caster_link" link2="base_l_drive_wheel_link" reason="Never"/>
+        <disable_collisions link1="base_l_caster_link" link2="base_r_drive_wheel_link" reason="Never"/>
+        <disable_collisions link1="base_l_caster_link" link2="docking_link" reason="Never"/>
+        <disable_collisions link1="base_l_caster_link" link2="plate_middle_link" reason="Never"/>
+        <disable_collisions link1="base_l_drive_wheel_link" link2="base_r_caster_link" reason="Never"/>
+        <disable_collisions link1="base_r_caster_link" link2="base_r_drive_wheel_link" reason="Never"/>
+        <disable_collisions link1="base_r_caster_link" link2="docking_link" reason="Never"/>
+        <disable_collisions link1="base_r_caster_link" link2="plate_middle_link" reason="Never"/>
     </xacro:if>
     <xacro:if value="${ARM}">
         <disable_collisions link1="arm_base_link" link2="arm_platform_link" reason="Adjacent"/>
