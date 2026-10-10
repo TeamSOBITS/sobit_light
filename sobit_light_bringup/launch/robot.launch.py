@@ -592,12 +592,14 @@ def launch_gz(context, *args, **kwargs):
         executable='republish',
         name=f'{cam}_depth_compressed_republisher',
         namespace=robot_name,
-        arguments=['raw', 'compressedDepth'],
         remappings=[
             ('in',                  f'/{robot_name}/{cam}/depth/image_rect_raw'),
             ('out/compressedDepth', f'/{robot_name}/{cam}/depth/image_rect_raw/compressedDepth'),
         ],
         parameters=[{
+            # image_transport 5.x ignores positional transports; an empty out_transport loads every plugin (out, out/theora, ...)
+            'in_transport': 'raw',
+            'out_transport': 'compressedDepth',
             'use_sim_time': True,
             f'qos_overrides./{robot_name}/{cam}/depth/image_rect_raw.subscription.reliability': 'best_effort',
             f'qos_overrides./{robot_name}/{cam}/depth/image_rect_raw/compressedDepth.publisher.reliability': 'best_effort',
@@ -636,12 +638,13 @@ def launch_gz(context, *args, **kwargs):
                 executable='republish',
                 name=f'{cam}_compressed_republisher',
                 namespace=robot_name,
-                arguments=['raw', 'compressed'],
                 remappings=[
                     ('in',             in_topic),
                     ('out/compressed', out_topic),
                 ],
                 parameters=[{
+                    'in_transport': 'raw',
+                    'out_transport': 'compressed',
                     'use_sim_time': True,
                     f'qos_overrides.{in_topic}.subscription.reliability': 'best_effort',
                     f'qos_overrides.{out_topic}.publisher.reliability': 'best_effort',
