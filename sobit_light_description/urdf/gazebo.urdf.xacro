@@ -210,13 +210,13 @@
 
           <always_on>1</always_on>
           <visualize>true</visualize>
-          <update_rate>10</update_rate>
+          <update_rate>30</update_rate>
 
           <camera name="head_camera_color">
             <horizontal_fov>1.21126</horizontal_fov>
             <image>
-              <width>1280</width>
-              <height>720</height>
+              <width>640</width>
+              <height>480</height>
               <format>RGB_INT8</format>
             </image>
             <clip>
@@ -245,13 +245,13 @@
 
           <always_on>1</always_on>
           <visualize>true</visualize>
-          <update_rate>10</update_rate>
+          <update_rate>15</update_rate>
 
           <camera name="head_camera_depth">
             <horizontal_fov>1.21126</horizontal_fov>
             <image>
-              <width>1280</width>
-              <height>720</height>
+              <width>640</width>
+              <height>480</height>
             </image>
             <clip>
               <near>0.1</near>

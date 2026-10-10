@@ -71,9 +71,9 @@ sensors:
         raw_topic: head_camera/color/image_raw
         compressed_topic: head_camera/color/image_raw/compressed
         info_topic: head_camera/color/camera_info
-        width: 1280
-        height: 720
-        fps: 10
+        width: 640
+        height: 480
+        fps: 30
       depth:
         frame: head_camera_depth_optical_frame
         raw_topic: head_camera/depth/image_rect_raw
@@ -81,9 +81,9 @@ sensors:
         info_topic: head_camera/depth/camera_info
         points_topic: head_camera/depth/points
         encoding: 16UC1
-        width: 1280
-        height: 720
-        fps: 10
+        width: 640
+        height: 480
+        fps: 15
         range_m: [0.1, 10.0]
 
     - name: hand_camera
