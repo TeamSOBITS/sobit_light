@@ -15,6 +15,9 @@
           <param name="mujoco_model">$(arg mujoco_model)</param>
           <param name="headless">$(arg mujoco_headless)</param>
           <param name="initial_keyframe">home</param>
+          <!-- Ground-truth pose of the free base joint from the physics (nav_msgs/Odometry, frame odom) -->
+          <param name="odom_free_joint_name">root</param>
+          <param name="odom_topic">mujoco/ground_truth</param>
         </xacro:if>
         <xacro:unless value="${sim_on}">
           <xacro:property name="dxl_sl_port" value="$(arg dxl_sl_port)"/>
